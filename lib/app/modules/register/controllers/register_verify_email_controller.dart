@@ -1,7 +1,7 @@
 import 'package:get/get.dart';
 
-class VerificationSuccessController extends GetxController {
-  //TODO: Implement VerificationSuccessController
+class RegisterVerifyEmailController extends GetxController {
+  //TODO: Implement RegisterVerifyEmailController
 
   final count = 0.obs;
   @override

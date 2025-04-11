@@ -2,10 +2,11 @@ import 'package:flutter/material.dart';
 
 import 'package:get/get.dart';
 
-import '../controllers/verification_success_controller.dart';
+import '../controllers/register_verify_email_success.dart';
 
-class VerificationSuccessView extends GetView<VerificationSuccessController> {
-  const VerificationSuccessView({Key? key}) : super(key: key);
+class RegisterVerifyEmailSuccessView
+    extends GetView<RegisterVerifyEmailSuccessController> {
+  const RegisterVerifyEmailSuccessView({Key? key}) : super(key: key);
   @override
   Widget build(BuildContext context) {
     return Scaffold(

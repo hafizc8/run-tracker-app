@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_svg/flutter_svg.dart';
 
 import 'package:get/get.dart';
 
@@ -16,6 +17,8 @@ class RegisterVerifyEmailSuccessView
           child: Column(
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
+              SvgPicture.asset('assets/icons/check_circle.svg', width: 72),
+              const SizedBox(height: 24),
               Text(
                 'Email Verified',
                 style: Theme.of(context).textTheme.headlineMedium,

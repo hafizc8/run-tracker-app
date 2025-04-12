@@ -10,6 +10,11 @@ class TTextTheme {
       fontWeight: FontWeight.bold,
       color: lightColorScheme.primary,
     ),
+    headlineSmall: TextStyle(
+      fontSize: 16,
+      fontWeight: FontWeight.w600,
+      color: lightColorScheme.primary,
+    ),
     titleSmall: TextStyle(
       fontSize: 16,
       fontWeight: FontWeight.w400,

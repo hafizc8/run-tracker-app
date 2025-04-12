@@ -5,10 +5,10 @@ import 'package:get/get.dart';
 import 'package:zest_mobile/app/core/theme/color_schemes.dart';
 import 'package:zest_mobile/app/routes/app_routes.dart';
 
-import '../controllers/register_controller.dart';
+import '../controllers/login_controller.dart';
 
-class RegisterView extends GetView<RegisterController> {
-  const RegisterView({Key? key}) : super(key: key);
+class LoginView extends GetView<LoginController> {
+  const LoginView({Key? key}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
@@ -30,7 +30,7 @@ class RegisterView extends GetView<RegisterController> {
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   Text(
-                    'Sign Up',
+                    'Login',
                     style: Theme.of(context).textTheme.headlineMedium,
                   ),
                   const SizedBox(height: 24),
@@ -67,56 +67,26 @@ class RegisterView extends GetView<RegisterController> {
                       ),
                     ],
                   ),
-                  const SizedBox(height: 16),
-                  Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Text(
-                        'Confirm Password',
-                        style: Theme.of(context).textTheme.titleSmall,
-                      ),
-                      const SizedBox(height: 12),
-                      TextFormField(
-                        cursorColor: Colors.black,
-                        decoration: const InputDecoration(
-                          hintText: 'Confirm your password',
-                        ),
-                      ),
-                    ],
-                  ),
                 ],
               ),
             ),
-            const SizedBox(height: 12),
-            Row(
-              children: [
-                Checkbox(value: true, onChanged: (val) {}),
-                Expanded(
-                  child: Wrap(
-                    children: [
-                      Text(
-                        'By signing up, you acknowledge and agree to our ',
-                        style: Theme.of(context).textTheme.bodySmall,
-                      ),
-                      const TextSpanWidget('Terms & Conditions'),
-                      Text(
-                        ' and ',
-                        style: Theme.of(context).textTheme.bodySmall,
-                      ),
-                      const TextSpanWidget('Privacy Policy'),
-                    ],
-                  ),
+            Align(
+              alignment: Alignment.centerRight,
+              child: TextButton(
+                onPressed: () {},
+                child: Text(
+                  'Forgot Password?',
+                  style: Theme.of(context).textTheme.headlineSmall,
                 ),
-              ],
+              ),
             ),
-            const SizedBox(height: 16),
             ElevatedButton(
               onPressed: () {},
-              child: const Text('Create Account'),
+              child: const Text('Login'),
             ),
             const SizedBox(height: 20),
             Text(
-              'or sign up with',
+              'or login with',
               style: Theme.of(context).textTheme.bodyLarge,
             ),
             const SizedBox(height: 16),
@@ -130,14 +100,14 @@ class RegisterView extends GetView<RegisterController> {
             ),
             const SizedBox(height: 24),
             Text(
-              'already have account?',
+              'Don\'t have account?',
               style: Theme.of(context).textTheme.bodyLarge,
             ),
             const SizedBox(height: 4),
             TextButton(
-              onPressed: () => Get.toNamed(AppRoutes.login),
+              onPressed: () => Get.toNamed(AppRoutes.register),
               child: Text(
-                'Login',
+                'Sign Up',
                 style: Theme.of(context).textTheme.headlineMedium,
               ),
             ),

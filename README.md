@@ -20,6 +20,7 @@ Zest Mobile is a modern **fitness app** built with Flutter, designed to help use
 lib/
 ├── app/
 │   ├── core/              # Constants, theme, global widgets
+│   │   ├── themes/
 │   │   ├── values/
 │   │   └── widgets/
 │   ├── data/              # Models and API services

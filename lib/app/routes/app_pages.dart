@@ -18,17 +18,50 @@ import 'app_routes.dart';
 
 class AppPages {
   static final pages = [
-    GetPage(name: AppRoutes.home, page: () => const HomeView(), binding: HomeBinding()),
+    GetPage(
+      name: AppRoutes.home,
+      page: () => const HomeView(),
+      binding: HomeBinding(),
+    ),
 
     // Auth
-    GetPage(name: AppRoutes.register, page: () => const RegisterView(), binding: RegisterBinding()),
-    GetPage(name: AppRoutes.registerVerifyEmail, page: () => const RegisterVerifyEmailView(), binding: RegisterVerifyEmailBinding()),
-    GetPage(name: AppRoutes.registerVerifyEmailSuccess, page: () => const RegisterVerifyEmailSuccessView(), binding: RegisterVerifyEmailSuccessBinding()),
-    
-    GetPage(name: AppRoutes.login, page: () => const LoginView(), binding: LoginBinding()),
-    GetPage(name: AppRoutes.forgotPassword, page: () => const ForgotPasswordView(), binding: ForgotPasswordBinding()),
-    GetPage(name: AppRoutes.forgotPasswordEmailSent, page: () => const ForgotPasswordEmailSentView()),
-    GetPage(name: AppRoutes.forgotPasswordSetNew, page: () => const ForgotPasswordSetNewPasswordView()),
-    GetPage(name: AppRoutes.forgotPasswordUpdated, page: () => const ForgotPasswordPasswordUpdatedView()),
+    GetPage(
+      name: AppRoutes.register,
+      page: () => const RegisterView(),
+      binding: RegisterBinding(),
+    ),
+    GetPage(
+      name: AppRoutes.registerVerifyEmail,
+      page: () => const RegisterVerifyEmailView(),
+      binding: RegisterVerifyEmailBinding(),
+    ),
+    GetPage(
+      name: AppRoutes.registerVerifyEmailSuccess,
+      page: () => const RegisterVerifyEmailSuccessView(),
+      binding: RegisterVerifyEmailSuccessBinding(),
+    ),
+
+    GetPage(
+      name: AppRoutes.login,
+      page: () => const LoginView(),
+      binding: LoginBinding(),
+    ),
+    GetPage(
+      name: AppRoutes.forgotPassword,
+      page: () => const ForgotPasswordView(),
+      binding: ForgotPasswordBinding(),
+    ),
+    GetPage(
+      name: AppRoutes.forgotPasswordEmailSent,
+      page: () => const ForgotPasswordEmailSentView(),
+    ),
+    GetPage(
+      name: AppRoutes.forgotPasswordSetNew,
+      page: () => const ForgotPasswordSetNewPasswordView(),
+    ),
+    GetPage(
+      name: AppRoutes.forgotPasswordUpdated,
+      page: () => const ForgotPasswordPasswordUpdatedView(),
+    ),
   ];
 }

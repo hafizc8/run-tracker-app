@@ -5,6 +5,7 @@ import 'package:zest_mobile/app/core/theme/checkbox_theme.dart';
 import 'package:zest_mobile/app/core/theme/color_schemes.dart';
 import 'package:zest_mobile/app/core/theme/elevated_btn_theme.dart';
 import 'package:zest_mobile/app/core/theme/input_decoration_theme.dart';
+import 'package:zest_mobile/app/core/theme/outlined_btn_theme.dart';
 import 'package:zest_mobile/app/core/theme/text_theme.dart';
 
 class TAppTheme {
@@ -19,6 +20,7 @@ class TAppTheme {
       appBarTheme: TAppBarTheme.lightAppBarTheme,
       textTheme: TTextTheme.lightTextTheme,
       elevatedButtonTheme: TElevatedButtonTheme.lightElevatedButtonTheme,
+      outlinedButtonTheme: TOutlinedButtonTheme.lightOutlinedButtonTheme,
       inputDecorationTheme: TInputDecorationTheme.lightInputDecorationTheme,
       checkboxTheme: TCheckboxTheme.lightCheckboxTheme,
       fontFamily: GoogleFonts.quicksand().fontFamily,

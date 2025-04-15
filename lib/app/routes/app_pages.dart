@@ -7,7 +7,11 @@ import 'package:zest_mobile/app/modules/auth/forgot_password/views/forgot_passwo
 import 'package:zest_mobile/app/modules/auth/login/bindings/login_binding.dart';
 import 'package:zest_mobile/app/modules/auth/login/views/login_view.dart';
 import 'package:zest_mobile/app/modules/auth/register/bindings/register_binding.dart';
+import 'package:zest_mobile/app/modules/auth/register/bindings/register_create_profile_binding.dart';
 import 'package:zest_mobile/app/modules/auth/register/bindings/register_verify_email_success_binding.dart';
+import 'package:zest_mobile/app/modules/auth/register/views/register_create_profile_choose_location_view.dart';
+import 'package:zest_mobile/app/modules/auth/register/views/register_create_profile_view.dart';
+import 'package:zest_mobile/app/modules/auth/register/views/register_success.dart';
 import 'package:zest_mobile/app/modules/auth/register/views/register_view.dart';
 import 'package:zest_mobile/app/modules/auth/register/bindings/register_verify_email_binding.dart';
 import 'package:zest_mobile/app/modules/auth/register/views/register_verify_email_view.dart';
@@ -39,6 +43,20 @@ class AppPages {
       name: AppRoutes.registerVerifyEmailSuccess,
       page: () => const RegisterVerifyEmailSuccessView(),
       binding: RegisterVerifyEmailSuccessBinding(),
+    ),
+    GetPage(
+      name: AppRoutes.registerCreateProfile,
+      page: () => const RegisterCreateProfileView(),
+      binding: RegisterCreateProfileBinding(),
+    ),
+    GetPage(
+      name: AppRoutes.registerCreateProfileChooseLocation,
+      page: () => const RegisterCreateProfileChooseLocationView(),
+      binding: RegisterCreateProfileBinding(),
+    ),
+    GetPage(
+      name: AppRoutes.registerSuccess,
+      page: () => const RegisterSuccessView(),
     ),
 
     GetPage(

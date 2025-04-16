@@ -1,9 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_svg/flutter_svg.dart';
-
-import 'package:get/get.dart';
-
-import '../controllers/register_verify_email_success.dart';
 
 class RegisterSuccessView extends StatelessWidget {
   const RegisterSuccessView({Key? key}) : super(key: key);

@@ -12,6 +12,11 @@ abstract class AppRoutes {
 
   // Register flow
   static const register = '/auth/register';
-  static const registerVerifyEmail = '/register-verify-email';
-  static const registerVerifyEmailSuccess = '/register-verify-email-success';
+  static const registerSuccess = '/auth/register/success';
+  static const registerVerifyEmail = '/auth/register-verify-email';
+  static const registerVerifyEmailSuccess =
+      '/auth/register-verify-email-success';
+  static const registerCreateProfile = '/auth/register-create-profile';
+  static const registerCreateProfileChooseLocation =
+      '/auth/register-create-profile-choose-location';
 }

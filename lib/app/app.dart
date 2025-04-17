@@ -12,7 +12,7 @@ class App extends StatelessWidget {
   Widget build(BuildContext context) {
     return GetMaterialApp(
       debugShowCheckedModeBanner: false,
-      initialRoute: AppRoutes.login,
+      initialRoute: AppRoutes.social,
       getPages: AppPages.pages,
       theme: TAppTheme.lightTheme,
       title: 'Zest Mobile',

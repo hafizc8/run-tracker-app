@@ -16,6 +16,8 @@ import 'package:zest_mobile/app/modules/auth/register/views/register_view.dart';
 import 'package:zest_mobile/app/modules/auth/register/bindings/register_verify_email_binding.dart';
 import 'package:zest_mobile/app/modules/auth/register/views/register_verify_email_view.dart';
 import 'package:zest_mobile/app/modules/auth/register/views/register_verify_email_success.dart';
+import 'package:zest_mobile/app/modules/social/bindings/social_binding.dart';
+import 'package:zest_mobile/app/modules/social/views/social_view.dart';
 import '../modules/home/bindings/home_binding.dart';
 import '../modules/home/views/home_view.dart';
 import 'app_routes.dart';
@@ -80,6 +82,12 @@ class AppPages {
     GetPage(
       name: AppRoutes.forgotPasswordUpdated,
       page: () => const ForgotPasswordPasswordUpdatedView(),
+    ),
+
+    GetPage(
+      name: AppRoutes.social,
+      page: () => const SocialView(),
+      binding: SocialBinding(),
     ),
   ];
 }

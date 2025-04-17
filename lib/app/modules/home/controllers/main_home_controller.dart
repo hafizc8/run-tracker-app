@@ -5,7 +5,7 @@ import 'package:zest_mobile/app/core/exception/handler/app_exception_handler_inf
 import 'package:zest_mobile/app/core/models/model/user_model.dart';
 import 'package:zest_mobile/app/core/services/auth_service.dart';
 
-class HomeController extends GetxController {
+class MainHomeController extends GetxController {
   var isLoading = false.obs;
 
   final _authService = sl<AuthService>();

@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
-
 import 'package:get/get.dart';
+import 'package:zest_mobile/app/core/models/forms/login_form.dart';
 import 'package:zest_mobile/app/routes/app_routes.dart';
 
 import '../controllers/login_controller.dart';
@@ -24,8 +24,9 @@ class LoginView extends GetView<LoginController> {
               child: Text('Logo'),
             ),
             const SizedBox(height: 24),
-            Form(
-              child: Column(
+            Obx(() {
+              LoginFormModel form = controller.form.value;
+              return Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   Text(
@@ -43,9 +44,18 @@ class LoginView extends GetView<LoginController> {
                       const SizedBox(height: 12),
                       TextFormField(
                         cursorColor: Colors.black,
-                        decoration: const InputDecoration(
+                        onChanged: (value) {
+                          controller.form.value = form.copyWith(
+                            email: value,
+                            errors: form.errors,
+                            field: 'email',
+                          );
+                        },
+                        decoration: InputDecoration(
                           hintText: 'Enter your email',
+                          errorText: form.errors?['email'],
                         ),
+                        textInputAction: TextInputAction.next,
                       ),
                     ],
                   ),
@@ -60,15 +70,24 @@ class LoginView extends GetView<LoginController> {
                       const SizedBox(height: 12),
                       TextFormField(
                         cursorColor: Colors.black,
-                        decoration: const InputDecoration(
+                        onChanged: (value) {
+                          controller.form.value = form.copyWith(
+                            password: value,
+                            errors: form.errors,
+                            field: 'password',
+                          );
+                        },
+                        decoration: InputDecoration(
                           hintText: 'Enter your password',
+                          errorText: form.errors?['password'],
                         ),
+                        textInputAction: TextInputAction.done,
                       ),
                     ],
                   ),
                 ],
-              ),
-            ),
+              );
+            }),
             Align(
               alignment: Alignment.centerRight,
               child: TextButton(
@@ -79,9 +98,17 @@ class LoginView extends GetView<LoginController> {
                 ),
               ),
             ),
-            ElevatedButton(
-              onPressed: () {},
-              child: const Text('Login'),
+            Obx(
+              () => ElevatedButton(
+                onPressed: controller.isLoading.value
+                    ? null
+                    : () => controller.login(),
+                child: Visibility(
+                  visible: controller.isLoading.value,
+                  replacement: const Text('Login'),
+                  child: const CircularProgressIndicator(),
+                ),
+              ),
             ),
             const SizedBox(height: 20),
             Text(

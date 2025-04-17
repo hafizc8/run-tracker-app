@@ -27,7 +27,7 @@ class RegisterVerifyEmailView extends GetView<RegisterVerifyEmailController> {
                   style: Theme.of(context).textTheme.bodyMedium,
                   children: <TextSpan>[
                     TextSpan(
-                      text: 'jondoe@gmail.com',
+                      text: controller.user?.email ?? '',
                       style: Theme.of(context).textTheme.bodyMedium!.copyWith(
                             color: Colors.black,
                             fontWeight: FontWeight.bold,
@@ -42,9 +42,21 @@ class RegisterVerifyEmailView extends GetView<RegisterVerifyEmailController> {
                 style: Theme.of(context).textTheme.bodyMedium,
               ),
               const SizedBox(height: 12),
-              ElevatedButton(
-                onPressed: () {},
-                child: const Text('Resend'),
+              Obx(
+                () => ElevatedButton(
+                  onPressed: controller.canResend.value
+                      ? () {
+                          controller.sendEmailVerify();
+                        }
+                      : null,
+                  child: Visibility(
+                    visible: controller.canResend.value,
+                    replacement: Text(
+                      'Resend Email in ${controller.resendCooldown.value}s',
+                    ),
+                    child: const Text('Resend Email'),
+                  ),
+                ),
               )
             ],
           ),

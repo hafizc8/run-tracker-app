@@ -10,11 +10,7 @@ class HomeView extends GetView<HomeController> {
     return Scaffold(
       appBar: AppBar(title: const Text('Home')),
       body: Center(
-        child: Obx(() => Text('Clicked: ${controller.count}')),
-      ),
-      floatingActionButton: FloatingActionButton(
-        onPressed: controller.increment,
-        child: const Icon(Icons.add),
+        child: Text('home ${controller.isLoading.value}'),
       ),
     );
   }

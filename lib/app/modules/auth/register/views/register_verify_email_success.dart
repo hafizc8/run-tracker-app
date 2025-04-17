@@ -3,7 +3,7 @@ import 'package:flutter_svg/flutter_svg.dart';
 
 import 'package:get/get.dart';
 
-import '../controllers/register_verify_email_success.dart';
+import '../controllers/register_verify_email_success_controller.dart';
 
 class RegisterVerifyEmailSuccessView
     extends GetView<RegisterVerifyEmailSuccessController> {

@@ -16,6 +16,8 @@ import 'package:zest_mobile/app/modules/auth/register/views/register_view.dart';
 import 'package:zest_mobile/app/modules/auth/register/bindings/register_verify_email_binding.dart';
 import 'package:zest_mobile/app/modules/auth/register/views/register_verify_email_view.dart';
 import 'package:zest_mobile/app/modules/auth/register/views/register_verify_email_success.dart';
+import 'package:zest_mobile/app/modules/home/bindings/main_home_binding.dart';
+import 'package:zest_mobile/app/modules/home/views/main_home_view.dart';
 import '../modules/home/bindings/home_binding.dart';
 import '../modules/home/views/home_view.dart';
 import 'app_routes.dart';
@@ -26,6 +28,11 @@ class AppPages {
       name: AppRoutes.home,
       page: () => const HomeView(),
       binding: HomeBinding(),
+    ),
+    GetPage(
+      name: AppRoutes.mainHome,
+      page: () => const MainHomeView(),
+      binding: MainHomeBinding(),
     ),
 
     // Auth

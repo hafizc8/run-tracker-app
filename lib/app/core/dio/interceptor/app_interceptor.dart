@@ -1,7 +1,12 @@
 import 'package:dio/dio.dart';
+import 'package:get/get.dart' as g;
 import 'package:zest_mobile/app/core/di/service_locator.dart';
+import 'package:zest_mobile/app/core/exception/app_exception.dart';
+import 'package:zest_mobile/app/core/exception/handler/app_exception_handler.dart';
+import 'package:zest_mobile/app/core/models/enums/app_exception_enum.dart';
 import 'package:zest_mobile/app/core/services/storage_service.dart';
 import 'package:zest_mobile/app/core/values/storage_keys.dart';
+import 'package:zest_mobile/app/routes/app_routes.dart';
 
 class AppInterceptor extends Interceptor {
   @override
@@ -10,17 +15,33 @@ class AppInterceptor extends Interceptor {
     if (token != null) {
       options.headers['Authorization'] = 'Bearer $token';
     }
-    return handler.next(options);
+    super.onRequest(options, handler);
   }
 
   @override
   void onResponse(Response response, ResponseInterceptorHandler handler) {
-    return handler.next(response);
+    super.onResponse(response, handler);
   }
 
   @override
   void onError(DioException err, ErrorInterceptorHandler handler) {
     // Handle Global Error di sini
-    return handler.next(err);
+    AppException appEx = AppExceptionHandler.fromDioError(err);
+    switch (appEx.type) {
+      case AppExceptionType.unauthorized:
+        sl<StorageService>().remove(StorageKeys.token);
+        sl<StorageService>().remove(StorageKeys.user);
+        g.Get.offAllNamed(AppRoutes.login);
+        break;
+      case AppExceptionType.emailUnVerified:
+        g.Get.offAllNamed(AppRoutes.registerVerifyEmail);
+        break;
+      case AppExceptionType.emptyProfile:
+        g.Get.offAllNamed(AppRoutes.registerCreateProfile);
+        break;
+
+      default:
+    }
+    super.onError(err, handler);
   }
 }

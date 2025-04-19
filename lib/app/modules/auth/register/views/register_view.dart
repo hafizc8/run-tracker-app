@@ -113,30 +113,32 @@ class RegisterView extends GetView<RegisterController> {
                     ],
                   ),
                   const SizedBox(height: 12),
-                  Row(
-                    children: [
-                      Checkbox(
-                        value: form.isAgree,
-                        onChanged: (val) {},
-                        isError: true,
-                      ),
-                      Expanded(
-                        child: Wrap(
-                          children: [
-                            Text(
-                              'By signing up, you acknowledge and agree to our ',
-                              style: Theme.of(context).textTheme.bodySmall,
-                            ),
-                            const TextSpanWidget('Terms & Conditions'),
-                            Text(
-                              ' and ',
-                              style: Theme.of(context).textTheme.bodySmall,
-                            ),
-                            const TextSpanWidget('Privacy Policy'),
-                          ],
+                  CheckboxListTile(
+                    value: form.isAgree,
+                    onChanged: (val) {
+                      controller.form.value = form.copyWith(
+                        isAgree: val,
+                        errors: form.errors,
+                        field: 'is_agree',
+                      );
+                    },
+                    controlAffinity: ListTileControlAffinity.leading,
+                    contentPadding: EdgeInsets.zero,
+                    isError: true,
+                    title: Wrap(
+                      children: [
+                        Text(
+                          'By signing up, you acknowledge and agree to our ',
+                          style: Theme.of(context).textTheme.bodySmall,
                         ),
-                      ),
-                    ],
+                        const TextSpanWidget('Terms & Conditions'),
+                        Text(
+                          ' and ',
+                          style: Theme.of(context).textTheme.bodySmall,
+                        ),
+                        const TextSpanWidget('Privacy Policy'),
+                      ],
+                    ),
                   ),
                   if (form.errors?['is_agree'] != null)
                     Text(
@@ -152,7 +154,7 @@ class RegisterView extends GetView<RegisterController> {
                 onPressed: controller.isLoading.value
                     ? null
                     : () {
-                        controller.register();
+                        controller.register(context);
                       },
                 child: Visibility(
                   visible: controller.isLoading.value,

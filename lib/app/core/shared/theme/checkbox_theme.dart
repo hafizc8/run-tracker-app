@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:zest_mobile/app/core/theme/color_schemes.dart';
+import 'package:zest_mobile/app/core/shared/theme/color_schemes.dart';
 
 class TCheckboxTheme {
   TCheckboxTheme._();
@@ -12,6 +12,7 @@ class TCheckboxTheme {
       if (states.contains(MaterialState.selected)) {
         return Colors.black; // Warna ketika dicentang
       }
+
       return Colors.grey.shade400; // Warna default border
     }),
 

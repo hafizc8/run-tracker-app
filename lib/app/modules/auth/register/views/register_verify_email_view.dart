@@ -50,11 +50,15 @@ class RegisterVerifyEmailView extends GetView<RegisterVerifyEmailController> {
                         }
                       : null,
                   child: Visibility(
-                    visible: controller.canResend.value,
-                    replacement: Text(
-                      'Resend Email in ${controller.resendCooldown.value}s',
+                    visible: !controller.isLoading.value,
+                    replacement: const CircularProgressIndicator(),
+                    child: Visibility(
+                      visible: controller.canResend.value,
+                      replacement: Text(
+                        'Resend Email in ${controller.resendCooldown.value}s',
+                      ),
+                      child: const Text('Resend Email'),
                     ),
-                    child: const Text('Resend Email'),
                   ),
                 ),
               )

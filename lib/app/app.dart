@@ -1,7 +1,7 @@
 import 'package:app_links/app_links.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import 'package:zest_mobile/app/core/theme/app_theme.dart';
+import 'package:zest_mobile/app/core/shared/theme/app_theme.dart';
 
 import 'package:zest_mobile/app/routes/app_pages.dart';
 import 'package:zest_mobile/app/routes/app_routes.dart';

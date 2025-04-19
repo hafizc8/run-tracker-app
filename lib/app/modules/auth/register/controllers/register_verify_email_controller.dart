@@ -15,6 +15,8 @@ class RegisterVerifyEmailController extends GetxController {
   final resendCooldown = 30.obs;
   final canResend = false.obs;
 
+  final isLoading = false.obs;
+
   Timer? _timer;
 
   @override
@@ -45,7 +47,8 @@ class RegisterVerifyEmailController extends GetxController {
   }
 
   Future<void> sendEmailVerify() async {
-    startTimer();
+    isLoading.value = true;
+
     try {
       bool resp = await _authService.sendEmailVerify();
       if (resp) {
@@ -56,10 +59,15 @@ class RegisterVerifyEmailController extends GetxController {
           colorText: Colors.white,
         );
       }
+
+      isLoading.value = false;
+      startTimer();
     } on AppException catch (e) {
+      isLoading.value = false;
       // show error snackbar, toast, etc
       AppExceptionHandlerInfo.handle(e);
     } catch (e) {
+      isLoading.value = false;
       Get.snackbar('Error', e.toString());
     }
   }

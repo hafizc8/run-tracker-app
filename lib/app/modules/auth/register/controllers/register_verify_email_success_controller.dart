@@ -1,17 +1,37 @@
+import 'dart:async';
+
 import 'package:get/get.dart';
 import 'package:zest_mobile/app/core/di/service_locator.dart';
 import 'package:zest_mobile/app/core/services/auth_service.dart';
 import 'package:zest_mobile/app/routes/app_routes.dart';
 
 class RegisterVerifyEmailSuccessController extends GetxController {
-  final AuthService _authService = sl<AuthService>();
+  var countDown = 5.obs;
 
+  Timer? _timer;
   @override
   void onInit() async {
-    await Future.delayed(
-      const Duration(seconds: 3),
-      () => Get.offAllNamed(AppRoutes.registerCreateProfile),
-    );
+    startTimer();
     super.onInit();
+  }
+
+  @override
+  void onClose() {
+    _timer?.cancel();
+    super.onClose();
+  }
+
+  void startTimer() {
+    countDown.value = 5;
+
+    _timer?.cancel();
+    _timer = Timer.periodic(const Duration(seconds: 1), (timer) {
+      if (countDown.value == 0) {
+        timer.cancel();
+        Get.offAllNamed(AppRoutes.mainHome);
+      } else {
+        countDown.value--;
+      }
+    });
   }
 }

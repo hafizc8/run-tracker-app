@@ -1,3 +1,4 @@
+import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:zest_mobile/app/core/di/service_locator.dart';
 import 'package:zest_mobile/app/core/exception/app_exception.dart';
@@ -28,7 +29,8 @@ class RegisterController extends GetxController {
     super.onClose();
   }
 
-  Future<void> register() async {
+  Future<void> register(BuildContext context) async {
+    FocusScope.of(context).unfocus();
     isLoading.value = true;
     form.value = form.value.clearErrors();
     try {

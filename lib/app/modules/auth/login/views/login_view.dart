@@ -102,7 +102,7 @@ class LoginView extends GetView<LoginController> {
               () => ElevatedButton(
                 onPressed: controller.isLoading.value
                     ? null
-                    : () => controller.login(),
+                    : () => controller.login(context),
                 child: Visibility(
                   visible: controller.isLoading.value,
                   replacement: const Text('Login'),

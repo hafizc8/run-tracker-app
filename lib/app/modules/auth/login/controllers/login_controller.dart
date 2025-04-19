@@ -1,3 +1,4 @@
+import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:zest_mobile/app/core/di/service_locator.dart';
 import 'package:zest_mobile/app/core/exception/app_exception.dart';
@@ -8,8 +9,7 @@ import 'package:zest_mobile/app/core/services/auth_service.dart';
 import 'package:zest_mobile/app/routes/app_routes.dart';
 
 class LoginController extends GetxController {
-  Rx<LoginFormModel> form =
-      LoginFormModel(email: 'usertest004@gmail.com', password: 'password').obs;
+  Rx<LoginFormModel> form = LoginFormModel().obs;
   var isLoading = false.obs;
   final _authService = sl<AuthService>();
 
@@ -19,7 +19,8 @@ class LoginController extends GetxController {
     super.onClose();
   }
 
-  Future<void> login() async {
+  Future<void> login(BuildContext context) async {
+    FocusScope.of(context).unfocus();
     isLoading.value = true;
     form.value = form.value.clearErrors();
     try {

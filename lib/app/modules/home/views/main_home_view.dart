@@ -7,9 +7,45 @@ class MainHomeView extends GetView<MainHomeController> {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      body: Center(
-        child: Text('Main Home'),
+    return Obx(
+      () => Scaffold(
+        body: controller.pages[controller.currentIndex.value],
+        floatingActionButton: SizedBox(
+          height: 72,
+          width: 72,
+          child: FloatingActionButton(
+            elevation: 0,
+            shape: const CircleBorder(),
+            onPressed: () {},
+            child: const Text('start'),
+          ),
+        ),
+        floatingActionButtonLocation: FloatingActionButtonLocation.centerDocked,
+        bottomNavigationBar: BottomNavigationBar(
+          type: BottomNavigationBarType.fixed,
+          currentIndex: controller.currentIndex.value,
+          onTap: (index) {
+            controller.changeTab(index);
+          },
+          items: const [
+            BottomNavigationBarItem(
+              icon: Icon(Icons.home),
+              label: "Home",
+            ),
+            BottomNavigationBarItem(
+              icon: Icon(Icons.home),
+              label: "Social",
+            ),
+            BottomNavigationBarItem(
+              icon: Icon(Icons.home),
+              label: "Shop",
+            ),
+            BottomNavigationBarItem(
+              icon: Icon(Icons.person),
+              label: "Profile",
+            ),
+          ],
+        ),
       ),
     );
   }

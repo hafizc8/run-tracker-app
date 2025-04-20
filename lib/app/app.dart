@@ -1,3 +1,5 @@
+import 'dart:math';
+
 import 'package:app_links/app_links.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
@@ -23,11 +25,18 @@ class _AppState extends State<App> {
 
   void _listenDynamicLinks() {
     _appLinks.uriLinkStream.listen((Uri? uri) {
-      if (uri != null &&
-          uri.scheme == "devzestplus" &&
-          uri.host == "email-verified" &&
-          uri.queryParameters['verified'] == 'true') {
-        Get.offAllNamed(AppRoutes.registerVerifyEmailSuccess);
+      if (uri != null && uri.scheme == "devzestplus") {
+        if (uri.host == "email-verified" &&
+            uri.queryParameters['verified'] == 'true') {
+          Get.offAllNamed(AppRoutes.registerVerifyEmailSuccess);
+        } else if (uri.host == "reset-password" &&
+            uri.queryParameters['token'] != null &&
+            uri.queryParameters['email'] != null) {
+          Get.offAllNamed(AppRoutes.forgotPasswordSetNew, arguments: {
+            'token': uri.queryParameters['token'],
+            'email': uri.queryParameters['email']
+          });
+        }
       }
     });
   }
@@ -36,7 +45,7 @@ class _AppState extends State<App> {
   Widget build(BuildContext context) {
     return GetMaterialApp(
       debugShowCheckedModeBanner: false,
-      initialRoute: AppRoutes.login,
+      initialRoute: AppRoutes.splash,
       getPages: AppPages.pages,
       theme: TAppTheme.lightTheme,
       title: 'Zest Mobile',

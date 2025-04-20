@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:zest_mobile/app/core/models/enums/gender_enum.dart';
+import 'package:zest_mobile/app/core/models/forms/registe_create_profile_form.dart';
 import 'package:zest_mobile/app/modules/auth/register/controllers/register_create_profile_controller.dart';
 import 'package:zest_mobile/app/routes/app_routes.dart';
 
@@ -16,8 +18,9 @@ class RegisterCreateProfileView
           crossAxisAlignment: CrossAxisAlignment.center,
           children: [
             const SizedBox(height: 24),
-            Form(
-              child: Column(
+            Obx(() {
+              RegisterCreateProfileFormModel form = controller.form.value;
+              return Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   Text(
@@ -29,31 +32,21 @@ class RegisterCreateProfileView
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
                       Text(
-                        'First Name',
+                        'Name',
                         style: Theme.of(context).textTheme.titleSmall,
                       ),
                       const SizedBox(height: 12),
                       TextFormField(
                         cursorColor: Colors.black,
-                        decoration: const InputDecoration(
-                          hintText: 'Enter your first name',
-                        ),
-                      ),
-                    ],
-                  ),
-                  const SizedBox(height: 16),
-                  Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Text(
-                        'Last Name',
-                        style: Theme.of(context).textTheme.titleSmall,
-                      ),
-                      const SizedBox(height: 12),
-                      TextFormField(
-                        cursorColor: Colors.black,
-                        decoration: const InputDecoration(
-                          hintText: 'Enter your last name',
+                        onChanged: (value) {
+                          controller.form.value = form.copyWith(
+                            name: value,
+                            field: 'name',
+                          );
+                        },
+                        decoration: InputDecoration(
+                          hintText: 'Enter your name',
+                          errorText: form.errors?['name'],
                         ),
                       ),
                     ],
@@ -70,9 +63,14 @@ class RegisterCreateProfileView
                       TextFormField(
                         cursorColor: Colors.black,
                         readOnly: true,
-                        decoration: const InputDecoration(
+                        controller: controller.dateController,
+                        onTap: () {
+                          controller.setDate(context);
+                        },
+                        decoration: InputDecoration(
                           hintText: 'Enter your birthday',
-                          suffixIcon: Icon(Icons.calendar_today),
+                          suffixIcon: const Icon(Icons.calendar_today),
+                          errorText: form.errors?['birthday'],
                         ),
                       ),
                     ],
@@ -85,26 +83,41 @@ class RegisterCreateProfileView
                         'Gender',
                         style: Theme.of(context).textTheme.titleSmall,
                       ),
-                      RadioListTile<String>(
+                      RadioListTile<GenderEnum>(
                         contentPadding: EdgeInsets.zero,
-                        title: Text('Male'),
-                        value: 'Male',
-                        groupValue: controller.selectedGender.value,
-                        onChanged: (val) {},
+                        title: Text(GenderEnum.male.name),
+                        value: GenderEnum.male,
+                        groupValue: form.gender,
+                        onChanged: (val) {
+                          controller.form.value = form.copyWith(
+                            gender: val,
+                            field: 'gender',
+                          );
+                        },
                       ),
-                      RadioListTile<String>(
+                      RadioListTile<GenderEnum>(
                         contentPadding: EdgeInsets.zero,
-                        title: Text('Female'),
-                        value: 'Female',
-                        groupValue: controller.selectedGender.value,
-                        onChanged: (val) {},
+                        title: Text(GenderEnum.female.name),
+                        value: GenderEnum.female,
+                        groupValue: form.gender,
+                        onChanged: (val) {
+                          controller.form.value = form.copyWith(
+                            gender: val,
+                            field: 'gender',
+                          );
+                        },
                       ),
-                      RadioListTile<String>(
+                      RadioListTile<GenderEnum>(
                         contentPadding: EdgeInsets.zero,
-                        title: Text('Prefer not to say'),
-                        value: 'Prefer not to say',
-                        groupValue: controller.selectedGender.value,
-                        onChanged: (val) {},
+                        title: Text(GenderEnum.unknown.name),
+                        value: GenderEnum.unknown,
+                        groupValue: form.gender,
+                        onChanged: (val) {
+                          controller.form.value = form.copyWith(
+                            gender: val,
+                            field: 'gender',
+                          );
+                        },
                       ),
                     ],
                   ),
@@ -130,16 +143,28 @@ class RegisterCreateProfileView
                     ],
                   ),
                 ],
-              ),
-            ),
+              );
+            })
           ],
         ),
       ),
       bottomNavigationBar: Padding(
         padding: const EdgeInsets.all(16.0),
-        child: ElevatedButton(
-          onPressed: () {},
-          child: const Text('Continue'),
+        child: Obx(
+          () => ElevatedButton(
+            onPressed: !controller.isValid
+                ? null
+                : controller.isLoading.value
+                    ? null
+                    : () {
+                        controller.completeProfile(context);
+                      },
+            child: Visibility(
+              visible: controller.isLoading.value,
+              replacement: const Text('Continue'),
+              child: const CircularProgressIndicator(),
+            ),
+          ),
         ),
       ),
     );

@@ -39,7 +39,7 @@ class ForgotPasswordEmailSentView extends GetView<ForgotPasswordController> {
               ),
               const SizedBox(height: 24),
               ElevatedButton(
-                onPressed: () => Get.toNamed(AppRoutes.forgotPasswordSetNew),
+                onPressed: () => Get.offAllNamed(AppRoutes.login),
                 child: const Text('Back to Login'),
               ),
             ],

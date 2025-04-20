@@ -1,8 +1,6 @@
 import 'dart:async';
 
 import 'package:get/get.dart';
-import 'package:zest_mobile/app/core/di/service_locator.dart';
-import 'package:zest_mobile/app/core/services/auth_service.dart';
 import 'package:zest_mobile/app/routes/app_routes.dart';
 
 class RegisterVerifyEmailSuccessController extends GetxController {

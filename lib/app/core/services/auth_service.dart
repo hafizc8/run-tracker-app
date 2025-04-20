@@ -1,7 +1,10 @@
 import 'package:zest_mobile/app/core/di/service_locator.dart';
 import 'package:zest_mobile/app/core/models/enums/http_method_enum.dart';
+import 'package:zest_mobile/app/core/models/forms/forgot_password_form.dart';
 import 'package:zest_mobile/app/core/models/forms/login_form.dart';
+import 'package:zest_mobile/app/core/models/forms/registe_create_profile_form.dart';
 import 'package:zest_mobile/app/core/models/forms/register_form.dart';
+import 'package:zest_mobile/app/core/models/forms/reset_password_form.dart';
 import 'package:zest_mobile/app/core/models/model/user_model.dart';
 import 'package:zest_mobile/app/core/services/api_service.dart';
 import 'package:zest_mobile/app/core/services/storage_service.dart';
@@ -20,6 +23,10 @@ class AuthService {
 
     return null;
   }
+
+  String? get token => sl<StorageService>().read(StorageKeys.token);
+
+  bool get isAuthenticated => user != null && token != null;
 
   Future<bool> login(LoginFormModel form) async {
     try {
@@ -57,13 +64,55 @@ class AuthService {
     }
   }
 
+  Future<bool> forgotPassword(ForgotPasswordFormModel form) async {
+    try {
+      final response = await _apiService.request(
+        path: AppConstants.forgotPassword,
+        method: HttpMethod.post,
+        data: form.toJson(),
+      );
+
+      return response.data['success'];
+    } catch (e) {
+      rethrow;
+    }
+  }
+
+  Future<bool> resetPassword(ResetPasswordFormModel form) async {
+    try {
+      final response = await _apiService.request(
+        path: AppConstants.resetPassword,
+        method: HttpMethod.post,
+        data: form.toJson(),
+      );
+
+      return response.data['success'];
+    } catch (e) {
+      rethrow;
+    }
+  }
+
+  Future<bool> completeProfile(RegisterCreateProfileFormModel form) async {
+    try {
+      final response = await _apiService.request(
+        path: AppConstants.completeProfile,
+        method: HttpMethod.post,
+        data: form.toJson(),
+      );
+
+      return response.data['success'];
+    } catch (e) {
+      rethrow;
+    }
+  }
+
   Future<UserModel> me() async {
     try {
       final response = await _apiService.request(
         path: AppConstants.user,
         method: HttpMethod.get,
       );
-      final user = UserModel.fromJson(response.data['data']['user']);
+      final user = UserModel.fromJson(response.data['data']);
       await sl<StorageService>().write(StorageKeys.user, user.toJson());
       return user;
     } catch (e) {

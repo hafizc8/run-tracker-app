@@ -1,3 +1,5 @@
+import 'package:flutter/material.dart';
+import 'package:flutter/widgets.dart';
 import 'package:get/get.dart';
 import 'package:zest_mobile/app/core/di/service_locator.dart';
 import 'package:zest_mobile/app/core/exception/app_exception.dart';
@@ -10,9 +12,20 @@ class MainHomeController extends GetxController {
 
   final _authService = sl<AuthService>();
 
+  var currentIndex = 0.obs;
+  List<Widget> get pages => [
+        SafeArea(child: Center(child: Text('Home'))),
+        SafeArea(child: Center(child: Text('Social'))),
+        SafeArea(child: Center(child: Text('Shop'))),
+        SafeArea(child: Center(child: Text('Profile'))),
+      ];
+  void changeTab(int index) {
+    currentIndex.value = index;
+  }
+
   @override
   void onInit() {
-    me();
+    // me();
     super.onInit();
   }
 

@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_typeahead/flutter_typeahead.dart';
 import 'package:get/get.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 
@@ -22,45 +23,75 @@ class RegisterCreateProfileChooseLocationView
         elevation: 1,
         centerTitle: false,
       ),
-      body: Obx(
-        () => Stack(
-          alignment: Alignment.center,
+      body: SingleChildScrollView(
+        child: Column(
           children: [
-            GoogleMap(
-              initialCameraPosition: CameraPosition(
-                target: controller.currentPosition.value,
-                zoom: 16,
+            Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+              child: TypeAheadField<Map<String, dynamic>>(
+                builder: (context, controller, focusNode) {
+                  return TextFormField(
+                    controller: controller,
+                    focusNode: focusNode,
+                    autofocus: true,
+                    decoration: const InputDecoration(
+                      prefixIcon: Icon(Icons.search),
+                      hintText: 'Search',
+                    ),
+                  );
+                },
+                suggestionsCallback: (pattern) {
+                  controller.searchPlace(pattern);
+                },
+                itemBuilder: (context, suggestion) {
+                  return ListTile(
+                    title: Text(suggestion['description']),
+                  );
+                },
+                onSelected: (suggestion) {
+                  // controller.selectPlace(suggestion['place_id']);
+                },
               ),
-              onMapCreated: controller.onMapCreated,
-              onCameraMove: controller.onCameraMove,
-              myLocationEnabled: true,
-              myLocationButtonEnabled: true,
-              zoomControlsEnabled: false,
-              minMaxZoomPreference: MinMaxZoomPreference(5, 20),
-              // Indonesia Bounds (kurang lebih)
-              cameraTargetBounds: CameraTargetBounds(
-                LatLngBounds(
-                  southwest: LatLng(-11.0, 95.0),
-                  northeast: LatLng(6.0, 141.0),
+            ),
+            Obx(
+              () => SizedBox(
+                height: 300,
+                child: GoogleMap(
+                  initialCameraPosition: CameraPosition(
+                    target: controller.currentPosition.value,
+                    zoom: 16,
+                  ),
+                  onMapCreated: controller.onMapCreated,
+                  onCameraMove: controller.onCameraMove,
+                  myLocationEnabled: true,
+                  myLocationButtonEnabled: true,
+                  zoomControlsEnabled: false,
+                  minMaxZoomPreference: MinMaxZoomPreference(5, 20),
+                  // Indonesia Bounds (kurang lebih)
+                  cameraTargetBounds: CameraTargetBounds(
+                    LatLngBounds(
+                      southwest: LatLng(-11.0, 95.0),
+                      northeast: LatLng(6.0, 141.0),
+                    ),
+                  ),
                 ),
               ),
             ),
-            const IgnorePointer(
-              child: Icon(
-                Icons.location_pin,
-                size: 50,
-                color: Colors.red,
+            const SizedBox(height: 12),
+            Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 16),
+              child: OutlinedButton.icon(
+                onPressed: () {},
+                icon: Icon(Icons.my_location_outlined),
+                label: Text('Use Current Location'),
               ),
             ),
-            Positioned(
-              bottom: 30,
-              child: ElevatedButton(
-                onPressed: () {
-                  final pos = controller.currentPosition.value;
-                  Get.snackbar("Lokasi Dipilih",
-                      "Lat: ${pos.latitude}, Lng: ${pos.longitude}");
-                },
-                child: const Text("Pilih Lokasi Ini"),
+            const SizedBox(height: 12),
+            Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 16),
+              child: Text(
+                'Jl. Jenderal Sudirman Blok Lot 11 No.Kav 58, RT.5/RW.3, Senayan, Kec. Kby. Baru, Kota Jakarta Selatan, Daerah Khusus Ibukota Jakarta 12190',
+                style: TextStyle(fontSize: 14),
               ),
             ),
           ],

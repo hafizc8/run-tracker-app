@@ -16,11 +16,11 @@ class ForgotPasswordController extends GetxController {
   final _authService = sl<AuthService>();
 
   @override
-  void onInit() {
+  void onReady() {
     var args = Get.arguments;
     formReset.value = formReset.value
-        .copyWith(email: args['email'] ?? '', token: args['token'] ?? '');
-    super.onInit();
+        .copyWith(email: args?['email'] ?? '', token: args?['token'] ?? '');
+    super.onReady();
   }
 
   Future<void> forgotPassword(BuildContext context) async {
@@ -62,7 +62,7 @@ class ForgotPasswordController extends GetxController {
     } on AppException catch (e) {
       isLoading.value = false;
       if (e.type == AppExceptionType.validation) {
-        form.value = form.value.setErrors(e.errors!);
+        formReset.value = formReset.value.setErrors(e.errors!);
         return;
       }
       // show error snackbar, toast, etc

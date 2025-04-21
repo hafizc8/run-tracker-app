@@ -1,13 +1,18 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android">
     <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION"/>
     <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION"/>
-
-    <meta-data android:name="com.google.android.geo.API_KEY"
-           android:value="AIzaSyD-ueM1nm0oVLA8c3ekfPu7rF2bD0NMD2w"/>
+     <uses-permission android:name="android.permission.INTERNET"/>
+ 
     <application
         android:label="zest_mobile"
         android:name="${applicationName}"
         android:icon="@mipmap/ic_launcher">
+
+        <!-- Google Api Key -->
+        <meta-data
+            android:name="com.google.android.geo.API_KEY"
+            android:value="AIzaSyD-ueM1nm0oVLA8c3ekfPu7rF2bD0NMD2w"/>
+
         <activity
             android:name=".MainActivity"
             android:exported="true"

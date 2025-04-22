@@ -9,9 +9,9 @@ class AppConstants {
   static const googleApiKey = "AIzaSyD-ueM1nm0oVLA8c3ekfPu7rF2bD0NMD2w";
 
   // API
-  static const API_VERSION = "v1";
-  static const String baseUrlDev = "https://dev.zestplus.app/api/$API_VERSION";
-  static const String baseUrl = "https://dev.zestplus.app/api/$API_VERSION";
+  static const apiVersion = "v1";
+  static const String baseUrlDev = "https://dev.zestplus.app/api/$apiVersion";
+  static const String baseUrl = "https://dev.zestplus.app/api/$apiVersion";
 
   // Auth
   static const String login = "/login";

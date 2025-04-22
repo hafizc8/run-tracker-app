@@ -21,7 +21,6 @@ class RegisterVerifyEmailController extends GetxController {
 
   @override
   void onInit() {
-    // sendEmailVerify();
     startTimer();
     super.onInit();
   }
@@ -60,16 +59,14 @@ class RegisterVerifyEmailController extends GetxController {
           colorText: Colors.white,
         );
       }
-
-      isLoading.value = false;
       startTimer();
     } on AppException catch (e) {
-      isLoading.value = false;
       // show error snackbar, toast, etc
       AppExceptionHandlerInfo.handle(e);
     } catch (e) {
-      isLoading.value = false;
       Get.snackbar('Error', e.toString());
+    } finally {
+      isLoading.value = false;
     }
   }
 }

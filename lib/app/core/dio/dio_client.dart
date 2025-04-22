@@ -1,6 +1,6 @@
 import 'package:dio/dio.dart';
 import 'package:flutter/foundation.dart';
-import 'package:pretty_dio_logger/src/pretty_dio_logger.dart';
+import 'package:pretty_dio_logger/pretty_dio_logger.dart';
 import 'package:zest_mobile/app/core/dio/interceptor/app_interceptor.dart';
 import 'package:zest_mobile/app/core/values/app_constants.dart';
 

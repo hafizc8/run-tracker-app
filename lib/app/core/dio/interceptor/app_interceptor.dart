@@ -19,11 +19,6 @@ class AppInterceptor extends Interceptor {
   }
 
   @override
-  void onResponse(Response response, ResponseInterceptorHandler handler) {
-    super.onResponse(response, handler);
-  }
-
-  @override
   void onError(DioException err, ErrorInterceptorHandler handler) {
     // Handle Global Error di sini
     AppException appEx = AppExceptionHandler.fromDioError(err);

@@ -7,7 +7,7 @@ import 'package:zest_mobile/app/modules/auth/register/controllers/register_creat
 
 class RegisterCreateProfileChooseLocationView
     extends GetView<RegisterCreateProfileLocController> {
-  const RegisterCreateProfileChooseLocationView({Key? key}) : super(key: key);
+  const RegisterCreateProfileChooseLocationView({super.key});
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -64,14 +64,14 @@ class RegisterCreateProfileChooseLocationView
                       onCameraMove: controller.onCameraMove,
                       onCameraIdle: controller.onCameraIdle,
                       onCameraMoveStarted: controller.onCameraMoveStarted,
-                      myLocationEnabled: true,
-                      myLocationButtonEnabled: true,
+                      myLocationEnabled: false,
+                      myLocationButtonEnabled: false,
                       zoomControlsEnabled: false,
                       minMaxZoomPreference: const MinMaxZoomPreference(5, 20),
                       // Indonesia Bounds (kurang lebih)
                       cameraTargetBounds: CameraTargetBounds(
                         LatLngBounds(
-                          southwest: const LatLng(-11.0, 95.0),
+                          southwest: const LatLng(-11.0, 94.0),
                           northeast: const LatLng(6.0, 141.0),
                         ),
                       ),

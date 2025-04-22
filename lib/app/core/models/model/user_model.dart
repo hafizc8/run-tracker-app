@@ -83,7 +83,7 @@ class UserModel extends Model<UserModel> {
     DateTime? deletedAt,
   }) {
     return UserModel(
-      id: id ?? this.id,
+      id: id,
       name: name ?? this.name,
       email: email ?? this.email,
       emailVerifiedAt: emailVerifiedAt ?? this.emailVerifiedAt,

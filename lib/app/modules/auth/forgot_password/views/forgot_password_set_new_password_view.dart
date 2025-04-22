@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:zest_mobile/app/core/models/forms/reset_password_form.dart';
-import 'package:zest_mobile/app/routes/app_routes.dart';
 
 import '../controllers/forgot_password_controller.dart';
 

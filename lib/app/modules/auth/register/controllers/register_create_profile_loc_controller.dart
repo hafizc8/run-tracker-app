@@ -12,7 +12,7 @@ class RegisterCreateProfileLocController extends GetxController {
   final _locationService = sl<LocationService>();
   var isLoading = false.obs;
   final currentPosition =
-      const LatLng(-6.2088, 106.8456).obs; // Default Jakarta
+      const LatLng(-6.2615, 106.8106).obs; // Default Jakarta
   GoogleMapController? mapController;
 
   final RxString address = ''.obs;
@@ -26,6 +26,12 @@ class RegisterCreateProfileLocController extends GetxController {
 
   @override
   void onInit() {
+    super.onInit();
+    initialPosition = CameraPosition(
+      target: currentPosition.value, // Default Jakarta,
+      zoom: 16,
+    );
+
     var args = Get.arguments;
     if (args != null) {
       if (args['lat'] != null && args['lng'] != null) {
@@ -36,11 +42,6 @@ class RegisterCreateProfileLocController extends GetxController {
         address.value = args['address'];
       }
     }
-    initialPosition = CameraPosition(
-      target: currentPosition.value, // Default Jakarta,
-      zoom: 16,
-    );
-    super.onInit();
   }
 
   @override
@@ -52,8 +53,7 @@ class RegisterCreateProfileLocController extends GetxController {
   Future<void> setMarkerAndMoveCamera(LatLng position) async {
     if (isClosed) return;
     currentPosition.value = position;
-    mapController
-        ?.animateCamera(CameraUpdate.newLatLng(currentPosition.value!));
+    mapController?.animateCamera(CameraUpdate.newLatLng(currentPosition.value));
   }
 
   Future<void> setCurrentLocation() async {
@@ -75,11 +75,11 @@ class RegisterCreateProfileLocController extends GetxController {
 
   void onCameraIdle() async {
     if (!allowReverseGeocode) return;
-
+    isLoading.value = true;
     _debounce?.cancel();
     _debounce = Timer(const Duration(seconds: 3), () async {
       allowReverseGeocode = false;
-      await _getAddressFromLatLng(currentPosition.value!);
+      await _getAddressFromLatLng(currentPosition.value);
     });
   }
 
@@ -91,6 +91,7 @@ class RegisterCreateProfileLocController extends GetxController {
     } catch (e) {
       Get.snackbar('Error', e.toString());
     }
+    return null;
   }
 
   // Fungsi untuk memilih lokasi dari hasil pencarian
@@ -108,16 +109,14 @@ class RegisterCreateProfileLocController extends GetxController {
 
   // Mengambil alamat dari latLng (reverse geocoding)
   Future<void> _getAddressFromLatLng(LatLng latLng) async {
-    isLoading.value = true;
     try {
       address.value = await _locationService.getAddressFromLatLng(latLng);
-      isLoading.value = false;
     } on AppException catch (e) {
-      isLoading.value = false;
       AppExceptionHandlerInfo.handle(e);
     } catch (e) {
-      isLoading.value = false;
       Get.snackbar('Error', e.toString());
+    } finally {
+      isLoading.value = false;
     }
   }
 }

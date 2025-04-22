@@ -9,7 +9,7 @@ class RegisterCreateProfileFormModel
   final String birthday;
   final GenderEnum gender;
 
-  Map<String, dynamic>? errors;
+  final Map<String, dynamic>? errors;
 
   RegisterCreateProfileFormModel({
     this.name = '',

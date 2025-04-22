@@ -31,7 +31,7 @@ class AppExceptionHandler {
           case 401:
             return AppException(
               type: AppExceptionType.unauthorized,
-              message: message,
+              message: 'Sesi anda telah habis. Silahkan login kembali.',
               statusCode: statusCode,
             );
           case 422:

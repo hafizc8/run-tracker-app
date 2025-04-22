@@ -5,7 +5,7 @@ class ResetPasswordFormModel extends FormModel<ResetPasswordFormModel> {
   final String password;
   final String passwordConfirmation;
   final String token;
-  Map<String, dynamic>? errors;
+  final Map<String, dynamic>? errors;
 
   ResetPasswordFormModel({
     this.email = '',

@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:geolocator/geolocator.dart';
 import 'package:get/get.dart';
 import 'package:zest_mobile/app/core/di/service_locator.dart';
 import 'package:zest_mobile/app/core/exception/app_exception.dart';
@@ -19,6 +20,16 @@ class RegisterCreateProfileController extends GetxController {
 
   bool get isValid => form.value.isValid;
 
+  @override
+  void onInit() {
+    super.onInit();
+    requestPermission();
+  }
+
+  void requestPermission() async {
+    await Geolocator.requestPermission();
+  }
+
   Future<void> completeProfile(BuildContext context) async {
     FocusScope.of(context).unfocus();
     isLoading.value = true;
@@ -28,10 +39,7 @@ class RegisterCreateProfileController extends GetxController {
         form.value,
       );
       if (resp) Get.offAllNamed(AppRoutes.registerSuccess);
-
-      isLoading.value = false;
     } on AppException catch (e) {
-      isLoading.value = false;
       if (e.type == AppExceptionType.validation) {
         form.value = form.value.setErrors(e.errors!);
         return;
@@ -39,8 +47,9 @@ class RegisterCreateProfileController extends GetxController {
       // show error snackbar, toast, etc
       AppExceptionHandlerInfo.handle(e);
     } catch (e) {
-      isLoading.value = false;
       Get.snackbar('Error', e.toString());
+    } finally {
+      isLoading.value = false;
     }
   }
 

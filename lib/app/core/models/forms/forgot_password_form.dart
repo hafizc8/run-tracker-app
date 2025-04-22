@@ -3,7 +3,7 @@ import 'package:zest_mobile/app/core/models/interface/form_model_interface.dart'
 class ForgotPasswordFormModel extends FormModel<ForgotPasswordFormModel> {
   final String email;
 
-  Map<String, dynamic>? errors;
+  final Map<String, dynamic>? errors;
 
   ForgotPasswordFormModel({
     this.email = '',

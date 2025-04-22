@@ -25,10 +25,7 @@ class RegisterController extends GetxController {
         form.value,
       );
       if (resp) Get.offAllNamed(AppRoutes.mainHome);
-
-      isLoading.value = false;
     } on AppException catch (e) {
-      isLoading.value = false;
       if (e.type == AppExceptionType.validation) {
         form.value = form.value.setErrors(e.errors!);
         return;
@@ -36,8 +33,9 @@ class RegisterController extends GetxController {
       // show error snackbar, toast, etc
       AppExceptionHandlerInfo.handle(e);
     } catch (e) {
-      isLoading.value = false;
       Get.snackbar('Error', e.toString());
+    } finally {
+      isLoading.value = false;
     }
   }
 }

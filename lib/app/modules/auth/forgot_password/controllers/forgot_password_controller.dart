@@ -35,10 +35,7 @@ class ForgotPasswordController extends GetxController {
         form.value,
       );
       if (resp) Get.offAllNamed(AppRoutes.forgotPasswordEmailSent);
-
-      isLoading.value = false;
     } on AppException catch (e) {
-      isLoading.value = false;
       if (e.type == AppExceptionType.validation) {
         form.value = form.value.setErrors(e.errors!);
         return;
@@ -46,8 +43,9 @@ class ForgotPasswordController extends GetxController {
       // show error snackbar, toast, etc
       AppExceptionHandlerInfo.handle(e);
     } catch (e) {
-      isLoading.value = false;
       Get.snackbar('Error', e.toString());
+    } finally {
+      isLoading.value = false;
     }
   }
 
@@ -60,10 +58,7 @@ class ForgotPasswordController extends GetxController {
         formReset.value,
       );
       if (resp) Get.offAllNamed(AppRoutes.forgotPasswordUpdated);
-
-      isLoading.value = false;
     } on AppException catch (e) {
-      isLoading.value = false;
       if (e.type == AppExceptionType.validation) {
         formReset.value = formReset.value.setErrors(e.errors!);
         return;
@@ -71,8 +66,9 @@ class ForgotPasswordController extends GetxController {
       // show error snackbar, toast, etc
       AppExceptionHandlerInfo.handle(e);
     } catch (e) {
-      isLoading.value = false;
       Get.snackbar('Error', e.toString());
+    } finally {
+      isLoading.value = false;
     }
   }
 }

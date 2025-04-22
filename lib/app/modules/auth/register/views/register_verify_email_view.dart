@@ -5,7 +5,7 @@ import 'package:get/get.dart';
 import '../controllers/register_verify_email_controller.dart';
 
 class RegisterVerifyEmailView extends GetView<RegisterVerifyEmailController> {
-  const RegisterVerifyEmailView({Key? key}) : super(key: key);
+  const RegisterVerifyEmailView({super.key});
   @override
   Widget build(BuildContext context) {
     return Scaffold(

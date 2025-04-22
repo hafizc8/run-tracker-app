@@ -9,7 +9,7 @@ import 'package:zest_mobile/app/routes/app_routes.dart';
 import '../controllers/register_controller.dart';
 
 class RegisterView extends GetView<RegisterController> {
-  const RegisterView({Key? key}) : super(key: key);
+  const RegisterView({super.key});
 
   @override
   Widget build(BuildContext context) {
@@ -227,7 +227,7 @@ class RegisterView extends GetView<RegisterController> {
 
 class TextSpanWidget extends StatelessWidget {
   final String text;
-  const TextSpanWidget(this.text, {Key? key}) : super(key: key);
+  const TextSpanWidget(this.text, {super.key});
 
   @override
   Widget build(BuildContext context) {

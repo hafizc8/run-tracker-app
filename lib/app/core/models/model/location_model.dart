@@ -7,12 +7,10 @@ class LocationModel extends Model<LocationModel> {
   LocationModel({this.desc = '', this.placeId = ''});
 
   @override
-  // TODO: implement props
   List<Object?> get props => [desc, placeId];
 
   @override
   Map<String, dynamic> toJson() {
-    // TODO: implement toJson
     throw UnimplementedError();
   }
 

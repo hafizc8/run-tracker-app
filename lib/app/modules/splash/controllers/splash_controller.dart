@@ -8,12 +8,16 @@ class SplashController extends GetxController {
 
   @override
   void onReady() {
-    Get.offAllNamed(AppRoutes.login);
-    // if (_authService.isAuthenticated) {
-    //   Get.offAllNamed(AppRoutes.mainHome);
-    // } else {
-    //   Get.offAllNamed(AppRoutes.login);
-    // }
     super.onReady();
+    redirect();
+  }
+
+  Future<void> redirect() async {
+    await Future.delayed(const Duration(milliseconds: 1000)); // opsional smooth
+    if (_authService.isAuthenticated) {
+      Get.offAllNamed(AppRoutes.mainHome);
+    } else {
+      Get.offAllNamed(AppRoutes.login);
+    }
   }
 }

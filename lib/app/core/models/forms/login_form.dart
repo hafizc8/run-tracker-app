@@ -3,7 +3,7 @@ import 'package:zest_mobile/app/core/models/interface/form_model_interface.dart'
 class LoginFormModel extends FormModel<LoginFormModel> {
   final String email;
   final String password;
-  Map<String, dynamic>? errors;
+  final Map<String, dynamic>? errors;
 
   LoginFormModel({
     this.email = '',

@@ -11,7 +11,7 @@ class LocationService {
 
   Future<LatLng> getCurrentLocation() async {
     try {
-      LocationPermission permission = await Geolocator.requestPermission();
+      await Geolocator.requestPermission();
       Position position = await Geolocator.getCurrentPosition(
         desiredAccuracy: LocationAccuracy.high,
       );

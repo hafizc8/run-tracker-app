@@ -5,7 +5,7 @@ class RegisterFormModel extends FormModel<RegisterFormModel> {
   final String password;
   final String passwordConfirmation;
   final bool isAgree;
-  Map<String, dynamic>? errors;
+  final Map<String, dynamic>? errors;
 
   RegisterFormModel({
     this.email = '',

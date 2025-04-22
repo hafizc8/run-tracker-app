@@ -8,7 +8,7 @@ import 'package:zest_mobile/app/routes/app_routes.dart';
 
 class RegisterCreateProfileView
     extends GetView<RegisterCreateProfileController> {
-  const RegisterCreateProfileView({Key? key}) : super(key: key);
+  const RegisterCreateProfileView({super.key});
 
   @override
   Widget build(BuildContext context) {

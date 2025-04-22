@@ -1,3 +1,5 @@
+import 'package:google_maps_flutter/google_maps_flutter.dart';
+
 class AppConstants {
   const AppConstants._();
 
@@ -19,7 +21,14 @@ class AppConstants {
   static const String resetPassword = "/reset-password";
   static const String completeProfile = "/complete-profile";
   static const String emailVerify = "/email/send";
+  static String searchLocation(String query) =>
+      'https://maps.googleapis.com/maps/api/place/autocomplete/json?input=$query&key=${AppConstants.googleApiKey}&components=country:ID';
 
+  static String addressFromLatLang(LatLng latLng) =>
+      'https://maps.googleapis.com/maps/api/geocode/json?latlng=${latLng.latitude},${latLng.longitude}&key=${AppConstants.googleApiKey}';
+
+  static String selectPlace(String placeId) =>
+      'https://maps.googleapis.com/maps/api/place/details/json?place_id=$placeId&key=${AppConstants.googleApiKey}';
   // User
   static const String user = "/user";
 }

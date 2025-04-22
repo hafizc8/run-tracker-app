@@ -72,7 +72,11 @@ class AppExceptionHandler {
               statusCode: statusCode,
             );
         }
-
+      case DioExceptionType.connectionError:
+        return AppException(
+          type: AppExceptionType.noInternet,
+          message: "Tidak ada koneksi internet.",
+        );
       case DioExceptionType.unknown:
         if (e.error is SocketException) {
           return AppException(

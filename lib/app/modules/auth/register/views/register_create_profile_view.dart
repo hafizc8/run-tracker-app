@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:zest_mobile/app/core/models/enums/gender_enum.dart';
 import 'package:zest_mobile/app/core/models/forms/registe_create_profile_form.dart';
 import 'package:zest_mobile/app/modules/auth/register/controllers/register_create_profile_controller.dart';
@@ -131,10 +132,28 @@ class RegisterCreateProfileView
                       ),
                       const SizedBox(height: 12),
                       TextFormField(
+                        controller: controller.addressController,
                         cursorColor: Colors.black,
                         readOnly: true,
-                        onTap: () => Get.toNamed(
-                            AppRoutes.registerCreateProfileChooseLocation),
+                        onTap: () async {
+                          final res = await Get.toNamed(
+                              AppRoutes.registerCreateProfileChooseLocation);
+                          if (res != null) {
+                            if (res['address'] != null &&
+                                res['address'] is String) {
+                              controller.addressController.text =
+                                  res['address'];
+                            }
+
+                            if (res['location'] != null &&
+                                res['location'] is LatLng) {
+                              controller.form.value = form.copyWith(
+                                latitude: res['location'].latitude,
+                                longitude: res['location'].longitude,
+                              );
+                            }
+                          }
+                        },
                         decoration: const InputDecoration(
                           hintText: 'Choose your location',
                           suffixIcon: Icon(Icons.location_on),

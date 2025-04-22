@@ -1,6 +1,6 @@
 import 'package:zest_mobile/app/core/models/interface/model_interface.dart';
 
-class UserModel extends Model {
+class UserModel extends Model<UserModel> {
   UserModel({
     required this.id,
     required this.name,

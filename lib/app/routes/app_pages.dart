@@ -8,6 +8,7 @@ import 'package:zest_mobile/app/modules/auth/login/bindings/login_binding.dart';
 import 'package:zest_mobile/app/modules/auth/login/views/login_view.dart';
 import 'package:zest_mobile/app/modules/auth/register/bindings/register_binding.dart';
 import 'package:zest_mobile/app/modules/auth/register/bindings/register_create_profile_binding.dart';
+import 'package:zest_mobile/app/modules/auth/register/bindings/register_create_profile_loc_binding.dart';
 import 'package:zest_mobile/app/modules/auth/register/bindings/register_verify_email_success_binding.dart';
 import 'package:zest_mobile/app/modules/auth/register/views/register_create_profile_choose_location_view.dart';
 import 'package:zest_mobile/app/modules/auth/register/views/register_create_profile_view.dart';
@@ -68,7 +69,7 @@ class AppPages {
     GetPage(
       name: AppRoutes.registerCreateProfileChooseLocation,
       page: () => const RegisterCreateProfileChooseLocationView(),
-      binding: RegisterCreateProfileBinding(),
+      binding: RegisterCreateProfileLocBinding(),
     ),
     GetPage(
       name: AppRoutes.registerSuccess,

@@ -12,6 +12,13 @@ class AppExceptionHandlerInfo {
         break;
       case AppExceptionType.emptyProfile:
         break;
+      case AppExceptionType.noInternet:
+        Get.snackbar(
+          'Error',
+          appEx.message,
+          backgroundColor: Theme.of(Get.context!).colorScheme.error,
+          colorText: Theme.of(Get.context!).colorScheme.onError,
+        );
       default:
         Get.snackbar('Error', appEx.message);
     }

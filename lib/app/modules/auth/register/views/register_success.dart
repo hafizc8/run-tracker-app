@@ -1,7 +1,9 @@
 import 'package:flutter/material.dart';
+import 'package:get/get.dart';
+import 'package:zest_mobile/app/routes/app_routes.dart';
 
 class RegisterSuccessView extends StatelessWidget {
-  const RegisterSuccessView({Key? key}) : super(key: key);
+  const RegisterSuccessView({super.key});
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -25,7 +27,7 @@ class RegisterSuccessView extends StatelessWidget {
               ),
               const SizedBox(height: 16),
               ElevatedButton(
-                onPressed: () {},
+                onPressed: () => Get.offAllNamed(AppRoutes.mainHome),
                 child: const Text('Let’s Go!'),
               ),
             ],

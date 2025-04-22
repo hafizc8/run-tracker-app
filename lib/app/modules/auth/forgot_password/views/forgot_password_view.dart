@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import 'package:zest_mobile/app/routes/app_routes.dart';
+import 'package:zest_mobile/app/core/models/forms/forgot_password_form.dart';
 
 import '../controllers/forgot_password_controller.dart';
 
@@ -39,21 +39,43 @@ class ForgotPasswordView extends GetView<ForgotPasswordController> {
                           style: Theme.of(context).textTheme.titleSmall,
                         ),
                         const SizedBox(height: 12),
-                        TextFormField(
-                          cursorColor: Colors.black,
-                          decoration: const InputDecoration(
-                            hintText: 'Enter your email',
-                          ),
-                        ),
+                        Obx(() {
+                          ForgotPasswordFormModel form = controller.form.value;
+                          return TextFormField(
+                            cursorColor: Colors.black,
+                            keyboardType: TextInputType.emailAddress,
+                            onChanged: (value) {
+                              controller.form.value = form.copyWith(
+                                email: value,
+                                errors: form.errors,
+                                field: 'email',
+                              );
+                            },
+                            decoration: InputDecoration(
+                              hintText: 'Enter your email',
+                              errorText: form.errors?['email'],
+                            ),
+                          );
+                        })
                       ],
                     ),
                   ],
                 ),
               ),
               const SizedBox(height: 24),
-              ElevatedButton(
-                onPressed: () => Get.toNamed(AppRoutes.forgotPasswordEmailSent),
-                child: const Text('Continue'),
+              Obx(
+                () => ElevatedButton(
+                  onPressed: controller.isLoading.value
+                      ? null
+                      : () {
+                          controller.forgotPassword(context);
+                        },
+                  child: Visibility(
+                    visible: controller.isLoading.value,
+                    replacement: const Text('Continue'),
+                    child: const CircularProgressIndicator(),
+                  ),
+                ),
               ),
               TextButton(
                 onPressed: () => Get.back(),
@@ -68,5 +90,4 @@ class ForgotPasswordView extends GetView<ForgotPasswordController> {
       ),
     );
   }
-
 }

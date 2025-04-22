@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:zest_mobile/app/core/theme/color_schemes.dart';
+import 'package:zest_mobile/app/core/shared/theme/color_schemes.dart';
 
 class TTextTheme {
   TTextTheme._();

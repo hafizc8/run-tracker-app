@@ -1,10 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import 'package:zest_mobile/app/routes/app_routes.dart';
+import 'package:zest_mobile/app/core/models/forms/reset_password_form.dart';
 
 import '../controllers/forgot_password_controller.dart';
 
-class ForgotPasswordSetNewPasswordView extends GetView<ForgotPasswordController> {
+class ForgotPasswordSetNewPasswordView
+    extends GetView<ForgotPasswordController> {
   const ForgotPasswordSetNewPasswordView({super.key});
 
   @override
@@ -17,8 +18,9 @@ class ForgotPasswordSetNewPasswordView extends GetView<ForgotPasswordController>
             mainAxisAlignment: MainAxisAlignment.center, // vertical center
             crossAxisAlignment: CrossAxisAlignment.center,
             children: [
-              Form(
-                child: Column(
+              Obx(() {
+                ResetPasswordFormModel form = controller.formReset.value;
+                return Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     Text(
@@ -36,9 +38,28 @@ class ForgotPasswordSetNewPasswordView extends GetView<ForgotPasswordController>
                         const SizedBox(height: 12),
                         TextFormField(
                           cursorColor: Colors.black,
-                          decoration: const InputDecoration(
+                          obscureText: controller.isVisiblePassword.value,
+                          onChanged: (value) {
+                            controller.formReset.value = form.copyWith(
+                              password: value,
+                              errors: form.errors,
+                              field: 'password',
+                            );
+                          },
+                          decoration: InputDecoration(
+                            suffixIcon: IconButton(
+                              icon: Icon(
+                                controller.isVisiblePassword.value
+                                    ? Icons.visibility
+                                    : Icons.visibility_off,
+                              ),
+                              onPressed: () =>
+                                  controller.isVisiblePassword.toggle(),
+                            ),
                             hintText: 'Enter your new password',
+                            errorText: form.errors?['password'],
                           ),
+                          textInputAction: TextInputAction.next,
                         ),
                         const SizedBox(height: 16),
                         Text(
@@ -48,19 +69,50 @@ class ForgotPasswordSetNewPasswordView extends GetView<ForgotPasswordController>
                         const SizedBox(height: 12),
                         TextFormField(
                           cursorColor: Colors.black,
-                          decoration: const InputDecoration(
+                          obscureText:
+                              controller.isVisiblePasswordConfirmation.value,
+                          onChanged: (value) {
+                            controller.formReset.value = form.copyWith(
+                              passwordConfirmation: value,
+                              errors: form.errors,
+                              field: 'password_confirmation',
+                            );
+                          },
+                          decoration: InputDecoration(
+                            suffixIcon: IconButton(
+                              icon: Icon(
+                                controller.isVisiblePasswordConfirmation.value
+                                    ? Icons.visibility
+                                    : Icons.visibility_off,
+                              ),
+                              onPressed: () => controller
+                                  .isVisiblePasswordConfirmation
+                                  .toggle(),
+                            ),
                             hintText: 'Confirm your new password',
+                            errorText: form.errors?['password_confirmation'],
                           ),
+                          textInputAction: TextInputAction.done,
                         ),
                       ],
                     ),
                   ],
-                ),
-              ),
+                );
+              }),
               const SizedBox(height: 24),
-              ElevatedButton(
-                onPressed: () => Get.toNamed(AppRoutes.forgotPasswordUpdated),
-                child: const Text('Update Password'),
+              Obx(
+                () => ElevatedButton(
+                  onPressed: controller.isLoading.value
+                      ? null
+                      : () {
+                          controller.resetPassword(context);
+                        },
+                  child: Visibility(
+                    visible: controller.isLoading.value,
+                    replacement: const Text('Update Password'),
+                    child: const CircularProgressIndicator(),
+                  ),
+                ),
               ),
             ],
           ),
@@ -68,5 +120,4 @@ class ForgotPasswordSetNewPasswordView extends GetView<ForgotPasswordController>
       ),
     );
   }
-
 }

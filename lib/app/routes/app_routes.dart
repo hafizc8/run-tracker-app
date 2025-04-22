@@ -1,4 +1,7 @@
 abstract class AppRoutes {
+  static const splash = '/splash';
+
+  static const mainHome = '/home/main-home';
   static const home = '/home';
 
   // Auth group

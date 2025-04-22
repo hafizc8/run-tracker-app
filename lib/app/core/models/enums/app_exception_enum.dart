@@ -1,4 +1,7 @@
 enum AppExceptionType {
+  emailUnVerified,
+  emptyProfile,
+  validation,
   timeout,
   noInternet,
   serverError,

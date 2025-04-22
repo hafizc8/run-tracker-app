@@ -1,4 +1,6 @@
 class StorageKeys {
+  const StorageKeys._();
+
   static const String token = 'auth_token';
-  // tambahkan sesuai kebutuhan
+  static const String user = 'user';
 }

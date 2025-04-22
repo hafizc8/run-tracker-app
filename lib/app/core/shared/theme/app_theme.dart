@@ -1,12 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
-import 'package:zest_mobile/app/core/theme/app_bar_theme.dart';
-import 'package:zest_mobile/app/core/theme/checkbox_theme.dart';
-import 'package:zest_mobile/app/core/theme/color_schemes.dart';
-import 'package:zest_mobile/app/core/theme/elevated_btn_theme.dart';
-import 'package:zest_mobile/app/core/theme/input_decoration_theme.dart';
-import 'package:zest_mobile/app/core/theme/outlined_btn_theme.dart';
-import 'package:zest_mobile/app/core/theme/text_theme.dart';
+import 'package:zest_mobile/app/core/shared/theme/app_bar_theme.dart';
+import 'package:zest_mobile/app/core/shared/theme/checkbox_theme.dart';
+import 'package:zest_mobile/app/core/shared/theme/color_schemes.dart';
+import 'package:zest_mobile/app/core/shared/theme/elevated_btn_theme.dart';
+import 'package:zest_mobile/app/core/shared/theme/input_decoration_theme.dart';
+import 'package:zest_mobile/app/core/shared/theme/outlined_btn_theme.dart';
+import 'package:zest_mobile/app/core/shared/theme/text_theme.dart';
 
 class TAppTheme {
   const TAppTheme._();

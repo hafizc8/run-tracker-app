@@ -9,12 +9,8 @@ class HomeView extends GetView<HomeController> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(title: const Text('Home')),
-      body: Center(
-        child: Obx(() => Text('Clicked: ${controller.count}')),
-      ),
-      floatingActionButton: FloatingActionButton(
-        onPressed: controller.increment,
-        child: const Icon(Icons.add),
+      body: const Center(
+        child: Text('home'),
       ),
     );
   }

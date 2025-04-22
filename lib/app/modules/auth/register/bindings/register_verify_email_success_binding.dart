@@ -1,12 +1,11 @@
 import 'package:get/get.dart';
-
-import '../controllers/register_verify_email_controller.dart';
+import 'package:zest_mobile/app/modules/auth/register/controllers/register_verify_email_success_controller.dart';
 
 class RegisterVerifyEmailSuccessBinding extends Bindings {
   @override
   void dependencies() {
-    Get.lazyPut<RegisterVerifyEmailController>(
-      () => RegisterVerifyEmailController(),
+    Get.lazyPut<RegisterVerifyEmailSuccessController>(
+      () => RegisterVerifyEmailSuccessController(),
     );
   }
 }

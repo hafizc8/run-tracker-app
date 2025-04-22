@@ -1,5 +1,6 @@
 import 'dart:async';
 
+import 'package:geolocator/geolocator.dart';
 import 'package:get/get.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:zest_mobile/app/core/di/service_locator.dart';
@@ -13,6 +14,7 @@ class RegisterCreateProfileLocController extends GetxController {
   var isLoading = false.obs;
   final currentPosition =
       const LatLng(-6.2615, 106.8106).obs; // Default Jakarta
+  Rxn<LatLng> lastLatLng = Rxn<LatLng>();
   GoogleMapController? mapController;
 
   final RxString address = ''.obs;
@@ -75,10 +77,29 @@ class RegisterCreateProfileLocController extends GetxController {
 
   void onCameraIdle() async {
     if (!allowReverseGeocode) return;
+    final newLatLng = currentPosition.value;
+    final oldLatLng = lastLatLng.value;
+
+    if (oldLatLng != null) {
+      final distance = Geolocator.distanceBetween(
+        oldLatLng.latitude,
+        oldLatLng.longitude,
+        newLatLng.latitude,
+        newLatLng.longitude,
+      );
+
+      if (distance < 50) {
+        // Gak usah fetch, cuma geser sedikit
+
+        return;
+      }
+    }
+
     isLoading.value = true;
     _debounce?.cancel();
-    _debounce = Timer(const Duration(seconds: 3), () async {
+    _debounce = Timer(const Duration(seconds: 1), () async {
       allowReverseGeocode = false;
+      lastLatLng.value = newLatLng;
       await _getAddressFromLatLng(currentPosition.value);
     });
   }

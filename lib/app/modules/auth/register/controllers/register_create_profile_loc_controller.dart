@@ -12,7 +12,7 @@ class RegisterCreateProfileLocController extends GetxController {
   final _locationService = sl<LocationService>();
   var isLoading = false.obs;
   final currentPosition =
-      const LatLng(-6.200000, 106.816666).obs; // Default Jakarta
+      const LatLng(-6.2088, 106.8456).obs; // Default Jakarta
   GoogleMapController? mapController;
 
   final RxString address = ''.obs;
@@ -22,10 +22,22 @@ class RegisterCreateProfileLocController extends GetxController {
   Timer? _debounce;
   bool allowReverseGeocode = false;
 
+  bool get canUpdate => address.value.isNotEmpty;
+
   @override
   void onInit() {
+    var args = Get.arguments;
+    if (args != null) {
+      if (args['lat'] != null && args['lng'] != null) {
+        currentPosition.value = LatLng(args['lat'], args['lng']);
+      }
+
+      if (args['address'] != null) {
+        address.value = args['address'];
+      }
+    }
     initialPosition = CameraPosition(
-      target: currentPosition.value,
+      target: currentPosition.value, // Default Jakarta,
       zoom: 16,
     );
     super.onInit();
@@ -40,7 +52,8 @@ class RegisterCreateProfileLocController extends GetxController {
   Future<void> setMarkerAndMoveCamera(LatLng position) async {
     if (isClosed) return;
     currentPosition.value = position;
-    mapController?.animateCamera(CameraUpdate.newLatLng(currentPosition.value));
+    mapController
+        ?.animateCamera(CameraUpdate.newLatLng(currentPosition.value!));
   }
 
   Future<void> setCurrentLocation() async {
@@ -66,7 +79,7 @@ class RegisterCreateProfileLocController extends GetxController {
     _debounce?.cancel();
     _debounce = Timer(const Duration(seconds: 3), () async {
       allowReverseGeocode = false;
-      await _getAddressFromLatLng(currentPosition.value);
+      await _getAddressFromLatLng(currentPosition.value!);
     });
   }
 

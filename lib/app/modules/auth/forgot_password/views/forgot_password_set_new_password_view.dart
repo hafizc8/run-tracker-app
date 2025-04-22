@@ -39,6 +39,7 @@ class ForgotPasswordSetNewPasswordView
                         const SizedBox(height: 12),
                         TextFormField(
                           cursorColor: Colors.black,
+                          obscureText: controller.isVisiblePassword.value,
                           onChanged: (value) {
                             controller.formReset.value = form.copyWith(
                               password: value,
@@ -47,9 +48,19 @@ class ForgotPasswordSetNewPasswordView
                             );
                           },
                           decoration: InputDecoration(
+                            suffixIcon: IconButton(
+                              icon: Icon(
+                                controller.isVisiblePassword.value
+                                    ? Icons.visibility
+                                    : Icons.visibility_off,
+                              ),
+                              onPressed: () =>
+                                  controller.isVisiblePassword.toggle(),
+                            ),
                             hintText: 'Enter your new password',
                             errorText: form.errors?['password'],
                           ),
+                          textInputAction: TextInputAction.next,
                         ),
                         const SizedBox(height: 16),
                         Text(
@@ -59,6 +70,8 @@ class ForgotPasswordSetNewPasswordView
                         const SizedBox(height: 12),
                         TextFormField(
                           cursorColor: Colors.black,
+                          obscureText:
+                              controller.isVisiblePasswordConfirmation.value,
                           onChanged: (value) {
                             controller.formReset.value = form.copyWith(
                               passwordConfirmation: value,
@@ -67,9 +80,20 @@ class ForgotPasswordSetNewPasswordView
                             );
                           },
                           decoration: InputDecoration(
+                            suffixIcon: IconButton(
+                              icon: Icon(
+                                controller.isVisiblePasswordConfirmation.value
+                                    ? Icons.visibility
+                                    : Icons.visibility_off,
+                              ),
+                              onPressed: () => controller
+                                  .isVisiblePasswordConfirmation
+                                  .toggle(),
+                            ),
                             hintText: 'Confirm your new password',
                             errorText: form.errors?['password_confirmation'],
                           ),
+                          textInputAction: TextInputAction.done,
                         ),
                       ],
                     ),

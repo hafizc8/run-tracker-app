@@ -19,23 +19,21 @@ class ForgotPasswordEmailSentView extends GetView<ForgotPasswordController> {
             mainAxisAlignment: MainAxisAlignment.center,
             crossAxisAlignment: CrossAxisAlignment.center,
             children: [
-              Form(
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.center,
-                  children: [
-                    SvgPicture.asset('assets/icons/email_sent.svg', width: 72),
-                    const SizedBox(height: 24),
-                    Text(
-                      'Email Sent',
-                      style: Theme.of(context).textTheme.headlineMedium,
-                    ),
-                    const SizedBox(height: 18),
-                    Text(
-                      'We have sent your password reset link.\nYou might need to check your spam folder.',
-                      style: Theme.of(context).textTheme.bodyMedium,
-                    ),
-                  ],
-                ),
+              Column(
+                crossAxisAlignment: CrossAxisAlignment.center,
+                children: [
+                  SvgPicture.asset('assets/icons/email_sent.svg', width: 72),
+                  const SizedBox(height: 24),
+                  Text(
+                    'Email Sent',
+                    style: Theme.of(context).textTheme.headlineMedium,
+                  ),
+                  const SizedBox(height: 18),
+                  Text(
+                    'We have sent your password reset link.\nYou might need to check your spam folder.',
+                    style: Theme.of(context).textTheme.bodyMedium,
+                  ),
+                ],
               ),
               const SizedBox(height: 24),
               ElevatedButton(

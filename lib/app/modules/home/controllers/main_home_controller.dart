@@ -6,10 +6,9 @@ import 'package:zest_mobile/app/core/exception/app_exception.dart';
 import 'package:zest_mobile/app/core/exception/handler/app_exception_handler_info.dart';
 import 'package:zest_mobile/app/core/models/model/user_model.dart';
 import 'package:zest_mobile/app/core/services/auth_service.dart';
+import 'package:loader_overlay/loader_overlay.dart';
 
 class MainHomeController extends GetxController {
-  var isLoading = false.obs;
-
   final _authService = sl<AuthService>();
 
   var currentIndex = 0.obs;
@@ -30,19 +29,17 @@ class MainHomeController extends GetxController {
   }
 
   Future<void> me() async {
-    isLoading.value = true;
+    Get.context?.loaderOverlay.show();
 
     try {
-      UserModel resp = await _authService.me();
-
-      isLoading.value = false;
+      await _authService.me();
+      Get.context?.loaderOverlay.hide();
     } on AppException catch (e) {
-      isLoading.value = false;
-
+      Get.context?.loaderOverlay.hide();
       // show error snackbar, toast, etc
       AppExceptionHandlerInfo.handle(e);
     } catch (e) {
-      isLoading.value = false;
+      Get.context?.loaderOverlay.hide();
       Get.snackbar('Error', e.toString());
     }
   }

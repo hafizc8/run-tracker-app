@@ -21,7 +21,8 @@ class RegisterVerifyEmailController extends GetxController {
 
   @override
   void onInit() {
-    sendEmailVerify();
+    // sendEmailVerify();
+    startTimer();
     super.onInit();
   }
 

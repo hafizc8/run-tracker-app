@@ -13,21 +13,8 @@ class RegisterController extends GetxController {
   var isLoading = false.obs;
   final _authService = sl<AuthService>();
 
-  @override
-  void onInit() {
-    super.onInit();
-  }
-
-  @override
-  void onReady() {
-    super.onReady();
-  }
-
-  @override
-  void onClose() {
-    form.value = form.value.clearErrors();
-    super.onClose();
-  }
+  var isVisiblePassword = true.obs;
+  var isVisiblePasswordConfirmation = true.obs;
 
   Future<void> register(BuildContext context) async {
     FocusScope.of(context).unfocus();

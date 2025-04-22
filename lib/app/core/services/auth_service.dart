@@ -26,7 +26,7 @@ class AuthService {
 
   String? get token => sl<StorageService>().read(StorageKeys.token);
 
-  bool get isAuthenticated => user != null && token != null;
+  bool get isAuthenticated => token != null;
 
   Future<bool> login(LoginFormModel form) async {
     try {

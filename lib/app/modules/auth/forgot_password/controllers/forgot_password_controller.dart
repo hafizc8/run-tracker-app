@@ -15,6 +15,9 @@ class ForgotPasswordController extends GetxController {
   var isLoading = false.obs;
   final _authService = sl<AuthService>();
 
+  var isVisiblePassword = true.obs;
+  var isVisiblePasswordConfirmation = true.obs;
+
   @override
   void onReady() {
     var args = Get.arguments;

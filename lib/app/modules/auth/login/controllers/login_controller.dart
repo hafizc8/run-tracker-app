@@ -10,14 +10,9 @@ import 'package:zest_mobile/app/routes/app_routes.dart';
 
 class LoginController extends GetxController {
   Rx<LoginFormModel> form = LoginFormModel().obs;
+  var isVisiblePassword = true.obs;
   var isLoading = false.obs;
   final _authService = sl<AuthService>();
-
-  @override
-  void onClose() {
-    form.value = form.value.clearErrors();
-    super.onClose();
-  }
 
   Future<void> login(BuildContext context) async {
     FocusScope.of(context).unfocus();

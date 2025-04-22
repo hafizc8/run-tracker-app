@@ -43,6 +43,7 @@ class ForgotPasswordView extends GetView<ForgotPasswordController> {
                           ForgotPasswordFormModel form = controller.form.value;
                           return TextFormField(
                             cursorColor: Colors.black,
+                            keyboardType: TextInputType.emailAddress,
                             onChanged: (value) {
                               controller.form.value = form.copyWith(
                                 email: value,

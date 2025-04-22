@@ -44,6 +44,7 @@ class LoginView extends GetView<LoginController> {
                       const SizedBox(height: 12),
                       TextFormField(
                         cursorColor: Colors.black,
+                        keyboardType: TextInputType.emailAddress,
                         onChanged: (value) {
                           controller.form.value = form.copyWith(
                             email: value,
@@ -68,20 +69,32 @@ class LoginView extends GetView<LoginController> {
                         style: Theme.of(context).textTheme.titleSmall,
                       ),
                       const SizedBox(height: 12),
-                      TextFormField(
-                        cursorColor: Colors.black,
-                        onChanged: (value) {
-                          controller.form.value = form.copyWith(
-                            password: value,
-                            errors: form.errors,
-                            field: 'password',
-                          );
-                        },
-                        decoration: InputDecoration(
-                          hintText: 'Enter your password',
-                          errorText: form.errors?['password'],
+                      Obx(
+                        () => TextFormField(
+                          cursorColor: Colors.black,
+                          obscureText: controller.isVisiblePassword.value,
+                          onChanged: (value) {
+                            controller.form.value = form.copyWith(
+                              password: value,
+                              errors: form.errors,
+                              field: 'password',
+                            );
+                          },
+                          decoration: InputDecoration(
+                            suffixIcon: IconButton(
+                              icon: Icon(
+                                controller.isVisiblePassword.value
+                                    ? Icons.visibility
+                                    : Icons.visibility_off,
+                              ),
+                              onPressed: () =>
+                                  controller.isVisiblePassword.toggle(),
+                            ),
+                            hintText: 'Enter your password',
+                            errorText: form.errors?['password'],
+                          ),
+                          textInputAction: TextInputAction.done,
                         ),
-                        textInputAction: TextInputAction.done,
                       ),
                     ],
                   ),

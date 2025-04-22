@@ -1,7 +1,9 @@
 import 'package:app_links/app_links.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:loader_overlay/loader_overlay.dart';
 import 'package:zest_mobile/app/core/shared/theme/app_theme.dart';
+import 'package:zest_mobile/app/core/shared/theme/color_schemes.dart';
 import 'package:zest_mobile/app/core/values/app_constants.dart';
 import 'package:zest_mobile/app/routes/app_pages.dart';
 import 'package:zest_mobile/app/routes/app_routes.dart';
@@ -41,12 +43,19 @@ class _AppState extends State<App> {
 
   @override
   Widget build(BuildContext context) {
-    return GetMaterialApp(
-      debugShowCheckedModeBanner: false,
-      initialRoute: AppRoutes.splash,
-      getPages: AppPages.pages,
-      theme: TAppTheme.lightTheme,
-      title: AppConstants.appName,
+    return GlobalLoaderOverlay(
+      overlayWidgetBuilder: (_) => Center(
+        child: CircularProgressIndicator(
+          color: lightColorScheme.primary,
+        ),
+      ),
+      child: GetMaterialApp(
+        debugShowCheckedModeBanner: false,
+        initialRoute: AppRoutes.splash,
+        getPages: AppPages.pages,
+        theme: TAppTheme.lightTheme,
+        title: AppConstants.appName,
+      ),
     );
   }
 }

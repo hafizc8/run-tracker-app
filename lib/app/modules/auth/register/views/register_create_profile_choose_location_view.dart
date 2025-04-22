@@ -64,7 +64,6 @@ class RegisterCreateProfileChooseLocationView
                       onCameraMove: controller.onCameraMove,
                       onCameraIdle: controller.onCameraIdle,
                       onCameraMoveStarted: controller.onCameraMoveStarted,
-
                       myLocationEnabled: true,
                       myLocationButtonEnabled: true,
                       zoomControlsEnabled: false,
@@ -121,12 +120,16 @@ class RegisterCreateProfileChooseLocationView
       ),
       bottomNavigationBar: Padding(
         padding: const EdgeInsets.all(16.0),
-        child: ElevatedButton(
-          onPressed: () => Get.back(result: {
-            'address': controller.address.value,
-            'location': controller.currentPosition.value,
-          }),
-          child: const Text('Update'),
+        child: Obx(
+          () => ElevatedButton(
+            onPressed: !controller.canUpdate
+                ? null
+                : () => Get.back(result: {
+                      'address': controller.address.value,
+                      'location': controller.currentPosition.value,
+                    }),
+            child: const Text('Update'),
+          ),
         ),
       ),
     );

@@ -137,7 +137,12 @@ class RegisterCreateProfileView
                         readOnly: true,
                         onTap: () async {
                           final res = await Get.toNamed(
-                              AppRoutes.registerCreateProfileChooseLocation);
+                              AppRoutes.registerCreateProfileChooseLocation,
+                              arguments: {
+                                'lat': form.latitude,
+                                'lng': form.longitude,
+                                'address': controller.addressController.text,
+                              });
                           if (res != null) {
                             if (res['address'] != null &&
                                 res['address'] is String) {

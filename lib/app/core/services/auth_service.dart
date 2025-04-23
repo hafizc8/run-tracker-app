@@ -140,6 +140,11 @@ class AuthService {
         method: HttpMethod.post,
       );
 
+      if (response.data['success']) {
+        await sl<StorageService>().remove(StorageKeys.token);
+        await sl<StorageService>().remove(StorageKeys.user);
+      }
+
       return response.data['success'];
     } catch (e) {
       rethrow;

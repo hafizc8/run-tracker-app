@@ -6,8 +6,14 @@ import 'package:zest_mobile/app/core/di/service_locator.dart';
 import 'package:zest_mobile/app/core/exception/app_exception.dart';
 import 'package:zest_mobile/app/core/exception/handler/app_exception_handler_info.dart';
 import 'package:zest_mobile/app/core/services/auth_service.dart';
+import 'package:zest_mobile/app/modules/profile/controllers/profile_controller.dart';
+import 'package:zest_mobile/app/modules/profile/views/profile_view.dart';
 
 class MainHomeController extends GetxController {
+  MainHomeController() {
+    Get.put(ProfileController());
+  }
+
   final _authService = sl<AuthService>();
 
   var currentIndex = 0.obs;
@@ -15,7 +21,7 @@ class MainHomeController extends GetxController {
         SafeArea(child: Center(child: Text('Home'))),
         SafeArea(child: Center(child: Text('Social'))),
         SafeArea(child: Center(child: Text('Shop'))),
-        SafeArea(child: Center(child: Text('Profile'))),
+        ProfileView(),
       ];
   void changeTab(int index) {
     currentIndex.value = index;

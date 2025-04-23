@@ -22,4 +22,8 @@ abstract class AppRoutes {
   static const registerCreateProfile = '/auth/register-create-profile';
   static const registerCreateProfileChooseLocation =
       '/auth/register-create-profile-choose-location';
+
+  // profile
+  static const profile = '/profile';
+  static const settings = '/settings';
 }

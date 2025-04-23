@@ -19,6 +19,8 @@ import 'package:zest_mobile/app/modules/auth/register/views/register_verify_emai
 import 'package:zest_mobile/app/modules/auth/register/views/register_verify_email_success.dart';
 import 'package:zest_mobile/app/modules/home/bindings/main_home_binding.dart';
 import 'package:zest_mobile/app/modules/home/views/main_home_view.dart';
+import 'package:zest_mobile/app/modules/profile/views/profile_view.dart';
+import 'package:zest_mobile/app/modules/profile/views/settings_view.dart';
 import 'package:zest_mobile/app/modules/splash/bindings/splash_binding.dart';
 import 'package:zest_mobile/app/modules/splash/views/splash_view.dart';
 import '../modules/home/bindings/home_binding.dart';
@@ -97,6 +99,14 @@ class AppPages {
     GetPage(
       name: AppRoutes.forgotPasswordUpdated,
       page: () => const ForgotPasswordPasswordUpdatedView(),
+    ),
+    GetPage(
+      name: AppRoutes.profile,
+      page: () => const ProfileView(),
+    ),
+    GetPage(
+      name: AppRoutes.settings,
+      page: () => const SettingsView(),
     ),
   ];
 }

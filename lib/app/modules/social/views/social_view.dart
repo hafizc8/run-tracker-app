@@ -4,7 +4,7 @@ import 'package:get/get.dart';
 import 'package:zest_mobile/app/modules/social/widgets/social_action_button.dart';
 import 'package:zest_mobile/app/modules/social/widgets/statistic_column.dart';
 import '../controllers/social_controller.dart';
-import 'package:zest_mobile/app/core/theme/color_schemes.dart';
+import 'package:zest_mobile/app/core/shared/theme/color_schemes.dart';
 
 class SocialView extends GetView<SocialController> {
   const SocialView({super.key});

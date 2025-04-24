@@ -1,6 +1,6 @@
 import 'package:dio/dio.dart';
 import 'package:flutter/foundation.dart';
-import 'package:pretty_dio_logger/src/pretty_dio_logger.dart';
+import 'package:pretty_dio_logger/pretty_dio_logger.dart';
 import 'package:zest_mobile/app/core/dio/interceptor/app_interceptor.dart';
 import 'package:zest_mobile/app/core/values/app_constants.dart';
 
@@ -12,13 +12,17 @@ class DioClient {
           BaseOptions(
             baseUrl:
                 kDebugMode ? AppConstants.baseUrlDev : AppConstants.baseUrl,
-            headers: {'Content-Type': 'application/json'},
+            headers: {
+              'Content-Type': 'application/json',
+              'Accept': 'application/json'
+            },
             connectTimeout: const Duration(seconds: 10),
             receiveTimeout: const Duration(seconds: 10),
             sendTimeout: const Duration(seconds: 10),
           ),
         ) {
     _dio.interceptors.addAll([
+      AppInterceptor(),
       PrettyDioLogger(
         requestHeader: true,
         requestBody: true,
@@ -29,7 +33,6 @@ class DioClient {
         enabled: kDebugMode,
         maxWidth: 90,
       ),
-      AppInterceptor(),
     ]);
   }
 

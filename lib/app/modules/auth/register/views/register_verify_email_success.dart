@@ -3,11 +3,11 @@ import 'package:flutter_svg/flutter_svg.dart';
 
 import 'package:get/get.dart';
 
-import '../controllers/register_verify_email_success.dart';
+import '../controllers/register_verify_email_success_controller.dart';
 
 class RegisterVerifyEmailSuccessView
     extends GetView<RegisterVerifyEmailSuccessController> {
-  const RegisterVerifyEmailSuccessView({Key? key}) : super(key: key);
+  const RegisterVerifyEmailSuccessView({super.key});
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -30,15 +30,17 @@ class RegisterVerifyEmailSuccessView
                 textAlign: TextAlign.center,
               ),
               const SizedBox(height: 24),
-              Text(
-                'Redirecting you to the next page in 5s',
-                style: Theme.of(context).textTheme.bodyMedium!.copyWith(
-                      color: Theme.of(context)
-                          .colorScheme
-                          .onBackground
-                          .withOpacity(0.3),
-                    ),
-                textAlign: TextAlign.center,
+              Obx(
+                () => Text(
+                  'Redirecting you to the next page in ${controller.countDown.value}s',
+                  style: Theme.of(context).textTheme.bodyMedium!.copyWith(
+                        color: Theme.of(context)
+                            .colorScheme
+                            .onBackground
+                            .withOpacity(0.3),
+                      ),
+                  textAlign: TextAlign.center,
+                ),
               ),
             ],
           ),

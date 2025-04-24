@@ -5,10 +5,13 @@ class AppException implements Exception {
   final String message;
   final int? statusCode;
 
+  final Map<String, List<dynamic>>? errors; // for validation
+
   AppException({
     required this.type,
     required this.message,
     this.statusCode,
+    this.errors,
   });
 
   @override

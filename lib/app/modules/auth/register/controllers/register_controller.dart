@@ -1,23 +1,41 @@
+import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:zest_mobile/app/core/di/service_locator.dart';
+import 'package:zest_mobile/app/core/exception/app_exception.dart';
+import 'package:zest_mobile/app/core/exception/handler/app_exception_handler_info.dart';
+import 'package:zest_mobile/app/core/models/enums/app_exception_enum.dart';
+import 'package:zest_mobile/app/core/models/forms/register_form.dart';
+import 'package:zest_mobile/app/core/services/auth_service.dart';
+import 'package:zest_mobile/app/routes/app_routes.dart';
 
 class RegisterController extends GetxController {
-  //TODO: Implement RegisterController
+  Rx<RegisterFormModel> form = RegisterFormModel().obs;
+  var isLoading = false.obs;
+  final _authService = sl<AuthService>();
 
-  final count = 0.obs;
-  @override
-  void onInit() {
-    super.onInit();
+  var isVisiblePassword = true.obs;
+  var isVisiblePasswordConfirmation = true.obs;
+
+  Future<void> register(BuildContext context) async {
+    FocusScope.of(context).unfocus();
+    isLoading.value = true;
+    form.value = form.value.clearErrors();
+    try {
+      bool resp = await _authService.register(
+        form.value,
+      );
+      if (resp) Get.offAllNamed(AppRoutes.mainHome);
+    } on AppException catch (e) {
+      if (e.type == AppExceptionType.validation) {
+        form.value = form.value.setErrors(e.errors!);
+        return;
+      }
+      // show error snackbar, toast, etc
+      AppExceptionHandlerInfo.handle(e);
+    } catch (e) {
+      Get.snackbar('Error', e.toString());
+    } finally {
+      isLoading.value = false;
+    }
   }
-
-  @override
-  void onReady() {
-    super.onReady();
-  }
-
-  @override
-  void onClose() {
-    super.onClose();
-  }
-
-  void increment() => count.value++;
 }

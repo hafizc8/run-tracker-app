@@ -8,6 +8,7 @@ import 'package:zest_mobile/app/modules/auth/login/bindings/login_binding.dart';
 import 'package:zest_mobile/app/modules/auth/login/views/login_view.dart';
 import 'package:zest_mobile/app/modules/auth/register/bindings/register_binding.dart';
 import 'package:zest_mobile/app/modules/auth/register/bindings/register_create_profile_binding.dart';
+import 'package:zest_mobile/app/modules/auth/register/bindings/register_create_profile_loc_binding.dart';
 import 'package:zest_mobile/app/modules/auth/register/bindings/register_verify_email_success_binding.dart';
 import 'package:zest_mobile/app/modules/auth/register/views/register_create_profile_choose_location_view.dart';
 import 'package:zest_mobile/app/modules/auth/register/views/register_create_profile_view.dart';
@@ -16,8 +17,12 @@ import 'package:zest_mobile/app/modules/auth/register/views/register_view.dart';
 import 'package:zest_mobile/app/modules/auth/register/bindings/register_verify_email_binding.dart';
 import 'package:zest_mobile/app/modules/auth/register/views/register_verify_email_view.dart';
 import 'package:zest_mobile/app/modules/auth/register/views/register_verify_email_success.dart';
+import 'package:zest_mobile/app/modules/home/bindings/main_home_binding.dart';
+import 'package:zest_mobile/app/modules/home/views/main_home_view.dart';
 import 'package:zest_mobile/app/modules/social/bindings/social_binding.dart';
 import 'package:zest_mobile/app/modules/social/views/social_view.dart';
+import 'package:zest_mobile/app/modules/splash/bindings/splash_binding.dart';
+import 'package:zest_mobile/app/modules/splash/views/splash_view.dart';
 import '../modules/home/bindings/home_binding.dart';
 import '../modules/home/views/home_view.dart';
 import 'app_routes.dart';
@@ -25,9 +30,21 @@ import 'app_routes.dart';
 class AppPages {
   static final pages = [
     GetPage(
+      name: AppRoutes.splash,
+      page: () => const SplashView(),
+      binding: SplashBinding(),
+    ),
+
+    GetPage(
       name: AppRoutes.home,
       page: () => const HomeView(),
       binding: HomeBinding(),
+    ),
+
+    GetPage(
+      name: AppRoutes.mainHome,
+      page: () => const MainHomeView(),
+      binding: MainHomeBinding(),
     ),
 
     // Auth
@@ -54,7 +71,7 @@ class AppPages {
     GetPage(
       name: AppRoutes.registerCreateProfileChooseLocation,
       page: () => const RegisterCreateProfileChooseLocationView(),
-      binding: RegisterCreateProfileBinding(),
+      binding: RegisterCreateProfileLocBinding(),
     ),
     GetPage(
       name: AppRoutes.registerSuccess,

@@ -2,13 +2,14 @@ import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 
 import 'package:get/get.dart';
-import 'package:zest_mobile/app/core/theme/color_schemes.dart';
+import 'package:zest_mobile/app/core/models/forms/register_form.dart';
+import 'package:zest_mobile/app/core/shared/theme/color_schemes.dart';
 import 'package:zest_mobile/app/routes/app_routes.dart';
 
 import '../controllers/register_controller.dart';
 
 class RegisterView extends GetView<RegisterController> {
-  const RegisterView({Key? key}) : super(key: key);
+  const RegisterView({super.key});
 
   @override
   Widget build(BuildContext context) {
@@ -25,8 +26,9 @@ class RegisterView extends GetView<RegisterController> {
               child: Text('Logo'),
             ),
             const SizedBox(height: 24),
-            Form(
-              child: Column(
+            Obx(() {
+              RegisterFormModel form = controller.form.value;
+              return Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   Text(
@@ -44,9 +46,19 @@ class RegisterView extends GetView<RegisterController> {
                       const SizedBox(height: 12),
                       TextFormField(
                         cursorColor: Colors.black,
-                        decoration: const InputDecoration(
+                        keyboardType: TextInputType.emailAddress,
+                        onChanged: (value) {
+                          controller.form.value = form.copyWith(
+                            email: value,
+                            errors: form.errors,
+                            field: 'email',
+                          );
+                        },
+                        decoration: InputDecoration(
                           hintText: 'Enter your email',
+                          errorText: form.errors?['email'],
                         ),
+                        textInputAction: TextInputAction.next,
                       ),
                     ],
                   ),
@@ -59,10 +71,31 @@ class RegisterView extends GetView<RegisterController> {
                         style: Theme.of(context).textTheme.titleSmall,
                       ),
                       const SizedBox(height: 12),
-                      TextFormField(
-                        cursorColor: Colors.black,
-                        decoration: const InputDecoration(
-                          hintText: 'Enter your password',
+                      Obx(
+                        () => TextFormField(
+                          cursorColor: Colors.black,
+                          obscureText: controller.isVisiblePassword.value,
+                          onChanged: (value) {
+                            controller.form.value = form.copyWith(
+                              password: value,
+                              errors: form.errors,
+                              field: 'password',
+                            );
+                          },
+                          decoration: InputDecoration(
+                            suffixIcon: IconButton(
+                              icon: Icon(
+                                controller.isVisiblePassword.value
+                                    ? Icons.visibility
+                                    : Icons.visibility_off,
+                              ),
+                              onPressed: () =>
+                                  controller.isVisiblePassword.toggle(),
+                            ),
+                            hintText: 'Enter your password',
+                            errorText: form.errors?['password'],
+                          ),
+                          textInputAction: TextInputAction.next,
                         ),
                       ),
                     ],
@@ -76,43 +109,87 @@ class RegisterView extends GetView<RegisterController> {
                         style: Theme.of(context).textTheme.titleSmall,
                       ),
                       const SizedBox(height: 12),
-                      TextFormField(
-                        cursorColor: Colors.black,
-                        decoration: const InputDecoration(
-                          hintText: 'Confirm your password',
+                      Obx(
+                        () => TextFormField(
+                          cursorColor: Colors.black,
+                          obscureText:
+                              controller.isVisiblePasswordConfirmation.value,
+                          onChanged: (value) {
+                            controller.form.value = form.copyWith(
+                              passwordConfirmation: value,
+                              errors: form.errors,
+                              field: 'password_confirmation',
+                            );
+                          },
+                          decoration: InputDecoration(
+                            suffixIcon: IconButton(
+                              icon: Icon(
+                                controller.isVisiblePasswordConfirmation.value
+                                    ? Icons.visibility
+                                    : Icons.visibility_off,
+                              ),
+                              onPressed: () => controller
+                                  .isVisiblePasswordConfirmation
+                                  .toggle(),
+                            ),
+                            hintText: 'Confirm your password',
+                            errorText: form.errors?['password_confirmation'],
+                          ),
+                          textInputAction: TextInputAction.done,
                         ),
                       ),
                     ],
                   ),
-                ],
-              ),
-            ),
-            const SizedBox(height: 12),
-            Row(
-              children: [
-                Checkbox(value: true, onChanged: (val) {}),
-                Expanded(
-                  child: Wrap(
-                    children: [
-                      Text(
-                        'By signing up, you acknowledge and agree to our ',
-                        style: Theme.of(context).textTheme.bodySmall,
-                      ),
-                      const TextSpanWidget('Terms & Conditions'),
-                      Text(
-                        ' and ',
-                        style: Theme.of(context).textTheme.bodySmall,
-                      ),
-                      const TextSpanWidget('Privacy Policy'),
-                    ],
+                  const SizedBox(height: 12),
+                  CheckboxListTile(
+                    value: form.isAgree,
+                    onChanged: (val) {
+                      controller.form.value = form.copyWith(
+                        isAgree: val,
+                        errors: form.errors,
+                        field: 'is_agree',
+                      );
+                    },
+                    controlAffinity: ListTileControlAffinity.leading,
+                    contentPadding: EdgeInsets.zero,
+                    isError: true,
+                    title: Wrap(
+                      children: [
+                        Text(
+                          'By signing up, you acknowledge and agree to our ',
+                          style: Theme.of(context).textTheme.bodySmall,
+                        ),
+                        const TextSpanWidget('Terms & Conditions'),
+                        Text(
+                          ' and ',
+                          style: Theme.of(context).textTheme.bodySmall,
+                        ),
+                        const TextSpanWidget('Privacy Policy'),
+                      ],
+                    ),
                   ),
-                ),
-              ],
-            ),
+                  if (form.errors?['is_agree'] != null)
+                    Text(
+                      form.errors!['is_agree'],
+                      style: const TextStyle(color: Colors.red),
+                    ),
+                ],
+              );
+            }),
             const SizedBox(height: 16),
-            ElevatedButton(
-              onPressed: () {},
-              child: const Text('Create Account'),
+            Obx(
+              () => ElevatedButton(
+                onPressed: controller.isLoading.value
+                    ? null
+                    : () {
+                        controller.register(context);
+                      },
+                child: Visibility(
+                  visible: controller.isLoading.value,
+                  replacement: const Text('Create Account'),
+                  child: const CircularProgressIndicator(),
+                ),
+              ),
             ),
             const SizedBox(height: 20),
             Text(
@@ -150,7 +227,7 @@ class RegisterView extends GetView<RegisterController> {
 
 class TextSpanWidget extends StatelessWidget {
   final String text;
-  const TextSpanWidget(this.text, {Key? key}) : super(key: key);
+  const TextSpanWidget(this.text, {super.key});
 
   @override
   Widget build(BuildContext context) {

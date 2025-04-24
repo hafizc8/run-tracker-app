@@ -14,10 +14,13 @@ class SettingsView extends GetView<SettingsController> {
         title: const Text('Settings'),
         automaticallyImplyLeading: false,
         elevation: 1,
-        leading: Icon(
-          Icons.chevron_left,
-          size: 48,
-          color: Theme.of(context).colorScheme.primary,
+        leading: GestureDetector(
+          onTap: () => Get.back(),
+          child: Icon(
+            Icons.chevron_left,
+            size: 48,
+            color: Theme.of(context).colorScheme.primary,
+          ),
         ),
       ),
       body: Column(
@@ -46,6 +49,7 @@ class SettingsView extends GetView<SettingsController> {
             ),
           ),
           ListTile(
+            onTap: () => controller.showNotifDialog(context),
             title: Row(
               children: [
                 FaIcon(
@@ -63,6 +67,7 @@ class SettingsView extends GetView<SettingsController> {
             ),
           ),
           ListTile(
+            onTap: () => controller.showPrivacyPolicyDialog(context),
             title: Row(
               children: [
                 Icon(

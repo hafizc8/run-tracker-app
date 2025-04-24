@@ -38,6 +38,11 @@ class TTextTheme {
       fontWeight: FontWeight.w600,
       color: lightColorScheme.onPrimary,
     ),
+    labelMedium: TextStyle(
+      fontSize: 14,
+      fontWeight: FontWeight.w600,
+      color: lightColorScheme.onPrimary,
+    ),
     labelSmall: TextStyle(
       fontSize: 12,
       fontWeight: FontWeight.w600,

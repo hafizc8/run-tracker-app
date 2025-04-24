@@ -6,12 +6,14 @@ import 'package:zest_mobile/app/core/di/service_locator.dart';
 import 'package:zest_mobile/app/core/exception/app_exception.dart';
 import 'package:zest_mobile/app/core/exception/handler/app_exception_handler_info.dart';
 import 'package:zest_mobile/app/core/services/auth_service.dart';
+import 'package:zest_mobile/app/modules/home/controllers/home_controller.dart';
 import 'package:zest_mobile/app/modules/profile/controllers/profile_controller.dart';
 import 'package:zest_mobile/app/modules/profile/views/profile_view.dart';
 
 class MainHomeController extends GetxController {
   MainHomeController() {
-    Get.put(ProfileController());
+    Get.lazyPut<HomeController>(() => HomeController());
+    Get.lazyPut<ProfileController>(() => ProfileController());
   }
 
   final _authService = sl<AuthService>();

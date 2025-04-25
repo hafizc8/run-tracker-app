@@ -1,7 +1,16 @@
 import 'package:get/get.dart';
+import 'package:zest_mobile/app/core/models/enums/social_page_enum.dart';
 
 class SocialController extends GetxController {
-  var count = 0.obs;
+  Rx<YourPageChip> selectedChip = YourPageChip.updates.obs;
 
-  void increment() => count++;
+  dynamic selectChip(YourPageChip chip) {
+    selectedChip.value = chip;
+  }
+
+  @override
+  void onInit() {
+    super.onInit();
+    print('SocialController onInit');
+  }
 }

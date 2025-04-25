@@ -7,6 +7,7 @@ class SocialActionButton extends StatelessWidget {
   final VoidCallback onTap;
 
   const SocialActionButton({
+    super.key, 
     required this.icon,
     required this.label,
     required this.onTap,

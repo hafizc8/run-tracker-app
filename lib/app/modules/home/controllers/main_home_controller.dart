@@ -6,16 +6,17 @@ import 'package:zest_mobile/app/core/di/service_locator.dart';
 import 'package:zest_mobile/app/core/exception/app_exception.dart';
 import 'package:zest_mobile/app/core/exception/handler/app_exception_handler_info.dart';
 import 'package:zest_mobile/app/core/services/auth_service.dart';
+import 'package:zest_mobile/app/modules/social/views/social_view.dart';
 
 class MainHomeController extends GetxController {
   final _authService = sl<AuthService>();
 
   var currentIndex = 0.obs;
-  List<Widget> get pages => const [
-        SafeArea(child: Center(child: Text('Home'))),
-        SafeArea(child: Center(child: Text('Social'))),
-        SafeArea(child: Center(child: Text('Shop'))),
-        SafeArea(child: Center(child: Text('Profile'))),
+  List<Widget> get pages => [
+        const SafeArea(child: Center(child: Text('Home'))),
+        SocialView(),
+        const SafeArea(child: Center(child: Text('Shop'))),
+        const SafeArea(child: Center(child: Text('Profile'))),
       ];
   void changeTab(int index) {
     currentIndex.value = index;
@@ -23,7 +24,7 @@ class MainHomeController extends GetxController {
 
   @override
   void onInit() {
-    me();
+    // me();
     super.onInit();
   }
 

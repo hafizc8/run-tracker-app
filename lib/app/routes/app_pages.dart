@@ -19,6 +19,11 @@ import 'package:zest_mobile/app/modules/auth/register/views/register_verify_emai
 import 'package:zest_mobile/app/modules/auth/register/views/register_verify_email_success.dart';
 import 'package:zest_mobile/app/modules/home/bindings/main_home_binding.dart';
 import 'package:zest_mobile/app/modules/home/views/main_home_view.dart';
+import 'package:zest_mobile/app/modules/activity/bindings/activity_binding.dart';
+import 'package:zest_mobile/app/modules/profile/bindings/badges_binding.dart';
+import 'package:zest_mobile/app/modules/profile/bindings/settings_binding.dart';
+import 'package:zest_mobile/app/modules/activity/views/activity_view.dart';
+import 'package:zest_mobile/app/modules/profile/views/badges_view.dart';
 import 'package:zest_mobile/app/modules/profile/views/profile_view.dart';
 import 'package:zest_mobile/app/modules/profile/views/settings_view.dart';
 import 'package:zest_mobile/app/modules/splash/bindings/splash_binding.dart';
@@ -107,6 +112,17 @@ class AppPages {
     GetPage(
       name: AppRoutes.settings,
       page: () => const SettingsView(),
+      binding: SettingsBinding(),
+    ),
+    GetPage(
+      name: AppRoutes.activity,
+      page: () => const ActivityView(),
+      binding: ActivityBinding(),
+    ),
+    GetPage(
+      name: AppRoutes.badges,
+      page: () => const BadgesView(),
+      binding: BadgesBinding(),
     ),
   ];
 }

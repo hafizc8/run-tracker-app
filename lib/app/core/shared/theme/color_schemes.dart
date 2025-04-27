@@ -6,7 +6,7 @@ ColorScheme get lightColorScheme => const ColorScheme(
       primary: Color(0xFF007AFF), // biru utama (misal untuk tombol)
       onPrimary: Colors.white, // teks/icon di atas warna primary
 
-      secondary: Color(0xFF6C757D), // abu sekunder (misal untuk chip/checkbox)
+      secondary: Color(0xFF999999), // abu sekunder (misal untuk chip/checkbox)
       onSecondary: Colors.white, // teks/icon di atas secondary
 
       background: Colors.white, // latar belakang utama (scaffold, body)

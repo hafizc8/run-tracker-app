@@ -26,4 +26,6 @@ abstract class AppRoutes {
   // profile
   static const profile = '/profile';
   static const settings = '/settings';
+  static const activity = '/activity';
+  static const badges = '/badges';
 }

@@ -17,11 +17,10 @@ abstract class AppRoutes {
   static const register = '/auth/register';
   static const registerSuccess = '/auth/register/success';
   static const registerVerifyEmail = '/auth/register-verify-email';
-  static const registerVerifyEmailSuccess =
-      '/auth/register-verify-email-success';
+  static const registerVerifyEmailSuccess = '/auth/register-verify-email-success';
   static const registerCreateProfile = '/auth/register-create-profile';
-  static const registerCreateProfileChooseLocation =
-      '/auth/register-create-profile-choose-location';
+  static const registerCreateProfileChooseLocation = '/auth/register-create-profile-choose-location';
 
   static const social = '/social';
+  static const socialYourPageActivityDetail = '/social/your-page/activity-detail';
 }

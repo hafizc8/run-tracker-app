@@ -20,6 +20,7 @@ import 'package:zest_mobile/app/modules/auth/register/views/register_verify_emai
 import 'package:zest_mobile/app/modules/home/bindings/main_home_binding.dart';
 import 'package:zest_mobile/app/modules/home/views/main_home_view.dart';
 import 'package:zest_mobile/app/modules/social/bindings/social_binding.dart';
+import 'package:zest_mobile/app/modules/social/views/partial/your_page_tab/social_your_page_activity_detail_view.dart';
 import 'package:zest_mobile/app/modules/social/views/social_view.dart';
 import 'package:zest_mobile/app/modules/splash/bindings/splash_binding.dart';
 import 'package:zest_mobile/app/modules/splash/views/splash_view.dart';
@@ -105,6 +106,10 @@ class AppPages {
       name: AppRoutes.social,
       page: () => const SocialView(),
       binding: SocialBinding(),
+    ),
+    GetPage(
+      name: AppRoutes.socialYourPageActivityDetail,
+      page: () => const SocialYourPageActivityDetailView(),
     ),
   ];
 }

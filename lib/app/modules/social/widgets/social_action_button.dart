@@ -24,6 +24,7 @@ class SocialActionButton extends StatelessWidget {
           borderRadius: BorderRadius.circular(20),
         ),
         child: Row(
+          mainAxisAlignment: MainAxisAlignment.center,
           children: [
             Icon(icon, size: 18, color: lightColorScheme.primary,),
             const SizedBox(width: 6),

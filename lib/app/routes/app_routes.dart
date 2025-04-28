@@ -19,8 +19,15 @@ abstract class AppRoutes {
   static const registerVerifyEmail = '/auth/register-verify-email';
   static const registerVerifyEmailSuccess = '/auth/register-verify-email-success';
   static const registerCreateProfile = '/auth/register-create-profile';
+
   static const registerCreateProfileChooseLocation = '/auth/register-create-profile-choose-location';
 
   static const social = '/social';
   static const socialYourPageActivityDetail = '/social/your-page/activity-detail';
+
+  // profile
+  static const profile = '/profile';
+  static const settings = '/settings';
+  static const activity = '/activity';
+  static const badges = '/badges';
 }

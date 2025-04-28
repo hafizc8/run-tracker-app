@@ -7,16 +7,24 @@ import 'package:zest_mobile/app/core/exception/app_exception.dart';
 import 'package:zest_mobile/app/core/exception/handler/app_exception_handler_info.dart';
 import 'package:zest_mobile/app/core/services/auth_service.dart';
 import 'package:zest_mobile/app/modules/social/views/social_view.dart';
+import 'package:zest_mobile/app/modules/home/controllers/home_controller.dart';
+import 'package:zest_mobile/app/modules/profile/controllers/profile_controller.dart';
+import 'package:zest_mobile/app/modules/profile/views/profile_view.dart';
 
 class MainHomeController extends GetxController {
+  MainHomeController() {
+    Get.lazyPut<HomeController>(() => HomeController());
+    Get.lazyPut<ProfileController>(() => ProfileController());
+  }
+
   final _authService = sl<AuthService>();
 
   var currentIndex = 0.obs;
-  List<Widget> get pages => [
-        const SafeArea(child: Center(child: Text('Home'))),
+  List<Widget> get pages => const [
+        SafeArea(child: Center(child: Text('Home'))),
         SocialView(),
-        const SafeArea(child: Center(child: Text('Shop'))),
-        const SafeArea(child: Center(child: Text('Profile'))),
+        SafeArea(child: Center(child: Text('Shop'))),
+        ProfileView(),
       ];
   void changeTab(int index) {
     currentIndex.value = index;

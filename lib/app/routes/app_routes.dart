@@ -24,6 +24,8 @@ abstract class AppRoutes {
 
   static const social = '/social';
   static const socialYourPageActivityDetail = '/social/your-page/activity-detail';
+  static const socialYourPageEventDetail = '/social/your-page/event-detail';
+  static const socialYourPageEventDetailInviteFriend = '/social/your-page/event-detail/invite-friend';
 
   // profile
   static const profile = '/profile';

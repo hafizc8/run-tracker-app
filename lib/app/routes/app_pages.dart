@@ -20,6 +20,8 @@ import 'package:zest_mobile/app/modules/auth/register/views/register_verify_emai
 import 'package:zest_mobile/app/modules/home/bindings/main_home_binding.dart';
 import 'package:zest_mobile/app/modules/home/views/main_home_view.dart';
 import 'package:zest_mobile/app/modules/social/bindings/social_binding.dart';
+import 'package:zest_mobile/app/modules/social/views/partial/for_you_tab/social_for_you_event_detail_invite_friend_view.dart';
+import 'package:zest_mobile/app/modules/social/views/partial/for_you_tab/social_for_you_event_detail_view.dart';
 import 'package:zest_mobile/app/modules/social/views/partial/your_page_tab/social_your_page_activity_detail_view.dart';
 import 'package:zest_mobile/app/modules/social/views/social_view.dart';
 import 'package:zest_mobile/app/modules/activity/bindings/activity_binding.dart';
@@ -117,6 +119,14 @@ class AppPages {
     GetPage(
       name: AppRoutes.socialYourPageActivityDetail,
       page: () => const SocialYourPageActivityDetailView(),
+    ),
+    GetPage(
+      name: AppRoutes.socialYourPageEventDetail,
+      page: () => const SocialForYouEventDetailView(),
+    ),
+    GetPage(
+      name: AppRoutes.socialYourPageEventDetailInviteFriend,
+      page: () => const SocialForYouEventDetaiInviteFriendView(),
     ),
     
     GetPage(

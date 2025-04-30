@@ -7,9 +7,17 @@ class TAppBarTheme {
   TAppBarTheme._();
 
   static AppBarTheme lightAppBarTheme = AppBarTheme(
-    backgroundColor: lightColorScheme.background,
+    surfaceTintColor: lightColorScheme.background,
     titleTextStyle: TTextTheme.lightTextTheme.headlineMedium?.copyWith(
       fontFamily: GoogleFonts.quicksand().fontFamily,
+    ),
+    iconTheme: IconThemeData(
+      color: lightColorScheme.primary,
+      size: 32,
+    ),
+    actionsIconTheme: IconThemeData(
+      color: lightColorScheme.primary,
+      size: 32,
     ),
   );
 }

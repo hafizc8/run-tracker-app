@@ -137,7 +137,7 @@ class RegisterCreateProfileView
                         readOnly: true,
                         onTap: () async {
                           final res = await Get.toNamed(
-                              AppRoutes.registerCreateProfileChooseLocation,
+                              AppRoutes.chooseLocation,
                               arguments: {
                                 'lat': form.latitude,
                                 'lng': form.longitude,

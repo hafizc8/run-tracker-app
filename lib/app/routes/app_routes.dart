@@ -20,11 +20,11 @@ abstract class AppRoutes {
   static const registerVerifyEmailSuccess =
       '/auth/register-verify-email-success';
   static const registerCreateProfile = '/auth/register-create-profile';
-  static const registerCreateProfileChooseLocation =
-      '/auth/register-create-profile-choose-location';
+  static const chooseLocation = '/choose-location';
 
   // profile
-  static const profile = '/profile';
+  static const profileMain = '/profile/main';
+  static const profileEdit = '/profile/edit';
   static const settings = '/settings';
   static const activity = '/activity';
   static const badges = '/badges';

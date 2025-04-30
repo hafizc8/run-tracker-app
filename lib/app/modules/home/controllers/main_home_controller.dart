@@ -7,8 +7,8 @@ import 'package:zest_mobile/app/core/exception/app_exception.dart';
 import 'package:zest_mobile/app/core/exception/handler/app_exception_handler_info.dart';
 import 'package:zest_mobile/app/core/services/auth_service.dart';
 import 'package:zest_mobile/app/modules/home/controllers/home_controller.dart';
-import 'package:zest_mobile/app/modules/profile/controllers/profile_controller.dart';
-import 'package:zest_mobile/app/modules/profile/views/profile_view.dart';
+import 'package:zest_mobile/app/modules/main_profile/controllers/profile_controller.dart';
+import 'package:zest_mobile/app/modules/main_profile/views/main_profile_view.dart';
 
 class MainHomeController extends GetxController {
   MainHomeController() {
@@ -23,7 +23,7 @@ class MainHomeController extends GetxController {
         SafeArea(child: Center(child: Text('Home'))),
         SafeArea(child: Center(child: Text('Social'))),
         SafeArea(child: Center(child: Text('Shop'))),
-        ProfileView(),
+        MainProfileView(),
       ];
   void changeTab(int index) {
     currentIndex.value = index;

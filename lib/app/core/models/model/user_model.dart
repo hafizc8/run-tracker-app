@@ -146,6 +146,9 @@ class UserModel extends Model<UserModel> {
     );
   }
 
+  String get address =>
+      "$village, $subdistrict, $district, $province, $country";
+
   @override
   Map<String, dynamic> toJson() => {
         "id": id,

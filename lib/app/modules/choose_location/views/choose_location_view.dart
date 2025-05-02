@@ -52,13 +52,19 @@ class ChooseLocationView extends GetView<ChooseLocationController> {
                 },
               ),
             ),
-            Obx(
-              () => SizedBox(
-                height: 300,
-                child: Stack(
-                  children: [
-                    GoogleMap(
-                      initialCameraPosition: controller.initialPosition,
+            SizedBox(
+              height: 300,
+              child: Stack(
+                children: [
+                  Visibility(
+                    visible: controller.currentPosition.value != null,
+                    replacement:
+                        const Center(child: CircularProgressIndicator()),
+                    child: GoogleMap(
+                      initialCameraPosition: CameraPosition(
+                        target: controller.currentPosition.value!,
+                        zoom: 16,
+                      ),
                       onMapCreated: controller.onMapCreated,
                       onCameraMove: controller.onCameraMove,
                       onCameraIdle: controller.onCameraIdle,
@@ -75,16 +81,16 @@ class ChooseLocationView extends GetView<ChooseLocationController> {
                         ),
                       ),
                     ),
-                    Align(
-                      alignment: Alignment.center,
-                      child: Icon(
-                        Icons.location_pin,
-                        size: 32,
-                        color: Theme.of(context).colorScheme.primary,
-                      ),
-                    )
-                  ],
-                ),
+                  ),
+                  Align(
+                    alignment: Alignment.center,
+                    child: Icon(
+                      Icons.location_pin,
+                      size: 32,
+                      color: Theme.of(context).colorScheme.primary,
+                    ),
+                  )
+                ],
               ),
             ),
             const SizedBox(height: 12),

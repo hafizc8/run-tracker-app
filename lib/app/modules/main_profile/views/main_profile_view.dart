@@ -5,6 +5,7 @@ import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:get/get.dart';
 import 'package:smooth_page_indicator/smooth_page_indicator.dart';
 import 'package:zest_mobile/app/core/shared/widgets/custom_chip.dart';
+import 'package:zest_mobile/app/core/shared/widgets/shimmer_loading_circle.dart';
 import 'package:zest_mobile/app/modules/main_profile/widgets/custom_tab_bar/views/custom_tab_bar_view.dart';
 import 'package:zest_mobile/app/routes/app_routes.dart';
 import 'package:cached_network_image/cached_network_image.dart';
@@ -51,10 +52,7 @@ class MainProfileView extends GetView<ProfileController> {
                               CachedNetworkImage(
                                 imageUrl: controller.user.value?.imageUrl ?? '',
                                 placeholder: (context, url) =>
-                                    CircularProgressIndicator(
-                                  color:
-                                      Theme.of(context).colorScheme.onPrimary,
-                                ),
+                                    const ShimmerLoadingCircle(size: 64),
                                 errorWidget: (context, url, error) =>
                                     const CircleAvatar(
                                   radius: 32,

@@ -72,4 +72,9 @@ class ResetPasswordFormModel extends FormModel<ResetPasswordFormModel> {
       'password_confirmation': passwordConfirmation,
     };
   }
+
+  @override
+  bool isValidToUpdate(ResetPasswordFormModel formHasEdited) {
+    throw UnimplementedError();
+  }
 }

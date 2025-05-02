@@ -12,14 +12,11 @@ import 'package:zest_mobile/app/core/services/location_service.dart';
 class ChooseLocationController extends GetxController {
   final _locationService = sl<LocationService>();
   var isLoading = false.obs;
-  final currentPosition =
-      const LatLng(-6.2615, 106.8106).obs; // Default Jakarta
+  Rxn<LatLng> currentPosition = Rxn<LatLng>(); // Default Jakarta
   Rxn<LatLng> lastLatLng = Rxn<LatLng>();
   GoogleMapController? mapController;
 
   final RxString address = ''.obs;
-
-  late final CameraPosition initialPosition;
 
   Timer? _debounce;
   bool allowReverseGeocode = false;
@@ -29,12 +26,9 @@ class ChooseLocationController extends GetxController {
   @override
   void onInit() {
     super.onInit();
-    initialPosition = CameraPosition(
-      target: currentPosition.value, // Default Jakarta,
-      zoom: 16,
-    );
 
     var args = Get.arguments;
+
     if (args != null) {
       if (args['lat'] != null && args['lng'] != null) {
         currentPosition.value = LatLng(args['lat'], args['lng']);
@@ -43,6 +37,8 @@ class ChooseLocationController extends GetxController {
       if (args['address'] != null) {
         address.value = args['address'];
       }
+    } else {
+      currentPosition.value = const LatLng(-6.2615, 106.8106);
     }
   }
 
@@ -55,7 +51,8 @@ class ChooseLocationController extends GetxController {
   Future<void> setMarkerAndMoveCamera(LatLng position) async {
     if (isClosed) return;
     currentPosition.value = position;
-    mapController?.animateCamera(CameraUpdate.newLatLng(currentPosition.value));
+    mapController
+        ?.animateCamera(CameraUpdate.newLatLng(currentPosition.value!));
   }
 
   Future<void> setCurrentLocation() async {
@@ -84,7 +81,7 @@ class ChooseLocationController extends GetxController {
       final distance = Geolocator.distanceBetween(
         oldLatLng.latitude,
         oldLatLng.longitude,
-        newLatLng.latitude,
+        newLatLng!.latitude,
         newLatLng.longitude,
       );
 
@@ -100,7 +97,7 @@ class ChooseLocationController extends GetxController {
     _debounce = Timer(const Duration(seconds: 1), () async {
       allowReverseGeocode = false;
       lastLatLng.value = newLatLng;
-      await _getAddressFromLatLng(currentPosition.value);
+      await _getAddressFromLatLng(currentPosition.value!);
     });
   }
 

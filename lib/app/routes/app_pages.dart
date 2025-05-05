@@ -19,14 +19,17 @@ import 'package:zest_mobile/app/modules/choose_location/bindings/choose_location
 import 'package:zest_mobile/app/modules/choose_location/views/choose_location_view.dart';
 import 'package:zest_mobile/app/modules/home/bindings/main_home_binding.dart';
 import 'package:zest_mobile/app/modules/home/views/main_home_view.dart';
+import 'package:zest_mobile/app/modules/social/bindings/social_binding.dart';
+import 'package:zest_mobile/app/modules/social/views/partial/for_you_tab/social_for_you_event_detail_invite_friend_view.dart';
+import 'package:zest_mobile/app/modules/social/views/partial/for_you_tab/social_for_you_event_detail_view.dart';
+import 'package:zest_mobile/app/modules/social/views/partial/your_page_tab/social_your_page_activity_detail_view.dart';
+import 'package:zest_mobile/app/modules/social/views/social_view.dart';
 import 'package:zest_mobile/app/modules/main_profile/bindings/badges_binding.dart';
 import 'package:zest_mobile/app/modules/main_profile/bindings/settings_binding.dart';
 import 'package:zest_mobile/app/modules/main_profile/partials/activity/bindings/activity_binding.dart';
 import 'package:zest_mobile/app/modules/main_profile/partials/activity/views/activity_view.dart';
 import 'package:zest_mobile/app/modules/main_profile/partials/edit_profile/bindings/edit_profile_binding.dart';
 import 'package:zest_mobile/app/modules/main_profile/partials/edit_profile/views/edit_profile_view.dart';
-import 'package:zest_mobile/app/modules/main_profile/partials/profile/bindings/profile_binding.dart';
-import 'package:zest_mobile/app/modules/main_profile/partials/profile/views/profile_view.dart';
 import 'package:zest_mobile/app/modules/main_profile/views/badges_view.dart';
 import 'package:zest_mobile/app/modules/main_profile/views/main_profile_view.dart';
 import 'package:zest_mobile/app/modules/main_profile/views/settings_view.dart';
@@ -110,6 +113,25 @@ class AppPages {
       name: AppRoutes.forgotPasswordUpdated,
       page: () => const ForgotPasswordPasswordUpdatedView(),
     ),
+
+    GetPage(
+      name: AppRoutes.social,
+      page: () => const SocialView(),
+      binding: SocialBinding(),
+    ),
+    GetPage(
+      name: AppRoutes.socialYourPageActivityDetail,
+      page: () => const SocialYourPageActivityDetailView(),
+    ),
+    GetPage(
+      name: AppRoutes.socialYourPageEventDetail,
+      page: () => const SocialForYouEventDetailView(),
+    ),
+    GetPage(
+      name: AppRoutes.socialYourPageEventDetailInviteFriend,
+      page: () => const SocialForYouEventDetaiInviteFriendView(),
+    ),
+    
     GetPage(
       name: AppRoutes.profileMain,
       page: () => const MainProfileView(),
@@ -133,11 +155,6 @@ class AppPages {
       name: AppRoutes.profileEdit,
       page: () => const EditProfileView(),
       binding: EditProfileBinding(),
-    ),
-    GetPage(
-      name: AppRoutes.profileUser,
-      page: () => const ProfileView(),
-      binding: ProfileBinding(),
     ),
   ];
 }

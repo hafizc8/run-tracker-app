@@ -27,4 +27,27 @@ class TCheckboxTheme {
       width: 1.5,
     ),
   );
+
+  static final primaryCheckboxTheme = CheckboxThemeData(
+    fillColor: MaterialStateProperty.resolveWith((states) {
+      if (states.contains(MaterialState.disabled)) {
+        return Colors.grey; // Warna ketika disabled
+      }
+      if (states.contains(MaterialState.selected)) {
+        return Colors.blue; // Warna ketika dicentang
+      }
+      return Colors.white; // Warna saat tidak dicentang
+    }),
+
+    checkColor: MaterialStateProperty.all(Colors.white), // warna centang
+
+    shape: RoundedRectangleBorder(
+      borderRadius: BorderRadius.circular(4),
+    ),
+
+    side: const BorderSide(
+      color: Colors.black, // Outline saat tidak dicentang
+      width: 1.5,
+    ),
+  );
 }

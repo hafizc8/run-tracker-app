@@ -19,6 +19,8 @@ import 'package:zest_mobile/app/modules/choose_location/bindings/choose_location
 import 'package:zest_mobile/app/modules/choose_location/views/choose_location_view.dart';
 import 'package:zest_mobile/app/modules/home/bindings/main_home_binding.dart';
 import 'package:zest_mobile/app/modules/home/views/main_home_view.dart';
+import 'package:zest_mobile/app/modules/main_profile/partials/profile/bindings/profile_binding.dart';
+import 'package:zest_mobile/app/modules/main_profile/partials/profile/views/profile_view.dart';
 import 'package:zest_mobile/app/modules/social/bindings/social_binding.dart';
 import 'package:zest_mobile/app/modules/social/views/partial/for_you_tab/social_for_you_event_detail_invite_friend_view.dart';
 import 'package:zest_mobile/app/modules/social/views/partial/for_you_tab/social_for_you_event_detail_view.dart';
@@ -155,6 +157,11 @@ class AppPages {
       name: AppRoutes.profileEdit,
       page: () => const EditProfileView(),
       binding: EditProfileBinding(),
+    ),
+    GetPage(
+      name: AppRoutes.profileUser,
+      page: () => const ProfileView(),
+      binding: ProfileBinding(),
     ),
   ];
 }

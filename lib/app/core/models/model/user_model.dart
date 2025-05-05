@@ -15,6 +15,7 @@ class UserModel extends Model<UserModel> {
     required this.village,
     required this.postcode,
     required this.imagePath,
+    required this.imageUrl,
     required this.birthday,
     required this.gender,
     required this.bio,
@@ -41,7 +42,8 @@ class UserModel extends Model<UserModel> {
   final String? subdistrict;
   final String? village;
   final dynamic postcode;
-  final dynamic imagePath;
+  final String? imagePath;
+  final String? imageUrl;
   final DateTime? birthday;
   final int? gender;
   final dynamic bio;
@@ -68,7 +70,8 @@ class UserModel extends Model<UserModel> {
     String? subdistrict,
     String? village,
     dynamic postcode,
-    dynamic imagePath,
+    String? imagePath,
+    String? imageUrl,
     DateTime? birthday,
     int? gender,
     dynamic bio,
@@ -96,6 +99,7 @@ class UserModel extends Model<UserModel> {
       village: village ?? this.village,
       postcode: postcode ?? this.postcode,
       imagePath: imagePath ?? this.imagePath,
+      imageUrl: imageUrl ?? this.imageUrl,
       birthday: birthday ?? this.birthday,
       gender: gender ?? this.gender,
       bio: bio ?? this.bio,
@@ -126,6 +130,7 @@ class UserModel extends Model<UserModel> {
       village: json["village"],
       postcode: json["postcode"],
       imagePath: json["image_path"],
+      imageUrl: json["image_url"],
       birthday: DateTime.tryParse(json["birthday"] ?? ""),
       gender: json["gender"],
       bio: json["bio"],
@@ -140,6 +145,9 @@ class UserModel extends Model<UserModel> {
       deletedAt: json["deleted_at"],
     );
   }
+
+  String get address =>
+      "$village, $subdistrict, $district, $province, $country";
 
   @override
   Map<String, dynamic> toJson() => {
@@ -156,6 +164,7 @@ class UserModel extends Model<UserModel> {
         "village": village,
         "postcode": postcode,
         "image_path": imagePath,
+        "image_url": imageUrl,
         "birthday": birthday?.toIso8601String(),
         "gender": gender,
         "bio": bio,
@@ -185,6 +194,7 @@ class UserModel extends Model<UserModel> {
         village,
         postcode,
         imagePath,
+        imageUrl,
         birthday,
         gender,
         bio,

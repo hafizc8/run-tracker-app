@@ -12,10 +12,7 @@ class DioClient {
           BaseOptions(
             baseUrl:
                 kDebugMode ? AppConstants.baseUrlDev : AppConstants.baseUrl,
-            headers: {
-              'Content-Type': 'application/json',
-              'Accept': 'application/json'
-            },
+            headers: {'Accept': 'application/json'},
             connectTimeout: const Duration(seconds: 10),
             receiveTimeout: const Duration(seconds: 10),
             sendTimeout: const Duration(seconds: 10),

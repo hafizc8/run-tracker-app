@@ -3,11 +3,10 @@ import 'package:flutter_typeahead/flutter_typeahead.dart';
 import 'package:get/get.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:zest_mobile/app/core/models/model/location_model.dart';
-import 'package:zest_mobile/app/modules/auth/register/controllers/register_create_profile_loc_controller.dart';
+import 'package:zest_mobile/app/modules/choose_location/controllers/choose_location_controller.dart';
 
-class RegisterCreateProfileChooseLocationView
-    extends GetView<RegisterCreateProfileLocController> {
-  const RegisterCreateProfileChooseLocationView({super.key});
+class ChooseLocationView extends GetView<ChooseLocationController> {
+  const ChooseLocationView({super.key});
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -53,13 +52,19 @@ class RegisterCreateProfileChooseLocationView
                 },
               ),
             ),
-            Obx(
-              () => SizedBox(
-                height: 300,
-                child: Stack(
-                  children: [
-                    GoogleMap(
-                      initialCameraPosition: controller.initialPosition,
+            SizedBox(
+              height: 300,
+              child: Stack(
+                children: [
+                  Visibility(
+                    visible: controller.currentPosition.value != null,
+                    replacement:
+                        const Center(child: CircularProgressIndicator()),
+                    child: GoogleMap(
+                      initialCameraPosition: CameraPosition(
+                        target: controller.currentPosition.value!,
+                        zoom: 16,
+                      ),
                       onMapCreated: controller.onMapCreated,
                       onCameraMove: controller.onCameraMove,
                       onCameraIdle: controller.onCameraIdle,
@@ -76,16 +81,16 @@ class RegisterCreateProfileChooseLocationView
                         ),
                       ),
                     ),
-                    Align(
-                      alignment: Alignment.center,
-                      child: Icon(
-                        Icons.location_pin,
-                        size: 32,
-                        color: Theme.of(context).colorScheme.primary,
-                      ),
-                    )
-                  ],
-                ),
+                  ),
+                  Align(
+                    alignment: Alignment.center,
+                    child: Icon(
+                      Icons.location_pin,
+                      size: 32,
+                      color: Theme.of(context).colorScheme.primary,
+                    ),
+                  )
+                ],
               ),
             ),
             const SizedBox(height: 12),

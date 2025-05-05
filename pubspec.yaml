@@ -50,6 +50,13 @@ dependencies:
   flutter_typeahead: ^5.2.0
   loader_overlay: ^4.0.4+1
   pretty_dio_logger: ^1.4.0
+  font_awesome_flutter: ^10.8.0
+  cached_network_image: ^3.4.0
+  carousel_slider: ^5.0.0
+  smooth_page_indicator: ^1.2.1
+  shimmer: ^3.0.0
+  flutter_cache_manager: ^3.4.1
+  image_picker: ^1.1.2
 
 dev_dependencies:
   flutter_test:
@@ -78,6 +85,7 @@ flutter:
   # To add assets to your application, add an assets section, like this:
   assets:
     - assets/icons/
+    - assets/images/
   #   - images/a_dot_ham.jpeg
 
   # An image asset can refer to one or more resolution-specific "variants", see

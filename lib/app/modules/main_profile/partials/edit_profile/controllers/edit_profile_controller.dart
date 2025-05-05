@@ -8,11 +8,15 @@ import 'package:geolocator/geolocator.dart';
 import 'package:get/get.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:zest_mobile/app/core/di/service_locator.dart';
+import 'package:zest_mobile/app/core/exception/app_exception.dart';
+import 'package:zest_mobile/app/core/exception/handler/app_exception_handler_info.dart';
 import 'package:zest_mobile/app/core/extension/date_extension.dart';
+import 'package:zest_mobile/app/core/models/enums/app_exception_enum.dart';
 import 'package:zest_mobile/app/core/models/enums/gender_enum.dart';
 import 'package:zest_mobile/app/core/models/forms/update_user_form.dart';
 import 'package:zest_mobile/app/core/models/model/user_model.dart';
 import 'package:zest_mobile/app/core/services/auth_service.dart';
+import 'package:zest_mobile/app/core/services/user_service.dart';
 
 class EditProfileController extends GetxController {
   var form = UpdateUserFormModel().obs;
@@ -21,6 +25,7 @@ class EditProfileController extends GetxController {
   var isLoading = false.obs;
   var originalForm = UpdateUserFormModel().obs;
   final _authService = sl<AuthService>();
+  final _userService = sl<UserService>();
 
   late ImagePicker _imagePicker;
 
@@ -130,5 +135,26 @@ class EditProfileController extends GetxController {
       isDismissible: false,
       enableDrag: false,
     );
+  }
+
+  Future<void> updateProfile(BuildContext context) async {
+    FocusScope.of(context).unfocus();
+    isLoading.value = true;
+    form.value = form.value.clearErrors();
+    try {
+      bool resp = await _userService.editUser(form.value);
+      if (resp) Get.back();
+    } on AppException catch (e) {
+      if (e.type == AppExceptionType.validation) {
+        form.value = form.value.setErrors(e.errors!);
+        return;
+      }
+      // show error snackbar, toast, etc
+      AppExceptionHandlerInfo.handle(e);
+    } catch (e) {
+      Get.snackbar('Error', e.toString());
+    } finally {
+      isLoading.value = false;
+    }
   }
 }

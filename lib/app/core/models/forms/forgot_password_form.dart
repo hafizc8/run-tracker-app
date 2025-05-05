@@ -52,9 +52,4 @@ class ForgotPasswordFormModel extends FormModel<ForgotPasswordFormModel> {
       'email': email,
     };
   }
-
-  @override
-  bool isValidToUpdate(ForgotPasswordFormModel formHasEdited) {
-    throw UnimplementedError();
-  }
 }

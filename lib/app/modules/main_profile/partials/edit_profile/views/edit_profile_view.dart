@@ -259,7 +259,9 @@ class EditProfileView extends GetView<EditProfileController> {
                 ? null
                 : controller.isLoading.value
                     ? null
-                    : () {},
+                    : () {
+                        controller.updateProfile(context);
+                      },
             child: Visibility(
               visible: controller.isLoading.value,
               replacement: const Text('Continue'),

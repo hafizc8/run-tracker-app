@@ -84,9 +84,4 @@ class RegisterCreateProfileFormModel
       'gender': gender.toValue,
     };
   }
-
-  @override
-  bool isValidToUpdate(RegisterCreateProfileFormModel formHasEdited) {
-    throw UnimplementedError();
-  }
 }

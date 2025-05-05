@@ -56,9 +56,4 @@ class LoginFormModel extends FormModel<LoginFormModel> {
       'password': password,
     };
   }
-
-  @override
-  bool isValidToUpdate(LoginFormModel formHasEdited) {
-    throw UnimplementedError();
-  }
 }

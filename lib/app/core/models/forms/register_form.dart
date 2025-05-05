@@ -72,9 +72,4 @@ class RegisterFormModel extends FormModel<RegisterFormModel> {
       'is_agree': isAgree,
     };
   }
-
-  @override
-  bool isValidToUpdate(RegisterFormModel formHasEdited) {
-    throw UnimplementedError();
-  }
 }

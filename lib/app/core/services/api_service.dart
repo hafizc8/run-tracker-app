@@ -5,20 +5,18 @@ import 'package:zest_mobile/app/core/exception/handler/app_exception_handler.dar
 import 'package:zest_mobile/app/core/extension/http_method_extension.dart';
 import 'package:zest_mobile/app/core/models/enums/app_exception_enum.dart';
 import 'package:zest_mobile/app/core/models/enums/http_method_enum.dart';
-import 'dart:io';
 
 class ApiService {
   final DioClient _dioClient;
 
   ApiService(this._dioClient);
 
-  Future<Response> request({
+  Future<Response> request<T>({
     required String path,
     required HttpMethod method,
-    dynamic data,
+    T? data,
     Map<String, String>? headers,
     Map<String, dynamic>? queryParams,
-    File? file,
   }) async {
     try {
       switch (method) {
@@ -30,17 +28,10 @@ class ApiService {
 
         case HttpMethod.post:
         case HttpMethod.put:
-          FormData formData;
-
-          if (file != null) {
-            formData = FormData.fromMap({
-              "file": await MultipartFile.fromFile(file.path,
-                  filename: file.uri.pathSegments.last),
-              "data": data,
-            });
+          if (data is FormData) {
             return await _dioClient.dio.request(
               path,
-              data: formData,
+              data: data,
               options: Options(
                 method: method.methodString,
                 headers: headers,

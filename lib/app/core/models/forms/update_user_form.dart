@@ -1,8 +1,10 @@
 import 'dart:io';
 
 import 'package:zest_mobile/app/core/models/interface/form_model_interface.dart';
+import 'package:zest_mobile/app/core/models/interface/mixin/form_model_mixin.dart';
 
-class UpdateUserFormModel extends FormModel<UpdateUserFormModel> {
+class UpdateUserFormModel extends FormModel<UpdateUserFormModel>
+    with FormModelMixin<UpdateUserFormModel> {
   final String? name;
   final String? email;
   final String? gender;
@@ -93,6 +95,7 @@ class UpdateUserFormModel extends FormModel<UpdateUserFormModel> {
       'latitude': latitude,
       'longitude': longitude,
       'image': image,
+      '_method': 'put',
     };
   }
 }

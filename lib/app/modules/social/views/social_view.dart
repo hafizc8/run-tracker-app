@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import 'package:zest_mobile/app/modules/social/views/partial/create_post_dialog.dart';
 import 'package:zest_mobile/app/modules/social/views/partial/for_you_tab/social_for_you_view.dart';
 import 'package:zest_mobile/app/modules/social/views/partial/your_page_tab/social_your_page_view.dart';
 import '../controllers/social_controller.dart';
@@ -38,12 +37,41 @@ class SocialView extends GetView<SocialController> {
       shadowColor: Colors.black.withOpacity(0.3),
       surfaceTintColor: Colors.transparent,
       actions: [
-        TextButton.icon(
-          onPressed: () {
-            Get.dialog(const CreatePostDialog());
+        PopupMenuButton<String>(
+          onSelected: (value) {
+            // Handle the selection
+            if (value == 'create_event') {
+              // Handle Create Event action
+            } else if (value == 'create_club') {
+              // Handle Create Club action
+            }
           },
-          icon: Icon(Icons.add, size: 20, color: Theme.of(context).colorScheme.primary),
-          label: Text('CREATE', style: Theme.of(context).textTheme.labelSmall?.copyWith(color: Theme.of(context).colorScheme.primary)),
+          surfaceTintColor: Theme.of(context).colorScheme.onPrimary,
+          itemBuilder: (BuildContext context) {
+            return [
+              PopupMenuItem<String>(
+                value: 'create_event',
+                child: Text(
+                  'Create an Event',
+                  style: Theme.of(context).textTheme.bodyMedium?.copyWith(fontWeight: FontWeight.w600),
+                ),
+              ),
+              PopupMenuItem<String>(
+                value: 'create_club',
+                child: Text(
+                  'Create a Club',
+                  style: Theme.of(context).textTheme.bodyMedium?.copyWith(fontWeight: FontWeight.w600),
+                ),
+              ),
+            ];
+          },
+          child: Row(
+            children: [
+              Icon(Icons.add, size: 20, color: Theme.of(context).colorScheme.primary),
+              const SizedBox(width: 3),
+              Text('CREATE', style: Theme.of(context).textTheme.labelSmall?.copyWith(color: Theme.of(context).colorScheme.primary)),
+            ],
+          ),
         ),
         Container(
           height: 24,

@@ -8,15 +8,15 @@ import 'package:zest_mobile/app/modules/auth/login/bindings/login_binding.dart';
 import 'package:zest_mobile/app/modules/auth/login/views/login_view.dart';
 import 'package:zest_mobile/app/modules/auth/register/bindings/register_binding.dart';
 import 'package:zest_mobile/app/modules/auth/register/bindings/register_create_profile_binding.dart';
-import 'package:zest_mobile/app/modules/auth/register/bindings/register_create_profile_loc_binding.dart';
+import 'package:zest_mobile/app/modules/auth/register/bindings/register_verify_email_binding.dart';
 import 'package:zest_mobile/app/modules/auth/register/bindings/register_verify_email_success_binding.dart';
-import 'package:zest_mobile/app/modules/auth/register/views/register_create_profile_choose_location_view.dart';
 import 'package:zest_mobile/app/modules/auth/register/views/register_create_profile_view.dart';
 import 'package:zest_mobile/app/modules/auth/register/views/register_success.dart';
-import 'package:zest_mobile/app/modules/auth/register/views/register_view.dart';
-import 'package:zest_mobile/app/modules/auth/register/bindings/register_verify_email_binding.dart';
-import 'package:zest_mobile/app/modules/auth/register/views/register_verify_email_view.dart';
 import 'package:zest_mobile/app/modules/auth/register/views/register_verify_email_success.dart';
+import 'package:zest_mobile/app/modules/auth/register/views/register_verify_email_view.dart';
+import 'package:zest_mobile/app/modules/auth/register/views/register_view.dart';
+import 'package:zest_mobile/app/modules/choose_location/bindings/choose_location_binding.dart';
+import 'package:zest_mobile/app/modules/choose_location/views/choose_location_view.dart';
 import 'package:zest_mobile/app/modules/home/bindings/main_home_binding.dart';
 import 'package:zest_mobile/app/modules/home/views/main_home_view.dart';
 import 'package:zest_mobile/app/modules/social/bindings/social_binding.dart';
@@ -24,15 +24,18 @@ import 'package:zest_mobile/app/modules/social/views/partial/for_you_tab/social_
 import 'package:zest_mobile/app/modules/social/views/partial/for_you_tab/social_for_you_event_detail_view.dart';
 import 'package:zest_mobile/app/modules/social/views/partial/your_page_tab/social_your_page_activity_detail_view.dart';
 import 'package:zest_mobile/app/modules/social/views/social_view.dart';
-import 'package:zest_mobile/app/modules/activity/bindings/activity_binding.dart';
-import 'package:zest_mobile/app/modules/profile/bindings/badges_binding.dart';
-import 'package:zest_mobile/app/modules/profile/bindings/settings_binding.dart';
-import 'package:zest_mobile/app/modules/activity/views/activity_view.dart';
-import 'package:zest_mobile/app/modules/profile/views/badges_view.dart';
-import 'package:zest_mobile/app/modules/profile/views/profile_view.dart';
-import 'package:zest_mobile/app/modules/profile/views/settings_view.dart';
+import 'package:zest_mobile/app/modules/main_profile/bindings/badges_binding.dart';
+import 'package:zest_mobile/app/modules/main_profile/bindings/settings_binding.dart';
+import 'package:zest_mobile/app/modules/main_profile/partials/activity/bindings/activity_binding.dart';
+import 'package:zest_mobile/app/modules/main_profile/partials/activity/views/activity_view.dart';
+import 'package:zest_mobile/app/modules/main_profile/partials/edit_profile/bindings/edit_profile_binding.dart';
+import 'package:zest_mobile/app/modules/main_profile/partials/edit_profile/views/edit_profile_view.dart';
+import 'package:zest_mobile/app/modules/main_profile/views/badges_view.dart';
+import 'package:zest_mobile/app/modules/main_profile/views/main_profile_view.dart';
+import 'package:zest_mobile/app/modules/main_profile/views/settings_view.dart';
 import 'package:zest_mobile/app/modules/splash/bindings/splash_binding.dart';
 import 'package:zest_mobile/app/modules/splash/views/splash_view.dart';
+
 import '../modules/home/bindings/home_binding.dart';
 import '../modules/home/views/home_view.dart';
 import 'app_routes.dart';
@@ -79,9 +82,9 @@ class AppPages {
       binding: RegisterCreateProfileBinding(),
     ),
     GetPage(
-      name: AppRoutes.registerCreateProfileChooseLocation,
-      page: () => const RegisterCreateProfileChooseLocationView(),
-      binding: RegisterCreateProfileLocBinding(),
+      name: AppRoutes.chooseLocation,
+      page: () => const ChooseLocationView(),
+      binding: ChooseLocationBinding(),
     ),
     GetPage(
       name: AppRoutes.registerSuccess,
@@ -130,8 +133,8 @@ class AppPages {
     ),
     
     GetPage(
-      name: AppRoutes.profile,
-      page: () => const ProfileView(),
+      name: AppRoutes.profileMain,
+      page: () => const MainProfileView(),
     ),
     GetPage(
       name: AppRoutes.settings,
@@ -147,6 +150,11 @@ class AppPages {
       name: AppRoutes.badges,
       page: () => const BadgesView(),
       binding: BadgesBinding(),
+    ),
+    GetPage(
+      name: AppRoutes.profileEdit,
+      page: () => const EditProfileView(),
+      binding: EditProfileBinding(),
     ),
   ];
 }

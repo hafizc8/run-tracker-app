@@ -1,11 +1,11 @@
 import 'package:flutter/material.dart';
 
 class CustomChip extends StatelessWidget {
-  Widget child;
-  Function? onTap;
-  Color backgroundColor;
+  final Widget child;
+  final Function? onTap;
+  final Color backgroundColor;
 
-  CustomChip({
+  const CustomChip({
     super.key,
     required this.child,
     this.onTap,

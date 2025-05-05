@@ -24,6 +24,7 @@ abstract class AppRoutes {
 
   // profile
   static const profileMain = '/profile/main';
+  static const profileUser = '/profile/user';
   static const profileEdit = '/profile/edit';
   static const settings = '/settings';
   static const activity = '/activity';

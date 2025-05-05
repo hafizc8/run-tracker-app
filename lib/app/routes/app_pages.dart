@@ -25,6 +25,8 @@ import 'package:zest_mobile/app/modules/main_profile/partials/activity/bindings/
 import 'package:zest_mobile/app/modules/main_profile/partials/activity/views/activity_view.dart';
 import 'package:zest_mobile/app/modules/main_profile/partials/edit_profile/bindings/edit_profile_binding.dart';
 import 'package:zest_mobile/app/modules/main_profile/partials/edit_profile/views/edit_profile_view.dart';
+import 'package:zest_mobile/app/modules/main_profile/partials/profile/bindings/profile_binding.dart';
+import 'package:zest_mobile/app/modules/main_profile/partials/profile/views/profile_view.dart';
 import 'package:zest_mobile/app/modules/main_profile/views/badges_view.dart';
 import 'package:zest_mobile/app/modules/main_profile/views/main_profile_view.dart';
 import 'package:zest_mobile/app/modules/main_profile/views/settings_view.dart';
@@ -131,6 +133,11 @@ class AppPages {
       name: AppRoutes.profileEdit,
       page: () => const EditProfileView(),
       binding: EditProfileBinding(),
+    ),
+    GetPage(
+      name: AppRoutes.profileUser,
+      page: () => const ProfileView(),
+      binding: ProfileBinding(),
     ),
   ];
 }

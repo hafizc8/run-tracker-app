@@ -1,9 +1,9 @@
 import 'package:get/get.dart';
-import 'package:zest_mobile/app/modules/main_profile/controllers/profile_controller.dart';
+import 'package:zest_mobile/app/modules/main_profile/controllers/main_profile_controller.dart';
 
 class TabBarController extends GetxController {
   final RxInt selectedIndex = 0.obs;
-  final ProfileController profileController = Get.find();
+  final ProfileMainController profileController = Get.find();
 
   void changeTabIndex(int index) {
     selectedIndex.value = index;

@@ -10,9 +10,9 @@ import 'package:zest_mobile/app/modules/main_profile/widgets/custom_tab_bar/view
 import 'package:zest_mobile/app/routes/app_routes.dart';
 import 'package:cached_network_image/cached_network_image.dart';
 
-import '../controllers/profile_controller.dart';
+import '../controllers/main_profile_controller.dart';
 
-class MainProfileView extends GetView<ProfileController> {
+class MainProfileView extends GetView<ProfileMainController> {
   const MainProfileView({super.key});
   @override
   Widget build(BuildContext context) {

@@ -123,14 +123,14 @@ class MainProfileView extends GetView<ProfileMainController> {
                           spacing: 5,
                           runSpacing: 5,
                           children: [
-                            CustomChip(
-                              child: const Text('10k Following'),
+                            const CustomChip(
+                              child: Text('10k Following'),
                             ),
-                            CustomChip(
-                              child: const Text('10k Following'),
+                            const CustomChip(
+                              child: Text('10k Following'),
                             ),
-                            CustomChip(
-                              child: const Text('10 Clubs'),
+                            const CustomChip(
+                              child: Text('10 Clubs'),
                             ),
                             Container(
                               padding: const EdgeInsets.symmetric(

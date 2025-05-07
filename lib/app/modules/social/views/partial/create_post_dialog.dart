@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:flutter/widgets.dart';
 import 'package:get/get.dart';
 
 class CreatePostDialog extends StatelessWidget {
@@ -31,15 +30,20 @@ class CreatePostDialog extends StatelessWidget {
                     children: [
                       Text(
                         'What\'s up Yola?',
-                        style: Theme.of(context).textTheme.bodyMedium?.copyWith(fontWeight: FontWeight.w600),
+                        style: Theme.of(context)
+                            .textTheme
+                            .bodyMedium
+                            ?.copyWith(fontWeight: FontWeight.w600),
                       ),
                       const SizedBox(height: 4),
                       Text(
                         'Share a photo, post, or activity with your followers!',
                         style: Theme.of(context).textTheme.bodySmall?.copyWith(
-                          fontWeight: FontWeight.w600,
-                          color: Theme.of(context).colorScheme.onSurfaceVariant,
-                        ),
+                              fontWeight: FontWeight.w600,
+                              color: Theme.of(context)
+                                  .colorScheme
+                                  .onSurfaceVariant,
+                            ),
                       ),
                     ],
                   ),
@@ -47,48 +51,51 @@ class CreatePostDialog extends StatelessWidget {
               ],
             ),
             const SizedBox(height: 12),
-        
+
             // Input Field
             TextFormField(
               maxLines: 4,
               decoration: InputDecoration(
                 hintText: 'Jot down your activity here',
-                border: OutlineInputBorder(borderRadius: BorderRadius.circular(12)),
+                border:
+                    OutlineInputBorder(borderRadius: BorderRadius.circular(12)),
               ),
             ),
-        
+
             const SizedBox(height: 12),
-        
+
             // Optional: Media Upload / Tags / Location
             Row(
               children: [
                 TextButton.icon(
-                  onPressed: () {}, 
+                  onPressed: () {},
                   icon: const Icon(
                     Icons.photo,
                     size: 18,
-                  ), 
+                  ),
                   label: Text(
                     'Add Photo or Video',
                     style: Theme.of(context).textTheme.headlineSmall?.copyWith(
-                      fontSize: 12,
-                    ),
+                          fontSize: 12,
+                        ),
                   ),
                   style: ButtonStyle(
-                    backgroundColor: MaterialStateProperty.all(Theme.of(context).colorScheme.primary.withOpacity(0.2)),
+                    backgroundColor: MaterialStateProperty.all(
+                        Theme.of(context).colorScheme.primary.withOpacity(0.2)),
                     shape: MaterialStateProperty.all(
                       RoundedRectangleBorder(
                         borderRadius: BorderRadius.circular(20),
                       ),
                     ),
-                    padding: MaterialStateProperty.all(const EdgeInsets.symmetric(horizontal: 15)),
+                    padding: MaterialStateProperty.all(
+                        const EdgeInsets.symmetric(horizontal: 15)),
                   ),
                 ),
               ],
             ),
-        
+
             const SizedBox(height: 20),
-        
+
             // Action Button
             Row(
               children: [
@@ -98,9 +105,11 @@ class CreatePostDialog extends StatelessWidget {
                   child: OutlinedButtonTheme(
                     data: OutlinedButtonThemeData(
                       style: OutlinedButton.styleFrom(
-                        backgroundColor: Theme.of(context).colorScheme.onPrimary,
+                        backgroundColor:
+                            Theme.of(context).colorScheme.onPrimary,
                         minimumSize: const Size.fromHeight(40),
-                        side: BorderSide(color: Theme.of(context).colorScheme.primary),
+                        side: BorderSide(
+                            color: Theme.of(context).colorScheme.primary),
                       ),
                     ),
                     child: OutlinedButton(
@@ -112,7 +121,7 @@ class CreatePostDialog extends StatelessWidget {
                   ),
                 ),
                 const SizedBox(width: 12),
-        
+
                 // Tombol Post (70%)
                 Expanded(
                   flex: 7,
@@ -120,7 +129,8 @@ class CreatePostDialog extends StatelessWidget {
                     data: ElevatedButtonThemeData(
                       style: ElevatedButton.styleFrom(
                         backgroundColor: Theme.of(context).colorScheme.primary,
-                        foregroundColor: Theme.of(context).colorScheme.onPrimary,
+                        foregroundColor:
+                            Theme.of(context).colorScheme.onPrimary,
                         minimumSize: const Size.fromHeight(40),
                       ),
                     ),
@@ -132,10 +142,8 @@ class CreatePostDialog extends StatelessWidget {
                     ),
                   ),
                 ),
-        
               ],
             ),
-        
           ],
         ),
       ),

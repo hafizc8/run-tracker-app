@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:zest_mobile/app/modules/social/views/partial/for_you_tab/social_for_you_view.dart';
 import 'package:zest_mobile/app/modules/social/views/partial/your_page_tab/social_your_page_view.dart';
+import 'package:zest_mobile/app/routes/app_routes.dart';
 import '../controllers/social_controller.dart';
 import 'package:zest_mobile/app/core/shared/theme/color_schemes.dart';
 
@@ -31,7 +32,10 @@ class SocialView extends GetView<SocialController> {
     return AppBar(
       title: Text(
         'Social',
-        style: Theme.of(context).textTheme.headlineMedium?.copyWith(fontWeight: FontWeight.w600),
+        style: Theme.of(context)
+            .textTheme
+            .headlineMedium
+            ?.copyWith(fontWeight: FontWeight.w600),
       ),
       elevation: 4,
       shadowColor: Colors.black.withOpacity(0.3),
@@ -53,23 +57,34 @@ class SocialView extends GetView<SocialController> {
                 value: 'create_event',
                 child: Text(
                   'Create an Event',
-                  style: Theme.of(context).textTheme.bodyMedium?.copyWith(fontWeight: FontWeight.w600),
+                  style: Theme.of(context)
+                      .textTheme
+                      .bodyMedium
+                      ?.copyWith(fontWeight: FontWeight.w600),
                 ),
               ),
               PopupMenuItem<String>(
                 value: 'create_club',
                 child: Text(
                   'Create a Club',
-                  style: Theme.of(context).textTheme.bodyMedium?.copyWith(fontWeight: FontWeight.w600),
+                  style: Theme.of(context)
+                      .textTheme
+                      .bodyMedium
+                      ?.copyWith(fontWeight: FontWeight.w600),
                 ),
               ),
             ];
           },
           child: Row(
             children: [
-              Icon(Icons.add, size: 20, color: Theme.of(context).colorScheme.primary),
+              Icon(Icons.add,
+                  size: 20, color: Theme.of(context).colorScheme.primary),
               const SizedBox(width: 3),
-              Text('CREATE', style: Theme.of(context).textTheme.labelSmall?.copyWith(color: Theme.of(context).colorScheme.primary)),
+              Text('CREATE',
+                  style: Theme.of(context)
+                      .textTheme
+                      .labelSmall
+                      ?.copyWith(color: Theme.of(context).colorScheme.primary)),
             ],
           ),
         ),
@@ -81,14 +96,18 @@ class SocialView extends GetView<SocialController> {
         ),
         Padding(
           padding: const EdgeInsets.only(right: 12, left: 10),
-          child: Container(
-            width: 36,
-            height: 36,
-            decoration: BoxDecoration(
-              color: Theme.of(context).colorScheme.primary,
-              shape: BoxShape.circle,
+          child: GestureDetector(
+            onTap: () => Get.toNamed(AppRoutes.socialSearch),
+            child: Container(
+              width: 36,
+              height: 36,
+              decoration: BoxDecoration(
+                color: Theme.of(context).colorScheme.primary,
+                shape: BoxShape.circle,
+              ),
+              child: Icon(Icons.search,
+                  size: 18, color: Theme.of(context).colorScheme.onPrimary),
             ),
-            child: Icon(Icons.search, size: 18, color: Theme.of(context).colorScheme.onPrimary),
           ),
         ),
       ],
@@ -102,14 +121,17 @@ class SocialView extends GetView<SocialController> {
         height: 48,
         decoration: BoxDecoration(
           color: Colors.grey.shade200,
-          borderRadius: const BorderRadius.only(topLeft: Radius.circular(12), topRight: Radius.circular(12)),
+          borderRadius: const BorderRadius.only(
+              topLeft: Radius.circular(12), topRight: Radius.circular(12)),
         ),
         child: Column(
           children: [
             TabBar(
               indicator: BoxDecoration(
                 color: lightColorScheme.primary,
-                borderRadius: const BorderRadius.only(topLeft: Radius.circular(12), topRight: Radius.circular(12)),
+                borderRadius: const BorderRadius.only(
+                    topLeft: Radius.circular(12),
+                    topRight: Radius.circular(12)),
               ),
               indicatorSize: TabBarIndicatorSize.tab,
               indicatorWeight: 1,

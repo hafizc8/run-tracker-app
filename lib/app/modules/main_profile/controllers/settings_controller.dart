@@ -9,8 +9,8 @@ import 'package:zest_mobile/app/routes/app_routes.dart';
 
 class SettingsController extends GetxController {
   var isLoading = false.obs;
-  var _allowNotif = false.obs;
-  var _allowEmailnotif = false.obs;
+  var allowNotif = false.obs;
+  var allowEmailnotif = false.obs;
   final _authService = sl<AuthService>();
 
   void logout() async {
@@ -131,9 +131,9 @@ class SettingsController extends GetxController {
                       style: Theme.of(context).textTheme.bodyLarge,
                     ),
                     trailing: Switch(
-                      value: _allowNotif.value,
+                      value: allowNotif.value,
                       onChanged: (value) {
-                        _allowNotif.toggle();
+                        allowNotif.toggle();
                       },
                     ),
                   ),
@@ -146,9 +146,9 @@ class SettingsController extends GetxController {
                       style: Theme.of(context).textTheme.bodyLarge,
                     ),
                     trailing: Switch(
-                      value: _allowEmailnotif.value,
+                      value: allowEmailnotif.value,
                       onChanged: (value) {
-                        _allowEmailnotif.toggle();
+                        allowEmailnotif.toggle();
                       },
                     ),
                   ),

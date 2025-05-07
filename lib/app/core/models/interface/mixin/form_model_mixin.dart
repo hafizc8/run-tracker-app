@@ -10,19 +10,36 @@ mixin FormModelMixin<T> {
   Future<FormData> toFormData() async {
     final map = toJson();
     final formMap = <String, dynamic>{};
+    final files = <MapEntry<String, MultipartFile>>[];
 
-    map.forEach((key, value) async {
+    for (var entry in map.entries) {
+      final key = entry.key;
+      final value = entry.value;
+
       if (value != null) {
         if (value.runtimeType is File) {
           File file = value as File;
-          formMap[key] = await MultipartFile.fromFile(file.path,
-              filename: file.path.split('/').last);
+          files.add(
+            MapEntry(
+              key,
+              await MultipartFile.fromFile(file.path, filename: value.path.split('/').last),
+            ),
+          );
+        } else if (value is List<File>) {
+          for (var file in value) {
+            files.add(
+              MapEntry(
+                '$key[]',
+                await MultipartFile.fromFile(file.path, filename: file.path.split('/').last),
+              ),
+            );
+          }
         } else {
           formMap[key] = value;
         }
       }
-    });
+    }
 
-    return FormData.fromMap(formMap);
+    return FormData.fromMap(formMap)..files.addAll(files);
   }
 }

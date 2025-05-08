@@ -7,10 +7,4 @@ class SocialController extends GetxController {
   dynamic selectChip(YourPageChip chip) {
     selectedChip.value = chip;
   }
-
-  @override
-  void onInit() {
-    super.onInit();
-    print('SocialController onInit');
-  }
 }

@@ -55,9 +55,11 @@ class CreatePostDialog extends GetView<SocialController> {
                       Text(
                         'Share a photo, post, or activity with your followers!',
                         style: Theme.of(context).textTheme.bodySmall?.copyWith(
-                          fontWeight: FontWeight.w600,
-                          color: Theme.of(context).colorScheme.onSurfaceVariant,
-                        ),
+                              fontWeight: FontWeight.w600,
+                              color: Theme.of(context)
+                                  .colorScheme
+                                  .onSurfaceVariant,
+                            ),
                       ),
                     ],
                   ),
@@ -144,9 +146,9 @@ class CreatePostDialog extends GetView<SocialController> {
                 );
               }
             ),
-        
+
             const SizedBox(height: 20),
-        
+
             // Action Button
             Row(
               children: [
@@ -156,9 +158,11 @@ class CreatePostDialog extends GetView<SocialController> {
                   child: OutlinedButtonTheme(
                     data: OutlinedButtonThemeData(
                       style: OutlinedButton.styleFrom(
-                        backgroundColor: Theme.of(context).colorScheme.onPrimary,
+                        backgroundColor:
+                            Theme.of(context).colorScheme.onPrimary,
                         minimumSize: const Size.fromHeight(40),
-                        side: BorderSide(color: Theme.of(context).colorScheme.primary),
+                        side: BorderSide(
+                            color: Theme.of(context).colorScheme.primary),
                       ),
                     ),
                     child: OutlinedButton(
@@ -170,7 +174,7 @@ class CreatePostDialog extends GetView<SocialController> {
                   ),
                 ),
                 const SizedBox(width: 12),
-        
+
                 // Tombol Post (70%)
                 Expanded(
                   flex: 7,
@@ -178,7 +182,8 @@ class CreatePostDialog extends GetView<SocialController> {
                     data: ElevatedButtonThemeData(
                       style: ElevatedButton.styleFrom(
                         backgroundColor: Theme.of(context).colorScheme.primary,
-                        foregroundColor: Theme.of(context).colorScheme.onPrimary,
+                        foregroundColor:
+                            Theme.of(context).colorScheme.onPrimary,
                         minimumSize: const Size.fromHeight(40),
                       ),
                     ),
@@ -190,10 +195,8 @@ class CreatePostDialog extends GetView<SocialController> {
                     ),
                   ),
                 ),
-        
               ],
             ),
-        
           ],
         ),
       ),

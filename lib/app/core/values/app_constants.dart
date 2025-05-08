@@ -31,6 +31,7 @@ class AppConstants {
       'https://maps.googleapis.com/maps/api/place/details/json?place_id=$placeId&key=${AppConstants.googleApiKey}';
   // User
   static const String user = "/user";
+  static const String userOther = "/user/other";
   static const String updateProfile = "/user";
 
   // Post

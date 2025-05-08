@@ -24,6 +24,8 @@ import 'package:zest_mobile/app/modules/main_profile/partials/profile/views/prof
 import 'package:zest_mobile/app/modules/social/bindings/social_binding.dart';
 import 'package:zest_mobile/app/modules/social/views/partial/for_you_tab/social_for_you_event_detail_invite_friend_view.dart';
 import 'package:zest_mobile/app/modules/social/views/partial/for_you_tab/social_for_you_event_detail_view.dart';
+import 'package:zest_mobile/app/modules/social/views/partial/search/bindings/social_search_binding.dart';
+import 'package:zest_mobile/app/modules/social/views/partial/search/views/social_search_view.dart';
 import 'package:zest_mobile/app/modules/social/views/partial/your_page_tab/social_your_page_activity_detail_view.dart';
 import 'package:zest_mobile/app/modules/social/views/social_view.dart';
 import 'package:zest_mobile/app/modules/main_profile/bindings/badges_binding.dart';
@@ -133,7 +135,7 @@ class AppPages {
       name: AppRoutes.socialYourPageEventDetailInviteFriend,
       page: () => const SocialForYouEventDetaiInviteFriendView(),
     ),
-    
+
     GetPage(
       name: AppRoutes.profileMain,
       page: () => const MainProfileView(),
@@ -162,6 +164,11 @@ class AppPages {
       name: AppRoutes.profileUser,
       page: () => const ProfileView(),
       binding: ProfileBinding(),
+    ),
+    GetPage(
+      name: AppRoutes.socialSearch,
+      page: () => const SocialSearchView(),
+      binding: SocialSearchBinding(),
     ),
   ];
 }

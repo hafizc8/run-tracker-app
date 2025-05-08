@@ -1,6 +1,6 @@
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:carousel_slider/carousel_slider.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/widgets.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:get/get.dart';
@@ -9,9 +9,7 @@ import 'package:zest_mobile/app/core/shared/widgets/card_activity.dart';
 import 'package:zest_mobile/app/core/shared/widgets/custom_chip.dart';
 import 'package:zest_mobile/app/core/shared/widgets/shimmer_loading_circle.dart';
 import 'package:zest_mobile/app/modules/main_profile/partials/profile/controllers/profile_controller.dart';
-
 import 'package:zest_mobile/app/routes/app_routes.dart';
-import 'package:cached_network_image/cached_network_image.dart';
 
 class ProfileView extends GetView<ProfileController> {
   const ProfileView({super.key});

@@ -142,14 +142,14 @@ class CustomTabBar extends GetView<TabBarController> {
                           decoration: const BoxDecoration(
                             color: Colors.transparent,
                           ),
-                          child: Column(
+                          child: const Column(
                             mainAxisAlignment: MainAxisAlignment.center,
                             children: [
-                              const Placeholder(
+                              Placeholder(
                                 fallbackHeight: 40,
                                 fallbackWidth: 80,
                               ),
-                              const SizedBox(height: 5),
+                              SizedBox(height: 5),
                               Column(
                                 children: [
                                   Text(
@@ -169,14 +169,14 @@ class CustomTabBar extends GetView<TabBarController> {
                           decoration: const BoxDecoration(
                             color: Colors.transparent,
                           ),
-                          child: Column(
+                          child: const Column(
                             mainAxisAlignment: MainAxisAlignment.center,
                             children: [
-                              const Placeholder(
+                              Placeholder(
                                 fallbackHeight: 40,
                                 fallbackWidth: 80,
                               ),
-                              const SizedBox(height: 5),
+                              SizedBox(height: 5),
                               Column(
                                 children: [
                                   Text(
@@ -196,14 +196,14 @@ class CustomTabBar extends GetView<TabBarController> {
                           decoration: const BoxDecoration(
                             color: Colors.transparent,
                           ),
-                          child: Column(
+                          child: const Column(
                             mainAxisAlignment: MainAxisAlignment.center,
                             children: [
-                              const Placeholder(
+                              Placeholder(
                                 fallbackHeight: 40,
                                 fallbackWidth: 80,
                               ),
-                              const SizedBox(height: 5),
+                              SizedBox(height: 5),
                               Column(
                                 children: [
                                   Text(
@@ -223,14 +223,14 @@ class CustomTabBar extends GetView<TabBarController> {
                           decoration: const BoxDecoration(
                             color: Colors.transparent,
                           ),
-                          child: Column(
+                          child: const Column(
                             mainAxisAlignment: MainAxisAlignment.center,
                             children: [
-                              const Placeholder(
+                              Placeholder(
                                 fallbackHeight: 40,
                                 fallbackWidth: 80,
                               ),
-                              const SizedBox(height: 5),
+                              SizedBox(height: 5),
                               Column(
                                 children: [
                                   Text(

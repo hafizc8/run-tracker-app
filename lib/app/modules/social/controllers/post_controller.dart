@@ -1,9 +1,9 @@
 import 'dart:io';
 
+import 'package:file_picker/file_picker.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
-import 'package:image_picker/image_picker.dart';
 import 'package:zest_mobile/app/core/exception/app_exception.dart';
 import 'package:zest_mobile/app/core/exception/handler/app_exception_handler_info.dart';
 import 'package:zest_mobile/app/core/di/service_locator.dart';
@@ -20,7 +20,6 @@ class PostController extends GetxController {
   final AuthService _authService = sl<AuthService>();
   final PostService _postService = sl<PostService>();
   final LocationService _locationService = sl<LocationService>();
-  late ImagePicker _imagePicker;
   RxList<PostModel?> posts = <PostModel?>[].obs;
   RxBool isLoadingCreatePost = false.obs;
   RxBool isLoadingGetAllPost = false.obs;
@@ -35,7 +34,6 @@ class PostController extends GetxController {
   void onInit() {
     super.onInit();
     getAllPost();
-    _imagePicker = ImagePicker();
     setCurrentLocation();
   }
 
@@ -87,10 +85,14 @@ class PostController extends GetxController {
 
   // Pick multiple images and videos.
   dynamic pickMultipleMedia() async {
-    List<XFile> medias = await _imagePicker.pickMultipleMedia();
-    form.value = form.value.copyWith(galleries: medias.map((e) => File(e.path)).toList());
+    FilePickerResult? result = await FilePicker.platform.pickFiles(
+      type: FileType.media,
+      allowMultiple: true,
+    );
 
-    Get.snackbar("Success", "${medias.length} media selected");
+    if (result != null) {
+      form.value = form.value.copyWith(galleries: result.xFiles.map((e) => File(e.path)).toList());
+    }
   }
 
   Future<void> createPost(BuildContext context) async {

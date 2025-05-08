@@ -31,15 +31,17 @@ class CreatePostDialog extends GetView<SocialController> {
             Row(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                CachedNetworkImage(
-                  imageUrl: postController.user?.imageUrl ?? '',
-                  width: 35,
-                  placeholder: (context, url) => const ShimmerLoadingCircle(size: 25),
-                  errorWidget: (context, url, error) =>
-                      const CircleAvatar(
-                        radius: 20,
-                        backgroundImage: AssetImage('assets/images/empty_profile.png',
-                      ),
+                ClipOval(
+                  child: CachedNetworkImage(
+                    imageUrl: postController.user?.imageUrl ?? '',
+                    width: 35,
+                    height: 35,
+                    fit: BoxFit.cover,
+                    placeholder: (context, url) => const ShimmerLoadingCircle(size: 35),
+                    errorWidget: (context, url, error) => const CircleAvatar(
+                      radius: 32,
+                      backgroundImage: AssetImage('assets/images/empty_profile.png'),
+                    ),
                   ),
                 ),
                 const SizedBox(width: 8),

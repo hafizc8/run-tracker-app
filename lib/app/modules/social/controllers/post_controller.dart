@@ -103,6 +103,8 @@ class PostController extends GetxController {
       Get.back();
       bool resp = await _postService.create(form.value);
       if (resp) {
+        hasReacheMax.value = false;
+        pagePost = 1;
         getAllPost();
         Get.snackbar("Success", "Successfully create post");
       }

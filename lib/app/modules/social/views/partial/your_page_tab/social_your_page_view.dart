@@ -36,6 +36,7 @@ class SocialYourPageView extends GetView<SocialController> {
         }
 
         return SingleChildScrollView(
+          controller: controller.yourPageScrollController,
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [

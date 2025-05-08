@@ -1,45 +1,7 @@
 import 'package:zest_mobile/app/core/models/interface/model_interface.dart';
 
-class PostAll extends Model<PostAll> {
-    PostAll({
-        required this.pagination,
-        required this.data,
-    });
-
-    final Pagination? pagination;
-    final List<PostData> data;
-
-    @override
-      PostAll copyWith({
-        Pagination? pagination,
-        List<PostData>? data,
-    }) {
-        return PostAll(
-            pagination: pagination ?? this.pagination,
-            data: data ?? this.data,
-        );
-    }
-
-    factory PostAll.fromJson(Map<String, dynamic> json){ 
-        return PostAll(
-            pagination: json["pagination"] == null ? null : Pagination.fromJson(json["pagination"]),
-            data: json["data"] == null ? [] : List<PostData>.from(json["data"]!.map((x) => PostData.fromJson(x))),
-        );
-    }
-
-    @override
-  Map<String, dynamic> toJson() => {
-        "pagination": pagination?.toJson(),
-        "data": data.map((x) => x.toJson()).toList(),
-    };
-
-    @override
-    List<Object?> get props => [
-    pagination, data, ];
-}
-
-class PostData extends Model<PostData> {
-    PostData({
+class PostModel extends Model<PostModel> {
+    PostModel({
         required this.id,
         required this.title,
         required this.content,
@@ -64,7 +26,7 @@ class PostData extends Model<PostData> {
     final List<Gallery> galleries;
 
     @override
-  PostData copyWith({
+  PostModel copyWith({
         String? id,
         String? title,
         String? content,
@@ -76,7 +38,7 @@ class PostData extends Model<PostData> {
         User? user,
         List<Gallery>? galleries,
     }) {
-        return PostData(
+        return PostModel(
             id: id ?? this.id,
             title: title ?? this.title,
             content: content ?? this.content,
@@ -90,8 +52,8 @@ class PostData extends Model<PostData> {
         );
     }
 
-    factory PostData.fromJson(Map<String, dynamic> json){ 
-        return PostData(
+    factory PostModel.fromJson(Map<String, dynamic> json){ 
+        return PostModel(
             id: json["id"],
             title: json["title"],
             content: json["content"],

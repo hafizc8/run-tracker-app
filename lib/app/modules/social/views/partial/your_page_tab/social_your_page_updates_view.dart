@@ -22,47 +22,49 @@ class SocialYourPageUpdatesView extends GetView<SocialController> {
             if (postController.isLoadingCreatePost.value) {
               return const LoadingCreatePost();
             }
-
+    
             return _buildActivityPrompt(context);
           }
         ),
         const SizedBox(height: 10),
-        Obx(
-          () {
-            if (postController.isLoadingGetAllPost.value) {
-              return const ShimmerLoadingList(
-                itemCount: 5,
-                itemHeight: 120,
-                itemSpacing: 15,
-                padding: EdgeInsets.all(0),
-              );
-            }
-
-            if (postController.posts.value?.data.isEmpty ?? true) {
-              return SizedBox(
-                height: 150,
-                child: Center(
-                  child: Text(
-                    'No Activity',
-                    style: Theme.of(context).textTheme.headlineSmall
-                  ),
-                ),
-              );
-            }
-
-            return ListView.builder(
-              itemCount: postController.posts.value?.data.length,
-              shrinkWrap: true,
-              physics: const NeverScrollableScrollPhysics(),
-              itemBuilder: (context, index) {
-                return ActivityCard(
-                  postData: postController.posts.value!.data[index], 
-                  onTap: () => Get.toNamed(AppRoutes.socialYourPageActivityDetail)
-                );
-              }
+        Obx(() {
+          if (postController.isLoadingGetAllPost.value && postController.pagePost == 1) {
+            return const ShimmerLoadingList(
+              itemCount: 5,
+              itemHeight: 120,
+              itemSpacing: 15,
+              padding: EdgeInsets.all(0),
             );
           }
-        ),
+        
+          if (postController.posts.isEmpty) {
+            return Center(
+              child: Text(
+                'No Activity',
+                style: Theme.of(context).textTheme.headlineSmall,
+              ),
+            );
+          }
+        
+          return ListView.builder(
+            shrinkWrap: true,
+            physics: const NeverScrollableScrollPhysics(),
+            itemCount: postController.posts.length + (postController.hasReacheMax.value ? 0 : 1),
+            itemBuilder: (context, index) {
+              if (index == postController.posts.length) {
+                return const Padding(
+                  padding: EdgeInsets.symmetric(vertical: 10),
+                  child: Center(child: CircularProgressIndicator()),
+                );
+              }
+          
+              return ActivityCard(
+                postData: postController.posts[index]!,
+                onTap: () => Get.toNamed(AppRoutes.socialYourPageActivityDetail),
+              );
+            },
+          );
+        }),
       ],
     );
   }

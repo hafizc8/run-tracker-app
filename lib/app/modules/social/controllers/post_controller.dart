@@ -9,7 +9,7 @@ import 'package:zest_mobile/app/core/exception/handler/app_exception_handler_inf
 import 'package:zest_mobile/app/core/di/service_locator.dart';
 import 'package:zest_mobile/app/core/models/enums/app_exception_enum.dart';
 import 'package:zest_mobile/app/core/models/forms/create_post_form.dart';
-import 'package:zest_mobile/app/core/models/model/post_all_model.dart';
+import 'package:zest_mobile/app/core/models/model/post_model.dart';
 import 'package:zest_mobile/app/core/models/model/user_model.dart';
 import 'package:zest_mobile/app/core/services/auth_service.dart';
 import 'package:zest_mobile/app/core/services/location_service.dart';
@@ -21,12 +21,15 @@ class PostController extends GetxController {
   final PostService _postService = sl<PostService>();
   final LocationService _locationService = sl<LocationService>();
   late ImagePicker _imagePicker;
-  Rx<PostAll?> posts = Rx<PostAll?>(null);
+  RxList<PostModel?> posts = <PostModel?>[].obs;
   RxBool isLoadingCreatePost = false.obs;
   RxBool isLoadingGetAllPost = false.obs;
   UserModel? get user => _authService.user;
   var form = CreatePostFormModel().obs;
   Rx<LatLng> latLng = const LatLng(-6.2615, 106.8106).obs;
+  var pagePost = 1;
+  var hasReacheMax = false.obs;
+  final postScrollController = ScrollController();
 
   @override
   void onInit() {
@@ -36,16 +39,38 @@ class PostController extends GetxController {
     setCurrentLocation();
   }
 
+  @override
+  void onClose() {
+    postScrollController.dispose();
+    super.onClose();
+  }
+
   Future<void> setCurrentLocation() async {
     latLng.value = await _locationService.getCurrentLocation();
   }
 
   Future<void> getAllPost() async {
-    isLoadingGetAllPost.value = true;
+    if (isLoadingGetAllPost.value || hasReacheMax.value) return;
+
     try {
-      posts.value = await _postService.getAll();
+      isLoadingGetAllPost.value = true;
+
+      final response = await _postService.getAll(page: pagePost);
+
+      // Deteksi akhir halaman dengan lebih akurat
+      if ((response.pagination.next == null || response.pagination.next!.isEmpty) || 
+          response.data.isEmpty || 
+          response.data.length < 20) {
+        hasReacheMax.value = true;
+      }
+
+      // Tambahkan hasil ke list
+      posts.addAll(response.data);
+
+      // Increment page terakhir
+      pagePost++;
+
     } on AppException catch (e) {
-      // show error snackbar, toast, etc
       AppExceptionHandlerInfo.handle(e);
     } catch (e) {
       Get.snackbar('Error', e.toString());
@@ -53,6 +78,7 @@ class PostController extends GetxController {
       isLoadingGetAllPost.value = false;
     }
   }
+
 
   dynamic openCreatePostDialog() {
     form.value = CreatePostFormModel().copyWith(latitude: latLng.value.latitude, longitude: latLng.value.longitude);

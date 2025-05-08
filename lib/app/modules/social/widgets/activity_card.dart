@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:zest_mobile/app/core/models/model/post_all_model.dart';
+import 'package:zest_mobile/app/core/models/model/post_model.dart';
 import 'package:zest_mobile/app/modules/social/widgets/post_media.dart';
 import 'package:zest_mobile/app/modules/social/widgets/social_action_button.dart';
 import 'package:zest_mobile/app/modules/social/widgets/statistic_column.dart';
@@ -14,7 +14,7 @@ class ActivityCard extends StatelessWidget {
   });
 
   void Function()? onTap;
-  PostData postData;
+  PostModel postData;
 
   @override
   Widget build(BuildContext context) {

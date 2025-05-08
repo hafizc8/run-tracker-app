@@ -13,9 +13,9 @@ class DioClient {
             baseUrl:
                 kDebugMode ? AppConstants.baseUrlDev : AppConstants.baseUrl,
             headers: {'Accept': 'application/json'},
-            connectTimeout: const Duration(seconds: 10),
-            receiveTimeout: const Duration(seconds: 10),
-            sendTimeout: const Duration(seconds: 10),
+            connectTimeout: const Duration(seconds: 120),
+            receiveTimeout: const Duration(seconds: 120),
+            sendTimeout: const Duration(seconds: 120),
           ),
         ) {
     _dio.interceptors.addAll([

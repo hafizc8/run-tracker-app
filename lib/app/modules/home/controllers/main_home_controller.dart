@@ -32,7 +32,7 @@ class MainHomeController extends GetxController {
 
   @override
   void onInit() {
-    // me();
+    me();
     super.onInit();
   }
 

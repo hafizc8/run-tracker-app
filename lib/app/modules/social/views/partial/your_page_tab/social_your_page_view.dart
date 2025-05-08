@@ -20,7 +20,7 @@ class SocialYourPageView extends GetView<SocialController> {
         Widget content;
 
         if (selected == YourPageChip.updates) {
-          content = const SocialYourPageUpdatesView();
+          content = SocialYourPageUpdatesView();
 
         } else if (selected == YourPageChip.following) {
           content = const SocialYourPageFollowingView();
@@ -36,6 +36,7 @@ class SocialYourPageView extends GetView<SocialController> {
         }
 
         return SingleChildScrollView(
+          controller: controller.yourPageScrollController,
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [

@@ -49,15 +49,17 @@ class MainProfileView extends GetView<ProfileMainController> {
                           padding: const EdgeInsets.only(top: 16),
                           child: Row(
                             children: [
-                              CachedNetworkImage(
-                                imageUrl: controller.user.value?.imageUrl ?? '',
-                                placeholder: (context, url) =>
-                                    const ShimmerLoadingCircle(size: 64),
-                                errorWidget: (context, url, error) =>
-                                    const CircleAvatar(
-                                  radius: 32,
-                                  backgroundImage: AssetImage(
-                                      'assets/images/empty_profile.png'),
+                              ClipOval(
+                                child: CachedNetworkImage(
+                                  imageUrl: controller.user.value?.imageUrl ?? '',
+                                  width: 50,
+                                  height: 50,
+                                  fit: BoxFit.cover,
+                                  placeholder: (context, url) => const ShimmerLoadingCircle(size: 50),
+                                  errorWidget: (context, url, error) => const CircleAvatar(
+                                    radius: 32,
+                                    backgroundImage: AssetImage('assets/images/empty_profile.png'),
+                                  ),
                                 ),
                               ),
                               const SizedBox(width: 8),

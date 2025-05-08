@@ -33,4 +33,8 @@ class AppConstants {
   static const String user = "/user";
   static const String userOther = "/user/other";
   static const String updateProfile = "/user";
+
+  // Post
+  static const String postGetAll = "/post";
+  static const String postCreate = "/post";
 }

@@ -1,5 +1,10 @@
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
+import 'package:get/get.dart';
 import 'package:zest_mobile/app/core/models/model/post_model.dart';
+import 'package:zest_mobile/app/core/shared/theme/color_schemes.dart';
+import 'package:zest_mobile/app/core/shared/widgets/shimmer_loading_circle.dart';
+import 'package:zest_mobile/app/modules/social/controllers/post_controller.dart';
 import 'package:zest_mobile/app/modules/social/widgets/post_media.dart';
 import 'package:zest_mobile/app/modules/social/widgets/social_action_button.dart';
 import 'package:zest_mobile/app/modules/social/widgets/statistic_column.dart';
@@ -15,6 +20,7 @@ class ActivityCard extends StatelessWidget {
 
   void Function()? onTap;
   PostModel postData;
+  final postController = Get.find<PostController>();
 
   @override
   Widget build(BuildContext context) {
@@ -44,6 +50,7 @@ class ActivityCard extends StatelessWidget {
               userImageUrl: postData.user?.imageUrl ?? '',
               createdAt: postData.createdAt?.toHumanPostDate() ?? '',
               district: postData.district ?? '',
+              isOwner: postData.isOwner ?? false
             ),
             const SizedBox(height: 8),
             _buildCardContent(
@@ -67,6 +74,7 @@ class ActivityCard extends StatelessWidget {
     required String userImageUrl,
     required String createdAt,
     required String district,
+    required bool isOwner
   }) {
     return SizedBox(
       width: double.infinity,
@@ -77,10 +85,18 @@ class ActivityCard extends StatelessWidget {
           Row(
             mainAxisSize: MainAxisSize.min,
             children: [
-              CircleAvatar(
-                radius: 16, 
-                backgroundColor: Colors.grey.shade300,
-                backgroundImage: NetworkImage(userImageUrl),
+              ClipOval(
+                child: CachedNetworkImage(
+                  imageUrl: userImageUrl,
+                  width: 30,
+                  height: 30,
+                  fit: BoxFit.cover,
+                  placeholder: (context, url) => const ShimmerLoadingCircle(size: 30),
+                  errorWidget: (context, url, error) => const CircleAvatar(
+                    radius: 30,
+                    backgroundImage: AssetImage('assets/images/empty_profile.png'),
+                  ),
+                ),
               ),
               const SizedBox(width: 8),
               // Column di tengah
@@ -107,13 +123,15 @@ class ActivityCard extends StatelessWidget {
             ],
           ),
           // PopupMenuButton di kanan
+          isOwner
+          ?
           PopupMenuButton<String>(
             onSelected: (value) {
               // Handle the selection
               if (value == 'edit') {
                 // Handle Edit Post action
               } else if (value == 'delete') {
-                // Handle Delete Post action
+                postController.confirmAndDeletePost(postId: postData.id ?? '');
               }
             },
             icon: Icon(
@@ -139,7 +157,9 @@ class ActivityCard extends StatelessWidget {
                 ),
               ];
             },
-          ),
+          )
+          :
+          const SizedBox(),
         ],
       ),
     );
@@ -236,11 +256,43 @@ class ActivityCard extends StatelessWidget {
   Widget _buildSocialActions() {
     return Row(
       children: [
-        SocialActionButton(icon: Icons.local_fire_department_outlined, label: 'Like', onTap: () {}),
+        SocialActionButton(
+          icon: AnimatedSwitcher(
+            duration: const Duration(milliseconds: 400),
+            transitionBuilder: (child, animation) {
+              return FadeTransition(
+                opacity: animation,
+                child: ScaleTransition(scale: animation, child: child),
+              );
+            },
+            child: Icon(
+              postData.isLiked!
+                  ? Icons.local_fire_department
+                  : Icons.local_fire_department_outlined,
+              key: ValueKey(postData.isLiked),
+              color: lightColorScheme.primary,
+              size: 18,
+            ),
+          ),
+          label: 'Like',
+          onTap: () => postController.likePost(
+            postId: postData.id!,
+            isDislike: postData.isLiked! ? 1 : 0,
+          ),
+        ),
+
         const SizedBox(width: 8),
-        SocialActionButton(icon: Icons.chat_bubble_outline, label: 'Comment', onTap: () {}),
+        SocialActionButton(
+          icon: Icon(Icons.chat_bubble_outline, size: 18, color: lightColorScheme.primary), 
+          label: 'Comment', 
+          onTap: () {}
+        ),
         const SizedBox(width: 8),
-        SocialActionButton(icon: Icons.share_outlined, label: 'Share', onTap: () {}),
+        SocialActionButton(
+          icon: Icon(Icons.share_outlined, size: 18, color: lightColorScheme.primary), 
+          label: 'Share', 
+          onTap: () {}
+        ),
       ],
     );
   }

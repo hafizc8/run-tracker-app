@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:zest_mobile/app/core/models/enums/social_page_enum.dart';
 import 'package:zest_mobile/app/core/shared/theme/color_schemes.dart';
+import 'package:zest_mobile/app/modules/social/controllers/post_controller.dart';
 import 'package:zest_mobile/app/modules/social/controllers/social_controller.dart';
 import 'package:zest_mobile/app/modules/social/views/partial/your_page_tab/social_your_page_clubs_view.dart';
 import 'package:zest_mobile/app/modules/social/views/partial/your_page_tab/social_your_page_followers_view.dart';
@@ -9,7 +10,9 @@ import 'package:zest_mobile/app/modules/social/views/partial/your_page_tab/socia
 import 'package:zest_mobile/app/modules/social/views/partial/your_page_tab/social_your_page_updates_view.dart';
 
 class SocialYourPageView extends GetView<SocialController> {
-  const SocialYourPageView({super.key});
+  SocialYourPageView({super.key});
+
+  final postController = Get.find<PostController>();
 
   @override
   Widget build(BuildContext context) {
@@ -20,7 +23,21 @@ class SocialYourPageView extends GetView<SocialController> {
         Widget content;
 
         if (selected == YourPageChip.updates) {
-          content = SocialYourPageUpdatesView();
+          return RefreshIndicator(
+            onRefresh: postController.refreshAllPosts,
+            child: SingleChildScrollView(
+              controller: postController.postScrollController,
+              physics: const AlwaysScrollableScrollPhysics(),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  _buildChipFilter(context),
+                  const SizedBox(height: 10),
+                  SocialYourPageUpdatesView(),
+                ],
+              ),
+            ),
+          );
 
         } else if (selected == YourPageChip.following) {
           content = const SocialYourPageFollowingView();
@@ -36,7 +53,6 @@ class SocialYourPageView extends GetView<SocialController> {
         }
 
         return SingleChildScrollView(
-          controller: controller.yourPageScrollController,
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [

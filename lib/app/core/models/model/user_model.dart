@@ -117,10 +117,10 @@ class UserModel extends Model<UserModel> {
 
   factory UserModel.fromJson(Map<String, dynamic> json) {
     return UserModel(
-      id: json["id"],
+      id: json["id"] ?? "",
       name: json["name"],
       email: json["email"],
-      emailVerifiedAt: DateTime.tryParse(json["email_verified_at"] ?? ""),
+      emailVerifiedAt: json["email_verified_at"] != null ? DateTime.tryParse(json["email_verified_at"]) : null,
       latitude: json["latitude"],
       longitude: json["longitude"],
       country: json["country"],
@@ -140,8 +140,8 @@ class UserModel extends Model<UserModel> {
       facebookToken: json["facebook_token"],
       appleId: json["apple_id"],
       appleToken: json["apple_token"],
-      createdAt: DateTime.tryParse(json["created_at"] ?? ""),
-      updatedAt: DateTime.tryParse(json["updated_at"] ?? ""),
+      createdAt: json["created_at"] != null ? DateTime.tryParse(json["created_at"]) : null,
+      updatedAt: json["updated_at"] != null ? DateTime.tryParse(json["updated_at"]) : null,
       deletedAt: json["deleted_at"],
     );
   }

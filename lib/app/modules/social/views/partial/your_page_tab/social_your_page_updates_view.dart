@@ -6,7 +6,6 @@ import 'package:zest_mobile/app/modules/social/controllers/post_controller.dart'
 import 'package:zest_mobile/app/modules/social/controllers/social_controller.dart';
 import 'package:zest_mobile/app/modules/social/widgets/activity_card.dart';
 import 'package:zest_mobile/app/modules/social/widgets/loading_create_post.dart';
-import 'package:zest_mobile/app/routes/app_routes.dart';
 
 class SocialYourPageUpdatesView extends GetView<SocialController> {
   SocialYourPageUpdatesView({super.key});
@@ -60,7 +59,7 @@ class SocialYourPageUpdatesView extends GetView<SocialController> {
           
               return ActivityCard(
                 postData: postController.posts[index]!,
-                onTap: () => Get.toNamed(AppRoutes.socialYourPageActivityDetail),
+                onTap: () => postController.goToDetail(postId: postController.posts[index]!.id!),
               );
             },
           );

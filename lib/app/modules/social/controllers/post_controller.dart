@@ -203,17 +203,18 @@ class PostController extends GetxController {
 
   Future<void> commentPost() async {
     try {
-      bool resp = await _postService.commentReply(
+      PostModel resp = await _postService.commentReply(
         postId: postDetail.value!.id!, 
         content: commentTextController.text, 
         parentCommentId: (focusedComment.value != null) ? focusedComment.value?.id ?? '' : '',
       );
       
-      if (resp) {
-        focusedComment.value = null;
-        commentTextController.clear();
-        Get.snackbar('Success', 'Successfully comment post');
-      }
+      focusedComment.value = null;
+      commentTextController.clear();
+      Get.snackbar('Success', 'Successfully comment post');
+
+      postDetail.value = resp;
+
     } on AppException catch (e) {
       // show error snackbar, toast, etc
       AppExceptionHandlerInfo.handle(e);

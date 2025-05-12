@@ -84,7 +84,7 @@ class PostService {
     }
   }
 
-  Future<bool> commentReply({
+  Future<PostModel> commentReply({
     required String postId,
     required String content,
     String parentCommentId = '',
@@ -103,7 +103,7 @@ class PostService {
         data: {'content': content},
       );
 
-      return response.data['success'];
+      return PostModel.fromJson(response.data['data']);
     } catch (e) {
       rethrow;
     }

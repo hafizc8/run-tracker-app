@@ -39,8 +39,8 @@ class UserMiniModel extends Equatable {
     return UserMiniModel(
       id: json["id"],
       name: json["name"],
-      isFollowed: json["is_followed"],
-      isFollowing: json["is_following"],
+      isFollowed: json["is_followed"] ?? 0,
+      isFollowing: json["is_following"] ?? 0,
       imagePath: json["image_path"],
       imageUrl: json["image_url"],
     );

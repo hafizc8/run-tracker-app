@@ -141,17 +141,17 @@ class SocialSearchView extends GetView<SocialSearchController> {
                                 child: Column(
                                   mainAxisAlignment: MainAxisAlignment.center,
                                   children: [
-                                    CachedNetworkImage(
-                                      width: 32,
-                                      height: 32,
-                                      imageUrl: user.imageUrl ?? '',
-                                      placeholder: (context, url) =>
-                                          const ShimmerLoadingCircle(size: 32),
-                                      errorWidget: (context, url, error) =>
-                                          const CircleAvatar(
-                                        radius: 16,
-                                        backgroundImage: AssetImage(
-                                            'assets/images/empty_profile.png'),
+                                    ClipOval(
+                                      child: CachedNetworkImage(
+                                        imageUrl: user.imageUrl ?? '',
+                                        width: 32,
+                                        height: 32,
+                                        fit: BoxFit.cover,
+                                        placeholder: (context, url) => const ShimmerLoadingCircle(size: 32),
+                                        errorWidget: (context, url, error) => const CircleAvatar(
+                                          radius: 16,
+                                          backgroundImage: AssetImage('assets/images/empty_profile.png'),
+                                        ),
                                       ),
                                     ),
                                     const SizedBox(height: 8),

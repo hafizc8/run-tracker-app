@@ -25,8 +25,7 @@ mixin FormModelMixin<T> {
             files.add(
               MapEntry(
                 '$key[]',
-                await MultipartFile.fromFile(file.path,
-                    filename: file.path.split('/').last),
+                await MultipartFile.fromFile(file.path, filename: file.path.split('/').last),
               ),
             );
           }
@@ -36,6 +35,6 @@ mixin FormModelMixin<T> {
       }
     }
 
-    return FormData.fromMap(formMap);
+    return FormData.fromMap(formMap)..files.addAll(files);
   }
 }

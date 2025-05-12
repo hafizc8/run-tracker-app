@@ -34,11 +34,37 @@ class UserService {
     }
   }
 
+  Future<bool> followUser(String id) async {
+    try {
+      final response = await _apiService.request(
+        path: AppConstants.userFollow(id),
+        method: HttpMethod.post,
+      );
+
+      return response.data['success'];
+    } catch (e) {
+      rethrow;
+    }
+  }
+
+  Future<bool> unFollowUser(String id) async {
+    try {
+      final response = await _apiService.request(
+        path: AppConstants.userUnFollow(id),
+        method: HttpMethod.post,
+      );
+
+      return response.data['success'];
+    } catch (e) {
+      rethrow;
+    }
+  }
+
   Future<PaginatedDataResponse<UserMiniModel>> getUserList({
     required int page,
     int random = 1,
     String search = '',
-    String followStatus = 'followable',
+    String? followStatus,
   }) async {
     try {
       final response = await _apiService.request<FormData>(
@@ -48,7 +74,7 @@ class UserService {
           'page': page.toString(),
           'random': random.toString(),
           'search': search,
-          'follow_status': followStatus,
+          if (followStatus != null) 'follow_status': followStatus,
         },
       );
 

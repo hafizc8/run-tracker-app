@@ -2,6 +2,7 @@ import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:shimmer/shimmer.dart';
+import 'package:zest_mobile/app/core/extension/follow_extension.dart';
 import 'package:zest_mobile/app/core/models/model/user_mini_model.dart';
 import 'package:zest_mobile/app/core/shared/widgets/custom_chip.dart';
 import 'package:zest_mobile/app/core/shared/widgets/shimmer_loading_circle.dart';
@@ -167,22 +168,41 @@ class SocialSearchView extends GetView<SocialSearchController> {
                                           ),
                                     ),
                                     const SizedBox(height: 8),
-                                    CustomChip(
-                                      backgroundColor: Theme.of(context)
-                                          .colorScheme
-                                          .primary
-                                          .withOpacity(0.1),
-                                      child: Text(
-                                        'Follow',
-                                        style: Theme.of(context)
-                                            .textTheme
-                                            .bodyMedium
-                                            ?.copyWith(
-                                              color: Theme.of(context)
-                                                  .colorScheme
-                                                  .primary,
-                                              fontWeight: FontWeight.bold,
-                                            ),
+                                    Obx(
+                                      () => CustomChip(
+                                        onTap: () {
+                                          if (user.isFollowing == 1) {
+                                            controller.unFollow(user.id);
+                                          } else {
+                                            controller.follow(user.id);
+                                          }
+                                        },
+                                        backgroundColor: Theme.of(context)
+                                            .colorScheme
+                                            .primary
+                                            .withOpacity(0.1),
+                                        child: Visibility(
+                                          visible: user.id ==
+                                              controller.userId.value,
+                                          replacement: Text(
+                                            {
+                                              'is_following': user.isFollowing,
+                                              'is_followed': user.isFollowed
+                                            }.followStatus,
+                                            style: Theme.of(context)
+                                                .textTheme
+                                                .bodyMedium
+                                                ?.copyWith(
+                                                  color: Theme.of(context)
+                                                      .colorScheme
+                                                      .primary,
+                                                  fontWeight: FontWeight.bold,
+                                                ),
+                                          ),
+                                          child: const Center(
+                                            child: CircularProgressIndicator(),
+                                          ),
+                                        ),
                                       ),
                                     ),
                                   ],
@@ -269,25 +289,49 @@ class SocialSearchView extends GetView<SocialSearchController> {
                                     fontWeight: FontWeight.bold,
                                   ),
                             ),
-                            trailing: CustomChip(
-                              padding: const EdgeInsets.symmetric(
-                                  horizontal: 16, vertical: 8),
-                              backgroundColor: Theme.of(context)
-                                  .colorScheme
-                                  .primary
-                                  .withOpacity(0.1),
-                              child: Text(
-                                'Follow',
-                                style: Theme.of(context)
-                                    .textTheme
-                                    .bodyMedium
-                                    ?.copyWith(
-                                      color:
-                                          Theme.of(context).colorScheme.primary,
-                                      fontWeight: FontWeight.bold,
+                            trailing:
+                                Row(mainAxisSize: MainAxisSize.min, children: [
+                              Obx(
+                                () => CustomChip(
+                                  onTap: () {
+                                    if (user.isFollowing == 1 &&
+                                        user.isFollowed == 1) {
+                                    } else if (user.isFollowing == 1) {
+                                      controller.unFollow(user.id);
+                                    } else {
+                                      controller.follow(user.id);
+                                    }
+                                  },
+                                  padding: const EdgeInsets.symmetric(
+                                      horizontal: 16, vertical: 8),
+                                  backgroundColor: Theme.of(context)
+                                      .colorScheme
+                                      .primary
+                                      .withOpacity(0.1),
+                                  child: Visibility(
+                                    visible: user.id == controller.userId.value,
+                                    replacement: Text(
+                                      {
+                                        'is_following': user.isFollowing,
+                                        'is_followed': user.isFollowed
+                                      }.followStatus,
+                                      style: Theme.of(context)
+                                          .textTheme
+                                          .bodyMedium
+                                          ?.copyWith(
+                                            color: Theme.of(context)
+                                                .colorScheme
+                                                .primary,
+                                            fontWeight: FontWeight.bold,
+                                          ),
                                     ),
+                                    child: const Center(
+                                      child: CircularProgressIndicator(),
+                                    ),
+                                  ),
+                                ),
                               ),
-                            ),
+                            ]),
                           );
                         },
                       ),

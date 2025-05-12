@@ -14,7 +14,9 @@ import 'package:zest_mobile/app/core/models/enums/gender_enum.dart';
 import 'package:zest_mobile/app/core/models/forms/update_user_form.dart';
 import 'package:zest_mobile/app/core/models/model/user_model.dart';
 import 'package:zest_mobile/app/core/services/auth_service.dart';
+import 'package:zest_mobile/app/core/services/storage_service.dart';
 import 'package:zest_mobile/app/core/services/user_service.dart';
+import 'package:zest_mobile/app/core/values/storage_keys.dart';
 
 class EditProfileController extends GetxController {
   var form = UpdateUserFormModel().obs;
@@ -55,11 +57,30 @@ class EditProfileController extends GetxController {
         longitude: double.tryParse(user.longitude ?? '0.0'),
         image: null,
       );
-      getCachedImageFile(user.imageUrl ?? '')
-          .then((value) => form.value = form.value.copyWith(image: value));
+      getCachedImageFile(user.imageUrl ?? '').then((value) {
+        form.value = form.value.copyWith(image: value);
+        originalForm.value = form.value;
+      }).onError((error, stackTrace) {
+        form.value = form.value.copyWith(image: null);
+      });
+
       dateController.text = user.birthday?.toYyyyMmDdString() ?? '';
       addressController.text = user.address;
       originalForm.value = form.value;
+    }
+  }
+
+  Future<void> setDate(BuildContext context) async {
+    final DateTime? picked = await showDatePicker(
+      context: context,
+      initialDate: form.value.birthday ?? DateTime.now(),
+      firstDate: DateTime(1900),
+      lastDate: DateTime.now(),
+    );
+
+    if (picked != null) {
+      form.value = form.value.copyWith(birthday: picked);
+      dateController.text = picked.toYyyyMmDdString();
     }
   }
 
@@ -141,7 +162,12 @@ class EditProfileController extends GetxController {
     form.value = form.value.clearErrors();
     try {
       bool resp = await _userService.editUser(form.value);
-      if (resp) Get.back();
+      if (resp) {
+        var data = sl<StorageService>().read(StorageKeys.user);
+        if (data != null) {
+          Get.back(result: UserModel.fromJson(data));
+        }
+      }
     } on AppException catch (e) {
       if (e.type == AppExceptionType.validation) {
         form.value = form.value.setErrors(e.errors!);

@@ -17,14 +17,9 @@ mixin FormModelMixin<T> {
       final value = entry.value;
 
       if (value != null) {
-        if (value.runtimeType is File) {
-          File file = value as File;
-          files.add(
-            MapEntry(
-              key,
-              await MultipartFile.fromFile(file.path, filename: value.path.split('/').last),
-            ),
-          );
+        if (value is File) {
+          formMap[key] = await MultipartFile.fromFile(value.path,
+              filename: value.path.split('/').last);
         } else if (value is List<File>) {
           for (var file in value) {
             files.add(

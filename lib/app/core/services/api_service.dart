@@ -36,6 +36,7 @@ class ApiService {
                 method: method.methodString,
                 headers: headers,
               ),
+              queryParameters: queryParams,
             );
           } else {
             return await _dioClient.dio.request(
@@ -45,6 +46,7 @@ class ApiService {
                 method: method.methodString,
                 headers: headers,
               ),
+              queryParameters: queryParams,
             );
           }
 

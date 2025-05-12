@@ -155,10 +155,10 @@ class SocialView extends GetView<SocialController> {
     return Container(
       padding: const EdgeInsets.symmetric(horizontal: 16),
       margin: const EdgeInsets.symmetric(horizontal: 3),
-      child: const TabBarView(
+      child: TabBarView(
         children: [
           SocialYourPageView(),
-          SocialForYouView(),
+          const SocialForYouView(),
         ],
       ),
     );

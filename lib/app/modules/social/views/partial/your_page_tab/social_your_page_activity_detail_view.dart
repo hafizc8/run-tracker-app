@@ -1,17 +1,103 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import 'package:zest_mobile/app/modules/social/controllers/social_controller.dart';
+import 'package:zest_mobile/app/core/shared/widgets/shimmer_loading_list.dart';
+import 'package:zest_mobile/app/modules/social/controllers/post_controller.dart';
 import 'package:zest_mobile/app/modules/social/widgets/activity_detail_card.dart';
 
-class SocialYourPageActivityDetailView extends GetView<SocialController> {
+class SocialYourPageActivityDetailView extends GetView<PostController> {
   const SocialYourPageActivityDetailView({super.key});
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: _buildAppBar(context),
-      body: const SingleChildScrollView(
-        child: ActivityDetailCard(),
+      body: Obx(
+        () {
+          if (controller.isLoadingPostDetail.value) {
+            return const ShimmerLoadingList(
+              itemCount: 10,
+              itemHeight: 50,
+              padding: EdgeInsets.symmetric(horizontal: 20, vertical: 20),
+            );
+          }
+
+          return SafeArea(
+            child: Column(
+              children: [
+                Flexible(
+                  child: SingleChildScrollView(
+                    child: ActivityDetailCard(
+                      postData: controller.postDetail.value,
+                    ),
+                  ),
+                ),
+
+                // Fixed TextField di bawah
+                Padding(
+                  padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 12),
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      // ⬇ Tampilkan ini saat membalas komentar
+                      if (controller.focusedComment.value != null)
+                        Padding(
+                          padding: const EdgeInsets.only(bottom: 10),
+                          child: Row(
+                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                            children: [
+                              Flexible(
+                                flex: 9,
+                                child: Text(
+                                  'Reply @${controller.focusedComment.value?.user?.name}: ${controller.focusedComment.value?.content}',
+                                  style: Theme.of(context).textTheme.bodySmall?.copyWith(
+                                    fontWeight: FontWeight.w600, 
+                                    color: Theme.of(context).colorScheme.onSurface,
+                                  ),
+                                  maxLines: 2,
+                                  overflow: TextOverflow.ellipsis,
+                                ),
+                              ),
+                              GestureDetector(
+                                onTap: () => controller.deleteReplyToComment(),
+                                child: const Icon(Icons.close, size: 20),
+                              )
+                            ],
+                          ),
+                        ),
+
+                      // ⬇ TextField untuk input komentar
+                      Row(
+                        children: [
+                          Expanded(
+                            child: TextField(
+                              focusNode: controller.commentFocusNode,
+                              controller: controller.commentTextController,
+                              decoration: InputDecoration(
+                                hintText: 'Enter your comment',
+                                border: OutlineInputBorder(
+                                  borderRadius: BorderRadius.circular(30),
+                                ),
+                                contentPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+                                suffixIcon: IconButton(
+                                  icon: Icon(
+                                    Icons.send,
+                                    color: Theme.of(context).colorScheme.primary,
+                                  ),
+                                  onPressed: () => controller.commentPost(),
+                                ),
+                              ),
+                              onSubmitted: (value) => controller.commentPost(),
+                            ),
+                          ),
+                        ],
+                      ),
+                    ],
+                  ),
+                ),
+              ],
+            ),
+          );
+        }
       ),
     );
   }

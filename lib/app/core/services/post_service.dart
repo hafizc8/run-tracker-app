@@ -49,4 +49,78 @@ class PostService {
       rethrow;
     }
   }
+
+  Future<bool> likeDislike({
+    required String postId,
+    int isDislike = 0
+  }) async {
+    try {
+      final response = await _apiService.request(
+        path: AppConstants.postLikeDislike.replaceAll(':postId', postId),
+        method: HttpMethod.post,
+        queryParams: {
+          'dislike': isDislike,
+        },
+      );
+
+      return response.data['success'];
+    } catch (e) {
+      rethrow;
+    }
+  }
+
+  Future<PostModel> getDetail({
+    required String postId,
+  }) async {
+    try {
+      final response = await _apiService.request(
+        path: AppConstants.postDetail.replaceAll(':postId', postId),
+        method: HttpMethod.get
+      );
+
+      return PostModel.fromJson(response.data['data']);
+    } catch (e) {
+      rethrow;
+    }
+  }
+
+  Future<PostModel> commentReply({
+    required String postId,
+    required String content,
+    String parentCommentId = '',
+  }) async {
+    try {
+      Map<String, dynamic> params = {};
+
+      if (parentCommentId.isNotEmpty) {
+        params['comment_id'] = parentCommentId;
+      }
+
+      final response = await _apiService.request(
+        path: AppConstants.postCommentReply.replaceAll(':postId', postId),
+        method: HttpMethod.post,
+        queryParams: params,
+        data: {'content': content},
+      );
+
+      return PostModel.fromJson(response.data['data']);
+    } catch (e) {
+      rethrow;
+    }
+  }
+
+  Future<bool> delete({
+    required String postId,
+  }) async {
+    try {
+      final response = await _apiService.request(
+        path: AppConstants.postDelete.replaceAll(':postId', postId),
+        method: HttpMethod.delete,
+      );
+
+      return response.data['success'];
+    } catch (e) {
+      rethrow;
+    }
+  }
 }

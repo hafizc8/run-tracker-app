@@ -40,4 +40,8 @@ class AppConstants {
   // Post
   static const String postGetAll = "/post";
   static const String postCreate = "/post";
+  static const String postDetail = "/post/:postId";
+  static const String postLikeDislike = "/post/:postId/like";
+  static const String postCommentReply = "/post/:postId/comment";
+  static const String postDelete = "/post/:postId";
 }

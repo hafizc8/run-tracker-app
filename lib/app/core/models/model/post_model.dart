@@ -1,5 +1,7 @@
 import 'package:zest_mobile/app/core/models/interface/model_interface.dart';
+import 'package:zest_mobile/app/core/models/model/user_mini_model.dart';
 
+// ignore: must_be_immutable
 class PostModel extends Model<PostModel> {
     PostModel({
         required this.id,
@@ -12,6 +14,9 @@ class PostModel extends Model<PostModel> {
         required this.updatedAt,
         required this.user,
         required this.galleries,
+        this.isLiked,
+        this.isOwner = false,
+        this.comments
     });
 
     final String? id;
@@ -22,8 +27,11 @@ class PostModel extends Model<PostModel> {
     final int? commentsCount;
     final DateTime? createdAt;
     final DateTime? updatedAt;
-    final User? user;
+    final UserMiniModel? user;
     final List<Gallery> galleries;
+    final List<Comment>? comments;
+    bool? isOwner;
+    bool? isLiked;
 
     @override
   PostModel copyWith({
@@ -35,8 +43,11 @@ class PostModel extends Model<PostModel> {
         int? commentsCount,
         DateTime? createdAt,
         DateTime? updatedAt,
-        User? user,
+        UserMiniModel? user,
         List<Gallery>? galleries,
+        bool? isLiked,
+        bool? isOwner,
+        List<Comment>? comments
     }) {
         return PostModel(
             id: id ?? this.id,
@@ -49,6 +60,9 @@ class PostModel extends Model<PostModel> {
             updatedAt: updatedAt ?? this.updatedAt,
             user: user ?? this.user,
             galleries: galleries ?? this.galleries,
+            isLiked: isLiked ?? this.isLiked,
+            comments: comments ?? this.comments,
+            isOwner: isOwner ?? this.isOwner
         );
     }
 
@@ -62,8 +76,11 @@ class PostModel extends Model<PostModel> {
             commentsCount: json["comments_count"],
             createdAt: DateTime.tryParse(json["created_at"] ?? ""),
             updatedAt: DateTime.tryParse(json["updated_at"] ?? ""),
-            user: json["user"] == null ? null : User.fromJson(json["user"]),
+            user: json["user"] == null ? null : UserMiniModel.fromJson(json["user"]),
             galleries: json["galleries"] == null ? [] : List<Gallery>.from(json["galleries"]!.map((x) => Gallery.fromJson(x))),
+            comments: json["comments"] == null ? [] : List<Comment>.from(json["comments"]!.map((x) => Comment.fromJson(x))),
+            isLiked: json['is_liked'] == 1,
+            isOwner: false,
         );
     }
 
@@ -83,7 +100,7 @@ class PostModel extends Model<PostModel> {
 
     @override
     List<Object?> get props => [
-    id, title, content, district, likesCount, commentsCount, createdAt, updatedAt, user, galleries, ];
+    id, title, content, district, likesCount, commentsCount, createdAt, updatedAt, user, galleries, comments, isLiked];
 }
 
 class Gallery extends Model<Gallery> {
@@ -136,114 +153,138 @@ class Gallery extends Model<Gallery> {
     id, type, path, url, ];
 }
 
-class User extends Model<User> {
-    User({
+class Comment extends Model<Comment> {
+    Comment({
         required this.id,
-        required this.name,
-        required this.imagePath,
-        required this.imageUrl,
+        required this.content,
+        required this.createdAt,
+        required this.user,
+        required this.replies,
     });
 
     final String? id;
-    final String? name;
-    final String? imagePath;
-    final String? imageUrl;
+    final String? content;
+    final DateTime? createdAt;
+    final UserMiniModel? user;
+    final List<Reply> replies;
 
     @override
-  User copyWith({
+      Comment copyWith({
         String? id,
-        String? name,
-        String? imagePath,
-        String? imageUrl,
+        String? content,
+        DateTime? createdAt,
+        UserMiniModel? user,
+        List<Reply>? replies,
     }) {
-        return User(
+        return Comment(
             id: id ?? this.id,
-            name: name ?? this.name,
-            imagePath: imagePath ?? this.imagePath,
-            imageUrl: imageUrl ?? this.imageUrl,
+            content: content ?? this.content,
+            createdAt: createdAt ?? this.createdAt,
+            user: user ?? this.user,
+            replies: replies ?? this.replies,
         );
     }
 
-    factory User.fromJson(Map<String, dynamic> json){ 
-        return User(
+    factory Comment.fromJson(Map<String, dynamic> json){ 
+        return Comment(
             id: json["id"],
-            name: json["name"],
-            imagePath: json["image_path"],
-            imageUrl: json["image_url"],
+            content: json["content"],
+            createdAt: DateTime.tryParse(json["created_at"] ?? ""),
+            user: json["user"] == null ? null : UserMiniModel.fromJson(json["user"]),
+            replies: json["replies"] == null ? [] : List<Reply>.from(json["replies"]!.map((x) => Reply.fromJson(x))),
         );
     }
 
     @override
-  Map<String, dynamic> toJson() => {
+      Map<String, dynamic> toJson() => {
         "id": id,
-        "name": name,
-        "image_path": imagePath,
-        "image_url": imageUrl,
+        "content": content,
+        "created_at": createdAt?.toIso8601String(),
+        "user": user?.toJson(),
+        "replies": replies.map((x) => x.toJson()).toList(),
     };
 
     @override
     List<Object?> get props => [
-    id, name, imagePath, imageUrl, ];
+    id, content, createdAt, user, replies, ];
 }
 
-class Pagination extends Model<Pagination> {
-    Pagination({
-        required this.total,
-        required this.offset,
-        required this.current,
-        required this.last,
-        required this.next,
-        required this.prev,
+class Reply extends Model<Reply> {
+    Reply({
+        required this.id,
+        required this.userId,
+        required this.postId,
+        required this.parentId,
+        required this.content,
+        required this.createdAt,
+        required this.updatedAt,
+        required this.deletedAt,
+        required this.user,
     });
 
-    final int? total;
-    final int? offset;
-    final int? current;
-    final int? last;
-    final String? next;
-    final String? prev;
+    final String? id;
+    final String? userId;
+    final String? postId;
+    final String? parentId;
+    final String? content;
+    final DateTime? createdAt;
+    final DateTime? updatedAt;
+    final dynamic deletedAt;
+    final UserMiniModel? user;
 
     @override
-  Pagination copyWith({
-        int? total,
-        int? offset,
-        int? current,
-        int? last,
-        String? next,
-        String? prev,
+      Reply copyWith({
+        String? id,
+        String? userId,
+        String? postId,
+        String? parentId,
+        String? content,
+        DateTime? createdAt,
+        DateTime? updatedAt,
+        dynamic deletedAt,
+        UserMiniModel? user,
     }) {
-        return Pagination(
-            total: total ?? this.total,
-            offset: offset ?? this.offset,
-            current: current ?? this.current,
-            last: last ?? this.last,
-            next: next ?? this.next,
-            prev: prev ?? this.prev,
+        return Reply(
+            id: id ?? this.id,
+            userId: userId ?? this.userId,
+            postId: postId ?? this.postId,
+            parentId: parentId ?? this.parentId,
+            content: content ?? this.content,
+            createdAt: createdAt ?? this.createdAt,
+            updatedAt: updatedAt ?? this.updatedAt,
+            deletedAt: deletedAt ?? this.deletedAt,
+            user: user ?? this.user,
         );
     }
 
-    factory Pagination.fromJson(Map<String, dynamic> json){ 
-        return Pagination(
-            total: json["total"],
-            offset: json["offset"],
-            current: json["current"],
-            last: json["last"],
-            next: json["next"],
-            prev: json["prev"],
+    factory Reply.fromJson(Map<String, dynamic> json){ 
+        return Reply(
+            id: json["id"],
+            userId: json["user_id"],
+            postId: json["post_id"],
+            parentId: json["parent_id"],
+            content: json["content"],
+            createdAt: DateTime.tryParse(json["created_at"] ?? ""),
+            updatedAt: DateTime.tryParse(json["updated_at"] ?? ""),
+            deletedAt: json["deleted_at"],
+            user: json["user"] == null ? null : UserMiniModel.fromJson(json["user"]),
         );
     }
 
     @override
-  Map<String, dynamic> toJson() => {
-        "total": total,
-        "offset": offset,
-        "current": current,
-        "last": last,
-        "next": next,
-        "prev": prev,
+      Map<String, dynamic> toJson() => {
+        "id": id,
+        "user_id": userId,
+        "post_id": postId,
+        "parent_id": parentId,
+        "content": content,
+        "created_at": createdAt?.toIso8601String(),
+        "updated_at": updatedAt?.toIso8601String(),
+        "deleted_at": deletedAt,
+        "user": user?.toJson(),
     };
 
     @override
     List<Object?> get props => [
-    total, offset, current, last, next, prev, ];
+    id, userId, postId, parentId, content, createdAt, updatedAt, deletedAt, user, ];
 }

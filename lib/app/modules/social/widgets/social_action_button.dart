@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:zest_mobile/app/core/shared/theme/color_schemes.dart';
 
 class SocialActionButton extends StatelessWidget {
-  final IconData icon;
+  final Widget icon;
   final String label;
   final VoidCallback onTap;
 
@@ -26,7 +26,7 @@ class SocialActionButton extends StatelessWidget {
         child: Row(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            Icon(icon, size: 18, color: lightColorScheme.primary,),
+            icon,
             const SizedBox(width: 6),
             Text(
               label,

@@ -33,4 +33,6 @@ class AppConstants {
   static const String user = "/user";
   static const String userOther = "/user/other";
   static const String updateProfile = "/user";
+  static String userFollow(String id) => "/follow/$id";
+  static String userUnFollow(String id) => "/unfollow/$id";
 }

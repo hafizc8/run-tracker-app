@@ -1,9 +1,11 @@
 import 'package:carousel_slider/carousel_slider.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/widgets.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:get/get.dart';
 import 'package:smooth_page_indicator/smooth_page_indicator.dart';
+import 'package:zest_mobile/app/core/models/model/user_model.dart';
 import 'package:zest_mobile/app/core/shared/widgets/custom_chip.dart';
 import 'package:zest_mobile/app/core/shared/widgets/shimmer_loading_circle.dart';
 import 'package:zest_mobile/app/modules/main_profile/widgets/custom_tab_bar/views/custom_tab_bar_view.dart';
@@ -49,15 +51,21 @@ class MainProfileView extends GetView<ProfileMainController> {
                           padding: const EdgeInsets.only(top: 16),
                           child: Row(
                             children: [
-                              CachedNetworkImage(
-                                imageUrl: controller.user.value?.imageUrl ?? '',
-                                placeholder: (context, url) =>
-                                    const ShimmerLoadingCircle(size: 64),
-                                errorWidget: (context, url, error) =>
-                                    const CircleAvatar(
-                                  radius: 32,
-                                  backgroundImage: AssetImage(
-                                      'assets/images/empty_profile.png'),
+                              ClipOval(
+                                child: CachedNetworkImage(
+                                  imageUrl:
+                                      controller.user.value?.imageUrl ?? '',
+                                  width: 50,
+                                  height: 50,
+                                  fit: BoxFit.cover,
+                                  placeholder: (context, url) =>
+                                      const ShimmerLoadingCircle(size: 50),
+                                  errorWidget: (context, url, error) =>
+                                      const CircleAvatar(
+                                    radius: 32,
+                                    backgroundImage: AssetImage(
+                                        'assets/images/empty_profile.png'),
+                                  ),
                                 ),
                               ),
                               const SizedBox(width: 8),
@@ -65,22 +73,34 @@ class MainProfileView extends GetView<ProfileMainController> {
                                 crossAxisAlignment: CrossAxisAlignment.start,
                                 children: [
                                   Row(
+                                    mainAxisSize: MainAxisSize.min,
                                     children: [
-                                      Text(
-                                        controller.user.value?.name ?? '-',
-                                        style: Theme.of(context)
-                                            .textTheme
-                                            .headlineMedium
-                                            ?.copyWith(
-                                              color: Theme.of(context)
-                                                  .colorScheme
-                                                  .onPrimary,
-                                            ),
+                                      ConstrainedBox(
+                                        constraints:
+                                            const BoxConstraints(maxWidth: 150),
+                                        child: Text(
+                                          controller.user.value?.name ?? '-',
+                                          maxLines: 2,
+                                          overflow: TextOverflow.ellipsis,
+                                          style: Theme.of(context)
+                                              .textTheme
+                                              .headlineMedium
+                                              ?.copyWith(
+                                                color: Theme.of(context)
+                                                    .colorScheme
+                                                    .onPrimary,
+                                              ),
+                                        ),
                                       ),
                                       const SizedBox(width: 8),
                                       GestureDetector(
-                                        onTap: () =>
-                                            Get.toNamed(AppRoutes.profileEdit),
+                                        onTap: () async {
+                                          var res = await Get.toNamed(
+                                              AppRoutes.profileEdit);
+                                          if (res != null) {
+                                            controller.user.value = res;
+                                          }
+                                        },
                                         child: Icon(
                                           Icons.edit,
                                           color: Theme.of(context)
@@ -90,18 +110,22 @@ class MainProfileView extends GetView<ProfileMainController> {
                                       ),
                                     ],
                                   ),
-                                  Text(
-                                    '${controller.user.value?.province ?? '-'}, ${controller.user.value?.country ?? '-'}',
-                                    maxLines: 2,
-                                    overflow: TextOverflow.ellipsis,
-                                    style: Theme.of(context)
-                                        .textTheme
-                                        .headlineSmall
-                                        ?.copyWith(
-                                          color: Theme.of(context)
-                                              .colorScheme
-                                              .onPrimary,
-                                        ),
+                                  ConstrainedBox(
+                                    constraints:
+                                        const BoxConstraints(maxWidth: 150),
+                                    child: Text(
+                                      '${controller.user.value?.province ?? '-'}, ${controller.user.value?.country ?? '-'}',
+                                      maxLines: 2,
+                                      overflow: TextOverflow.ellipsis,
+                                      style: Theme.of(context)
+                                          .textTheme
+                                          .headlineSmall
+                                          ?.copyWith(
+                                            color: Theme.of(context)
+                                                .colorScheme
+                                                .onPrimary,
+                                          ),
+                                    ),
                                   ),
                                 ],
                               )

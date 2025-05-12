@@ -95,7 +95,7 @@ class UpdateUserFormModel extends FormModel<UpdateUserFormModel>
       'latitude': latitude,
       'longitude': longitude,
       'image': image,
-      '_method': 'put',
+      // '_method': 'put',
     };
   }
 }

@@ -136,7 +136,7 @@ class EditProfileView extends GetView<EditProfileController> {
                       cursorColor: Colors.black,
                       readOnly: true,
                       controller: controller.dateController,
-                      onTap: () {},
+                      onTap: () => controller.setDate(context),
                       decoration: InputDecoration(
                         hintText: 'Enter your birthday',
                         suffixIcon: const Icon(Icons.calendar_today),

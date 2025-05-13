@@ -45,6 +45,7 @@ class SocialView extends GetView<SocialController> {
           onSelected: (value) {
             // Handle the selection
             if (value == 'create_event') {
+              Get.toNamed(AppRoutes.eventCreate);
               // Handle Create Event action
             } else if (value == 'create_club') {
               // Handle Create Club action

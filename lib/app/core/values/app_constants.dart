@@ -45,4 +45,8 @@ class AppConstants {
   static String postCommentReply(String postId) => "/post/$postId/comment";
   static String postDelete(String postId) => "/post/$postId";
   static String postUpdate(String postId) => "/post/$postId";
+
+  // Event
+  static const String eventActivity = "/event/activity";
+  static const String eventStore = "/event";
 }

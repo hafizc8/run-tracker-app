@@ -1,21 +1,30 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import 'package:zest_mobile/app/modules/social/controllers/social_controller.dart';
+import 'package:zest_mobile/app/core/models/model/user_mini_model.dart';
+import 'package:zest_mobile/app/modules/social/controllers/social_followers_controller.dart';
 
-class SocialYourPageFollowersView extends GetView<SocialController> {
+class SocialYourPageFollowersView extends GetView<SocialFollowersController> {
   const SocialYourPageFollowersView({super.key});
 
   @override
   Widget build(BuildContext context) {
     return Column(
       children: [
-        TextFormField(
-          decoration: InputDecoration(
-            hintText: 'Search',
-            border: OutlineInputBorder(borderRadius: BorderRadius.circular(12)),
-            suffixIcon: Icon(
-              Icons.search,
-              color: Theme.of(context).colorScheme.primary,
+        Obx(
+          () => Visibility(
+            visible:
+                controller.friends.isNotEmpty || controller.isLoading.value,
+            child: TextFormField(
+              onChanged: (value) => controller.onSearchChanged(value),
+              decoration: InputDecoration(
+                hintText: 'Search',
+                border:
+                    OutlineInputBorder(borderRadius: BorderRadius.circular(12)),
+                suffixIcon: Icon(
+                  Icons.search,
+                  color: Theme.of(context).colorScheme.primary,
+                ),
+              ),
             ),
           ),
         ),
@@ -25,45 +34,92 @@ class SocialYourPageFollowersView extends GetView<SocialController> {
           children: [
             Text(
               'Followers',
-              style: Theme.of(context).textTheme.headlineSmall?.copyWith(fontWeight: FontWeight.bold),
+              style: Theme.of(context)
+                  .textTheme
+                  .headlineSmall
+                  ?.copyWith(fontWeight: FontWeight.bold),
             ),
-            Text(
-              '(50)',
-              style: Theme.of(context).textTheme.headlineSmall?.copyWith(fontWeight: FontWeight.bold),
+            Obx(
+              () => Text(
+                '(${controller.friends.length})',
+                style: Theme.of(context)
+                    .textTheme
+                    .headlineSmall
+                    ?.copyWith(fontWeight: FontWeight.bold),
+              ),
             ),
           ],
         ),
         const SizedBox(height: 16),
-        ListView.builder(
-          shrinkWrap: true,
-          itemCount: 15,
-          physics: const NeverScrollableScrollPhysics(),
-          itemBuilder: (context, index) {
-            return Column(
-              children: [
-                _buildFollowersListItem(context),
-                const SizedBox(height: 15),
-              ],
+        Obx(() {
+          if (controller.resultSearchEmpty.value) {
+            return Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 16),
+              child: Text(
+                'No result for “${controller.search.value}”',
+                style: Theme.of(context).textTheme.bodyMedium?.copyWith(
+                      color: Theme.of(context).colorScheme.secondary,
+                      fontWeight: FontWeight.bold,
+                    ),
+              ),
             );
-          },
-        ),
+          }
+          if (controller.friends.isEmpty &&
+              controller.search.value.isEmpty &&
+              !controller.isLoading.value) {
+            return Text(
+              'You Have No Followers',
+              style: Theme.of(context).textTheme.bodyLarge?.copyWith(
+                    fontWeight: FontWeight.bold,
+                    color: Theme.of(context).colorScheme.secondary,
+                  ),
+            );
+          }
+          return ListView.builder(
+            shrinkWrap: true,
+            itemCount: controller.friends.length +
+                (controller.hasReacheMax.value ? 0 : 1),
+            physics: const NeverScrollableScrollPhysics(),
+            itemBuilder: (context, index) {
+              if (index == controller.friends.length) {
+                return Center(
+                  child: Container(
+                    margin: const EdgeInsets.symmetric(vertical: 10),
+                    child: const CircularProgressIndicator(),
+                  ),
+                );
+              }
+
+              final user = controller.friends[index];
+              return Column(
+                children: [
+                  _buildFollowersListItem(context, user),
+                  const SizedBox(height: 15),
+                ],
+              );
+            },
+          );
+        })
       ],
     );
   }
 
-  Widget _buildFollowersListItem(BuildContext context) {
+  Widget _buildFollowersListItem(BuildContext context, UserMiniModel user) {
     return Row(
       children: [
         CircleAvatar(
-          radius: 20, 
+          radius: 20,
           backgroundColor: Colors.grey.shade300,
           child: const Icon(Icons.person, color: Colors.white),
         ),
         const SizedBox(width: 8),
         Flexible(
           child: Text(
-            'John Doe',
-            style: Theme.of(context).textTheme.bodyMedium?.copyWith(fontWeight: FontWeight.w600),
+            user.name,
+            style: Theme.of(context)
+                .textTheme
+                .bodyMedium
+                ?.copyWith(fontWeight: FontWeight.w600),
           ),
         ),
       ],

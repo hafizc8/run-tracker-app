@@ -129,7 +129,7 @@ class ActivityCard extends StatelessWidget {
             onSelected: (value) {
               // Handle the selection
               if (value == 'edit') {
-                // Handle Edit Post action
+                postController.goToEditPost(postId: postData.id ?? '', isFromDetail: false);
               } else if (value == 'delete') {
                 postController.confirmAndDeletePost(postId: postData.id ?? '');
               }
@@ -285,7 +285,7 @@ class ActivityCard extends StatelessWidget {
         SocialActionButton(
           icon: Icon(Icons.chat_bubble_outline, size: 18, color: lightColorScheme.primary), 
           label: 'Comment', 
-          onTap: () {}
+          onTap: () => postController.goToDetail(postId: postData.id!, isFocusComment: true),
         ),
         const SizedBox(width: 8),
         SocialActionButton(

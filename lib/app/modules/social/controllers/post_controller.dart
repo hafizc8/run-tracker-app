@@ -187,6 +187,7 @@ class PostController extends GetxController {
 
   Future<void> goToDetail({
     required String postId,
+    bool isFocusComment = false
   }) async {
     try {
       Get.toNamed(AppRoutes.socialYourPageActivityDetail);
@@ -205,7 +206,16 @@ class PostController extends GetxController {
       Get.snackbar('Error', e.toString());
     } finally {
       isLoadingPostDetail.value = false;
+
+      if (isFocusComment) {
+        await Future.delayed(const Duration(milliseconds: 500));
+        focusToComment();
+      }
     }
+  }
+
+  dynamic focusToComment() {
+    commentFocusNode.requestFocus();
   }
 
   Future<void> commentPost() async {

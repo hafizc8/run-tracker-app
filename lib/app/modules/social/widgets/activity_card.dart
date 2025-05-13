@@ -285,7 +285,7 @@ class ActivityCard extends StatelessWidget {
         SocialActionButton(
           icon: Icon(Icons.chat_bubble_outline, size: 18, color: lightColorScheme.primary), 
           label: 'Comment', 
-          onTap: () {}
+          onTap: () => postController.goToDetail(postId: postData.id!, isFocusComment: true),
         ),
         const SizedBox(width: 8),
         SocialActionButton(

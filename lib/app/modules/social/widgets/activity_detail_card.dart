@@ -240,7 +240,7 @@ class ActivityDetailCard extends StatelessWidget {
           child: SocialActionButton(
             icon: Icon(Icons.chat_bubble_outline, size: 18, color: lightColorScheme.primary), 
             label: 'Comment', 
-            onTap: () {}
+            onTap: () => controller.focusToComment(),
           ),
         ),
         const SizedBox(width: 8),

@@ -26,6 +26,7 @@ import 'package:zest_mobile/app/modules/social/views/partial/for_you_tab/social_
 import 'package:zest_mobile/app/modules/social/views/partial/for_you_tab/social_for_you_event_detail_view.dart';
 import 'package:zest_mobile/app/modules/social/views/partial/search/bindings/social_search_binding.dart';
 import 'package:zest_mobile/app/modules/social/views/partial/search/views/social_search_view.dart';
+import 'package:zest_mobile/app/modules/social/views/partial/your_page_tab/post/edit_post_view.dart';
 import 'package:zest_mobile/app/modules/social/views/partial/your_page_tab/social_your_page_activity_detail_view.dart';
 import 'package:zest_mobile/app/modules/social/views/social_view.dart';
 import 'package:zest_mobile/app/modules/main_profile/bindings/badges_binding.dart';
@@ -134,6 +135,10 @@ class AppPages {
     GetPage(
       name: AppRoutes.socialYourPageEventDetailInviteFriend,
       page: () => const SocialForYouEventDetaiInviteFriendView(),
+    ),
+    GetPage(
+      name: AppRoutes.socialEditPost,
+      page: () => const EditPostView(),
     ),
 
     GetPage(

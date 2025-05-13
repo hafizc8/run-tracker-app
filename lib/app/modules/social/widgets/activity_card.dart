@@ -129,7 +129,7 @@ class ActivityCard extends StatelessWidget {
             onSelected: (value) {
               // Handle the selection
               if (value == 'edit') {
-                // Handle Edit Post action
+                postController.goToEditPost(postId: postData.id ?? '', isFromDetail: false);
               } else if (value == 'delete') {
                 postController.confirmAndDeletePost(postId: postData.id ?? '');
               }

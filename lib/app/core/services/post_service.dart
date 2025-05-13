@@ -1,5 +1,6 @@
 import 'package:zest_mobile/app/core/models/enums/http_method_enum.dart';
 import 'package:zest_mobile/app/core/models/forms/create_post_form.dart';
+import 'package:zest_mobile/app/core/models/forms/update_post_form.dart';
 import 'package:zest_mobile/app/core/models/interface/pagination_response_model.dart';
 import 'package:zest_mobile/app/core/models/model/post_model.dart';
 import 'package:zest_mobile/app/core/services/api_service.dart';
@@ -56,7 +57,7 @@ class PostService {
   }) async {
     try {
       final response = await _apiService.request(
-        path: AppConstants.postLikeDislike.replaceAll(':postId', postId),
+        path: AppConstants.postLikeDislike(postId),
         method: HttpMethod.post,
         queryParams: {
           'dislike': isDislike,
@@ -74,7 +75,7 @@ class PostService {
   }) async {
     try {
       final response = await _apiService.request(
-        path: AppConstants.postDetail.replaceAll(':postId', postId),
+        path: AppConstants.postDetail(postId),
         method: HttpMethod.get
       );
 
@@ -97,7 +98,7 @@ class PostService {
       }
 
       final response = await _apiService.request(
-        path: AppConstants.postCommentReply.replaceAll(':postId', postId),
+        path: AppConstants.postCommentReply(postId),
         method: HttpMethod.post,
         queryParams: params,
         data: {'content': content},
@@ -114,7 +115,7 @@ class PostService {
   }) async {
     try {
       final response = await _apiService.request(
-        path: AppConstants.postDelete.replaceAll(':postId', postId),
+        path: AppConstants.postDelete(postId),
         method: HttpMethod.delete,
       );
 
@@ -123,4 +124,23 @@ class PostService {
       rethrow;
     }
   }
+
+  Future<PostModel> update({
+    required String postId,
+    required UpdatePostFormModel form
+  }) async {
+    try {
+      final response = await _apiService.request<FormData>(
+        path: AppConstants.postUpdate(postId),
+        method: HttpMethod.post,
+        headers: {'Content-Type': 'multipart/form-data'},
+        data: await form.toFormData(),
+      );
+
+      return PostModel.fromJson(response.data['data']);
+    } catch (e) {
+      rethrow;
+    }
+  }
+
 }

@@ -127,9 +127,9 @@ class SocialYourPageActivityDetailView extends GetView<PostController> {
           onSelected: (value) {
             // Handle the selection
             if (value == 'edit') {
-              // Handle Edit Activity action
+              controller.goToEditPost(postId: controller.postDetail.value?.id ?? '', isFromDetail: true);
             } else if (value == 'delete') {
-              // Handle Delete Activity action
+              controller.confirmAndDeletePost(postId: controller.postDetail.value?.id ?? '', isPostDetail: true);
             }
           },
           icon: Icon(

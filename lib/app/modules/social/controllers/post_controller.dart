@@ -9,13 +9,14 @@ import 'package:zest_mobile/app/core/exception/handler/app_exception_handler_inf
 import 'package:zest_mobile/app/core/di/service_locator.dart';
 import 'package:zest_mobile/app/core/models/enums/app_exception_enum.dart';
 import 'package:zest_mobile/app/core/models/forms/create_post_form.dart';
+import 'package:zest_mobile/app/core/models/forms/update_post_form.dart';
 import 'package:zest_mobile/app/core/models/model/post_model.dart';
 import 'package:zest_mobile/app/core/models/model/user_model.dart';
 import 'package:zest_mobile/app/core/services/auth_service.dart';
 import 'package:zest_mobile/app/core/services/location_service.dart';
 import 'package:zest_mobile/app/core/services/post_service.dart';
 import 'package:zest_mobile/app/core/shared/helpers/debouncer.dart';
-import 'package:zest_mobile/app/modules/social/views/partial/create_post_dialog.dart';
+import 'package:zest_mobile/app/modules/social/views/partial/your_page_tab/post/create_post_dialog.dart';
 import 'package:zest_mobile/app/routes/app_routes.dart';
 
 class PostController extends GetxController {
@@ -39,6 +40,12 @@ class PostController extends GetxController {
   final FocusNode commentFocusNode = FocusNode();
   Rx<Comment?> focusedComment = Rx<Comment?>(null);
   final _debouncer = Debouncer(milliseconds: 500);
+
+  // update post
+  var updatePostForm = UpdatePostFormModel().obs;
+  var updatePostOriginalForm = UpdatePostFormModel().obs;
+  RxBool isLoadingUpdatePost = false.obs;
+  RxBool isLoadingLoadUpdatePost = false.obs;
 
   @override
   void onInit() {
@@ -237,7 +244,10 @@ class PostController extends GetxController {
     commentFocusNode.unfocus();
   }
 
-  Future<void> confirmAndDeletePost({required String postId}) async {
+  Future<void> confirmAndDeletePost({
+    required String postId,
+    bool isPostDetail = false
+  }) async {
     Get.defaultDialog(
       title: 'Delete Post',
       middleText: 'Are you sure to delete this post?',
@@ -247,9 +257,12 @@ class PostController extends GetxController {
       backgroundColor: Colors.white,
       titlePadding: const EdgeInsets.symmetric(vertical: 10),
       contentPadding: const EdgeInsets.symmetric(horizontal: 20, vertical: 10),
-      onConfirm: () async {
+      onConfirm: () {
+        if (isPostDetail) {
+          Get.back(closeOverlays: true); // close detail page
+        }
         Get.back(closeOverlays: true);
-        await _deletePost(postId: postId);
+        _deletePost(postId: postId);
       },
     );
   }
@@ -268,4 +281,102 @@ class PostController extends GetxController {
     }
   }
 
+  bool get isValidToUpdate => updatePostOriginalForm.value.isValidToUpdate(updatePostForm.value);
+
+  Future<void> goToEditPost({
+    required String postId,
+    bool isFromDetail = false
+  }) async {
+    Get.toNamed(AppRoutes.socialEditPost);
+
+    isLoadingLoadUpdatePost.value = true;
+
+    PostModel response = await _postService.getDetail(postId: postId);
+    
+    updatePostForm.value = UpdatePostFormModel(
+      id: response.id,
+      title: response.title,
+      content: response.content,
+      currentGalleries: response.galleries,
+      isFromDetail: isFromDetail
+    );
+
+    updatePostOriginalForm.value = updatePostForm.value;
+
+    isLoadingLoadUpdatePost.value = false;
+  }
+
+  void removeMedia({
+    required bool isFromServer,
+    Gallery? gallery,
+    File? file,
+  }) {
+    final updatedForm = updatePostForm.value;
+
+    if (isFromServer && gallery != null) {
+      // Hapus berdasarkan ID Gallery
+      final newCurrentGalleries = (updatedForm.currentGalleries ?? [])
+          .where((g) => g.id != gallery.id)
+          .toList();
+
+      final newDeletedGalleries = List<String>.from(updatedForm.deletedGalleries ?? [])
+        ..add(gallery.id ?? '');
+
+      updatePostForm.value = updatedForm.copyWith(
+        currentGalleries: newCurrentGalleries,
+        deletedGalleries: newDeletedGalleries,
+      );
+    } else if (!isFromServer && file != null) {
+      // Hapus berdasarkan path file lokal
+      final newNewGalleries = (updatedForm.newGalleries ?? [])
+          .where((f) => f.path != file.path)
+          .toList();
+
+      updatePostForm.value = updatedForm.copyWith(
+        newGalleries: newNewGalleries,
+      );
+    }
+  }
+
+
+  dynamic pickMultipleMediaToUpdate() async {
+    FilePickerResult? result = await FilePicker.platform.pickFiles(
+      type: FileType.media,
+      allowMultiple: true,
+    );
+
+    if (result != null) {
+      updatePostForm.value = updatePostForm.value.copyWith(
+        newGalleries: result.xFiles.map((e) => File(e.path)).toList(),
+      );
+    }
+  }
+
+  Future<void> updatePost() async {
+    try {
+      isLoadingUpdatePost.value = true;
+
+      PostModel resp = await _postService.update(postId: updatePostForm.value.id!, form: updatePostForm.value);
+      Get.back(); // close form update
+
+      if (!(updatePostForm.value.isFromDetail ?? false)) {
+        await refreshAllPosts();
+        Get.snackbar('Success', 'Successfully update post');
+      } else {
+        postDetail.value = postDetail.value!.copyWith(
+          title: resp.title,
+          content: resp.content,
+          galleries: resp.galleries,
+        );
+        Get.snackbar('Success', 'Successfully update post');
+      }
+    } on AppException catch (e) {
+      // show error snackbar, toast, etc
+      AppExceptionHandlerInfo.handle(e);
+    } catch (e) {
+      Get.snackbar('Error', e.toString());
+    } finally {
+      isLoadingUpdatePost.value = false;
+    }
+  }
 }

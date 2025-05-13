@@ -4,6 +4,7 @@ import 'package:zest_mobile/app/core/models/enums/social_page_enum.dart';
 import 'package:zest_mobile/app/core/shared/theme/color_schemes.dart';
 import 'package:zest_mobile/app/modules/social/controllers/post_controller.dart';
 import 'package:zest_mobile/app/modules/social/controllers/social_controller.dart';
+import 'package:zest_mobile/app/modules/social/controllers/social_following_controller.dart';
 import 'package:zest_mobile/app/modules/social/views/partial/your_page_tab/social_your_page_clubs_view.dart';
 import 'package:zest_mobile/app/modules/social/views/partial/your_page_tab/social_your_page_followers_view.dart';
 import 'package:zest_mobile/app/modules/social/views/partial/your_page_tab/social_your_page_following_view.dart';
@@ -13,64 +14,93 @@ class SocialYourPageView extends GetView<SocialController> {
   SocialYourPageView({super.key});
 
   final postController = Get.find<PostController>();
+  final followingController = Get.find<SocialFollowingController>();
+  final followersController = Get.find<SocialFollowingController>();
 
   @override
   Widget build(BuildContext context) {
-    return Obx(
-      () {
-        final selected = controller.selectedChip.value;
+    return Obx(() {
+      final selected = controller.selectedChip.value;
 
-        Widget content;
+      Widget content;
 
-        if (selected == YourPageChip.updates) {
-          return RefreshIndicator(
-            onRefresh: postController.refreshAllPosts,
-            child: SingleChildScrollView(
-              controller: postController.postScrollController,
-              physics: const AlwaysScrollableScrollPhysics(),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  _buildChipFilter(context),
-                  const SizedBox(height: 10),
-                  SocialYourPageUpdatesView(),
-                ],
-              ),
+      if (selected == YourPageChip.updates) {
+        return RefreshIndicator(
+          onRefresh: postController.refreshAllPosts,
+          child: SingleChildScrollView(
+            controller: postController.postScrollController,
+            physics: const AlwaysScrollableScrollPhysics(),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                _buildChipFilter(context),
+                const SizedBox(height: 10),
+                SocialYourPageUpdatesView(),
+              ],
             ),
-          );
-
-        } else if (selected == YourPageChip.following) {
-          content = const SocialYourPageFollowingView();
-
-        } else if (selected == YourPageChip.followers) {
-          content = const SocialYourPageFollowersView();
-
-        } else if (selected == YourPageChip.clubs) {
-          content = const SocialYourPageClubsView();
-
-        } else {
-          content = Center(child: Text('No content for "$selected" yet'));
-        }
-
-        return SingleChildScrollView(
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              _buildChipFilter(context),
-              const SizedBox(height: 10),
-              content,
-            ],
           ),
         );
+      } else if (selected == YourPageChip.following) {
+        return RefreshIndicator(
+          onRefresh: () async {
+            followingController.load(refresh: true);
+          },
+          child: SingleChildScrollView(
+            controller: followingController.scrollFriendsController,
+            physics: const AlwaysScrollableScrollPhysics(),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                _buildChipFilter(context),
+                const SizedBox(height: 10),
+                const SocialYourPageFollowingView(),
+              ],
+            ),
+          ),
+        );
+      } else if (selected == YourPageChip.followers) {
+        return RefreshIndicator(
+          onRefresh: () async {
+            followersController.load(refresh: true);
+          },
+          child: SingleChildScrollView(
+            controller: followersController.scrollFriendsController,
+            physics: const AlwaysScrollableScrollPhysics(),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                _buildChipFilter(context),
+                const SizedBox(height: 10),
+                const SocialYourPageFollowersView(),
+              ],
+            ),
+          ),
+        );
+      } else if (selected == YourPageChip.clubs) {
+        content = const SocialYourPageClubsView();
+      } else {
+        content = Center(child: Text('No content for "$selected" yet'));
       }
-    );
+
+      return SingleChildScrollView(
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            _buildChipFilter(context),
+            const SizedBox(height: 10),
+            content,
+          ],
+        ),
+      );
+    });
   }
 
   Widget _buildChipFilter(BuildContext context) {
     return Obx(() {
       return SingleChildScrollView(
         scrollDirection: Axis.horizontal,
-        padding: const EdgeInsets.symmetric(horizontal: 8), // biar ada space kiri-kanan
+        padding: const EdgeInsets.symmetric(
+            horizontal: 8), // biar ada space kiri-kanan
         child: Row(
           children: [
             _buildFilterChip(context, 'Updates', YourPageChip.updates),
@@ -86,8 +116,8 @@ class SocialYourPageView extends GetView<SocialController> {
     });
   }
 
-
-  Widget _buildFilterChip(BuildContext context, String label, YourPageChip chipType) {
+  Widget _buildFilterChip(
+      BuildContext context, String label, YourPageChip chipType) {
     return InkWell(
       onTap: () {
         controller.selectChip(chipType);
@@ -96,11 +126,14 @@ class SocialYourPageView extends GetView<SocialController> {
       child: Chip(
         label: Text(label),
         backgroundColor: const Color(0xFFdaebfe),
-        labelStyle: Theme.of(context).textTheme.headlineSmall?.copyWith(fontSize: 12),
+        labelStyle:
+            Theme.of(context).textTheme.headlineSmall?.copyWith(fontSize: 12),
         shape: RoundedRectangleBorder(
           borderRadius: BorderRadius.circular(20),
           side: BorderSide(
-            color: (controller.selectedChip.value == chipType) ? lightColorScheme.primary : Colors.transparent,
+            color: (controller.selectedChip.value == chipType)
+                ? lightColorScheme.primary
+                : Colors.transparent,
             width: 1,
           ),
         ),

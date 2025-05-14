@@ -1,15 +1,13 @@
 import 'package:flutter/material.dart';
-import 'package:flutter/widgets.dart';
-import 'package:flutter_typeahead/flutter_typeahead.dart';
 import 'package:get/get.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:zest_mobile/app/core/models/forms/store_event_form.dart';
 import 'package:zest_mobile/app/core/models/model/event_activity_model.dart';
 import 'package:zest_mobile/app/routes/app_routes.dart';
 
-import '../controllers/event_controller.dart';
+import '../controllers/event_action_controller.dart';
 
-class EventCreateView extends GetView<EventController> {
+class EventCreateView extends GetView<EventActionController> {
   const EventCreateView({super.key});
 
   @override

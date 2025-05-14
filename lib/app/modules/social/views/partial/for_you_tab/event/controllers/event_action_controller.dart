@@ -11,10 +11,10 @@ import 'package:zest_mobile/app/core/extension/date_extension.dart';
 import 'package:zest_mobile/app/core/models/enums/app_exception_enum.dart';
 import 'package:zest_mobile/app/core/models/forms/store_event_form.dart';
 import 'package:zest_mobile/app/core/models/model/event_activity_model.dart';
+import 'package:zest_mobile/app/core/models/model/event_model.dart';
 import 'package:zest_mobile/app/core/services/event_service.dart';
-import 'package:zest_mobile/app/routes/app_routes.dart';
 
-class EventController extends GetxController {
+class EventActionController extends GetxController {
   var dateController = TextEditingController();
   var addressController = TextEditingController();
   var imageController = TextEditingController();
@@ -148,8 +148,10 @@ class EventController extends GetxController {
   Future<void> storeEvent() async {
     isLoading.value = true;
     try {
-      bool res = await _eventService.storeEvent(form.value);
-      if (res) Get.offAllNamed(AppRoutes.social);
+      final EventModel? res = await _eventService.storeEvent(form.value);
+      if (res != null) {
+        Get.back(result: res);
+      }
     } on AppException catch (e) {
       if (e.type == AppExceptionType.validation) {
         form.value = form.value.setErrors(e.errors!);

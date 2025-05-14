@@ -48,5 +48,5 @@ class AppConstants {
 
   // Event
   static const String eventActivity = "/event/activity";
-  static const String eventStore = "/event";
+  static const String event = "/event";
 }

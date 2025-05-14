@@ -17,6 +17,8 @@ import 'package:zest_mobile/app/modules/auth/register/views/register_verify_emai
 import 'package:zest_mobile/app/modules/auth/register/views/register_view.dart';
 import 'package:zest_mobile/app/modules/choose_location/bindings/choose_location_binding.dart';
 import 'package:zest_mobile/app/modules/choose_location/views/choose_location_view.dart';
+import 'package:zest_mobile/app/modules/club/partial/create_club/bindings/create_club_binding.dart';
+import 'package:zest_mobile/app/modules/club/partial/create_club/views/create_club_view.dart';
 import 'package:zest_mobile/app/modules/home/bindings/main_home_binding.dart';
 import 'package:zest_mobile/app/modules/home/views/main_home_view.dart';
 import 'package:zest_mobile/app/modules/main_profile/partials/profile/bindings/profile_binding.dart';
@@ -174,6 +176,13 @@ class AppPages {
       name: AppRoutes.socialSearch,
       page: () => const SocialSearchView(),
       binding: SocialSearchBinding(),
+    ),
+
+    // club
+    GetPage(
+      name: AppRoutes.createClub,
+      page: () => const CreateClubView(),
+      binding: CreateClubBinding(),
     ),
   ];
 }

@@ -57,4 +57,27 @@ class ClubService {
       rethrow;
     }
   }
+
+  Future<bool> accOrJoinOrLeave({
+    required String clubId,
+    int leave = 0,
+  }) async {
+    try {
+      Map<String, dynamic>? queryParams = {};
+
+      if (leave == 1) {
+        queryParams['leave'] = leave;
+      }
+
+      final response = await _apiService.request<FormData>(
+        path: AppConstants.clubAccOrJoinOrLeave(clubId),
+        method: HttpMethod.post,
+        queryParams: queryParams,
+      );
+
+      return response.data['success'];
+    } catch (e) {
+      rethrow;
+    }
+  }
 }

@@ -49,4 +49,5 @@ class AppConstants {
   // Club
   static const String clubGetAll = "/club";
   static const String clubCreate = "/club";
+  static String clubAccOrJoinOrLeave(String clubdId) => "/club/$clubdId/join";
 }

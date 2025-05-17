@@ -24,6 +24,7 @@ class ClubModel extends Model<ClubModel> {
     required this.challengeCount,
     required this.eventCount,
     this.isOwner = false,
+    this.isJoined = false,
   });
 
   final String? id;
@@ -44,6 +45,7 @@ class ClubModel extends Model<ClubModel> {
   final int? clubUsersCount;
   final int? challengeCount;
   final int? eventCount;
+  final bool? isJoined;
   bool? isOwner;
 
   @override
@@ -67,6 +69,7 @@ class ClubModel extends Model<ClubModel> {
     int? challengeCount,
     int? eventCount,
     bool? isOwner,
+    bool? isJoined,
   }) {
     return ClubModel(
       id: id ?? this.id,
@@ -88,6 +91,7 @@ class ClubModel extends Model<ClubModel> {
       challengeCount: challengeCount ?? this.challengeCount,
       eventCount: eventCount ?? this.eventCount,
       isOwner: isOwner ?? this.isOwner,
+      isJoined: isJoined ?? this.isJoined,
     );
   }
 
@@ -112,6 +116,7 @@ class ClubModel extends Model<ClubModel> {
       challengeCount: json["challenge_count"],
       eventCount: json["event_count"],
       isOwner: json["is_owner"] == 1,
+      isJoined: json["is_joined"] == 1,
     );
   }
 
@@ -136,6 +141,7 @@ class ClubModel extends Model<ClubModel> {
         "challenge_count": challengeCount,
         "event_count": eventCount,
         "is_owner": isOwner == true ? 1 : 0,
+        "is_joined": isJoined == true ? 1 : 0
       };
 
   @override
@@ -159,5 +165,6 @@ class ClubModel extends Model<ClubModel> {
         challengeCount,
         eventCount,
         isOwner,
+        isJoined
       ];
 }

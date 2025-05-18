@@ -22,7 +22,7 @@ class ClubModel extends Model<ClubModel> {
     required this.eventsCount,
     required this.clubUsersCount,
     required this.challengeCount,
-    required this.eventCount,
+    this.isPendingJoin = false,
     this.isOwner = false,
     this.isJoined = false,
   });
@@ -44,7 +44,7 @@ class ClubModel extends Model<ClubModel> {
   final int? eventsCount;
   final int? clubUsersCount;
   final int? challengeCount;
-  final int? eventCount;
+  final bool? isPendingJoin;
   final bool? isJoined;
   bool? isOwner;
 
@@ -67,7 +67,7 @@ class ClubModel extends Model<ClubModel> {
     int? eventsCount,
     int? clubUsersCount,
     int? challengeCount,
-    int? eventCount,
+    bool? isPendingJoin,
     bool? isOwner,
     bool? isJoined,
   }) {
@@ -89,7 +89,7 @@ class ClubModel extends Model<ClubModel> {
       eventsCount: eventsCount ?? this.eventsCount,
       clubUsersCount: clubUsersCount ?? this.clubUsersCount,
       challengeCount: challengeCount ?? this.challengeCount,
-      eventCount: eventCount ?? this.eventCount,
+      isPendingJoin: isPendingJoin ?? this.isPendingJoin,
       isOwner: isOwner ?? this.isOwner,
       isJoined: isJoined ?? this.isJoined,
     );
@@ -114,7 +114,7 @@ class ClubModel extends Model<ClubModel> {
       eventsCount: json["events_count"],
       clubUsersCount: json["club_users_count"],
       challengeCount: json["challenge_count"],
-      eventCount: json["event_count"],
+      isPendingJoin: json["is_pending_join"] == 1,
       isOwner: json["is_owner"] == 1,
       isJoined: json["is_joined"] == 1,
     );
@@ -139,7 +139,7 @@ class ClubModel extends Model<ClubModel> {
         "events_count": eventsCount,
         "club_users_count": clubUsersCount,
         "challenge_count": challengeCount,
-        "event_count": eventCount,
+        "is_pending_join": isPendingJoin == true ? 1 : 0,
         "is_owner": isOwner == true ? 1 : 0,
         "is_joined": isJoined == true ? 1 : 0
       };
@@ -163,7 +163,7 @@ class ClubModel extends Model<ClubModel> {
         eventsCount,
         clubUsersCount,
         challengeCount,
-        eventCount,
+        isPendingJoin,
         isOwner,
         isJoined
       ];

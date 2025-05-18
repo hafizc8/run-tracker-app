@@ -40,4 +40,6 @@ abstract class AppRoutes {
 
   // club
   static const createClub = '/create-club';
+  static const detailClub = '/detail-club';
+  static const memberListInClub = '/detail-club/member-list';
 }

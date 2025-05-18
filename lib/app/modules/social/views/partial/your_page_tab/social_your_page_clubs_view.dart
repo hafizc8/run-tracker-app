@@ -96,7 +96,10 @@ class SocialYourPageClubsView extends GetView<SocialClubSearchController> {
               }
 
               final club = controller.clubs[index];
-              return _buildClubsListItem(context: context, club: club);
+              return InkWell(
+                onTap: () => controller.goToClubDetails(club),
+                child: _buildClubsListItem(context: context, club: club),
+              );
             },
           );
         }),

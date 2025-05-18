@@ -5,6 +5,7 @@ import 'package:zest_mobile/app/core/models/interface/pagination_response_model.
 import 'package:zest_mobile/app/core/models/model/club_model.dart';
 import 'package:zest_mobile/app/core/services/club_service.dart';
 import 'package:zest_mobile/app/core/shared/helpers/debouncer.dart';
+import 'package:zest_mobile/app/routes/app_routes.dart';
 
 class SocialClubSearchController extends GetxController {
   var isLoading = false.obs;
@@ -130,5 +131,9 @@ class SocialClubSearchController extends GetxController {
     } finally {
       isLoading.value = false;
     }
+  }
+
+  dynamic goToClubDetails(ClubModel club) {
+    Get.toNamed(AppRoutes.detailClub, arguments: club.id);
   }
 }

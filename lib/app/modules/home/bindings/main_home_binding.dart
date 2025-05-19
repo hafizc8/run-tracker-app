@@ -15,7 +15,9 @@ class MainHomeBinding extends Bindings {
     Get.lazyPut<PostController>(() => PostController());
     Get.lazyPut<SocialFollowingController>(() => SocialFollowingController());
     Get.lazyPut<SocialFollowersController>(() => SocialFollowersController());
-    Get.lazyPut<EventActionController>(() => EventActionController());
+    Get.lazyPut<EventActionController>(
+      () => EventActionController(),
+    );
     Get.lazyPut<EventController>(() => EventController());
   }
 }

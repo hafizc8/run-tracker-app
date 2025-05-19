@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:zest_mobile/app/core/extension/follow_extension.dart';
 import 'package:zest_mobile/app/core/models/model/user_mini_model.dart';
+import 'package:zest_mobile/app/core/shared/widgets/custom_chip.dart';
 import 'package:zest_mobile/app/modules/social/controllers/social_following_controller.dart';
 
 class SocialYourPageFollowingView extends GetView<SocialFollowingController> {
@@ -126,6 +128,22 @@ class SocialYourPageFollowingView extends GetView<SocialFollowingController> {
             .bodyMedium
             ?.copyWith(fontWeight: FontWeight.w600),
       ),
+      // trailing: Row(
+      //   mainAxisSize: MainAxisSize.min,
+      //   children: [
+      //     CustomChip(
+      //       backgroundColor:
+      //           Theme.of(context).colorScheme.primary.withOpacity(0.1),
+      //       child: Text(
+      //         {'is_followed': user.isFollowed}.followingStatus,
+      //         style: Theme.of(context).textTheme.bodyMedium?.copyWith(
+      //               color: Theme.of(context).colorScheme.primary,
+      //               fontWeight: FontWeight.bold,
+      //             ),
+      //       ),
+      //     )
+      //   ],
+      // ),
     );
   }
 }

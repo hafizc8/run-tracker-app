@@ -11,6 +11,14 @@ extension BoolExtension on dynamic {
         return '1';
       case false:
         return '0';
+      case '1':
+        return 'true';
+      case '0':
+        return 'false';
+      case 1:
+        return 'true';
+      case 0:
+        return 'false';
       default:
         return '0';
     }

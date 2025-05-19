@@ -131,7 +131,7 @@ class AppPages {
     ),
     GetPage(
       name: AppRoutes.socialYourPageEventDetail,
-      page: () => const SocialForYouEventDetailView(),
+      page: () => SocialForYouEventDetailView(),
     ),
     GetPage(
       name: AppRoutes.socialYourPageEventDetailInviteFriend,

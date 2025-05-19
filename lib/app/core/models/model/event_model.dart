@@ -1,6 +1,7 @@
+import 'package:equatable/equatable.dart';
 import 'package:zest_mobile/app/core/models/interface/model_interface.dart';
 
-class EventModel extends Model {
+class EventModel extends Equatable {
   EventModel({
     required this.id,
     required this.activity,
@@ -23,6 +24,10 @@ class EventModel extends Model {
     required this.isPublic,
     required this.isAutoPostToClub,
     required this.cancelledAt,
+    required this.isOwner,
+    required this.isPendingJoin,
+    required this.isJoined,
+    required this.user,
   });
 
   final String? id;
@@ -30,8 +35,8 @@ class EventModel extends Model {
   final String? title;
   final String? slug;
   final String? description;
-  final String? imagePath;
-  final String? imageUrl;
+  final dynamic imagePath;
+  final dynamic imageUrl;
   final String? latitude;
   final String? longitude;
   final String? country;
@@ -45,17 +50,20 @@ class EventModel extends Model {
   final int? quota;
   final int? isPublic;
   final int? isAutoPostToClub;
-  final dynamic cancelledAt;
+  final DateTime? cancelledAt;
+  final int? isOwner;
+  final int? isPendingJoin;
+  final int? isJoined;
+  final User? user;
 
-  @override
   EventModel copyWith({
     String? id,
     String? activity,
     String? title,
     String? slug,
     String? description,
-    String? imagePath,
-    String? imageUrl,
+    dynamic? imagePath,
+    dynamic? imageUrl,
     String? latitude,
     String? longitude,
     String? country,
@@ -63,13 +71,17 @@ class EventModel extends Model {
     String? district,
     String? subdistrict,
     String? village,
-    String? postcode,
+    dynamic? postcode,
     DateTime? datetime,
     int? price,
     int? quota,
     int? isPublic,
     int? isAutoPostToClub,
-    String? cancelledAt,
+    DateTime? cancelledAt,
+    int? isOwner,
+    int? isPendingJoin,
+    int? isJoined,
+    User? user,
   }) {
     return EventModel(
       id: id ?? this.id,
@@ -93,6 +105,10 @@ class EventModel extends Model {
       isPublic: isPublic ?? this.isPublic,
       isAutoPostToClub: isAutoPostToClub ?? this.isAutoPostToClub,
       cancelledAt: cancelledAt ?? this.cancelledAt,
+      isOwner: isOwner ?? this.isOwner,
+      isPendingJoin: isPendingJoin ?? this.isPendingJoin,
+      isJoined: isJoined ?? this.isJoined,
+      user: user ?? this.user,
     );
   }
 
@@ -118,12 +134,14 @@ class EventModel extends Model {
       quota: json["quota"],
       isPublic: json["is_public"],
       isAutoPostToClub: json["is_auto_post_to_club"],
-      cancelledAt: json["cancelled_at"],
+      cancelledAt: DateTime.tryParse(json["cancelled_at"] ?? ""),
+      isOwner: json["is_owner"],
+      isPendingJoin: json["is_pending_join"],
+      isJoined: json["is_joined"],
+      user: json["user"] == null ? null : User.fromJson(json["user"]),
     );
   }
-  String get address =>
-      "$village, $subdistrict, $district, $province, $country";
-  @override
+
   Map<String, dynamic> toJson() => {
         "id": id,
         "activity": activity,
@@ -145,13 +163,20 @@ class EventModel extends Model {
         "quota": quota,
         "is_public": isPublic,
         "is_auto_post_to_club": isAutoPostToClub,
-        "cancelled_at": cancelledAt,
+        "cancelled_at": cancelledAt?.toIso8601String(),
+        "is_owner": isOwner,
+        "is_pending_join": isPendingJoin,
+        "is_joined": isJoined,
+        "user": user?.toJson(),
       };
 
   @override
   String toString() {
-    return "$id, $activity, $title, $slug, $description, $imagePath, $imageUrl, $latitude, $longitude, $country, $province, $district, $subdistrict, $village, $postcode, $datetime, $price, $quota, $isPublic, $isAutoPostToClub, $cancelledAt, ";
+    return "$id, $activity, $title, $slug, $description, $imagePath, $imageUrl, $latitude, $longitude, $country, $province, $district, $subdistrict, $village, $postcode, $datetime, $price, $quota, $isPublic, $isAutoPostToClub, $cancelledAt, $isOwner, $isPendingJoin, $isJoined, $user, ";
   }
+
+  String get address =>
+      "$village, $subdistrict, $district, $province, $country";
 
   @override
   List<Object?> get props => [
@@ -176,5 +201,68 @@ class EventModel extends Model {
         isPublic,
         isAutoPostToClub,
         cancelledAt,
+        isOwner,
+        isPendingJoin,
+        isJoined,
+        user,
+      ];
+}
+
+class User extends Model {
+  User({
+    required this.id,
+    required this.name,
+    required this.imagePath,
+    required this.imageUrl,
+  });
+
+  final String? id;
+  final String? name;
+  final String? imagePath;
+  final String? imageUrl;
+
+  @override
+  User copyWith({
+    String? id,
+    String? name,
+    String? imagePath,
+    String? imageUrl,
+  }) {
+    return User(
+      id: id ?? this.id,
+      name: name ?? this.name,
+      imagePath: imagePath ?? this.imagePath,
+      imageUrl: imageUrl ?? this.imageUrl,
+    );
+  }
+
+  factory User.fromJson(Map<String, dynamic> json) {
+    return User(
+      id: json["id"],
+      name: json["name"],
+      imagePath: json["image_path"],
+      imageUrl: json["image_url"],
+    );
+  }
+
+  @override
+  Map<String, dynamic> toJson() => {
+        "id": id,
+        "name": name,
+        "image_path": imagePath,
+        "image_url": imageUrl,
+      };
+
+  @override
+  String toString() {
+    return "$id, $name, $imagePath, $imageUrl, ";
+  }
+
+  @override
+  List<Object?> get props => [
+        id,
+        name,
+        imagePath,
+        imageUrl,
       ];
 }

@@ -1,8 +1,12 @@
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
+import 'package:shimmer/shimmer.dart';
+import 'package:zest_mobile/app/core/extension/date_extension.dart';
+import 'package:zest_mobile/app/core/models/model/event_model.dart';
 
 class EventDetailCard extends StatelessWidget {
-  const EventDetailCard({super.key});
-
+  const EventDetailCard({super.key, required this.event});
+  final EventModel? event;
   @override
   Widget build(BuildContext context) {
     return Container(
@@ -15,9 +19,13 @@ class EventDetailCard extends StatelessWidget {
           Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
-              Text(
-                'Valentine\'s Date',
-                style: Theme.of(context).textTheme.headlineMedium,
+              Expanded(
+                child: Text(
+                  event?.title ?? '-',
+                  maxLines: 1,
+                  overflow: TextOverflow.ellipsis,
+                  style: Theme.of(context).textTheme.headlineMedium,
+                ),
               ),
               Icon(
                 Icons.share_outlined,
@@ -33,14 +41,24 @@ class EventDetailCard extends StatelessWidget {
               // borderRadius: BorderRadius.circular(12),
               child: Container(
                 color: Colors.grey.shade300,
-                child: const Center(
-                  child: Column(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    children: [
-                      Icon(Icons.image, size: 64, color: Colors.grey),
-                      SizedBox(height: 8),
-                      Text('Image Placeholder', style: TextStyle(color: Colors.grey)),
-                    ],
+                child: CachedNetworkImage(
+                  imageUrl: event?.imageUrl ?? '',
+                  fit: BoxFit.cover,
+                  placeholder: (context, url) => Shimmer.fromColors(
+                    baseColor: Colors.grey.shade300,
+                    highlightColor: Colors.grey.shade100,
+                    child: const SizedBox.shrink(),
+                  ),
+                  errorWidget: (context, url, error) => const Center(
+                    child: Column(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        Icon(Icons.image, size: 64, color: Colors.grey),
+                        SizedBox(height: 8),
+                        Text('Image Placeholder',
+                            style: TextStyle(color: Colors.grey)),
+                      ],
+                    ),
                   ),
                 ),
               ),
@@ -50,17 +68,43 @@ class EventDetailCard extends StatelessWidget {
           // title
           Row(
             children: [
-              CircleAvatar(
-                radius: 18, 
-                backgroundColor: Colors.grey.shade300,
-                child: const Icon(Icons.person, color: Colors.white),
+              ClipOval(
+                child: CachedNetworkImage(
+                  imageUrl: event?.user?.imageUrl ?? '',
+                  width: 50,
+                  height: 50,
+                  fit: BoxFit.cover,
+                  placeholder: (context, url) => Shimmer.fromColors(
+                    baseColor: Colors.grey.shade300,
+                    highlightColor: Colors.grey.shade100,
+                    child: const SizedBox.shrink(),
+                  ),
+                  errorWidget: (context, url, error) => const Center(
+                    child: Column(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        Icon(
+                          Icons.person,
+                          size: 24,
+                          color: Colors.grey,
+                        ),
+                      ],
+                    ),
+                  ),
+                ),
               ),
               const SizedBox(width: 8),
               Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  Text('ORGANIZED BY', style: Theme.of(context).textTheme.labelSmall?.copyWith(color: Theme.of(context).colorScheme.onTertiary)),
-                  Text('[INDIVIDUAL/CLUB NAME]', style: Theme.of(context).textTheme.bodyMedium?.copyWith(fontWeight: FontWeight.w600)),
+                  Text('ORGANIZED BY',
+                      style: Theme.of(context).textTheme.labelSmall?.copyWith(
+                          color: Theme.of(context).colorScheme.onTertiary)),
+                  Text('[${event?.user?.name}]',
+                      style: Theme.of(context)
+                          .textTheme
+                          .bodyMedium
+                          ?.copyWith(fontWeight: FontWeight.w600)),
                 ],
               ),
             ],
@@ -68,7 +112,7 @@ class EventDetailCard extends StatelessWidget {
           const SizedBox(height: 15),
           // description
           Text(
-            'Description The sky\'s the limit for this challenge. Run repeats on your local hill or gear up for a huge mountain adventure – however you do it, climb at least 2,000 meters over as many activities as you like. You\'ll get a sweet finisher\'s badge plus race-ready legs!',
+            event?.description ?? '-',
             style: Theme.of(context).textTheme.titleSmall,
           ),
           const SizedBox(height: 15),
@@ -81,8 +125,8 @@ class EventDetailCard extends StatelessWidget {
                     child: _buildInfoItem(
                       context,
                       icon: Icons.track_changes_outlined,
-                      title: 'TARGET',
-                      subtitle: '10.000',
+                      title: 'Quota',
+                      subtitle: '${event?.quota}',
                     ),
                   ),
                   const SizedBox(width: 20),
@@ -91,7 +135,7 @@ class EventDetailCard extends StatelessWidget {
                       context,
                       icon: Icons.date_range_outlined,
                       title: 'PERIOD',
-                      subtitle: '14 February 2025',
+                      subtitle: event?.datetime?.toYyyyMmDdString() ?? '-',
                     ),
                   ),
                 ],
@@ -104,7 +148,7 @@ class EventDetailCard extends StatelessWidget {
                       context,
                       icon: Icons.map_outlined,
                       title: 'LOCATION',
-                      subtitle: 'Anywhere',
+                      subtitle: event?.address ?? '-',
                     ),
                   ),
                   const SizedBox(width: 20),
@@ -113,7 +157,8 @@ class EventDetailCard extends StatelessWidget {
                       context,
                       icon: Icons.confirmation_num_outlined,
                       title: 'HTM',
-                      subtitle: 'Free',
+                      subtitle:
+                          (event?.price ?? 0) > 0 ? '${event?.price}' : 'Free',
                     ),
                   ),
                 ],
@@ -141,7 +186,11 @@ class EventDetailCard extends StatelessWidget {
     );
   }
 
-  Widget _personGridList({required BuildContext context, required String title, required int itemCount, required Widget Function(BuildContext, int) itemBuilder}) {
+  Widget _personGridList(
+      {required BuildContext context,
+      required String title,
+      required int itemCount,
+      required Widget Function(BuildContext, int) itemBuilder}) {
     return Container(
       padding: const EdgeInsets.all(15),
       color: Colors.grey.shade200,
@@ -187,14 +236,14 @@ class EventDetailCard extends StatelessWidget {
               Text(
                 title,
                 style: Theme.of(context).textTheme.labelSmall?.copyWith(
-                  color: Theme.of(context).colorScheme.onSurfaceVariant,
-                ),
+                      color: Theme.of(context).colorScheme.onSurfaceVariant,
+                    ),
               ),
               Text(
                 subtitle,
                 style: Theme.of(context).textTheme.bodyMedium?.copyWith(
-                  fontWeight: FontWeight.w600,
-                ),
+                      fontWeight: FontWeight.w600,
+                    ),
                 maxLines: 1,
                 overflow: TextOverflow.ellipsis,
               ),
@@ -229,7 +278,10 @@ class EventDetailCard extends StatelessWidget {
           const SizedBox(height: 8),
           Text(
             'John Doe',
-            style: Theme.of(context).textTheme.bodyMedium?.copyWith(fontWeight: FontWeight.w600),
+            style: Theme.of(context)
+                .textTheme
+                .bodyMedium
+                ?.copyWith(fontWeight: FontWeight.w600),
           )
         ],
       ),

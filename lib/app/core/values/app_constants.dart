@@ -48,5 +48,11 @@ class AppConstants {
 
   // Event
   static const String eventActivity = "/event/activity";
-  static const String event = "/event";
+  static const String eventLocation = "/event/location";
+  static String eventDetail(String id) => "/event/$id";
+  static String eventAccLeaveJoin(String id) => "/event/$id/join";
+  static String event([String? id]) => id != null ? "/event/$id" : "/event";
+
+  // Clubs
+  static const String clubsMini = "/club";
 }

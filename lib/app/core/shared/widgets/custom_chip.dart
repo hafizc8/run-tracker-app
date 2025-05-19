@@ -5,6 +5,7 @@ class CustomChip extends StatelessWidget {
   final Function? onTap;
   final Color backgroundColor;
   final EdgeInsets padding;
+  final Border? border;
 
   const CustomChip({
     super.key,
@@ -12,17 +13,19 @@ class CustomChip extends StatelessWidget {
     this.onTap,
     this.padding = const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
     this.backgroundColor = Colors.white,
+    this.border,
   });
 
   @override
   Widget build(BuildContext context) {
     return GestureDetector(
-      onTap: () => onTap!(),
+      onTap: () => onTap == null ? null : onTap!(),
       child: Container(
         padding: padding,
         decoration: BoxDecoration(
           color: backgroundColor,
           borderRadius: BorderRadius.circular(100),
+          border: border ?? Border.all(color: Colors.transparent),
         ),
         child: child,
       ),

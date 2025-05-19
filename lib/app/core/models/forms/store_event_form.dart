@@ -4,6 +4,7 @@ import 'package:intl/intl.dart';
 import 'package:zest_mobile/app/core/extension/bool_extension.dart';
 import 'package:zest_mobile/app/core/models/interface/form_model_interface.dart';
 import 'package:zest_mobile/app/core/models/interface/mixin/form_model_mixin.dart';
+import 'package:zest_mobile/app/core/models/model/club_mini_model.dart';
 import 'package:zest_mobile/app/core/models/model/event_activity_model.dart';
 
 class EventStoreFormModel extends FormModel<EventStoreFormModel>
@@ -19,7 +20,7 @@ class EventStoreFormModel extends FormModel<EventStoreFormModel>
   final DateTime? datetime;
   final bool? isPublic;
   final bool? isAutoPostToClub;
-  final List<String>? shareToClubs;
+  final List<ClubMiniModel>? shareToClubs;
 
   final Map<String, dynamic>? errors;
 
@@ -57,7 +58,7 @@ class EventStoreFormModel extends FormModel<EventStoreFormModel>
     DateTime? datetime,
     bool? isPublic,
     bool? isAutoPostToClub,
-    List<String>? shareToClubs,
+    List<ClubMiniModel>? shareToClubs,
     Map<String, dynamic>? errors,
     String? field,
   }) {
@@ -127,12 +128,21 @@ class EventStoreFormModel extends FormModel<EventStoreFormModel>
           : null,
       'is_public': isPublic.toBool,
       'is_auto_post_to_club': isAutoPostToClub.toBool,
-      'share_to_clubs': shareToClubs,
+      'share_to_clubs': shareToClubs?.map((obj) => obj.id).toList(),
     };
   }
 
   @override
   bool isValidToUpdate(EventStoreFormModel formHasEdited) {
-    throw UnimplementedError();
+    return activity != formHasEdited.activity ||
+        title != formHasEdited.title ||
+        description != formHasEdited.description ||
+        latitude != formHasEdited.latitude ||
+        longitude != formHasEdited.longitude ||
+        quota != formHasEdited.quota ||
+        image != formHasEdited.image ||
+        datetime != formHasEdited.datetime ||
+        isPublic != formHasEdited.isPublic ||
+        price != formHasEdited.price;
   }
 }

@@ -33,3 +33,7 @@ extension DateFormatting on DateTime {
     return DateFormat('d MMM yyyy').format(this);
   }
 }
+
+extension DateTimeExtensions on DateTime {
+  bool get isFuture => isAfter(DateTime.now());
+}

@@ -13,4 +13,13 @@ extension FollowStatusExtension on Map<String, int> {
       return 'Follow';
     }
   }
+
+  String get followingStatus {
+    final isFollowing = this['is_followed'] ?? 0;
+    if (isFollowing == 1) {
+      return 'Message';
+    } else {
+      return 'Follow';
+    }
+  }
 }

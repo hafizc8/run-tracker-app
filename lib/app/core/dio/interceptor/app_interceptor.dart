@@ -34,7 +34,11 @@ class AppInterceptor extends Interceptor {
       case AppExceptionType.emptyProfile:
         g.Get.offAllNamed(AppRoutes.registerCreateProfile);
         break;
-
+      case AppExceptionType.serverError:
+        sl<StorageService>().remove(StorageKeys.token);
+        sl<StorageService>().remove(StorageKeys.user);
+        g.Get.offAllNamed(AppRoutes.login);
+        break;
       default:
     }
     super.onError(err, handler);

@@ -1,11 +1,17 @@
+import 'dart:math';
+
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
+import 'package:get/get.dart';
 import 'package:shimmer/shimmer.dart';
 import 'package:zest_mobile/app/core/extension/date_extension.dart';
+import 'package:zest_mobile/app/core/extension/event_extension.dart';
 import 'package:zest_mobile/app/core/models/model/event_model.dart';
+import 'package:zest_mobile/app/modules/social/views/partial/for_you_tab/event/controllers/event_action_controller.dart';
+import 'package:zest_mobile/app/modules/social/views/partial/for_you_tab/event/controllers/event_controller.dart';
 
 class EventCard extends StatelessWidget {
-  const EventCard(
+  EventCard(
       {super.key,
       required this.onTap,
       this.eventModel,
@@ -16,6 +22,9 @@ class EventCard extends StatelessWidget {
   final void Function()? onTap;
   final Color backgroundColor;
   final bool isAction;
+
+  final eventController = Get.find<EventController>();
+  final eventActionController = Get.find<EventActionController>();
 
   @override
   Widget build(BuildContext context) {
@@ -79,22 +88,98 @@ class EventCard extends StatelessWidget {
                   child: Positioned(
                     top: 10,
                     right: 10,
-                    child: Container(
-                      padding: const EdgeInsets.symmetric(
-                          horizontal: 10, vertical: 4),
-                      decoration: const BoxDecoration(
-                        color: Colors.white,
-                        shape: BoxShape.rectangle,
-                        borderRadius: BorderRadius.all(Radius.circular(12)),
-                      ),
-                      child: Icon(
-                        Icons.share_outlined,
-                        size: 20,
-                        color: Theme.of(context).colorScheme.primary,
-                      ),
+                    child: Row(
+                      children: [
+                        Container(
+                          padding: const EdgeInsets.symmetric(
+                              horizontal: 10, vertical: 4),
+                          decoration: const BoxDecoration(
+                            color: Colors.white,
+                            shape: BoxShape.rectangle,
+                            borderRadius: BorderRadius.all(Radius.circular(12)),
+                          ),
+                          child: Icon(
+                            Icons.share_outlined,
+                            size: 20,
+                            color: Theme.of(context).colorScheme.primary,
+                          ),
+                        ),
+                        const SizedBox(width: 5),
+                        Visibility(
+                          visible: eventModel?.isOwner == 1,
+                          child: Container(
+                            padding: const EdgeInsets.symmetric(
+                                horizontal: 10, vertical: 4),
+                            decoration: const BoxDecoration(
+                              color: Colors.white,
+                              shape: BoxShape.rectangle,
+                              borderRadius:
+                                  BorderRadius.all(Radius.circular(12)),
+                            ),
+                            child: PopupMenuButton<String>(
+                              onSelected: (value) async {
+                                // Handle the selection
+                                if (value == 'edit_event') {
+                                  // Handle Edit Event action
+                                  eventActionController.gotToEdit(eventModel!,
+                                      from: 'list');
+                                } else if (value == 'cancel_event') {
+                                  // Handle Cancel Event action
+                                  await eventController
+                                      .cancelEvent(eventModel?.id ?? '');
+                                }
+                              },
+                              surfaceTintColor:
+                                  Theme.of(context).colorScheme.onPrimary,
+                              itemBuilder: (BuildContext context) {
+                                return [
+                                  PopupMenuItem<String>(
+                                    value: 'edit_event',
+                                    child: Text(
+                                      'Edit Event',
+                                      style: Theme.of(context)
+                                          .textTheme
+                                          .bodyMedium
+                                          ?.copyWith(
+                                              fontWeight: FontWeight.w600),
+                                    ),
+                                  ),
+                                  PopupMenuItem<String>(
+                                    value: 'cancel_event',
+                                    child: Obx(
+                                      () => Visibility(
+                                        visible: eventController
+                                            .isLoadingAction.value,
+                                        replacement: Text(
+                                          'Cancel Event',
+                                          style: Theme.of(context)
+                                              .textTheme
+                                              .bodyMedium
+                                              ?.copyWith(
+                                                  fontWeight: FontWeight.w600),
+                                        ),
+                                        child: CircularProgressIndicator(
+                                          color: Theme.of(context)
+                                              .colorScheme
+                                              .primary,
+                                        ),
+                                      ),
+                                    ),
+                                  ),
+                                ];
+                              },
+                              child: Icon(
+                                Icons.more_horiz_outlined,
+                                size: 20,
+                                color: Theme.of(context).colorScheme.primary,
+                              ),
+                            ),
+                          ),
+                        ),
+                      ],
                     ),
                   ),
-                )
+                ),
               ],
             ),
             const SizedBox(height: 15),
@@ -116,8 +201,8 @@ class EventCard extends StatelessWidget {
                       child: _buildInfoItem(
                         context,
                         icon: Icons.track_changes_outlined,
-                        title: 'TARGET',
-                        subtitle: '10.000',
+                        title: 'QUOTA',
+                        subtitle: eventModel?.quota.toString() ?? '-',
                       ),
                     ),
                     const SizedBox(width: 20),
@@ -158,24 +243,48 @@ class EventCard extends StatelessWidget {
               ],
             ),
             const SizedBox(height: 15),
-            SizedBox(
-              height: 40,
+            Visibility(
+              visible: !isAction,
+              replacement: ElevatedButton(
+                onPressed: () {},
+                child: const Row(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    Icon(Icons.share, size: 20),
+                    SizedBox(width: 8),
+                    Text('Share'),
+                  ],
+                ),
+              ),
               child: Visibility(
-                visible: !isAction,
-                replacement: ElevatedButton(
-                  onPressed: () {},
-                  child: const Row(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    children: [
-                      Icon(Icons.share, size: 20),
-                      SizedBox(width: 8),
-                      Text('Share'),
-                    ],
+                visible: eventModel?.cancelledAt != null,
+                replacement: Visibility(
+                  visible: (eventModel?.datetime ?? DateTime.now()).isFuture,
+                  child: ElevatedButton(
+                    onPressed: eventModel?.isJoined == 0
+                        ? () {
+                            eventController
+                                .accLeaveJoinEvent(eventModel?.id ?? '');
+                          }
+                        : null,
+                    child: Obx(
+                      () => Visibility(
+                        visible: eventController.isLoadingAction.value,
+                        replacement:
+                            Text((eventModel?.isJoined ?? 0).toEventStatus),
+                        child: CircularProgressIndicator(
+                          color: Theme.of(context).colorScheme.onPrimary,
+                        ),
+                      ),
+                    ),
                   ),
                 ),
                 child: ElevatedButton(
-                  onPressed: () {},
-                  child: const Text('Join'),
+                  onPressed: null,
+                  child: Text(
+                    'Cancelled',
+                    style: Theme.of(context).textTheme.labelSmall,
+                  ),
                 ),
               ),
             ),

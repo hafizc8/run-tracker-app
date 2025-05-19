@@ -61,6 +61,36 @@ class LocationService {
     }
   }
 
+  Future<String> getCityFromLatLng(LatLng latLng) async {
+    try {
+      final response = await _apiService.request(
+        path: AppConstants.addressFromLatLang(latLng),
+        method: HttpMethod.get,
+      );
+
+      if (response.statusCode != 200) {
+        throw Exception('Failed to get address');
+      }
+
+      final results = List.from(response.data['results']);
+      if (results.isEmpty) {
+        return 'Kota tidak ditemukan';
+      }
+
+      final addressComponents = results.first['address_components'] as List<dynamic>;
+      for (var component in addressComponents) {
+        final types = component['types'] as List<dynamic>;
+        if (types.contains('administrative_area_level_2')) {
+          return component['long_name'].toString();
+        }
+      }
+
+      return 'Kota tidak ditemukan';
+    } catch (e) {
+      rethrow;
+    }
+  }
+
   Future<LatLng> selectPlace(String placeId) async {
     try {
       final response = await _apiService.request(

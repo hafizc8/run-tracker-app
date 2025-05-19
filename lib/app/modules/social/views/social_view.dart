@@ -66,7 +66,7 @@ class SocialView extends GetView<SocialController> {
               }
               // Handle Create Event action
             } else if (value == 'create_club') {
-              // Handle Create Club action
+              Get.toNamed(AppRoutes.createClub);
             }
           },
           surfaceTintColor: Theme.of(context).colorScheme.onPrimary,

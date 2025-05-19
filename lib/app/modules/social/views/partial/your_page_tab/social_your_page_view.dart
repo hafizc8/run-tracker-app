@@ -3,6 +3,7 @@ import 'package:get/get.dart';
 import 'package:zest_mobile/app/core/models/enums/social_page_enum.dart';
 import 'package:zest_mobile/app/core/shared/theme/color_schemes.dart';
 import 'package:zest_mobile/app/modules/social/controllers/post_controller.dart';
+import 'package:zest_mobile/app/modules/social/controllers/social_club_search_controller.dart';
 import 'package:zest_mobile/app/modules/social/controllers/social_controller.dart';
 import 'package:zest_mobile/app/modules/social/controllers/social_following_controller.dart';
 import 'package:zest_mobile/app/modules/social/views/partial/your_page_tab/social_your_page_clubs_view.dart';
@@ -16,13 +17,12 @@ class SocialYourPageView extends GetView<SocialController> {
   final postController = Get.find<PostController>();
   final followingController = Get.find<SocialFollowingController>();
   final followersController = Get.find<SocialFollowingController>();
+  final clubSearchController = Get.find<SocialClubSearchController>();
 
   @override
   Widget build(BuildContext context) {
     return Obx(() {
       final selected = controller.selectedChip.value;
-
-      Widget content;
 
       if (selected == YourPageChip.updates) {
         return RefreshIndicator(
@@ -77,9 +77,23 @@ class SocialYourPageView extends GetView<SocialController> {
           ),
         );
       } else if (selected == YourPageChip.clubs) {
-        content = const SocialYourPageClubsView();
-      } else {
-        content = Center(child: Text('No content for "$selected" yet'));
+        return RefreshIndicator(
+          onRefresh: () async {
+            clubSearchController.load(refresh: true);
+          },
+          child: SingleChildScrollView(
+            controller: clubSearchController.scrollClubSearchController,
+            physics: const AlwaysScrollableScrollPhysics(),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                _buildChipFilter(context),
+                const SizedBox(height: 10),
+                const SocialYourPageClubsView(),
+              ],
+            ),
+          ),
+        );
       }
 
       return SingleChildScrollView(
@@ -88,7 +102,7 @@ class SocialYourPageView extends GetView<SocialController> {
           children: [
             _buildChipFilter(context),
             const SizedBox(height: 10),
-            content,
+            Center(child: Text('No content for "$selected" yet')),
           ],
         ),
       );

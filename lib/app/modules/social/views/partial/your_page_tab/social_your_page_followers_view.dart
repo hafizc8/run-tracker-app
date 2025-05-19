@@ -1,6 +1,8 @@
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:zest_mobile/app/core/models/model/user_mini_model.dart';
+import 'package:zest_mobile/app/core/shared/widgets/shimmer_loading_circle.dart';
 import 'package:zest_mobile/app/modules/social/controllers/social_followers_controller.dart';
 
 class SocialYourPageFollowersView extends GetView<SocialFollowersController> {
@@ -105,24 +107,27 @@ class SocialYourPageFollowersView extends GetView<SocialFollowersController> {
   }
 
   Widget _buildFollowersListItem(BuildContext context, UserMiniModel user) {
-    return Row(
-      children: [
-        CircleAvatar(
-          radius: 20,
-          backgroundColor: Colors.grey.shade300,
-          child: const Icon(Icons.person, color: Colors.white),
-        ),
-        const SizedBox(width: 8),
-        Flexible(
-          child: Text(
-            user.name,
-            style: Theme.of(context)
-                .textTheme
-                .bodyMedium
-                ?.copyWith(fontWeight: FontWeight.w600),
+    return ListTile(
+      leading: ClipOval(
+        child: CachedNetworkImage(
+          imageUrl: user.imageUrl ?? '',
+          width: 37,
+          height: 37,
+          fit: BoxFit.cover,
+          placeholder: (context, url) => const ShimmerLoadingCircle(size: 37),
+          errorWidget: (context, url, error) => const CircleAvatar(
+            radius: 37,
+            backgroundImage: AssetImage('assets/images/empty_profile.png'),
           ),
         ),
-      ],
+      ),
+      title: Text(
+        user.name,
+        style: Theme.of(context)
+            .textTheme
+            .bodyMedium
+            ?.copyWith(fontWeight: FontWeight.w600),
+      ),
     );
   }
 }

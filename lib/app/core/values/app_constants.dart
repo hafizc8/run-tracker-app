@@ -45,4 +45,11 @@ class AppConstants {
   static String postCommentReply(String postId) => "/post/$postId/comment";
   static String postDelete(String postId) => "/post/$postId";
   static String postUpdate(String postId) => "/post/$postId";
+
+  // Club
+  static const String clubGetAll = "/club";
+  static const String clubCreate = "/club";
+  static String clubAccOrJoinOrLeave(String clubdId) => "/club/$clubdId/join";
+  static String clubDetail(String clubdId) => "/club/$clubdId";
+  static String clubGetAllMember(String clubdId) => "/club/$clubdId/user";
 }

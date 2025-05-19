@@ -37,4 +37,9 @@ abstract class AppRoutes {
   static const settings = '/settings';
   static const activity = '/activity';
   static const badges = '/badges';
+
+  // club
+  static const createClub = '/create-club';
+  static const detailClub = '/detail-club';
+  static const memberListInClub = '/detail-club/member-list';
 }

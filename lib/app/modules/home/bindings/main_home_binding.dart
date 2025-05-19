@@ -1,6 +1,7 @@
 import 'package:get/get.dart';
 import 'package:zest_mobile/app/modules/home/controllers/main_home_controller.dart';
 import 'package:zest_mobile/app/modules/social/controllers/post_controller.dart';
+import 'package:zest_mobile/app/modules/social/controllers/social_club_search_controller.dart';
 import 'package:zest_mobile/app/modules/social/controllers/social_controller.dart';
 import 'package:zest_mobile/app/modules/social/controllers/social_followers_controller.dart';
 import 'package:zest_mobile/app/modules/social/controllers/social_following_controller.dart';
@@ -13,5 +14,6 @@ class MainHomeBinding extends Bindings {
     Get.lazyPut<PostController>(() => PostController());
     Get.lazyPut<SocialFollowingController>(() => SocialFollowingController());
     Get.lazyPut<SocialFollowersController>(() => SocialFollowersController());
+    Get.lazyPut<SocialClubSearchController>(() => SocialClubSearchController());
   }
 }

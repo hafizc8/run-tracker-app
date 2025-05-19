@@ -106,7 +106,10 @@ class EventCard extends StatelessWidget {
                         ),
                         const SizedBox(width: 5),
                         Visibility(
-                          visible: eventModel?.isOwner == 1,
+                          visible: eventModel?.isOwner == 1 &&
+                              (eventModel?.datetime ?? DateTime.now())
+                                  .isFuture &&
+                              eventModel?.cancelledAt == null,
                           child: Container(
                             padding: const EdgeInsets.symmetric(
                                 horizontal: 10, vertical: 4),

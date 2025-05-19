@@ -22,6 +22,7 @@ class CustomChip extends StatelessWidget {
       onTap: () => onTap == null ? null : onTap!(),
       child: Container(
         padding: padding,
+        alignment: Alignment.center,
         decoration: BoxDecoration(
           color: backgroundColor,
           borderRadius: BorderRadius.circular(100),

@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:shimmer/shimmer.dart';
+import 'package:zest_mobile/app/core/extension/date_extension.dart';
 import 'package:zest_mobile/app/core/shared/widgets/shimmer_loading_event.dart';
 import 'package:zest_mobile/app/modules/social/controllers/social_controller.dart';
 import 'package:zest_mobile/app/modules/social/views/partial/for_you_tab/event/controllers/event_action_controller.dart';
@@ -57,7 +58,10 @@ class SocialForYouEventDetailView extends GetView<SocialController> {
       surfaceTintColor: Colors.transparent,
       actions: [
         Obx(() {
-          return eventController.event.value?.isOwner == 1
+          return eventController.event.value?.isOwner == 1 &&
+                  eventController.event.value?.cancelledAt == null &&
+                  (eventController.event.value?.datetime ?? DateTime.now())
+                      .isFuture
               ? PopupMenuButton<String>(
                   onSelected: (value) {
                     // Handle the selection

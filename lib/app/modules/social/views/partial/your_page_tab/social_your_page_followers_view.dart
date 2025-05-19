@@ -130,16 +130,88 @@ class SocialYourPageFollowersView extends GetView<SocialFollowersController> {
             .bodyMedium
             ?.copyWith(fontWeight: FontWeight.w600),
       ),
-      // trailing: Row(
-      //   mainAxisSize: MainAxisSize.min,
-      //   children: [
-      //     CustomChip(
-      //         child: Text(
-      //       {'is_following': user.isFollowing, 'is_followed': user.isFollowed}
-      //           .followStatus,
-      //     ))
-      //   ],
-      // ),
+      trailing: Row(
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          Obx(
+            () => CustomChip(
+              padding: const EdgeInsets.symmetric(
+                horizontal: 16,
+              ),
+              onTap: () {
+                if (user.isFollowing == 0 && user.isFollowed == 1) {
+                  controller.follow(user.id);
+                }
+              },
+              backgroundColor:
+                  Theme.of(context).colorScheme.primary.withOpacity(0.1),
+              child: Visibility(
+                visible: user.id == controller.userId.value,
+                replacement: Text(
+                  {
+                    'is_following': user.isFollowing,
+                    'is_followed': user.isFollowed
+                  }.followerStatus,
+                  style: Theme.of(context).textTheme.bodyMedium?.copyWith(
+                        color: Theme.of(context).colorScheme.primary,
+                        fontWeight: FontWeight.bold,
+                      ),
+                ),
+                child: const Center(
+                  child: CircularProgressIndicator(),
+                ),
+              ),
+            ),
+          ),
+          Visibility(
+            visible: user.isFollowing == 1 && user.isFollowed == 1,
+            child: Row(
+              children: [
+                const SizedBox(width: 16),
+                PopupMenuButton<String>(
+                  onSelected: (value) async {
+                    // Handle the selection
+                    if (value == 'un_follow') {
+                      controller.unFollow(user.id);
+                    }
+                  },
+                  surfaceTintColor: Theme.of(context).colorScheme.onPrimary,
+                  itemBuilder: (BuildContext context) {
+                    return [
+                      PopupMenuItem<String>(
+                        value: 'un_follow',
+                        child: Obx(
+                          () => Visibility(
+                            visible: controller.isLoadingFollow.value,
+                            replacement: Text(
+                              'Unfollow',
+                              maxLines: 1,
+                              overflow: TextOverflow.ellipsis,
+                              textAlign: TextAlign.center,
+                              style: Theme.of(context)
+                                  .textTheme
+                                  .bodyMedium
+                                  ?.copyWith(fontWeight: FontWeight.w600),
+                            ),
+                            child: CircularProgressIndicator(
+                              color: Theme.of(context).colorScheme.primary,
+                            ),
+                          ),
+                        ),
+                      ),
+                    ];
+                  },
+                  child: Icon(
+                    Icons.more_horiz_outlined,
+                    size: 20,
+                    color: Theme.of(context).colorScheme.primary,
+                  ),
+                ),
+              ],
+            ),
+          ),
+        ],
+      ),
     );
   }
 }

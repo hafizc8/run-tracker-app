@@ -30,8 +30,8 @@ class AppConstants {
   static String selectPlace(String placeId) =>
       'https://maps.googleapis.com/maps/api/place/details/json?place_id=$placeId&key=${AppConstants.googleApiKey}';
   // User
-  static const String user = "/user";
-  static const String userOther = "/user/other";
+  static const String user = "/me";
+  static const String userOther = "/user";
   static const String updateProfile = "/user";
 
   static String userFollow(String id) => "/follow/$id";

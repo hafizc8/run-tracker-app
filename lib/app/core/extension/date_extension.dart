@@ -5,6 +5,10 @@ extension DateFormatting on DateTime {
     return DateFormat('yyyy-MM-dd').format(this);
   }
 
+  String toddMMMyyyy() {
+    return DateFormat("dd MMMM yyyy").format(this);
+  }
+
   String toDDMMMyyyyString() {
     return DateFormat('dd MMM yyyy').format(this);
   }
@@ -32,4 +36,8 @@ extension DateFormatting on DateTime {
     // Tampilkan dalam format tanggal: 7 May 2025
     return DateFormat('d MMM yyyy').format(this);
   }
+}
+
+extension DateTimeExtensions on DateTime {
+  bool get isFuture => isAfter(DateTime.now());
 }

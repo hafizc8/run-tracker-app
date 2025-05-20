@@ -10,6 +10,8 @@ class SocialFollowingController extends GetxController {
   var isLoading = false.obs;
   var hasReacheMax = false.obs;
   var resultSearchEmpty = false.obs;
+  var isLoadingFollow = false.obs;
+  var userId = ''.obs;
 
   TextEditingController searchController = TextEditingController();
 
@@ -133,6 +135,62 @@ class SocialFollowingController extends GetxController {
       ); // show error snackbar, toast, etc (e.g.message)
     } finally {
       isLoading.value = false;
+    }
+  }
+
+  Future<void> follow(String id) async {
+    userId.value = id;
+    isLoadingFollow.value = true;
+    try {
+      bool res = await _userService.followUser(id);
+
+      if (res) {
+        int index = friends.indexWhere((element) => element.id == id);
+        if (index != -1) {
+          final user = friends[index];
+          friends[index] = user.copyWith(
+            isFollowing: res ? 1 : 0,
+          );
+        }
+      }
+    } catch (e) {
+      Get.snackbar(
+        'Error',
+        e.toString(),
+        backgroundColor: Colors.red,
+        colorText: Colors.white,
+      ); // show error snackbar, toast, etc (e.g.message)
+    } finally {
+      userId.value = '';
+      isLoadingFollow.value = false;
+    }
+  }
+
+  Future<void> unFollow(String id) async {
+    userId.value = id;
+    isLoadingFollow.value = true;
+    try {
+      bool res = await _userService.unFollowUser(id);
+
+      if (res) {
+        int index = friends.indexWhere((element) => element.id == id);
+        if (index != -1) {
+          final user = friends[index];
+          friends[index] = user.copyWith(
+            isFollowing: res ? 0 : 1,
+          );
+        }
+      }
+    } catch (e) {
+      Get.snackbar(
+        'Error',
+        e.toString(),
+        backgroundColor: Colors.red,
+        colorText: Colors.white,
+      ); // show error snackbar, toast, etc (e.g.message)
+    } finally {
+      userId.value = '';
+      isLoadingFollow.value = false;
     }
   }
 }

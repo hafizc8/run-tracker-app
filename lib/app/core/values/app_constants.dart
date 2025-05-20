@@ -30,8 +30,8 @@ class AppConstants {
   static String selectPlace(String placeId) =>
       'https://maps.googleapis.com/maps/api/place/details/json?place_id=$placeId&key=${AppConstants.googleApiKey}';
   // User
-  static const String user = "/user";
-  static const String userOther = "/user/other";
+  static const String user = "/me";
+  static const String userOther = "/user";
   static const String updateProfile = "/user";
 
   static String userFollow(String id) => "/follow/$id";
@@ -46,7 +46,15 @@ class AppConstants {
   static String postDelete(String postId) => "/post/$postId";
   static String postUpdate(String postId) => "/post/$postId";
 
-  // Club
+  // Event
+  static const String eventActivity = "/event/activity";
+  static const String eventLocation = "/event/location";
+  static String eventDetail(String id) => "/event/$id";
+  static String eventAccLeaveJoin(String id) => "/event/$id/join";
+  static String event([String? id]) => id != null ? "/event/$id" : "/event";
+
+  // Clubs
+  static const String clubsMini = "/club";
   static const String clubGetAll = "/club";
   static const String clubCreate = "/club";
   static String clubAccOrJoinOrLeave(String clubdId) => "/club/$clubdId/join";

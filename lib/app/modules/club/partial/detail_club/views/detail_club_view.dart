@@ -3,11 +3,11 @@ import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:get/get.dart';
 import 'package:zest_mobile/app/core/models/model/club_model.dart';
-import 'package:zest_mobile/app/core/shared/widgets/custom_chip.dart';
 import 'package:zest_mobile/app/core/shared/widgets/shimmer_loading_circle.dart';
 import 'package:zest_mobile/app/core/shared/widgets/shimmer_loading_list.dart';
 import 'package:zest_mobile/app/modules/club/partial/detail_club/controllers/detail_club_controller.dart';
 import 'package:zest_mobile/app/core/extension/date_extension.dart';
+import 'package:zest_mobile/app/modules/club/partial/detail_club/partial/tab_bar_club/views/tab_bar_club_view.dart';
 import 'package:zest_mobile/app/routes/app_routes.dart';
 
 class DetailClubView extends GetView<DetailClubController> {
@@ -47,6 +47,7 @@ class DetailClubView extends GetView<DetailClubController> {
           }
         ),
       ),
+      floatingActionButton: _buildFloatingActionButton(context),
     );
   }
 
@@ -149,12 +150,20 @@ class DetailClubView extends GetView<DetailClubController> {
             spacing: 8,
             runSpacing: 8,
             children: [
-              CustomChip(
+              GestureDetector(
                 onTap: () => Get.toNamed(AppRoutes.memberListInClub, arguments: club?.id),
-                child: Text(
-                  '${club?.clubUsersCount ?? 0} Members',
-                  style: Theme.of(context).textTheme.labelSmall?.copyWith(
-                    color: Theme.of(context).colorScheme.primary,
+                child: Container(
+                  padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
+                  decoration: BoxDecoration(
+                    color: Colors.white,
+                    borderRadius: BorderRadius.circular(100),
+                    border: Border.all(color: Colors.transparent),
+                  ),
+                  child: Text(
+                    '${club?.clubUsersCount ?? 0} Members',
+                    style: Theme.of(context).textTheme.labelSmall?.copyWith(
+                      color: Theme.of(context).colorScheme.primary,
+                    ),
                   ),
                 ),
               ),
@@ -173,16 +182,19 @@ class DetailClubView extends GetView<DetailClubController> {
                   ),
                 ),
               ),
-              Container(
-                padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
-                decoration: BoxDecoration(
-                  color: Theme.of(context).colorScheme.background,
-                  borderRadius: BorderRadius.circular(100),
-                ),
-                child: Icon(
-                  Icons.person_add_outlined,
-                  size: 16.0,
-                  color: Theme.of(context).colorScheme.primary,
+              InkWell(
+                onTap: () => Get.toNamed(AppRoutes.inviteToClub, arguments: club?.id),
+                child: Container(
+                  padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
+                  decoration: BoxDecoration(
+                    color: Theme.of(context).colorScheme.background,
+                    borderRadius: BorderRadius.circular(100),
+                  ),
+                  child: Icon(
+                    Icons.person_add_outlined,
+                    size: 16.0,
+                    color: Theme.of(context).colorScheme.primary,
+                  ),
                 ),
               ),
               InkWell(
@@ -201,7 +213,7 @@ class DetailClubView extends GetView<DetailClubController> {
                 ),
               ),
             ],
-          )
+          ),
         ],
       ),
     );
@@ -210,32 +222,53 @@ class DetailClubView extends GetView<DetailClubController> {
   Widget _buildClubContent() {
     return Column(
       children: [
-        const SizedBox(height: 16),
-        Container(
-          margin: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
-          padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 45),
-          decoration: BoxDecoration(
-          color: Colors.grey.shade300,
-            borderRadius: BorderRadius.circular(12),
-          ),
-        ),
-        Container(
-          margin: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
-          padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 45),
-          decoration: BoxDecoration(
-          color: Colors.grey.shade300,
-            borderRadius: BorderRadius.circular(12),
-          ),
-        ),
-        Container(
-          margin: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
-          padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 45),
-          decoration: BoxDecoration(
-          color: Colors.grey.shade300,
-            borderRadius: BorderRadius.circular(12),
-          ),
-        ),
+        const SizedBox(height: 10),
+        TabBarClub(),
       ],
+    );
+  }
+
+  Widget _buildFloatingActionButton(BuildContext context) {
+    return Builder(
+      builder: (context) => FloatingActionButton(
+        backgroundColor: Theme.of(context).colorScheme.primary,
+        child: const Icon(Icons.edit, color: Colors.white),
+        onPressed: () async {
+          await showMenu(
+            context: context,
+            position: RelativeRect.fromLTRB(
+              MediaQuery.of(context).size.width - 100,
+              MediaQuery.of(context).size.height - 200,
+              20,
+              0,
+            ),
+            surfaceTintColor: Theme.of(context).colorScheme.onPrimary,
+            items: [
+              PopupMenuItem<String>(
+                value: 'create_an_event',
+                child: Text(
+                  'Create an Event',
+                  style: Theme.of(context).textTheme.bodyMedium?.copyWith(fontWeight: FontWeight.w600),
+                ),
+              ),
+              PopupMenuItem<String>(
+                value: 'create_a_challange',
+                child: Text(
+                  'Create a Challange',
+                  style: Theme.of(context).textTheme.bodyMedium?.copyWith(fontWeight: FontWeight.w600),
+                ),
+              ),
+            ],
+            elevation: 8.0,
+          ).then((value) {
+            if (value == 'create_an_event') {
+              // do edit action
+            } else if (value == 'create_a_challange') {
+              // do delete action
+            }
+          });
+        },
+      ),
     );
   }
 }

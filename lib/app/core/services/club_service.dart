@@ -122,4 +122,21 @@ class ClubService {
       rethrow;
     }
   }
+
+  Future<bool> inviteToClub({
+    required String clubId,
+    required List<String> userIds
+  }) async {
+    try {
+      final response = await _apiService.request(
+        path: AppConstants.clubInviteFollowersToClub(clubId),
+        method: HttpMethod.post,
+        data: {'user_ids': userIds},
+      );
+
+      return response.data['success'];
+    } catch (e) {
+      rethrow;
+    }
+  }
 }

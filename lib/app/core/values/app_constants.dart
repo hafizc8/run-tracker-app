@@ -60,4 +60,5 @@ class AppConstants {
   static String clubAccOrJoinOrLeave(String clubdId) => "/club/$clubdId/join";
   static String clubDetail(String clubdId) => "/club/$clubdId";
   static String clubGetAllMember(String clubdId) => "/club/$clubdId/user";
+  static String clubInviteFollowersToClub(String clubdId) => "/club/$clubdId/invite";
 }

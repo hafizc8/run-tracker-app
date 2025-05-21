@@ -8,6 +8,7 @@ class UserMiniModel extends Equatable {
     this.isFollowing = 0,
     this.imagePath,
     this.imageUrl,
+    this.isJoinedToClub = false,
   });
 
   final String id;
@@ -16,6 +17,7 @@ class UserMiniModel extends Equatable {
   final int isFollowing;
   final String? imagePath;
   final String? imageUrl;
+  final bool isJoinedToClub;
 
   UserMiniModel copyWith({
     String? id,
@@ -24,6 +26,7 @@ class UserMiniModel extends Equatable {
     int? isFollowing,
     String? imagePath,
     String? imageUrl,
+    bool? isJoinedToClub,
   }) {
     return UserMiniModel(
       id: id ?? this.id,
@@ -32,6 +35,7 @@ class UserMiniModel extends Equatable {
       isFollowing: isFollowing ?? this.isFollowing,
       imagePath: imagePath ?? this.imagePath,
       imageUrl: imageUrl ?? this.imageUrl,
+      isJoinedToClub: isJoinedToClub ?? this.isJoinedToClub,
     );
   }
 
@@ -43,6 +47,7 @@ class UserMiniModel extends Equatable {
       isFollowing: json["is_following"] ?? 0,
       imagePath: json["image_path"],
       imageUrl: json["image_url"],
+      isJoinedToClub: json["is_joined_to_club"] != null ? (json["is_joined_to_club"] == 1) : false,
     );
   }
 
@@ -68,5 +73,6 @@ class UserMiniModel extends Equatable {
         isFollowing,
         imagePath,
         imageUrl,
+        isJoinedToClub,
       ];
 }

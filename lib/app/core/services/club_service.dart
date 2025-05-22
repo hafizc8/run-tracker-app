@@ -101,13 +101,15 @@ class ClubService {
   Future<PaginatedDataResponse<ClubMemberModel>> getAllMembers({
     required String clubId,
     required int page,
+    int? limit
   }) async {
     try {
       final response = await _apiService.request(
         path: AppConstants.clubGetAllMember(clubId),
         method: HttpMethod.get,
         queryParams: {
-          'page': page.toString()
+          'page': page.toString(),
+          if (limit != null) 'limit': limit.toString(),
         },
       );
 

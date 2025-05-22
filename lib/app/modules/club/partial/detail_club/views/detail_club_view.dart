@@ -1,5 +1,6 @@
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/widgets.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:get/get.dart';
 import 'package:zest_mobile/app/core/models/model/club_model.dart';
@@ -80,43 +81,56 @@ class DetailClubView extends GetView<DetailClubController> {
               Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  Row(
-                    mainAxisSize: MainAxisSize.min,
-                    children: [
-                      FaIcon(
-                        FontAwesomeIcons.crown,
-                        size: 16,
-                        color: Theme.of(context).colorScheme.onPrimary,
-                      ),
-                      const SizedBox(width: 8),
-                      ConstrainedBox(
-                        constraints: BoxConstraints(maxWidth: MediaQuery.of(context).size.width * 0.5),
-                        child: Text(
-                          club?.name ?? '',
-                          maxLines: 2,
-                          overflow: TextOverflow.ellipsis,
-                          style: Theme.of(context)
-                              .textTheme
-                              .headlineMedium
-                              ?.copyWith(
-                                color: Theme.of(context)
-                                    .colorScheme
-                                    .onPrimary,
-                                fontSize: 20
-                              ),
+                  Visibility(
+                    visible: club?.isOwner ?? false,
+                    child: Row(
+                      mainAxisSize: MainAxisSize.min,
+                      children: [
+                        FaIcon(
+                          FontAwesomeIcons.crown,
+                          size: 16,
+                          color: Theme.of(context).colorScheme.onPrimary,
+                        ),
+                        const SizedBox(width: 8),
+                        ConstrainedBox(
+                          constraints: BoxConstraints(maxWidth: MediaQuery.of(context).size.width * 0.5),
+                          child: Text(
+                            club?.name ?? '',
+                            maxLines: 2,
+                            overflow: TextOverflow.ellipsis,
+                            style: Theme.of(context).textTheme.headlineMedium?.copyWith(
+                              color: Theme.of(context).colorScheme.onPrimary,
+                              fontSize: 20
+                            ),
+                          ),
+                        ),
+                        const SizedBox(width: 8),
+                        GestureDetector(
+                          onTap: () => Get.toNamed(AppRoutes.updateClub, arguments: club?.id),
+                          child: Icon(
+                            Icons.edit,
+                            color: Theme.of(context)
+                                .colorScheme
+                                .onPrimary,
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+                  Visibility(
+                    visible: !(club?.isOwner ?? false),
+                    child: ConstrainedBox(
+                      constraints: BoxConstraints(maxWidth: MediaQuery.of(context).size.width * 0.73),
+                      child: Text(
+                        club?.name ?? '',
+                        maxLines: 2,
+                        overflow: TextOverflow.ellipsis,
+                        style: Theme.of(context).textTheme.headlineMedium?.copyWith(
+                          color: Theme.of(context).colorScheme.onPrimary,
+                          fontSize: 20
                         ),
                       ),
-                      const SizedBox(width: 8),
-                      GestureDetector(
-                        onTap: () => Get.toNamed(AppRoutes.updateClub, arguments: club?.id),
-                        child: Icon(
-                          Icons.edit,
-                          color: Theme.of(context)
-                              .colorScheme
-                              .onPrimary,
-                        ),
-                      ),
-                    ],
+                    ),
                   ),
                   const SizedBox(height: 5),
                   Row(
@@ -142,7 +156,7 @@ class DetailClubView extends GetView<DetailClubController> {
           ),
           const SizedBox(height: 16),
           Text(
-            club?.description ?? '',
+            club?.description ?? 'No description',
             style: Theme.of(context).textTheme.labelSmall,
           ),
           const SizedBox(height: 16),

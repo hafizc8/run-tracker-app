@@ -1,14 +1,17 @@
 import 'package:cached_network_image/cached_network_image.dart';
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
 import 'package:get/get.dart';
 import 'package:shimmer/shimmer.dart';
 import 'package:zest_mobile/app/core/extension/follow_extension.dart';
+import 'package:zest_mobile/app/core/models/enums/club_privacy_enum.dart';
 import 'package:zest_mobile/app/core/models/model/club_model.dart';
 import 'package:zest_mobile/app/core/models/model/user_mini_model.dart';
 import 'package:zest_mobile/app/core/shared/widgets/custom_chip.dart';
 import 'package:zest_mobile/app/core/shared/widgets/shimmer_loading_circle.dart';
 import 'package:zest_mobile/app/modules/social/views/partial/search/controllers/social_search_controller.dart';
+import 'package:zest_mobile/app/routes/app_routes.dart';
 
 class SocialSearchView extends GetView<SocialSearchController> {
   const SocialSearchView({super.key});
@@ -532,85 +535,92 @@ class SocialSearchView extends GetView<SocialSearchController> {
                     padding: const EdgeInsets.symmetric(horizontal: 16),
                     itemBuilder: (context, index) {
                       ClubModel club = controller.clubMayYouKnow[index];
-                      return Card(
-                        surfaceTintColor:
-                            Theme.of(context).colorScheme.onPrimary,
-                        elevation: 2,
-                        shape: RoundedRectangleBorder(
-                            borderRadius: BorderRadius.circular(12)),
-                        child: Container(
-                          width: 120,
-                          padding: const EdgeInsets.all(12),
-                          alignment: Alignment.center,
-                          child: Column(
-                            mainAxisAlignment: MainAxisAlignment.center,
-                            children: [
-                              ClipOval(
-                                child: CachedNetworkImage(
-                                  imageUrl: club.imageUrl ?? '',
-                                  width: 32,
-                                  height: 32,
-                                  fit: BoxFit.cover,
-                                  placeholder: (context, url) =>
-                                      const ShimmerLoadingCircle(size: 32),
-                                  errorWidget: (context, url, error) =>
-                                      const CircleAvatar(
-                                    radius: 16,
-                                    backgroundImage: AssetImage(
-                                        'assets/images/empty_profile.png'),
-                                  ),
-                                ),
-                              ),
-                              const SizedBox(height: 8),
-                              Text(
-                                club.name ?? '',
-                                maxLines: 2,
-                                overflow: TextOverflow.ellipsis,
-                                textAlign: TextAlign.center,
-                                style: Theme.of(context)
-                                    .textTheme
-                                    .bodyMedium
-                                    ?.copyWith(
-                                      fontWeight: FontWeight.bold,
+                      return InkWell(
+                        onTap: () => Get.toNamed(AppRoutes.previewClub, arguments: club.id),
+                        child: Card(
+                          surfaceTintColor:
+                              Theme.of(context).colorScheme.onPrimary,
+                          elevation: 2,
+                          shape: RoundedRectangleBorder(
+                              borderRadius: BorderRadius.circular(12)),
+                          child: Container(
+                            width: 120,
+                            padding: const EdgeInsets.all(12),
+                            alignment: Alignment.center,
+                            child: Column(
+                              mainAxisAlignment: MainAxisAlignment.center,
+                              children: [
+                                ClipOval(
+                                  child: CachedNetworkImage(
+                                    imageUrl: club.imageUrl ?? '',
+                                    width: 32,
+                                    height: 32,
+                                    fit: BoxFit.cover,
+                                    placeholder: (context, url) =>
+                                        const ShimmerLoadingCircle(size: 32),
+                                    errorWidget: (context, url, error) =>
+                                        const CircleAvatar(
+                                      radius: 16,
+                                      backgroundImage: AssetImage(
+                                          'assets/images/empty_profile.png'),
                                     ),
-                              ),
-                              const SizedBox(height: 8),
-                              CustomChip(
-                                onTap: () {
-                                  if (!(club.isJoined ?? false)) {
-                                    controller.joinClub(club.id ?? '');
-                                  }
-                                },
-                                padding: const EdgeInsets.symmetric(
-                                    horizontal: 16, vertical: 8),
-                                backgroundColor: (club.isJoined ?? false)
-                                    ? Colors.transparent
-                                    : Theme.of(context)
-                                        .colorScheme
-                                        .primary
-                                        .withOpacity(0.1),
-                                child: Visibility(
-                                  visible: club.id == controller.clubId.value,
-                                  replacement: Text(
-                                    (club.isJoined ?? false)
-                                        ? 'Joined'
-                                        : 'Join',
-                                    style: Theme.of(context)
-                                        .textTheme
-                                        .bodyMedium
-                                        ?.copyWith(
-                                          color: Theme.of(context)
-                                              .colorScheme
-                                              .primary,
-                                          fontWeight: FontWeight.bold,
-                                        ),
-                                  ),
-                                  child: const Center(
-                                    child: CircularProgressIndicator(),
                                   ),
                                 ),
-                              ),
-                            ],
+                                const SizedBox(height: 8),
+                                Text(
+                                  club.name ?? '',
+                                  maxLines: 2,
+                                  overflow: TextOverflow.ellipsis,
+                                  textAlign: TextAlign.center,
+                                  style: Theme.of(context)
+                                      .textTheme
+                                      .bodyMedium
+                                      ?.copyWith(
+                                        fontWeight: FontWeight.bold,
+                                      ),
+                                ),
+                                const SizedBox(height: 16),
+                                Visibility(
+                                  visible: club.privacy == ClubPrivacyEnum.public,
+                                  child: CustomChip(
+                                    onTap: () {
+                                      if (!(club.isJoined ?? false)) {
+                                        controller.joinClub(club.id ?? '');
+                                      } else {
+                                        Get.snackbar('Error', 'You have joined the club');
+                                      }
+                                    },
+                                    padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 4),
+                                    backgroundColor: (club.isJoined ?? false)
+                                        ? Colors.transparent
+                                        : Theme.of(context)
+                                            .colorScheme
+                                            .primary
+                                            .withOpacity(0.1),
+                                    child: Visibility(
+                                      visible: club.id == controller.clubId.value,
+                                      replacement: Text(
+                                        (club.isJoined ?? false)
+                                            ? 'Joined'
+                                            : 'Join',
+                                        style: Theme.of(context)
+                                            .textTheme
+                                            .bodyMedium
+                                            ?.copyWith(
+                                              color: Theme.of(context)
+                                                  .colorScheme
+                                                  .primary,
+                                              fontWeight: FontWeight.bold,
+                                            ),
+                                      ),
+                                      child: const Center(
+                                        child: CircularProgressIndicator(),
+                                      ),
+                                    ),
+                                  ),
+                                ),
+                              ],
+                            ),
                           ),
                         ),
                       );
@@ -669,6 +679,7 @@ class SocialSearchView extends GetView<SocialSearchController> {
                     ClubModel club = controller.clubs[index];
 
                     return ListTile(
+                      onTap: () => Get.toNamed(AppRoutes.previewClub, arguments: club.id),
                       leading: ClipOval(
                         child: CachedNetworkImage(
                           imageUrl: club.imageUrl ?? '',
@@ -699,40 +710,48 @@ class SocialSearchView extends GetView<SocialSearchController> {
                         overflow: TextOverflow.ellipsis,
                         style: Theme.of(context).textTheme.bodySmall,
                       ),
-                      trailing: Row(mainAxisSize: MainAxisSize.min, children: [
-                        CustomChip(
+                      trailing: Visibility(
+                        visible: club.privacy == ClubPrivacyEnum.public,
+                        child: GestureDetector(
                           onTap: () {
                             if (!(club.isJoined ?? false)) {
                               controller.joinClub(club.id ?? '');
+                            } else {
+                              Get.snackbar(
+                                'Error',
+                                'You have joined the club',
+                              );
                             }
                           },
-                          padding: const EdgeInsets.symmetric(
-                              horizontal: 16, vertical: 8),
-                          backgroundColor: (club.isJoined ?? false)
-                              ? Colors.transparent
-                              : Theme.of(context)
-                                  .colorScheme
-                                  .primary
-                                  .withOpacity(0.1),
-                          child: Visibility(
-                            visible: club.id == controller.clubId.value,
-                            replacement: Text(
-                              (club.isJoined ?? false) ? 'Joined' : 'Join',
-                              style: Theme.of(context)
-                                  .textTheme
-                                  .bodyMedium
-                                  ?.copyWith(
-                                    color:
-                                        Theme.of(context).colorScheme.primary,
-                                    fontWeight: FontWeight.bold,
-                                  ),
+                          child: Container(
+                            padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 4),
+                            decoration: BoxDecoration(
+                              color: (club.isJoined ?? false)
+                                ? Colors.transparent
+                                : Theme.of(context).colorScheme.primary.withOpacity(0.1),
+                              borderRadius: BorderRadius.circular(100),
+                              border: Border.all(color: Colors.transparent),
                             ),
-                            child: const Center(
-                              child: CircularProgressIndicator(),
+                            child: Visibility(
+                              visible: club.id == controller.clubId.value,
+                              replacement: Text(
+                                (club.isJoined ?? false) ? 'Joined' : 'Join',
+                                style: Theme.of(context)
+                                    .textTheme
+                                    .bodyMedium
+                                    ?.copyWith(
+                                      color:
+                                          Theme.of(context).colorScheme.primary,
+                                      fontWeight: FontWeight.bold,
+                                    ),
+                              ),
+                              child: const Center(
+                                child: CircularProgressIndicator(),
+                              ),
                             ),
                           ),
                         ),
-                      ]),
+                      ),
                     );
                   },
                 ),

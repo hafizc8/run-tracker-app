@@ -1,8 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import 'package:zest_mobile/app/core/shared/widgets/card_challenge.dart';
-import 'package:zest_mobile/app/core/shared/widgets/card_event.dart';
 import 'package:zest_mobile/app/modules/club/partial/detail_club/partial/tab_bar_club/controllers/tab_bar_club_controller.dart';
+import 'package:zest_mobile/app/modules/club/partial/detail_club/partial/tab_bar_club/views/widgets/club_card_event.dart';
 import 'package:zest_mobile/app/routes/app_routes.dart';
 
 class TabBarClub extends GetView<TabBarClubController> {
@@ -68,9 +67,9 @@ class TabBarClub extends GetView<TabBarClubController> {
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    const CardChallenge(),
-                    const SizedBox(height: 8),
-                    const CardEvent(),
+                    const ClubCardEvent(),
+                    // const ClubCardChallenge(),
+                    // const SizedBox(height: 8),
                   ],
                 ),
               );

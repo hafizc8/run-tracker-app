@@ -108,7 +108,7 @@ class DetailClubView extends GetView<DetailClubController> {
                       ),
                       const SizedBox(width: 8),
                       GestureDetector(
-                        onTap: () {},
+                        onTap: () => Get.toNamed(AppRoutes.updateClub, arguments: club?.id),
                         child: Icon(
                           Icons.edit,
                           color: Theme.of(context)

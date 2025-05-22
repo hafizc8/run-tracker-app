@@ -1,6 +1,7 @@
 import 'package:dio/dio.dart';
 import 'package:zest_mobile/app/core/models/enums/http_method_enum.dart';
 import 'package:zest_mobile/app/core/models/forms/create_club_form.dart';
+import 'package:zest_mobile/app/core/models/forms/update_club_form.dart';
 import 'package:zest_mobile/app/core/models/interface/pagination_response_model.dart';
 import 'package:zest_mobile/app/core/models/model/club_member_model.dart';
 import 'package:zest_mobile/app/core/models/model/club_model.dart';
@@ -132,6 +133,24 @@ class ClubService {
         path: AppConstants.clubInviteFollowersToClub(clubId),
         method: HttpMethod.post,
         data: {'user_ids': userIds},
+      );
+
+      return response.data['success'];
+    } catch (e) {
+      rethrow;
+    }
+  }
+
+  Future<bool> update({
+    required String clubId,
+    required UpdateClubFormModel form
+  }) async {
+    try {
+      final response = await _apiService.request<FormData>(
+        path: AppConstants.clubUpdate(clubId),
+        method: HttpMethod.post,
+        headers: {'Content-Type': 'multipart/form-data'},
+        data: await form.toFormData(),
       );
 
       return response.data['success'];

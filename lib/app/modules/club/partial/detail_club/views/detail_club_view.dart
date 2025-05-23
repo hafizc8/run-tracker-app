@@ -39,11 +39,14 @@ class DetailClubView extends GetView<DetailClubController> {
               );
             }
 
-            return Column(
-              children: [
-                _buildClubInfo(context: context),
-                _buildClubContent(),
-              ],
+            return Visibility(
+              visible: !controller.isLoading.value,
+              child: Column(
+                children: [
+                  _buildClubInfo(context: context),
+                  _buildClubContent(),
+                ],
+              ),
             );
           }
         ),

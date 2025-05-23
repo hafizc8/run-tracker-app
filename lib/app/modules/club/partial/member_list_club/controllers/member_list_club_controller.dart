@@ -45,7 +45,13 @@ class MemberListClubController extends GetxController {
     });
   }
 
-  Future<void> loadMembers() async {
+  Future<void> loadMembers({bool refresh = false}) async {
+    if (refresh) {
+      clubMembers.clear();
+      pageMember = 1;
+      hasReacheMax.value = false;
+    }
+
     if (isLoading.value || hasReacheMax.value) return;
 
     try {
@@ -72,6 +78,40 @@ class MemberListClubController extends GetxController {
       Get.snackbar('Error', e.toString());
     } finally {
       isLoading.value = false;
+    }
+  }
+
+  Future<void> assignAsAdmin({required String clubUserId}) async {
+    try {
+      bool success = await _clubService.addOrRemoveAsAdmin(clubId: clubId, clubUserId: clubUserId);
+      
+      if (success) {
+        // refresh
+        loadMembers(refresh: true);
+
+        Get.snackbar('Success', 'Successfully assign member as admin');
+      }
+    } on AppException catch (e) {
+      AppExceptionHandlerInfo.handle(e);
+    } catch (e) {
+      Get.snackbar('Error', e.toString());
+    }
+  }
+
+  Future<void> removeUserInClub({required String clubUserId}) async {
+    try {
+      bool success = await _clubService.removeUserInClub(clubId: clubId, clubUserId: clubUserId);
+      
+      if (success) {
+        // refresh
+        loadMembers(refresh: true);
+
+        Get.snackbar('Success', 'Successfully remove user in club');
+      }
+    } on AppException catch (e) {
+      AppExceptionHandlerInfo.handle(e);
+    } catch (e) {
+      Get.snackbar('Error', e.toString());
     }
   }
 }

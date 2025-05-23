@@ -1,6 +1,7 @@
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:permission_handler/permission_handler.dart';
 import 'package:zest_mobile/app/core/models/model/club_member_model.dart';
 import 'package:zest_mobile/app/core/shared/widgets/shimmer_loading_circle.dart';
 import 'package:zest_mobile/app/core/shared/widgets/shimmer_loading_list.dart';
@@ -128,8 +129,11 @@ class MemberListClubView extends GetView<MemberListClubController> {
         );
 
         if (result != null) {
-          // show alert
-          Get.snackbar('Coming soon', 'Feature is coming soon');
+          if (result == 'assign_as_admin') {
+            controller.assignAsAdmin(clubUserId: members?.id ?? '');
+          } else if (result == 'remove_from_club') {
+            controller.removeUserInClub(clubUserId: members?.id ?? '');
+          }
         }
       },
       child: ListTile(
@@ -148,17 +152,18 @@ class MemberListClubView extends GetView<MemberListClubController> {
         ),
         title: Text(
           members?.user?.name ?? '',
-          style: Theme.of(context)
-              .textTheme
-              .bodyMedium
-              ?.copyWith(fontWeight: FontWeight.w600),
+          style: Theme.of(context).textTheme.bodyMedium?.copyWith(fontWeight: FontWeight.w600),
         ),
-        trailing: Text(
-          members?.roleText ?? '',
-          style: Theme.of(context)
-              .textTheme
-              .labelMedium
-              ?.copyWith(color: Colors.grey),
+        trailing: Visibility(
+          visible: members?.status == 0,
+          replacement: Text(
+            members?.roleText ?? '',
+            style: Theme.of(context).textTheme.labelMedium?.copyWith(color: Colors.grey),
+          ),
+          child: Text(
+            members?.status == 0 ? members?.statusText ?? '' : '',
+            style: Theme.of(context).textTheme.labelMedium?.copyWith(color: Colors.grey),
+          ),
         ),
       ),
     );

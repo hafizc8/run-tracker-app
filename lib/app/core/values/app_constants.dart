@@ -57,9 +57,11 @@ class AppConstants {
   static const String clubsMini = "/club";
   static const String clubGetAll = "/club";
   static const String clubCreate = "/club";
-  static String clubUpdate(String clubdId) => "/club/$clubdId";
-  static String clubAccOrJoinOrLeave(String clubdId) => "/club/$clubdId/join";
-  static String clubDetail(String clubdId) => "/club/$clubdId";
-  static String clubGetAllMember(String clubdId) => "/club/$clubdId/user";
-  static String clubInviteFollowersToClub(String clubdId) => "/club/$clubdId/invite";
+  static String clubUpdate(String clubId) => "/club/$clubId";
+  static String clubAccOrJoinOrLeave(String clubId) => "/club/$clubId/join";
+  static String clubAddOrRemoveAsAdmin(String clubId, String clubUserId) => "/club/$clubId/user/$clubUserId/admin";
+  static String clubRemoveUserInClub(String clubId, String clubUserId) => "/club/$clubId/user/$clubUserId";
+  static String clubDetail(String clubId) => "/club/$clubId";
+  static String clubGetAllMember(String clubId) => "/club/$clubId/user";
+  static String clubInviteFollowersToClub(String clubId) => "/club/$clubId/invite";
 }

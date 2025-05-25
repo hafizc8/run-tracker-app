@@ -285,7 +285,7 @@ class EventCreateView extends GetView<EventActionController> {
                     TextFormField(
                       cursorColor: Colors.black,
                       keyboardType: TextInputType.number,
-                      initialValue: form.quota.toString(),
+                      initialValue: (form.quota ?? '').toString(),
                       onChanged: (value) {
                         controller.form.value = form.copyWith(
                           quota: int.parse(value),
@@ -345,16 +345,6 @@ class EventCreateView extends GetView<EventActionController> {
                     trailing: Switch(
                       value: form.isAutoPostToClub ?? false,
                       onChanged: (value) {
-                        if ((form.shareToClubs ?? []).isEmpty) {
-                          Get.snackbar(
-                            'Warning!',
-                            'Please select at least one club',
-                            backgroundColor:
-                                Theme.of(context).colorScheme.primary,
-                            colorText: Theme.of(context).colorScheme.onPrimary,
-                          );
-                          return;
-                        }
                         controller.form.value = form.copyWith(
                           isAutoPostToClub: value,
                           errors: form.errors,
@@ -378,83 +368,88 @@ class EventCreateView extends GetView<EventActionController> {
                   const SizedBox(
                     height: 16,
                   ),
-                  Obx(() {
-                    final clubs = controller.form.value.shareToClubs;
-                    return Wrap(
-                      spacing: 8,
-                      runSpacing: 8,
-                      children: [
-                        ...(clubs ?? []).map(
-                          (club) => CustomChip(
-                            border: Border.all(
-                              color: Theme.of(context).colorScheme.primary,
+                  if (form.isAutoPostToClub ?? false) ...[
+                    Obx(() {
+                      final clubs = controller.form.value.shareToClubs;
+                      return Wrap(
+                        spacing: 8,
+                        runSpacing: 8,
+                        children: [
+                          ...(clubs ?? []).map(
+                            (club) => CustomChip(
+                              border: Border.all(
+                                color: Theme.of(context).colorScheme.primary,
+                              ),
+                              child: Row(
+                                mainAxisSize: MainAxisSize.min,
+                                children: [
+                                  Flexible(
+                                    child: Text(
+                                      club.name ?? '-',
+                                      maxLines: 1,
+                                      overflow: TextOverflow.ellipsis,
+                                      style: Theme.of(context)
+                                          .textTheme
+                                          .bodyMedium,
+                                    ),
+                                  ),
+                                  GestureDetector(
+                                    onTap: () {
+                                      final List<ClubMiniModel> updateClubs =
+                                          List.from(clubs ?? []);
+                                      updateClubs.remove(club);
+                                      controller.form.value = form.copyWith(
+                                        shareToClubs: updateClubs,
+                                        isAutoPostToClub:
+                                            (form.isAutoPostToClub ?? false)
+                                                ? updateClubs.isNotEmpty
+                                                : false,
+                                      );
+                                    },
+                                    child: Icon(
+                                      Icons.delete_forever,
+                                      color:
+                                          Theme.of(context).colorScheme.error,
+                                    ),
+                                  )
+                                ],
+                              ),
                             ),
+                          ),
+                          CustomChip(
+                            backgroundColor: Theme.of(context)
+                                .colorScheme
+                                .primary
+                                .withOpacity(.1),
+                            onTap: () {
+                              controller.showAddClubsDialog();
+                              if (controller.eventClubs.isEmpty) {
+                                controller.getClubs();
+                              }
+                            },
                             child: Row(
                               mainAxisSize: MainAxisSize.min,
                               children: [
-                                Flexible(
-                                  child: Text(
-                                    club.name ?? '-',
-                                    maxLines: 1,
-                                    overflow: TextOverflow.ellipsis,
-                                    style:
-                                        Theme.of(context).textTheme.bodyMedium,
-                                  ),
+                                Icon(Icons.add,
+                                    color:
+                                        Theme.of(context).colorScheme.primary),
+                                Text(
+                                  'Add  Club',
+                                  style: Theme.of(context)
+                                      .textTheme
+                                      .bodySmall
+                                      ?.copyWith(
+                                          color: Theme.of(context)
+                                              .colorScheme
+                                              .primary),
                                 ),
-                                GestureDetector(
-                                  onTap: () {
-                                    final List<ClubMiniModel> updateClubs =
-                                        List.from(clubs ?? []);
-                                    updateClubs.remove(club);
-                                    controller.form.value = form.copyWith(
-                                      shareToClubs: updateClubs,
-                                      isAutoPostToClub:
-                                          (form.isAutoPostToClub ?? false)
-                                              ? updateClubs.isNotEmpty
-                                              : false,
-                                    );
-                                  },
-                                  child: Icon(
-                                    Icons.delete_forever,
-                                    color: Theme.of(context).colorScheme.error,
-                                  ),
-                                )
                               ],
                             ),
                           ),
-                        ),
-                        CustomChip(
-                          backgroundColor: Theme.of(context)
-                              .colorScheme
-                              .primary
-                              .withOpacity(.1),
-                          onTap: () {
-                            controller.showAddClubsDialog();
-                            if (controller.eventClubs.isEmpty) {
-                              controller.getClubs();
-                            }
-                          },
-                          child: Row(
-                            mainAxisSize: MainAxisSize.min,
-                            children: [
-                              Icon(Icons.add,
-                                  color: Theme.of(context).colorScheme.primary),
-                              Text(
-                                'Add  Club',
-                                style: Theme.of(context)
-                                    .textTheme
-                                    .bodySmall
-                                    ?.copyWith(
-                                        color: Theme.of(context)
-                                            .colorScheme
-                                            .primary),
-                              ),
-                            ],
-                          ),
-                        ),
-                      ],
-                    );
-                  }),
+                        ],
+                      );
+                    }),
+                  ]
                 ]
               ],
             );

@@ -1,11 +1,11 @@
 import 'dart:io';
-import 'dart:math';
 
 import 'package:flutter/material.dart';
 import 'package:flutter_cache_manager/flutter_cache_manager.dart';
 import 'package:geolocator/geolocator.dart';
 import 'package:get/get.dart';
 import 'package:image_picker/image_picker.dart';
+import 'package:intl/intl.dart';
 import 'package:zest_mobile/app/core/di/service_locator.dart';
 import 'package:zest_mobile/app/core/exception/app_exception.dart';
 import 'package:zest_mobile/app/core/exception/handler/app_exception_handler_info.dart';
@@ -72,17 +72,116 @@ class EventActionController extends GetxController {
   }
 
   Future<void> setDate(BuildContext context) async {
-    final DateTime? picked = await showDatePicker(
+    final DateTime? pickedDate = await showDatePicker(
       context: context,
       initialDate: form.value.datetime ?? DateTime.now(),
       firstDate: DateTime.now(),
       lastDate: DateTime(2100),
     );
 
-    if (picked != null) {
-      form.value = form.value.copyWith(
-          datetime: picked, errors: form.value.errors, field: 'datetime');
-      dateController.text = picked.toYyyyMmDdString();
+    if (pickedDate != null) {
+      TimeOfDay? startTime;
+      TimeOfDay? endTime;
+
+      await showDialog(
+        context: context,
+        barrierDismissible: false,
+        builder: (context) {
+          return StatefulBuilder(
+            builder: (context, setState) {
+              return AlertDialog(
+                surfaceTintColor: Colors.white,
+                title: Text('Choose Time'),
+                content: Column(
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    // Waktu Mulai
+                    ListTile(
+                      title: Text('Start Time'),
+                      subtitle: Text(
+                        startTime != null
+                            ? '${startTime!.hour.toString().padLeft(2, '0')}.${startTime!.minute.toString().padLeft(2, '0')}'
+                            : 'No time selected',
+                      ),
+                      trailing: Icon(Icons.access_time),
+                      onTap: () async {
+                        final picked = await showTimePicker(
+                          context: context,
+                          initialTime: startTime ?? TimeOfDay.now(),
+                        );
+                        if (picked != null) {
+                          setState(() => startTime = picked);
+                        }
+                      },
+                    ),
+                    // Waktu Berakhir
+                    ListTile(
+                      title: Text('End Time'),
+                      subtitle: Text(
+                        endTime != null
+                            ? '${endTime!.hour.toString().padLeft(2, '0')}.${endTime!.minute.toString().padLeft(2, '0')}'
+                            : 'No time selected',
+                      ),
+                      trailing: Icon(Icons.access_time),
+                      onTap: () async {
+                        final picked = await showTimePicker(
+                          context: context,
+                          initialTime: endTime ?? TimeOfDay.now(),
+                        );
+                        if (picked != null) {
+                          setState(() => endTime = picked);
+                        }
+                      },
+                    ),
+                  ],
+                ),
+                actions: [
+                  TextButton(
+                    onPressed: () => Get.back(),
+                    child: Text('Batal'),
+                  ),
+                  TextButton(
+                    onPressed: startTime == null || endTime == null
+                        ? null
+                        : () {
+                            if (startTime != null && endTime != null) {
+                              Get.back();
+                            }
+                          },
+                    child: Text('Simpan'),
+                  ),
+                ],
+              );
+            },
+          );
+        },
+      );
+
+      if (startTime != null && endTime != null) {
+        String formattedDate = DateFormat('d MMM yyyy').format(pickedDate);
+
+        String formatTime(TimeOfDay time) =>
+            '${time.hour.toString().padLeft(2, '0')}.${time.minute.toString().padLeft(2, '0')}';
+
+        String result =
+            '$formattedDate, ${formatTime(startTime!)}–${formatTime(endTime!)}';
+
+        String formatTimeOfDayToHms(TimeOfDay time) {
+          final now = DateTime.now();
+          final dateTime =
+              DateTime(now.year, now.month, now.day, time.hour, time.minute);
+          return DateFormat('HH:mm:ss').format(dateTime);
+        }
+
+        dateController.text = result;
+        form.value = form.value.copyWith(
+          datetime: pickedDate,
+          startTime: formatTimeOfDayToHms(startTime!),
+          endTime: formatTimeOfDayToHms(endTime!),
+          errors: form.value.errors,
+          field: 'date',
+        );
+      }
     }
   }
 

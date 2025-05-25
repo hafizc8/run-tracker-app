@@ -20,18 +20,7 @@ class DetailClubView extends GetView<DetailClubController> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        backgroundColor: Theme.of(context).colorScheme.background,
-        title: const Text('Club Details'),
-        automaticallyImplyLeading: false,
-        elevation: 1,
-        leading: GestureDetector(
-          onTap: () => Get.back(),
-          child: const Icon(
-            Icons.chevron_left,
-          ),
-        ),
-      ),
+      appBar: _buildAppBar(context),
       body: SingleChildScrollView(
         child: Obx(
           () {
@@ -319,6 +308,77 @@ class DetailClubView extends GetView<DetailClubController> {
           });
         },
       ),
+    );
+  }
+
+  PreferredSizeWidget _buildAppBar(BuildContext context) {
+    return AppBar(
+      title: Text(
+        'Club Details',
+        style: Theme.of(context).textTheme.headlineMedium?.copyWith(fontWeight: FontWeight.w600),
+      ),
+      leading: IconButton(
+        icon: const Icon(Icons.chevron_left),
+        onPressed: () => Get.back(),
+      ),
+      elevation: 4,
+      shadowColor: Colors.black.withOpacity(0.3),
+      surfaceTintColor: Colors.transparent,
+      actions: [
+        PopupMenuButton<String>(
+          onSelected: (value) async {
+            // Handle the selection
+            if (value == 'invite_friend') {
+              Get.toNamed(AppRoutes.inviteToClub, arguments: controller.clubId);
+            } else if (value == 'share_club') {
+              Get.snackbar('Coming soon', 'Feature is coming soon');
+            } else if (value == 'mute_club') {
+              Get.snackbar('Coming soon', 'Feature is coming soon');
+            } else if (value == 'leave_club') {
+              await controller.leaveClub();
+            }
+          },
+          surfaceTintColor: Theme.of(context).colorScheme.onPrimary,
+          itemBuilder: (BuildContext context) {
+            return [
+              PopupMenuItem<String>(
+                value: 'invite_friend',
+                child: Text(
+                  'Invite a Friend',
+                  style: Theme.of(context).textTheme.bodyMedium?.copyWith(fontWeight: FontWeight.w600),
+                ),
+              ),
+              PopupMenuItem<String>(
+                value: 'share_club',
+                child: Text(
+                  'Share Club',
+                  style: Theme.of(context).textTheme.bodyMedium?.copyWith(fontWeight: FontWeight.w600),
+                ),
+              ),
+              PopupMenuItem<String>(
+                value: 'mute_club',
+                child: Text(
+                  'Mute Club',
+                  style: Theme.of(context).textTheme.bodyMedium?.copyWith(fontWeight: FontWeight.w600),
+                ),
+              ),
+              PopupMenuItem<String>(
+                value: 'leave_club',
+                child: Text(
+                  'Leave Club',
+                  style: Theme.of(context).textTheme.bodyMedium?.copyWith(fontWeight: FontWeight.w600),
+                ),
+              ),
+            ];
+          },
+          child: const Padding(
+            padding: EdgeInsets.only(right: 16),
+            child: Icon(
+              Icons.more_horiz,
+            ),
+          ),
+        ),
+      ],
     );
   }
 }

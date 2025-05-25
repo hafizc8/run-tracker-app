@@ -51,6 +51,8 @@ class AppConstants {
   static const String eventLocation = "/event/location";
   static String eventDetail(String id) => "/event/$id";
   static String eventAccLeaveJoin(String id) => "/event/$id/join";
+  static String eventInviteFriend(String id) => "/event/$id/invite";
+  static String eventUsers(String id) => "/event/$id/user";
   static String event([String? id]) => id != null ? "/event/$id" : "/event";
 
   // Clubs

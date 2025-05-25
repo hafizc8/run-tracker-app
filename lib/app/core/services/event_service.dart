@@ -103,6 +103,23 @@ class EventService {
     }
   }
 
+  Future<bool> inviteOrReserveEvent(String id,
+      {bool? isReserved = false, List<String> userIds = const []}) async {
+    try {
+      final response = await _apiService.request(
+          path: AppConstants.eventInviteFriend(id),
+          method: HttpMethod.post,
+          data: {
+            'is_reserved': isReserved,
+            'user_ids': userIds,
+          });
+
+      return response.data['success'];
+    } catch (e) {
+      rethrow;
+    }
+  }
+
   Future<PaginatedDataResponse<EventModel>> getEvents({
     int page = 1,
     int random = 1,
@@ -128,6 +145,30 @@ class EventService {
       return PaginatedDataResponse<EventModel>.fromJson(
         response.data['data'],
         (json) => EventModel.fromJson(json),
+      );
+    } catch (e) {
+      rethrow;
+    }
+  }
+
+  Future<PaginatedDataResponse<EventUserModel>> getEventUsers({
+    required String eventId,
+    int page = 1,
+    List<String> statues = const [],
+  }) async {
+    try {
+      final response = await _apiService.request(
+        path: AppConstants.eventUsers(eventId),
+        method: HttpMethod.get,
+        queryParams: {
+          'page': page.toString(),
+          for (var status in statues) 'status[]': status,
+        },
+      );
+
+      return PaginatedDataResponse<EventUserModel>.fromJson(
+        response.data['data'],
+        (json) => EventUserModel.fromJson(json),
       );
     } catch (e) {
       rethrow;

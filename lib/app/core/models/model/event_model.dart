@@ -28,6 +28,8 @@ class EventModel extends Equatable {
     required this.isPendingJoin,
     required this.isJoined,
     required this.user,
+    required this.userOnEvents,
+    required this.userOnEventsCount,
   });
 
   final String? id;
@@ -55,6 +57,8 @@ class EventModel extends Equatable {
   final int? isPendingJoin;
   final int? isJoined;
   final User? user;
+  final List<EventUserModel>? userOnEvents;
+  final int? userOnEventsCount;
 
   EventModel copyWith({
     String? id,
@@ -82,6 +86,8 @@ class EventModel extends Equatable {
     int? isPendingJoin,
     int? isJoined,
     User? user,
+    List<EventUserModel>? userOnEvents,
+    int? userOnEventsCount,
   }) {
     return EventModel(
       id: id ?? this.id,
@@ -109,6 +115,8 @@ class EventModel extends Equatable {
       isPendingJoin: isPendingJoin ?? this.isPendingJoin,
       isJoined: isJoined ?? this.isJoined,
       user: user ?? this.user,
+      userOnEvents: userOnEvents ?? this.userOnEvents,
+      userOnEventsCount: userOnEventsCount ?? this.userOnEventsCount,
     );
   }
 
@@ -129,7 +137,7 @@ class EventModel extends Equatable {
       subdistrict: json["subdistrict"],
       village: json["village"],
       postcode: json["postcode"],
-      datetime: DateTime.tryParse(json["datetime"] ?? ""),
+      datetime: DateTime.tryParse(json["date"] ?? ""),
       price: json["price"],
       quota: json["quota"],
       isPublic: json["is_public"],
@@ -138,7 +146,16 @@ class EventModel extends Equatable {
       isOwner: json["is_owner"],
       isPendingJoin: json["is_pending_join"],
       isJoined: json["is_joined"],
-      user: json["user"] == null ? null : User.fromJson(json["user"]),
+      user: json["user"] == null
+          ? null
+          : User.fromJson(
+              json["user"],
+            ),
+      userOnEvents: json["event_users"] == null
+          ? null
+          : List<EventUserModel>.from(
+              json["event_users"].map((x) => EventUserModel.fromJson(x))),
+      userOnEventsCount: json["event_users_count"],
     );
   }
 
@@ -168,12 +185,11 @@ class EventModel extends Equatable {
         "is_pending_join": isPendingJoin,
         "is_joined": isJoined,
         "user": user?.toJson(),
+        "event_users": userOnEvents == null
+            ? null
+            : List<dynamic>.from(userOnEvents!.map((x) => x.toJson())),
+        "event_users_count": userOnEventsCount
       };
-
-  @override
-  String toString() {
-    return "$id, $activity, $title, $slug, $description, $imagePath, $imageUrl, $latitude, $longitude, $country, $province, $district, $subdistrict, $village, $postcode, $datetime, $price, $quota, $isPublic, $isAutoPostToClub, $cancelledAt, $isOwner, $isPendingJoin, $isJoined, $user, ";
-  }
 
   String get address =>
       "$village, $subdistrict, $district, $province, $country";
@@ -205,6 +221,8 @@ class EventModel extends Equatable {
         isPendingJoin,
         isJoined,
         user,
+        userOnEvents,
+        userOnEventsCount,
       ];
 }
 
@@ -264,5 +282,62 @@ class User extends Model {
         name,
         imagePath,
         imageUrl,
+      ];
+}
+
+class EventUserModel extends Equatable {
+  EventUserModel({
+    required this.id,
+    required this.status,
+    required this.statusText,
+    required this.user,
+  });
+
+  final String? id;
+  final int? status;
+  final String? statusText;
+  final User? user;
+
+  EventUserModel copyWith({
+    String? id,
+    int? status,
+    String? statusText,
+    User? user,
+  }) {
+    return EventUserModel(
+      id: id ?? this.id,
+      status: status ?? this.status,
+      statusText: statusText ?? this.statusText,
+      user: user ?? this.user,
+    );
+  }
+
+  factory EventUserModel.fromJson(Map<String, dynamic> json) {
+    return EventUserModel(
+      id: json["id"],
+      status: json["status"],
+      statusText: json["status_text"],
+      user: json["user"] == null ? null : User.fromJson(json["user"]),
+    );
+  }
+
+  Map<String, dynamic> toJson() => {
+        "id": id,
+        "status": status,
+        "status_text": statusText,
+        "user": user?.toJson(),
+      };
+
+  @override
+  String toString() {
+    return "$id, $status, $statusText, $user, ";
+  }
+
+  @override
+  List<Object?> get props => [
+        id,
+        status,
+        statusText,
+        user,
       ];
 }

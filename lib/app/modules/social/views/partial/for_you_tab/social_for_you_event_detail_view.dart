@@ -3,13 +3,14 @@ import 'package:get/get.dart';
 import 'package:shimmer/shimmer.dart';
 import 'package:zest_mobile/app/core/extension/date_extension.dart';
 import 'package:zest_mobile/app/core/shared/widgets/shimmer_loading_event.dart';
-import 'package:zest_mobile/app/modules/social/controllers/social_controller.dart';
+
 import 'package:zest_mobile/app/modules/social/views/partial/for_you_tab/event/controllers/event_action_controller.dart';
 import 'package:zest_mobile/app/modules/social/views/partial/for_you_tab/event/controllers/event_controller.dart';
+import 'package:zest_mobile/app/modules/social/views/partial/for_you_tab/event/controllers/event_detail_controller.dart';
 import 'package:zest_mobile/app/modules/social/widgets/event_detail_card.dart';
 import 'package:zest_mobile/app/routes/app_routes.dart';
 
-class SocialForYouEventDetailView extends GetView<SocialController> {
+class SocialForYouEventDetailView extends GetView<EventDetailController> {
   SocialForYouEventDetailView({super.key});
 
   final eventController = Get.find<EventController>();
@@ -248,7 +249,10 @@ class SocialForYouEventDetailView extends GetView<SocialController> {
                       child: ElevatedButton(
                         onPressed: () {
                           Get.toNamed(
-                              AppRoutes.socialYourPageEventDetailInviteFriend);
+                              AppRoutes.socialYourPageEventDetailInviteFriend,
+                              arguments: {
+                                'eventId': eventController.event.value?.id
+                              });
                         },
                         child: Text(
                           'Invite a Friend',

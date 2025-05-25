@@ -17,6 +17,8 @@ import 'package:zest_mobile/app/modules/auth/register/views/register_verify_emai
 import 'package:zest_mobile/app/modules/auth/register/views/register_view.dart';
 import 'package:zest_mobile/app/modules/choose_location/bindings/choose_location_binding.dart';
 import 'package:zest_mobile/app/modules/choose_location/views/choose_location_view.dart';
+import 'package:zest_mobile/app/modules/social/views/partial/for_you_tab/event/bindings/event_invite_binding%20copy.dart';
+import 'package:zest_mobile/app/modules/social/views/partial/for_you_tab/event/bindings/event_invite_binding.dart';
 import 'package:zest_mobile/app/modules/social/views/partial/for_you_tab/event/views/create_view.dart';
 import 'package:zest_mobile/app/modules/club/partial/create_club/bindings/create_club_binding.dart';
 import 'package:zest_mobile/app/modules/club/partial/create_club/views/create_club_view.dart';
@@ -138,10 +140,12 @@ class AppPages {
     GetPage(
       name: AppRoutes.socialYourPageEventDetail,
       page: () => SocialForYouEventDetailView(),
+      binding: EventDetailBinding(),
     ),
     GetPage(
       name: AppRoutes.socialYourPageEventDetailInviteFriend,
       page: () => const SocialForYouEventDetaiInviteFriendView(),
+      binding: EventInviteBinding(),
     ),
     GetPage(
       name: AppRoutes.socialEditPost,

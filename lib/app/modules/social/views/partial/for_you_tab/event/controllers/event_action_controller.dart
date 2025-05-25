@@ -160,18 +160,8 @@ class EventActionController extends GetxController {
       if (startTime != null && endTime != null) {
         String formattedDate = DateFormat('d MMM yyyy').format(pickedDate);
 
-        String formatTime(TimeOfDay time) =>
-            '${time.hour.toString().padLeft(2, '0')}.${time.minute.toString().padLeft(2, '0')}';
-
         String result =
             '$formattedDate, ${formatTime(startTime!)}–${formatTime(endTime!)}';
-
-        String formatTimeOfDayToHms(TimeOfDay time) {
-          final now = DateTime.now();
-          final dateTime =
-              DateTime(now.year, now.month, now.day, time.hour, time.minute);
-          return DateFormat('HH:mm:ss').format(dateTime);
-        }
 
         dateController.text = result;
         form.value = form.value.copyWith(
@@ -183,6 +173,16 @@ class EventActionController extends GetxController {
         );
       }
     }
+  }
+
+  String formatTime(TimeOfDay time) =>
+      '${time.hour.toString().padLeft(2, '0')}.${time.minute.toString().padLeft(2, '0')}';
+
+  String formatTimeOfDayToHms(TimeOfDay time) {
+    final now = DateTime.now();
+    final dateTime =
+        DateTime(now.year, now.month, now.day, time.hour, time.minute);
+    return DateFormat('HH:mm:ss').format(dateTime);
   }
 
   Future<void> imagePicker(BuildContext context) async {
@@ -329,7 +329,8 @@ class EventActionController extends GetxController {
       if (res != null) {
         eventController.detailEvent(res.id!);
         if (from.value == 'list') {
-          Get.offNamed(AppRoutes.socialYourPageEventDetail);
+          Get.offNamed(AppRoutes.socialYourPageEventDetail,
+              arguments: {'eventId': res.id});
         } else if (from.value == 'detail') {
           Get.back(result: res);
         }
@@ -402,6 +403,10 @@ class EventActionController extends GetxController {
       ..refresh();
     this.event.value = event;
     isEdit.value = true;
+    String formattedDate = DateFormat('d MMM yyyy').format(event.datetime!);
+
+    String result =
+        '$formattedDate, ${formatTime(event.startTime!)}–${formatTime(event.endTime!)}';
     form.value = EventStoreFormModel(
       title: event.title,
       description: event.description,
@@ -410,6 +415,8 @@ class EventActionController extends GetxController {
       longitude: double.parse(event.longitude!),
       quota: event.quota,
       datetime: event.datetime,
+      startTime: formatTimeOfDayToHms(event.startTime ?? TimeOfDay.now()),
+      endTime: formatTimeOfDayToHms(event.endTime ?? TimeOfDay.now()),
       isPublic: bool.parse(event.isPublic.toBool),
       activity: EventActivityModel(
         value: event.activity,
@@ -420,7 +427,7 @@ class EventActionController extends GetxController {
     imageController.text =
         event.imageUrl == null ? '' : event.imageUrl.split('/').last;
     addressController.text = event.address;
-    dateController.text = event.datetime!.toYyyyMmDdString();
+    dateController.text = result;
 
     getCachedImageFile(event.imageUrl ?? '').then((value) {
       form.value = form.value.copyWith(image: value);

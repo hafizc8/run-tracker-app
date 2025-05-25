@@ -155,7 +155,7 @@ class EventInviteController extends GetxController {
         userIds: invites.map((e) => e.id).toList(),
       );
       if (res) {
-        Get.back();
+        Get.back(result: res);
         Get.snackbar(
           'Success',
           "Event invited successfully",
@@ -187,7 +187,7 @@ class EventInviteController extends GetxController {
         userIds: invites.map((e) => e.id).toList(),
       );
       if (res) {
-        Get.back();
+        Get.back(result: res);
         Get.snackbar(
           'Success',
           "Event reserved successfully",

@@ -162,7 +162,7 @@ class EventService {
         method: HttpMethod.get,
         queryParams: {
           'page': page.toString(),
-          for (var status in statues) 'status[]': status,
+          'status[]': statues,
         },
       );
 

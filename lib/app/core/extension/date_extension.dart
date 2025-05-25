@@ -1,3 +1,4 @@
+import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 
 extension DateFormatting on DateTime {
@@ -43,5 +44,15 @@ extension DateFormatting on DateTime {
 }
 
 extension DateTimeExtensions on DateTime {
-  bool get isFuture => isAfter(DateTime.now());
+  bool isDateTimePassed(TimeOfDay time) {
+    final combinedDateTime = DateTime(
+      year,
+      month,
+      day,
+      time.hour,
+      time.minute,
+    );
+
+    return combinedDateTime.isAfter(DateTime.now());
+  }
 }

@@ -1,4 +1,5 @@
 import 'package:equatable/equatable.dart';
+import 'package:flutter/material.dart';
 import 'package:zest_mobile/app/core/models/interface/model_interface.dart';
 
 class EventModel extends Equatable {
@@ -19,6 +20,8 @@ class EventModel extends Equatable {
     required this.village,
     required this.postcode,
     required this.datetime,
+    required this.startTime,
+    required this.endTime,
     required this.price,
     required this.quota,
     required this.isPublic,
@@ -48,6 +51,8 @@ class EventModel extends Equatable {
   final String? village;
   final dynamic postcode;
   final DateTime? datetime;
+  final TimeOfDay? startTime;
+  final TimeOfDay? endTime;
   final int? price;
   final int? quota;
   final int? isPublic;
@@ -77,6 +82,8 @@ class EventModel extends Equatable {
     String? village,
     dynamic? postcode,
     DateTime? datetime,
+    TimeOfDay? startTime,
+    TimeOfDay? endTime,
     int? price,
     int? quota,
     int? isPublic,
@@ -106,6 +113,8 @@ class EventModel extends Equatable {
       village: village ?? this.village,
       postcode: postcode ?? this.postcode,
       datetime: datetime ?? this.datetime,
+      startTime: startTime ?? this.startTime,
+      endTime: endTime ?? this.endTime,
       price: price ?? this.price,
       quota: quota ?? this.quota,
       isPublic: isPublic ?? this.isPublic,
@@ -121,6 +130,9 @@ class EventModel extends Equatable {
   }
 
   factory EventModel.fromJson(Map<String, dynamic> json) {
+    final startTime =
+        json['start_time'].split(':'); // "23:59:59" → ["23", "59", "59"]
+    final endTime = json['end_time'].split(':');
     return EventModel(
       id: json["id"],
       activity: json["activity"],
@@ -138,6 +150,14 @@ class EventModel extends Equatable {
       village: json["village"],
       postcode: json["postcode"],
       datetime: DateTime.tryParse(json["date"] ?? ""),
+      startTime: TimeOfDay(
+        hour: int.parse(startTime[0]),
+        minute: int.parse(startTime[1]),
+      ),
+      endTime: TimeOfDay(
+        hour: int.parse(endTime[0]),
+        minute: int.parse(endTime[1]),
+      ),
       price: json["price"],
       quota: json["quota"],
       isPublic: json["is_public"],
@@ -176,6 +196,8 @@ class EventModel extends Equatable {
         "village": village,
         "postcode": postcode,
         "datetime": datetime?.toIso8601String(),
+        "start_time": startTime,
+        "end_time": endTime,
         "price": price,
         "quota": quota,
         "is_public": isPublic,
@@ -212,6 +234,8 @@ class EventModel extends Equatable {
         village,
         postcode,
         datetime,
+        startTime,
+        endTime,
         price,
         quota,
         isPublic,

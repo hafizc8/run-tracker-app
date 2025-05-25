@@ -124,7 +124,9 @@ class EventCard extends StatelessWidget {
                       const SizedBox(width: 5),
                       Visibility(
                         visible: eventModel?.isOwner == 1 &&
-                            (eventModel?.datetime ?? DateTime.now()).isFuture &&
+                            (eventModel?.datetime ?? DateTime.now())
+                                .isDateTimePassed(
+                                    eventModel?.startTime ?? TimeOfDay.now()) &&
                             eventModel?.cancelledAt == null,
                         child: Container(
                           padding: const EdgeInsets.symmetric(
@@ -297,7 +299,9 @@ class EventCard extends StatelessWidget {
               child: Visibility(
                 visible: eventModel?.cancelledAt != null,
                 replacement: Visibility(
-                  visible: (eventModel?.datetime ?? DateTime.now()).isFuture,
+                  visible: (eventModel?.datetime ?? DateTime.now())
+                      .isDateTimePassed(
+                          eventModel?.startTime ?? TimeOfDay.now()),
                   child: ElevatedButton(
                     onPressed: eventModel?.isJoined == 0
                         ? () {

@@ -237,55 +237,30 @@ class MainProfileView extends GetView<ProfileMainController> {
                 ],
               ),
             ),
-            CarouselSlider(
-              items: controller.items.map((item) {
-                return Container(
-                  width: 125,
-                  height: 80,
-                  margin: const EdgeInsets.symmetric(horizontal: 16),
-                  decoration: const BoxDecoration(
-                    color: Colors.transparent,
-                  ),
-                  child: Column(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    children: [
-                      const Placeholder(fallbackHeight: 40, fallbackWidth: 100),
-                      const SizedBox(height: 5),
-                      Text(
-                        item,
-                        textAlign: TextAlign.center,
+            Row(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: controller.items
+                  .map(
+                    (e) => Container(
+                      margin: const EdgeInsets.symmetric(horizontal: 16),
+                      decoration: const BoxDecoration(
+                        color: Colors.transparent,
                       ),
-                    ],
-                  ),
-                );
-              }).toList(),
-              carouselController: controller.controllerSlider,
-              options: CarouselOptions(
-                height: 100,
-                enlargeCenterPage: false,
-                enableInfiniteScroll: false,
-                disableCenter: false,
-                padEnds: false,
-                viewportFraction: 125 / MediaQuery.of(context).size.width,
-                onPageChanged: (index, reason) {
-                  controller.activeIndex.value = index;
-                },
-              ),
-            ),
-            Center(
-              child: Obx(
-                () => AnimatedSmoothIndicator(
-                  activeIndex: (controller.activeIndex.value / 3).floor(),
-                  count: (controller.items.length / 3).ceil(),
-                  effect: WormEffect(
-                    dotHeight: 8,
-                    dotWidth: 8,
-                    activeDotColor: Theme.of(context).primaryColor,
-                  ),
-                  onDotClicked: (index) =>
-                      controller.controllerSlider.animateToPage(index),
-                ),
-              ),
+                      child: Column(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: [
+                          const Placeholder(
+                              fallbackHeight: 40, fallbackWidth: 100),
+                          const SizedBox(height: 5),
+                          Text(
+                            e,
+                            textAlign: TextAlign.center,
+                          ),
+                        ],
+                      ),
+                    ),
+                  )
+                  .toList(),
             ),
             const SizedBox(height: 16),
             Container(

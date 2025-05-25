@@ -1,10 +1,13 @@
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
+import 'package:get/get.dart';
 import 'package:shimmer/shimmer.dart';
 import 'package:zest_mobile/app/core/extension/date_extension.dart';
 import 'package:zest_mobile/app/core/models/model/event_model.dart';
+import 'package:zest_mobile/app/core/shared/widgets/shimmer_loading_circle.dart';
+import 'package:zest_mobile/app/modules/social/views/partial/for_you_tab/event/controllers/event_detail_controller.dart';
 
-class EventDetailCard extends StatelessWidget {
+class EventDetailCard extends GetView<EventDetailController> {
   const EventDetailCard({super.key, required this.event});
   final EventModel? event;
   @override
@@ -167,19 +170,29 @@ class EventDetailCard extends StatelessWidget {
           ),
           const SizedBox(height: 15),
           // Going list
-          _personGridList(
-            context: context,
-            title: 'Going',
-            itemCount: 3,
-            itemBuilder: (context, index) => _buildPersonList(context),
+          Obx(
+            () => _personGridList(
+              context: context,
+              title: 'Going',
+              itemCount: controller.usersInvites.length,
+              itemBuilder: (context, index) => _buildPersonList(
+                context,
+                controller.usersInvites[index],
+              ),
+            ),
           ),
           const SizedBox(height: 15),
           // Waitlist
-          _personGridList(
-            context: context,
-            title: 'Waitlist',
-            itemCount: 3,
-            itemBuilder: (context, index) => _buildPersonList(context),
+          Obx(
+            () => _personGridList(
+              context: context,
+              title: 'Waitlist',
+              itemCount: controller.usersWaitings.length,
+              itemBuilder: (context, index) => _buildPersonList(
+                context,
+                controller.usersWaitings[index],
+              ),
+            ),
           ),
         ],
       ),
@@ -254,8 +267,9 @@ class EventDetailCard extends StatelessWidget {
     );
   }
 
-  Widget _buildPersonList(BuildContext context) {
+  Widget _buildPersonList(BuildContext context, EventUserModel user) {
     return Container(
+      padding: const EdgeInsets.all(8),
       decoration: BoxDecoration(
         color: Colors.white,
         borderRadius: BorderRadius.circular(8),
@@ -270,14 +284,25 @@ class EventDetailCard extends StatelessWidget {
       child: Column(
         mainAxisAlignment: MainAxisAlignment.center,
         children: [
-          CircleAvatar(
-            radius: 20,
-            backgroundColor: Colors.grey.shade300,
-            child: const Icon(Icons.person, color: Colors.white),
+          ClipOval(
+            child: CachedNetworkImage(
+              imageUrl: user.user?.imageUrl ?? '',
+              width: 50,
+              height: 50,
+              fit: BoxFit.cover,
+              placeholder: (context, url) =>
+                  const ShimmerLoadingCircle(size: 50),
+              errorWidget: (context, url, error) => const CircleAvatar(
+                radius: 32,
+                backgroundImage: AssetImage('assets/images/empty_profile.png'),
+              ),
+            ),
           ),
           const SizedBox(height: 8),
           Text(
-            'John Doe',
+            user.user?.name ?? '',
+            maxLines: 1,
+            overflow: TextOverflow.ellipsis,
             style: Theme.of(context)
                 .textTheme
                 .bodyMedium

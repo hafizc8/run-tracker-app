@@ -18,6 +18,8 @@ class EventStoreFormModel extends FormModel<EventStoreFormModel>
   final int? quota;
   final File? image;
   final DateTime? datetime;
+  final String? startTime;
+  final String? endTime;
   final bool? isPublic;
   final bool? isAutoPostToClub;
   final List<ClubMiniModel>? shareToClubs;
@@ -33,6 +35,8 @@ class EventStoreFormModel extends FormModel<EventStoreFormModel>
     this.longitude,
     this.image,
     this.datetime,
+    this.startTime,
+    this.endTime,
     this.shareToClubs,
     this.activity,
     this.title,
@@ -56,6 +60,8 @@ class EventStoreFormModel extends FormModel<EventStoreFormModel>
     int? quota,
     File? image,
     DateTime? datetime,
+    String? startTime,
+    String? endTime,
     bool? isPublic,
     bool? isAutoPostToClub,
     List<ClubMiniModel>? shareToClubs,
@@ -78,6 +84,8 @@ class EventStoreFormModel extends FormModel<EventStoreFormModel>
       quota: quota ?? this.quota,
       image: image ?? this.image,
       datetime: datetime ?? this.datetime,
+      startTime: startTime ?? this.startTime,
+      endTime: endTime ?? this.endTime,
       isPublic: isPublic ?? this.isPublic,
       isAutoPostToClub: isAutoPostToClub ?? this.isAutoPostToClub,
       shareToClubs: shareToClubs ?? this.shareToClubs,
@@ -96,6 +104,8 @@ class EventStoreFormModel extends FormModel<EventStoreFormModel>
         quota,
         image,
         datetime,
+        startTime,
+        endTime,
         isPublic,
         isAutoPostToClub,
         shareToClubs,
@@ -123,9 +133,10 @@ class EventStoreFormModel extends FormModel<EventStoreFormModel>
       'longitude': longitude,
       'quota': quota,
       'image': image,
-      'datetime': datetime != null
-          ? DateFormat('yyyy-MM-dd HH:mm:ss').format(datetime!)
-          : null,
+      'date':
+          datetime != null ? DateFormat('yyyy-MM-dd').format(datetime!) : null,
+      'start_time': startTime,
+      'end_time': endTime,
       'is_public': isPublic.toBool,
       'is_auto_post_to_club': isAutoPostToClub.toBool,
       'share_to_clubs': shareToClubs?.map((obj) => obj.id).toList(),
@@ -143,6 +154,8 @@ class EventStoreFormModel extends FormModel<EventStoreFormModel>
         image != formHasEdited.image ||
         datetime != formHasEdited.datetime ||
         isPublic != formHasEdited.isPublic ||
+        startTime != formHasEdited.startTime ||
+        endTime != formHasEdited.endTime ||
         price != formHasEdited.price;
   }
 }

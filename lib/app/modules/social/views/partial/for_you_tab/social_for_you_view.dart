@@ -266,7 +266,10 @@ class SocialForYouView extends GetView<SocialController> {
                   return EventCard(
                     eventModel: eventController.events[index],
                     onTap: () {
-                      Get.toNamed(AppRoutes.socialYourPageEventDetail);
+                      Get.toNamed(AppRoutes.socialYourPageEventDetail,
+                          arguments: {
+                            'eventId': eventController.events[index].id
+                          });
                       eventController
                           .detailEvent(eventController.events[index].id ?? '');
                     },

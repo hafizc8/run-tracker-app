@@ -23,6 +23,8 @@ import 'package:zest_mobile/app/modules/club/partial/preview_club/bindings/previ
 import 'package:zest_mobile/app/modules/club/partial/preview_club/views/preview_club_view.dart';
 import 'package:zest_mobile/app/modules/club/partial/update_club/bindings/update_club_binding.dart';
 import 'package:zest_mobile/app/modules/club/partial/update_club/views/update_club_view.dart';
+import 'package:zest_mobile/app/modules/social/views/partial/for_you_tab/event/bindings/event_invite_binding%20copy.dart';
+import 'package:zest_mobile/app/modules/social/views/partial/for_you_tab/event/bindings/event_invite_binding.dart';
 import 'package:zest_mobile/app/modules/social/views/partial/for_you_tab/event/views/create_view.dart';
 import 'package:zest_mobile/app/modules/club/partial/create_club/bindings/create_club_binding.dart';
 import 'package:zest_mobile/app/modules/club/partial/create_club/views/create_club_view.dart';
@@ -144,10 +146,12 @@ class AppPages {
     GetPage(
       name: AppRoutes.socialYourPageEventDetail,
       page: () => SocialForYouEventDetailView(),
+      binding: EventDetailBinding(),
     ),
     GetPage(
       name: AppRoutes.socialYourPageEventDetailInviteFriend,
       page: () => const SocialForYouEventDetaiInviteFriendView(),
+      binding: EventInviteBinding(),
     ),
     GetPage(
       name: AppRoutes.socialEditPost,

@@ -5,6 +5,10 @@ extension DateFormatting on DateTime {
     return DateFormat('yyyy-MM-dd').format(this);
   }
 
+  String toYyyyMmDdHisString() {
+    return DateFormat('yyyy-MM-dd HH:mm:ss').format(this);
+  }
+
   String toddMMMyyyy() {
     return DateFormat("dd MMMM yyyy").format(this);
   }

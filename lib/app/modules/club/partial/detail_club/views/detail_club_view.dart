@@ -3,12 +3,15 @@ import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:get/get.dart';
+import 'package:zest_mobile/app/core/models/model/club_mini_model.dart';
 import 'package:zest_mobile/app/core/models/model/club_model.dart';
 import 'package:zest_mobile/app/core/shared/widgets/shimmer_loading_circle.dart';
 import 'package:zest_mobile/app/core/shared/widgets/shimmer_loading_list.dart';
 import 'package:zest_mobile/app/modules/club/partial/detail_club/controllers/detail_club_controller.dart';
 import 'package:zest_mobile/app/core/extension/date_extension.dart';
 import 'package:zest_mobile/app/modules/club/partial/detail_club/partial/tab_bar_club/views/tab_bar_club_view.dart';
+import 'package:zest_mobile/app/modules/social/views/partial/for_you_tab/event/controllers/event_action_controller.dart';
+import 'package:zest_mobile/app/modules/social/widgets/event_card_dialog.dart';
 import 'package:zest_mobile/app/routes/app_routes.dart';
 
 class DetailClubView extends GetView<DetailClubController> {
@@ -51,7 +54,14 @@ class DetailClubView extends GetView<DetailClubController> {
           }
         ),
       ),
-      floatingActionButton: _buildFloatingActionButton(context),
+      floatingActionButton: Obx(
+        () {
+          return Visibility(
+            visible: !controller.isLoading.value,
+            child: _buildFloatingActionButton(context, controller.club.value),
+          );
+        }
+      ),
     );
   }
 
@@ -245,7 +255,7 @@ class DetailClubView extends GetView<DetailClubController> {
     );
   }
 
-  Widget _buildFloatingActionButton(BuildContext context) {
+  Widget _buildFloatingActionButton(BuildContext context, ClubModel? club) {
     return Builder(
       builder: (context) => FloatingActionButton(
         backgroundColor: Theme.of(context).colorScheme.primary,
@@ -277,11 +287,34 @@ class DetailClubView extends GetView<DetailClubController> {
               ),
             ],
             elevation: 8.0,
-          ).then((value) {
+          ).then((value) async {
             if (value == 'create_an_event') {
-              // do edit action
+              // find EventActionController and hit createEventFromClub()
+              final eventActionController = Get.find<EventActionController>();
+              eventActionController.createEventFromClub(
+                ClubMiniModel(id: club?.id, name: club?.name),
+              );
+
+              final res = await Get.toNamed(AppRoutes.eventCreate);
+
+              if (res != null) {
+                showDialog(
+                  context: context,
+                  builder: (context) {
+                    return Dialog(
+                      surfaceTintColor: Colors.transparent,
+                      backgroundColor: Colors.transparent,
+                      child: EventCardDialog(
+                        eventModel: res,
+                        onTap: null,
+                        isAction: true,
+                      ),
+                    );
+                  },
+                );
+              }
             } else if (value == 'create_a_challange') {
-              // do delete action
+              Get.snackbar('Coming soon', 'Feature is coming soon');
             }
           });
         },

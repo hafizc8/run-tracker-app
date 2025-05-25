@@ -144,9 +144,6 @@ class SocialYourPageFollowingView extends GetView<SocialFollowingController> {
         children: [
           Obx(
             () => CustomChip(
-              padding: const EdgeInsets.symmetric(
-                horizontal: 16,
-              ),
               onTap: () {
                 if (user.isFollowing == 0) {
                   controller.follow(user.id);
@@ -158,7 +155,7 @@ class SocialYourPageFollowingView extends GetView<SocialFollowingController> {
                 visible: user.id == controller.userId.value,
                 replacement: Text(
                   {
-                    'is_following': user.isFollowing,
+                    'is_follower': user.isFollowing,
                   }.followingStatus,
                   style: Theme.of(context).textTheme.bodyMedium?.copyWith(
                         color: Theme.of(context).colorScheme.primary,

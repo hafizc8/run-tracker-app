@@ -7,20 +7,22 @@ import 'package:zest_mobile/app/core/extension/date_extension.dart';
 import 'package:zest_mobile/app/core/models/interface/pagination_response_model.dart';
 import 'package:zest_mobile/app/core/models/model/event_location_model.dart';
 import 'package:zest_mobile/app/core/models/model/event_model.dart';
+import 'package:zest_mobile/app/core/models/model/user_mini_model.dart';
 import 'package:zest_mobile/app/core/services/event_service.dart';
 import 'package:zest_mobile/app/core/shared/helpers/debouncer.dart';
-import 'package:zest_mobile/app/routes/app_routes.dart';
 
 class EventController extends GetxController {
   var isLoading = false.obs;
   var isLoadingAction = false.obs;
   var isLoadingDetail = false.obs;
   var hasReacheMax = false.obs;
+
   final _eventService = sl<EventService>();
 
   var events = <EventModel>[].obs;
   Rx<EventModel?> event = Rx(null);
   var eventLocations = <EventLocationModel>[].obs;
+  var friends = <UserMiniModel>[].obs;
 
   final scrollController = ScrollController();
 
@@ -38,6 +40,7 @@ class EventController extends GetxController {
     super.onInit();
     getLocations();
     load();
+
     scrollController.addListener(() {
       var maxScroll = scrollController.position.pixels >=
           scrollController.position.maxScrollExtent - 200;

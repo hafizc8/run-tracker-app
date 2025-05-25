@@ -11,7 +11,7 @@ class CustomChip extends StatelessWidget {
     super.key,
     required this.child,
     this.onTap,
-    this.padding = const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
+    this.padding = const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
     this.backgroundColor = Colors.white,
     this.border,
   });
@@ -22,7 +22,6 @@ class CustomChip extends StatelessWidget {
       onTap: () => onTap == null ? null : onTap!(),
       child: Container(
         padding: padding,
-        alignment: Alignment.center,
         decoration: BoxDecoration(
           color: backgroundColor,
           borderRadius: BorderRadius.circular(100),

@@ -1,9 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:zest_mobile/app/core/models/model/user_mini_model.dart';
 import 'package:zest_mobile/app/core/shared/widgets/custom_blue_checkbox.dart';
-import 'package:zest_mobile/app/modules/social/controllers/social_controller.dart';
+import 'package:zest_mobile/app/core/shared/widgets/shimmer_loading_list.dart';
+import 'package:zest_mobile/app/modules/social/views/partial/for_you_tab/event/controllers/event_invite_controller.dart';
 
-class SocialForYouEventDetaiInviteFriendView extends GetView<SocialController> {
+class SocialForYouEventDetaiInviteFriendView
+    extends GetView<EventInviteController> {
   const SocialForYouEventDetaiInviteFriendView({super.key});
 
   @override
@@ -16,9 +19,11 @@ class SocialForYouEventDetaiInviteFriendView extends GetView<SocialController> {
           child: Column(
             children: [
               TextFormField(
+                onChanged: (value) => controller.search.value = value,
                 decoration: InputDecoration(
                   hintText: 'Search',
-                  border: OutlineInputBorder(borderRadius: BorderRadius.circular(12)),
+                  border: OutlineInputBorder(
+                      borderRadius: BorderRadius.circular(12)),
                   suffixIcon: Icon(
                     Icons.search,
                     color: Theme.of(context).colorScheme.primary,
@@ -31,23 +36,62 @@ class SocialForYouEventDetaiInviteFriendView extends GetView<SocialController> {
                 children: [
                   Text(
                     'Select Friend',
-                    style: Theme.of(context).textTheme.headlineSmall?.copyWith(fontWeight: FontWeight.bold),
+                    style: Theme.of(context)
+                        .textTheme
+                        .headlineSmall
+                        ?.copyWith(fontWeight: FontWeight.bold),
                   ),
-                  Text(
-                    '(2 Selected)',
-                    style: Theme.of(context).textTheme.headlineSmall?.copyWith(fontWeight: FontWeight.bold),
+                  Obx(
+                    () => Text(
+                      '(${controller.invites.length} Selected)',
+                      style: Theme.of(context)
+                          .textTheme
+                          .headlineSmall
+                          ?.copyWith(fontWeight: FontWeight.bold),
+                    ),
                   ),
                 ],
               ),
               const SizedBox(height: 16),
-              ListView.builder(
-                shrinkWrap: true,
-                itemCount: 15,
-                physics: const NeverScrollableScrollPhysics(),
-                itemBuilder: (context, index) {
-                  return _buildFriendListItem(context);
-                },
-              ),
+              Obx(() {
+                if (controller.resultSearchEmpty.value &&
+                    controller.pageFriend == 1) {
+                  return Center(
+                    child: Text(
+                      'No result for : ${controller.search.value}',
+                      style: Theme.of(context)
+                          .textTheme
+                          .headlineSmall
+                          ?.copyWith(fontWeight: FontWeight.bold),
+                    ),
+                  );
+                }
+                if (controller.isLoadingFriend.value &&
+                    controller.pageFriend == 1) {
+                  return const ShimmerLoadingList(
+                    itemCount: 10,
+                  );
+                }
+
+                return ListView.builder(
+                  shrinkWrap: true,
+                  itemCount: controller.friends.length +
+                      (controller.hasReacheMaxFriend.value ? 0 : 1),
+                  physics: const NeverScrollableScrollPhysics(),
+                  itemBuilder: (context, index) {
+                    if (index == controller.friends.length) {
+                      return Center(
+                        child: Container(
+                          margin: const EdgeInsets.symmetric(vertical: 10),
+                          child: const CircularProgressIndicator(),
+                        ),
+                      );
+                    }
+                    final friend = controller.friends[index];
+                    return _buildFriendListItem(context, friend);
+                  },
+                );
+              }),
             ],
           ),
         ),
@@ -92,61 +136,80 @@ class SocialForYouEventDetaiInviteFriendView extends GetView<SocialController> {
           ),
         ],
       ),
-      child: Row(
-        children: [
-          Expanded(
-            child: OutlinedButtonTheme(
-              data: OutlinedButtonThemeData(
-                style: OutlinedButton.styleFrom(
-                  backgroundColor: Theme.of(context).colorScheme.onPrimary,
-                  minimumSize: const Size.fromHeight(40),
-                  side: BorderSide(color: Theme.of(context).colorScheme.primary),
+      child: Obx(
+        () => Row(
+          children: [
+            Expanded(
+              child: OutlinedButtonTheme(
+                data: OutlinedButtonThemeData(
+                  style: OutlinedButton.styleFrom(
+                    backgroundColor: Theme.of(context).colorScheme.onPrimary,
+                    minimumSize: const Size.fromHeight(40),
+                    side: BorderSide(
+                        color: Theme.of(context).colorScheme.primary),
+                  ),
                 ),
-              ),
-              child: OutlinedButton(
-                onPressed: () {
-                  Get.back();
-                },
-                child: Text(
-                  'Reverse',
-                  style: Theme.of(context).textTheme.labelSmall?.copyWith(color: Theme.of(context).colorScheme.primary),
-                ),
-              ),
-            ),
-          ),
-          const SizedBox(width: 10),
-          Expanded(
-            child: ElevatedButtonTheme(
-              data: ElevatedButtonThemeData(
-                style: ElevatedButton.styleFrom(
-                  backgroundColor: Theme.of(context).colorScheme.primary,
-                  foregroundColor: Theme.of(context).colorScheme.onPrimary,
-                  minimumSize: const Size.fromHeight(40),
-                ),
-              ),
-              child: ElevatedButton(
-                onPressed: () {
-                  Get.back();
-                },
-                child: Text(
-                  'Invite',
-                  style: Theme.of(context).textTheme.labelSmall,
+                child: OutlinedButton(
+                  onPressed: controller.invites.isEmpty ||
+                          controller.isLoadingReserveFriend.value
+                      ? null
+                      : () {
+                          controller.reserveEvent(isReserved: true);
+                        },
+                  child: Visibility(
+                    visible: !controller.isLoadingReserveFriend.value,
+                    replacement: const CircularProgressIndicator(),
+                    child: Text(
+                      'Reserve',
+                      style: Theme.of(context).textTheme.labelSmall?.copyWith(
+                            color: Theme.of(context).colorScheme.primary,
+                          ),
+                    ),
+                  ),
                 ),
               ),
             ),
-          ),
-        ],
+            const SizedBox(width: 10),
+            Expanded(
+              child: ElevatedButtonTheme(
+                data: ElevatedButtonThemeData(
+                  style: ElevatedButton.styleFrom(
+                    backgroundColor: Theme.of(context).colorScheme.primary,
+                    foregroundColor: Theme.of(context).colorScheme.onPrimary,
+                    minimumSize: const Size.fromHeight(40),
+                  ),
+                ),
+                child: ElevatedButton(
+                  onPressed: controller.invites.isEmpty ||
+                          controller.isLoadingInviteFriend.value
+                      ? null
+                      : () {
+                          controller.inviteEvent(isReserved: false);
+                        },
+                  child: Visibility(
+                    visible: !controller.isLoadingInviteFriend.value,
+                    replacement: const CircularProgressIndicator(),
+                    child: Text(
+                      'Invite',
+                      style: Theme.of(context).textTheme.labelSmall,
+                    ),
+                  ),
+                ),
+              ),
+            ),
+          ],
+        ),
       ),
     );
   }
 
-  Widget _buildFriendListItem(BuildContext context) {
+  Widget _buildFriendListItem(BuildContext context, UserMiniModel friend) {
     return Padding(
       padding: const EdgeInsets.only(bottom: 10),
       child: Row(
         children: [
           CircleAvatar(
-            radius: 20, 
+            radius: 20,
             backgroundColor: Colors.grey.shade300,
             child: const Icon(Icons.person, color: Colors.white),
           ),
@@ -154,14 +217,21 @@ class SocialForYouEventDetaiInviteFriendView extends GetView<SocialController> {
           Expanded(
             child: Text(
               'John Doe',
-              style: Theme.of(context).textTheme.bodyMedium?.copyWith(fontWeight: FontWeight.w600),
+              style: Theme.of(context)
+                  .textTheme
+                  .bodyMedium
+                  ?.copyWith(fontWeight: FontWeight.w600),
             ),
           ),
           const Spacer(),
           // checkbox
-          CustomBlueCheckbox(
-            value: true,
-            onChanged: (val) {},
+          Obx(
+            () => CustomBlueCheckbox(
+              value: controller.invites.contains(friend),
+              onChanged: (val) {
+                controller.toggleInvite(friend);
+              },
+            ),
           ),
         ],
       ),

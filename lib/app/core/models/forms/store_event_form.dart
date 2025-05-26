@@ -109,6 +109,7 @@ class EventStoreFormModel extends FormModel<EventStoreFormModel>
         isPublic,
         isAutoPostToClub,
         shareToClubs,
+        errors
       ];
 
   @override

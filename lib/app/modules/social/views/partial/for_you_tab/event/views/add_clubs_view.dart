@@ -125,7 +125,7 @@ class AddClubs extends GetView<EventActionController> {
                 child: // Buttons
                     Container(
                   color: Theme.of(context).colorScheme.background,
-                  padding: const EdgeInsets.all(16),
+                  padding: const EdgeInsets.all(4),
                   child: Row(
                     children: [
                       Expanded(

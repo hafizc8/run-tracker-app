@@ -232,7 +232,7 @@ class EventCreateView extends GetView<EventActionController> {
                       decoration: InputDecoration(
                         hintText: 'Choose date & time',
                         suffixIcon: const Icon(Icons.calendar_today),
-                        errorText: form.errors?['datetime'],
+                        errorText: form.errors?['date'],
                       ),
                     ),
                   ],

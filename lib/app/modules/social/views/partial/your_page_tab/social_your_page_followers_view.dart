@@ -16,8 +16,7 @@ class SocialYourPageFollowersView extends GetView<SocialFollowersController> {
       children: [
         Obx(
           () => Visibility(
-            visible:
-                controller.friends.isNotEmpty || controller.isLoading.value,
+            visible: controller.total.value > 0,
             child: TextFormField(
               onChanged: (value) => controller.onSearchChanged(value),
               decoration: InputDecoration(
@@ -68,11 +67,17 @@ class SocialYourPageFollowersView extends GetView<SocialFollowersController> {
               ),
             );
           }
-          if (controller.friends.isEmpty &&
-              controller.search.value.isEmpty &&
-              !controller.isLoading.value) {
+          if (controller.isLoading.value && controller.pageFriend == 1) {
+            return Center(
+              child: Container(
+                margin: const EdgeInsets.symmetric(vertical: 10),
+                child: const CircularProgressIndicator(),
+              ),
+            );
+          }
+          if (controller.total.value == 0) {
             return Text(
-              'You Have No Followers',
+              'You Have No Following',
               style: Theme.of(context).textTheme.bodyLarge?.copyWith(
                     fontWeight: FontWeight.bold,
                     color: Theme.of(context).colorScheme.secondary,

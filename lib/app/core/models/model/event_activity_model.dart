@@ -4,19 +4,23 @@ class EventActivityModel extends Model {
   EventActivityModel({
     required this.value,
     required this.label,
+    required this.image,
   });
 
   final String? value;
   final String? label;
+  final String? image;
 
   @override
   EventActivityModel copyWith({
     String? value,
     String? label,
+    String? image,
   }) {
     return EventActivityModel(
       value: value ?? this.value,
       label: label ?? this.label,
+      image: image ?? this.image,
     );
   }
 
@@ -24,13 +28,14 @@ class EventActivityModel extends Model {
     return EventActivityModel(
       value: json["value"],
       label: json["label"],
+      image: json["image"],
     );
   }
 
   static List<EventActivityModel> defaultListEventActivity() {
     return [
-      EventActivityModel(value: "Running", label: "Running"),
-      EventActivityModel(value: "Badminton", label: "Badminton"),
+      EventActivityModel(value: "Running", label: "Running", image: ""),
+      EventActivityModel(value: "Badminton", label: "Badminton", image: ""),
     ];
   }
 
@@ -38,16 +43,13 @@ class EventActivityModel extends Model {
   Map<String, dynamic> toJson() => {
         "value": value,
         "label": label,
+        "image": image,
       };
-
-  @override
-  String toString() {
-    return "$value, $label, ";
-  }
 
   @override
   List<Object?> get props => [
         value,
         label,
+        image,
       ];
 }

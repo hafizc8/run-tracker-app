@@ -2,6 +2,7 @@ import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_image_stack/flutter_image_stack.dart';
 import 'package:get/get.dart';
+import 'package:intl/intl.dart';
 import 'package:shimmer/shimmer.dart';
 import 'package:zest_mobile/app/core/extension/date_extension.dart';
 import 'package:zest_mobile/app/core/extension/event_extension.dart';
@@ -96,11 +97,30 @@ class EventCard extends StatelessWidget {
                       Radius.circular(8),
                     ),
                   ),
-                  child: Text(
-                    eventModel?.activity ?? '-',
-                    style: Theme.of(context).textTheme.bodyMedium?.copyWith(
-                          color: Theme.of(context).colorScheme.primary,
-                        ),
+                  child: Row(
+                    children: [
+                      // CachedNetworkImage(
+                      //   imageUrl: eventModel?.activity ?? '',
+                      //   width: 50,
+                      //   height: 50,
+                      //   fit: BoxFit.cover,
+                      //   placeholder: (context, url) =>
+                      //       const ShimmerLoadingCircle(size: 50),
+                      //   errorWidget: (context, url, error) =>
+                      //       const CircleAvatar(
+                      //     radius: 32,
+                      //     backgroundImage:
+                      //         AssetImage('assets/images/empty_profile.png'),
+                      //   ),
+                      // ),
+                      // const SizedBox(width: 8),
+                      Text(
+                        eventModel?.activity ?? '-',
+                        style: Theme.of(context).textTheme.bodyMedium?.copyWith(
+                              color: Theme.of(context).colorScheme.primary,
+                            ),
+                      ),
+                    ],
                   ),
                 ),
                 Visibility(
@@ -263,7 +283,7 @@ class EventCard extends StatelessWidget {
                   icon: Icons.date_range_outlined,
                   title: 'PERIOD',
                   subtitle:
-                      (eventModel?.datetime ?? DateTime.now()).toddMMMyyyy(),
+                      '${DateFormat('d MMM yyyy').format(eventModel!.datetime!)}, ${eventActionController.formatTime(eventModel!.startTime!)}–${eventActionController.formatTime(eventModel!.endTime!)}',
                 ),
                 const SizedBox(height: 12),
                 _buildInfoItem(

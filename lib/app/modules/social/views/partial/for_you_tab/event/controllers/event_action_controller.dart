@@ -428,6 +428,7 @@ class EventActionController extends GetxController {
       activity: EventActivityModel(
         value: event.activity,
         label: event.activity,
+        image: '',
       ),
     );
     original.value = form.value;

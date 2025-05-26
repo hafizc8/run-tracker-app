@@ -1,11 +1,13 @@
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/widgets.dart';
 import 'package:get/get.dart';
 import 'package:shimmer/shimmer.dart';
 import 'package:zest_mobile/app/core/extension/date_extension.dart';
 import 'package:zest_mobile/app/core/models/model/event_model.dart';
 import 'package:zest_mobile/app/core/shared/widgets/shimmer_loading_circle.dart';
 import 'package:zest_mobile/app/modules/social/views/partial/for_you_tab/event/controllers/event_detail_controller.dart';
+import 'package:zest_mobile/app/routes/app_routes.dart';
 
 class EventDetailCard extends GetView<EventDetailController> {
   const EventDetailCard({super.key, required this.event});
@@ -186,6 +188,7 @@ class EventDetailCard extends GetView<EventDetailController> {
             return _personGridList(
               context: context,
               title: 'Going',
+              seeAll: true,
               itemCount: controller.usersInvites.length,
               itemBuilder: (context, index) => _buildPersonList(
                 context,
@@ -225,6 +228,7 @@ class EventDetailCard extends GetView<EventDetailController> {
 
   Widget _personGridList(
       {required BuildContext context,
+      bool seeAll = false,
       required String title,
       required int itemCount,
       required Widget Function(BuildContext, int) itemBuilder}) {
@@ -234,9 +238,24 @@ class EventDetailCard extends GetView<EventDetailController> {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          Text(
-            '$title ($itemCount)',
-            style: Theme.of(context).textTheme.headlineSmall,
+          Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            children: [
+              Text(
+                '$title ($itemCount)',
+                style: Theme.of(context).textTheme.headlineSmall,
+              ),
+              if (seeAll) ...[
+                GestureDetector(
+                  onTap: () => Get.toNamed(AppRoutes.eventSeeAllParticipant,
+                      arguments: {'eventId': event?.id}),
+                  child: Text(
+                    'See all',
+                    style: Theme.of(context).textTheme.headlineSmall,
+                  ),
+                ),
+              ]
+            ],
           ),
           const SizedBox(height: 10),
           GridView.builder(

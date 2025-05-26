@@ -17,7 +17,8 @@ import 'package:zest_mobile/app/modules/auth/register/views/register_verify_emai
 import 'package:zest_mobile/app/modules/auth/register/views/register_view.dart';
 import 'package:zest_mobile/app/modules/choose_location/bindings/choose_location_binding.dart';
 import 'package:zest_mobile/app/modules/choose_location/views/choose_location_view.dart';
-import 'package:zest_mobile/app/modules/social/views/partial/for_you_tab/event/bindings/event_invite_binding%20copy.dart';
+import 'package:zest_mobile/app/modules/social/views/partial/for_you_tab/event/bindings/event_detail_binding.dart';
+import 'package:zest_mobile/app/modules/social/views/partial/for_you_tab/event/bindings/event_see_all_participant_binding.dart';
 import 'package:zest_mobile/app/modules/social/views/partial/for_you_tab/event/bindings/event_invite_binding.dart';
 import 'package:zest_mobile/app/modules/social/views/partial/for_you_tab/event/views/create_view.dart';
 import 'package:zest_mobile/app/modules/club/partial/create_club/bindings/create_club_binding.dart';
@@ -31,6 +32,7 @@ import 'package:zest_mobile/app/modules/home/views/main_home_view.dart';
 import 'package:zest_mobile/app/modules/main_profile/partials/profile/bindings/profile_binding.dart';
 import 'package:zest_mobile/app/modules/main_profile/partials/profile/views/profile_view.dart';
 import 'package:zest_mobile/app/modules/social/bindings/social_binding.dart';
+import 'package:zest_mobile/app/modules/social/views/partial/for_you_tab/event/views/see_all_participant_view.dart';
 import 'package:zest_mobile/app/modules/social/views/partial/for_you_tab/social_for_you_event_detail_invite_friend_view.dart';
 import 'package:zest_mobile/app/modules/social/views/partial/for_you_tab/social_for_you_event_detail_view.dart';
 import 'package:zest_mobile/app/modules/social/views/partial/search/bindings/social_search_binding.dart';
@@ -146,6 +148,11 @@ class AppPages {
       name: AppRoutes.socialYourPageEventDetailInviteFriend,
       page: () => const SocialForYouEventDetaiInviteFriendView(),
       binding: EventInviteBinding(),
+    ),
+    GetPage(
+      name: AppRoutes.eventSeeAllParticipant,
+      page: () => const SocialForYouEventDetailSeelAllParticipantView(),
+      binding: EventDetailSeeAllParticipantBinding(),
     ),
     GetPage(
       name: AppRoutes.socialEditPost,

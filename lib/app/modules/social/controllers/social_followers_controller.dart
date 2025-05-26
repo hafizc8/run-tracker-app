@@ -11,12 +11,14 @@ class SocialFollowersController extends GetxController {
   var hasReacheMax = false.obs;
   var resultSearchEmpty = false.obs;
   var isLoadingFollow = false.obs;
+  var userId = ''.obs;
+
   TextEditingController searchController = TextEditingController();
+
   final _userService = sl<UserService>();
 
   var friends = <UserMiniModel>[].obs;
   var search = ''.obs;
-  var userId = ''.obs;
 
   final scrollFriendsController = ScrollController();
 
@@ -29,12 +31,15 @@ class SocialFollowersController extends GetxController {
   void onInit() {
     super.onInit();
     scrollFriendsController.addListener(() {
-      var maxScroll = scrollFriendsController.position.pixels >=
-          scrollFriendsController.position.maxScrollExtent - 200;
+      final position = scrollFriendsController.position;
 
-      if (maxScroll && !hasReacheMax.value) {
-        load();
-      }
+      bool isNearBottom = position.pixels >= position.maxScrollExtent - 200;
+
+      _debouncer.run(() {
+        if (isNearBottom && !isLoading.value && !hasReacheMax.value) {
+          load();
+        }
+      });
     });
   }
 
@@ -52,7 +57,7 @@ class SocialFollowersController extends GetxController {
       hasReacheMax.value = false;
     }
     search.value = input;
-
+    searchController.text = input;
     _debouncer.run(() => searchFriends(input));
   }
 
@@ -61,7 +66,6 @@ class SocialFollowersController extends GetxController {
       friends.clear();
       pageFriend = 1;
       hasReacheMax.value = false;
-      return;
     }
 
     if (isLoading.value || hasReacheMax.value) return;
@@ -120,7 +124,7 @@ class SocialFollowersController extends GetxController {
       if ((response.pagination.next == null ||
               response.pagination.next == '') ||
           response.pagination.total < 20) hasReacheMax.value = true;
-
+      total.value = response.pagination.total;
       friends.value += response.data;
     } catch (e) {
       Get.snackbar(

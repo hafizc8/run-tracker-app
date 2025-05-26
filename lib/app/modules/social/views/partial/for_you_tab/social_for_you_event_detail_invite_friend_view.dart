@@ -1,7 +1,9 @@
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:zest_mobile/app/core/models/model/user_mini_model.dart';
 import 'package:zest_mobile/app/core/shared/widgets/custom_blue_checkbox.dart';
+import 'package:zest_mobile/app/core/shared/widgets/shimmer_loading_circle.dart';
 import 'package:zest_mobile/app/core/shared/widgets/shimmer_loading_list.dart';
 import 'package:zest_mobile/app/modules/social/views/partial/for_you_tab/event/controllers/event_invite_controller.dart';
 
@@ -208,15 +210,24 @@ class SocialForYouEventDetaiInviteFriendView
       padding: const EdgeInsets.only(bottom: 10),
       child: Row(
         children: [
-          CircleAvatar(
-            radius: 20,
-            backgroundColor: Colors.grey.shade300,
-            child: const Icon(Icons.person, color: Colors.white),
+          ClipOval(
+            child: CachedNetworkImage(
+              imageUrl: friend.imageUrl ?? '',
+              width: 50,
+              height: 50,
+              fit: BoxFit.cover,
+              placeholder: (context, url) =>
+                  const ShimmerLoadingCircle(size: 50),
+              errorWidget: (context, url, error) => const CircleAvatar(
+                radius: 32,
+                backgroundImage: AssetImage('assets/images/empty_profile.png'),
+              ),
+            ),
           ),
           const SizedBox(width: 8),
           Expanded(
             child: Text(
-              'John Doe',
+              friend.name,
               style: Theme.of(context)
                   .textTheme
                   .bodyMedium

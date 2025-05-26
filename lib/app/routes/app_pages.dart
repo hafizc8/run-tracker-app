@@ -26,7 +26,6 @@ import 'package:zest_mobile/app/modules/club/partial/update_club/views/update_cl
 import 'package:zest_mobile/app/modules/social/views/partial/for_you_tab/event/bindings/event_invite_binding.dart';
 import 'package:zest_mobile/app/modules/social/views/partial/for_you_tab/event/bindings/event_detail_binding.dart';
 import 'package:zest_mobile/app/modules/social/views/partial/for_you_tab/event/bindings/event_see_all_participant_binding.dart';
-import 'package:zest_mobile/app/modules/social/views/partial/for_you_tab/event/bindings/event_invite_binding.dart';
 import 'package:zest_mobile/app/modules/social/views/partial/for_you_tab/event/views/create_view.dart';
 import 'package:zest_mobile/app/modules/club/partial/create_club/bindings/create_club_binding.dart';
 import 'package:zest_mobile/app/modules/club/partial/create_club/views/create_club_view.dart';

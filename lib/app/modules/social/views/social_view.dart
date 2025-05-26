@@ -3,7 +3,6 @@ import 'package:get/get.dart';
 import 'package:zest_mobile/app/core/shared/theme/color_schemes.dart';
 import 'package:zest_mobile/app/modules/social/views/partial/for_you_tab/social_for_you_view.dart';
 import 'package:zest_mobile/app/modules/social/views/partial/your_page_tab/social_your_page_view.dart';
-import 'package:zest_mobile/app/modules/social/widgets/event_card.dart';
 import 'package:zest_mobile/app/modules/social/widgets/event_card_dialog.dart';
 import 'package:zest_mobile/app/routes/app_routes.dart';
 

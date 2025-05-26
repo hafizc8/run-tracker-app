@@ -2,16 +2,21 @@ import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
 import 'package:get/get.dart';
+import 'package:intl/intl.dart';
 import 'package:shimmer/shimmer.dart';
 import 'package:zest_mobile/app/core/extension/date_extension.dart';
 import 'package:zest_mobile/app/core/models/model/event_model.dart';
 import 'package:zest_mobile/app/core/shared/widgets/shimmer_loading_circle.dart';
+import 'package:zest_mobile/app/modules/social/views/partial/for_you_tab/event/controllers/event_action_controller.dart';
 import 'package:zest_mobile/app/modules/social/views/partial/for_you_tab/event/controllers/event_detail_controller.dart';
 import 'package:zest_mobile/app/routes/app_routes.dart';
 
 class EventDetailCard extends GetView<EventDetailController> {
-  const EventDetailCard({super.key, required this.event});
+  
+  EventDetailCard({super.key, required this.event});
   final EventModel? event;
+  final eventActionController = Get.find<EventActionController>();
+
   @override
   Widget build(BuildContext context) {
     return Container(
@@ -124,49 +129,34 @@ class EventDetailCard extends GetView<EventDetailController> {
           Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              Row(
-                children: [
-                  Expanded(
-                    child: _buildInfoItem(
-                      context,
-                      icon: Icons.track_changes_outlined,
-                      title: 'Quota',
-                      subtitle: '${event?.quota}',
-                    ),
-                  ),
-                  const SizedBox(width: 20),
-                  Expanded(
-                    child: _buildInfoItem(
-                      context,
-                      icon: Icons.date_range_outlined,
-                      title: 'PERIOD',
-                      subtitle: event?.datetime?.toYyyyMmDdString() ?? '-',
-                    ),
-                  ),
-                ],
+              _buildInfoItem(
+                context,
+                icon: Icons.track_changes_outlined,
+                title: 'QUOTA',
+                subtitle: event?.quota.toString() ?? '-',
+              ),
+              const SizedBox(height: 16),
+              _buildInfoItem(
+                context,
+                icon: Icons.date_range_outlined,
+                title: 'PERIOD',
+                subtitle:
+                    '${DateFormat('d MMM yyyy').format(event!.datetime!)}, ${eventActionController.formatTime(event!.startTime!)}–${eventActionController.formatTime(event!.endTime!)}',
               ),
               const SizedBox(height: 12),
-              Row(
-                children: [
-                  Expanded(
-                    child: _buildInfoItem(
-                      context,
-                      icon: Icons.map_outlined,
-                      title: 'LOCATION',
-                      subtitle: event?.address ?? '-',
-                    ),
-                  ),
-                  const SizedBox(width: 20),
-                  Expanded(
-                    child: _buildInfoItem(
-                      context,
-                      icon: Icons.confirmation_num_outlined,
-                      title: 'HTM',
-                      subtitle:
-                          (event?.price ?? 0) > 0 ? '${event?.price}' : 'Free',
-                    ),
-                  ),
-                ],
+              _buildInfoItem(
+                context,
+                icon: Icons.map_outlined,
+                title: 'LOCATION',
+                subtitle: event?.address ?? '-',
+              ),
+              const SizedBox(height: 16),
+              _buildInfoItem(
+                context,
+                icon: Icons.confirmation_num_outlined,
+                title: 'HTM',
+                subtitle:
+                    "${(event?.price == null || event?.price == 0) ? 'Free' : event?.price}",
               ),
             ],
           ),

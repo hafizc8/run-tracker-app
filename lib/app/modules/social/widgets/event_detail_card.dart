@@ -170,8 +170,20 @@ class EventDetailCard extends GetView<EventDetailController> {
           ),
           const SizedBox(height: 15),
           // Going list
-          Obx(
-            () => _personGridList(
+          Obx(() {
+            if (controller.isLoading.value) {
+              return Shimmer.fromColors(
+                baseColor: Colors.grey.shade300,
+                highlightColor: Colors.grey.shade100,
+                child: _personGridList(
+                  context: context,
+                  title: 'Going',
+                  itemCount: 3,
+                  itemBuilder: (context, index) => _buildPersonList(context),
+                ),
+              );
+            }
+            return _personGridList(
               context: context,
               title: 'Going',
               itemCount: controller.usersInvites.length,
@@ -179,12 +191,24 @@ class EventDetailCard extends GetView<EventDetailController> {
                 context,
                 controller.usersInvites[index],
               ),
-            ),
-          ),
+            );
+          }),
           const SizedBox(height: 15),
           // Waitlist
-          Obx(
-            () => _personGridList(
+          Obx(() {
+            if (controller.isLoadingWaitList.value) {
+              return Shimmer.fromColors(
+                baseColor: Colors.grey.shade300,
+                highlightColor: Colors.grey.shade100,
+                child: _personGridList(
+                  context: context,
+                  title: 'Waitlist',
+                  itemCount: 3,
+                  itemBuilder: (context, index) => _buildPersonList(context),
+                ),
+              );
+            }
+            return _personGridList(
               context: context,
               title: 'Waitlist',
               itemCount: controller.usersWaitings.length,
@@ -192,8 +216,8 @@ class EventDetailCard extends GetView<EventDetailController> {
                 context,
                 controller.usersWaitings[index],
               ),
-            ),
-          ),
+            );
+          }),
         ],
       ),
     );
@@ -267,7 +291,7 @@ class EventDetailCard extends GetView<EventDetailController> {
     );
   }
 
-  Widget _buildPersonList(BuildContext context, EventUserModel user) {
+  Widget _buildPersonList(BuildContext context, [EventUserModel? user]) {
     return Container(
       padding: const EdgeInsets.all(8),
       decoration: BoxDecoration(
@@ -286,7 +310,7 @@ class EventDetailCard extends GetView<EventDetailController> {
         children: [
           ClipOval(
             child: CachedNetworkImage(
-              imageUrl: user.user?.imageUrl ?? '',
+              imageUrl: user?.user?.imageUrl ?? '',
               width: 50,
               height: 50,
               fit: BoxFit.cover,
@@ -300,7 +324,7 @@ class EventDetailCard extends GetView<EventDetailController> {
           ),
           const SizedBox(height: 8),
           Text(
-            user.user?.name ?? '',
+            user?.user?.name ?? '',
             maxLines: 1,
             overflow: TextOverflow.ellipsis,
             style: Theme.of(context)

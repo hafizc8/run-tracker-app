@@ -62,7 +62,9 @@ class SocialForYouEventDetailView extends GetView<EventDetailController> {
           return eventController.event.value?.isOwner == 1 &&
                   eventController.event.value?.cancelledAt == null &&
                   (eventController.event.value?.datetime ?? DateTime.now())
-                      .isFuture
+                      .isDateTimePassed(
+                    (eventController.event.value?.startTime ?? TimeOfDay.now()),
+                  )
               ? PopupMenuButton<String>(
                   onSelected: (value) {
                     // Handle the selection
@@ -247,12 +249,15 @@ class SocialForYouEventDetailView extends GetView<EventDetailController> {
                         ),
                       ),
                       child: ElevatedButton(
-                        onPressed: () {
-                          Get.toNamed(
+                        onPressed: () async {
+                          var res = await Get.toNamed(
                               AppRoutes.socialYourPageEventDetailInviteFriend,
                               arguments: {
                                 'eventId': eventController.event.value?.id
                               });
+                          if (res != null && res) {
+                            controller.init();
+                          }
                         },
                         child: Text(
                           'Invite a Friend',

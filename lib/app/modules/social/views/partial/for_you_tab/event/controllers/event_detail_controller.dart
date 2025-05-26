@@ -30,8 +30,8 @@ class EventDetailController extends GetxController {
 
   Future<void> init() async {
     Future.wait([
-      loadGoing(),
-      loadWaiting(),
+      loadGoing(refresh: true),
+      loadWaiting(refresh: true),
     ]);
   }
 
@@ -48,7 +48,7 @@ class EventDetailController extends GetxController {
           await _eventService.getEventUsers(
         eventId: eventId,
         page: page,
-        statues: ['1'],
+        statues: ['1', '3'],
       );
 
       if ((response.pagination.next == null ||

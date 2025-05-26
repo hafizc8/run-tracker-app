@@ -17,6 +17,13 @@ import 'package:zest_mobile/app/modules/auth/register/views/register_verify_emai
 import 'package:zest_mobile/app/modules/auth/register/views/register_view.dart';
 import 'package:zest_mobile/app/modules/choose_location/bindings/choose_location_binding.dart';
 import 'package:zest_mobile/app/modules/choose_location/views/choose_location_view.dart';
+import 'package:zest_mobile/app/modules/club/partial/invite_to_club/bindings/invite_to_club_binding.dart';
+import 'package:zest_mobile/app/modules/club/partial/invite_to_club/views/invite_to_club_view.dart';
+import 'package:zest_mobile/app/modules/club/partial/preview_club/bindings/preview_club_binding.dart';
+import 'package:zest_mobile/app/modules/club/partial/preview_club/views/preview_club_view.dart';
+import 'package:zest_mobile/app/modules/club/partial/update_club/bindings/update_club_binding.dart';
+import 'package:zest_mobile/app/modules/club/partial/update_club/views/update_club_view.dart';
+import 'package:zest_mobile/app/modules/social/views/partial/for_you_tab/event/bindings/event_invite_binding.dart';
 import 'package:zest_mobile/app/modules/social/views/partial/for_you_tab/event/bindings/event_detail_binding.dart';
 import 'package:zest_mobile/app/modules/social/views/partial/for_you_tab/event/bindings/event_see_all_participant_binding.dart';
 import 'package:zest_mobile/app/modules/social/views/partial/for_you_tab/event/bindings/event_invite_binding.dart';
@@ -205,13 +212,28 @@ class AppPages {
     ),
     GetPage(
       name: AppRoutes.detailClub,
-      page: () => const DetailClubView(),
+      page: () => DetailClubView(),
       binding: DetailClubBinding(),
     ),
     GetPage(
       name: AppRoutes.memberListInClub,
       page: () => const MemberListClubView(),
       binding: MemberListClubBinding(),
+    ),
+    GetPage(
+      name: AppRoutes.inviteToClub,
+      page: () => const InviteToClubView(),
+      binding: InviteToClubBinding(),
+    ),
+    GetPage(
+      name: AppRoutes.updateClub,
+      page: () => const UpdateClubView(),
+      binding: UpdateClubBinding(),
+    ),
+    GetPage(
+      name: AppRoutes.previewClub,
+      page: () => const PreviewClubView(),
+      binding: PreviewClubBinding(),
     ),
   ];
 }

@@ -9,8 +9,10 @@ import 'package:zest_mobile/app/core/exception/app_exception.dart';
 import 'package:zest_mobile/app/core/exception/handler/app_exception_handler_info.dart';
 import 'package:zest_mobile/app/core/models/enums/app_exception_enum.dart';
 import 'package:zest_mobile/app/core/models/forms/create_club_form.dart';
+import 'package:zest_mobile/app/core/models/model/club_model.dart';
 import 'package:zest_mobile/app/core/services/club_service.dart';
 import 'package:zest_mobile/app/core/services/location_service.dart';
+import 'package:zest_mobile/app/routes/app_routes.dart';
 
 class CreateClubController extends GetxController {
   Rx<CreateClubFormModel> form = CreateClubFormModel().obs;
@@ -54,13 +56,16 @@ class CreateClubController extends GetxController {
     FocusScope.of(context).unfocus();
     isLoading.value = true;
     form.value = form.value.clearErrors();
-    form.value.copyWith(city: cityController.text);
+    form.value = form.value.copyWith(city: cityController.text);
+
     try {
-      bool resp = await _clubService.create(form.value);
-      if (resp) {
-        Get.back(closeOverlays: true);
-        Get.snackbar("Success", "Successfully create club");
-      }
+      ClubModel resp = await _clubService.create(form.value);
+
+      Get.back(closeOverlays: true);
+      Get.snackbar("Success", "Successfully create club");
+
+      // go to detail club
+      await Get.toNamed(AppRoutes.detailClub, arguments: resp.id);
     } on AppException catch (e) {
       if (e.type == AppExceptionType.validation) {
         form.value = form.value.setErrors(e.errors!);

@@ -73,6 +73,7 @@ class _PostVideoPlayerState extends State<PostVideoPlayer> {
       ..initialize().then((_) {
         setState(() => _initialized = true);
         _controller.setLooping(true);
+        _controller.setVolume(0);
         _controller.play();
       });
   }

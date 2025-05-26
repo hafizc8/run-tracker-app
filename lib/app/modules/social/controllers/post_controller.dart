@@ -220,6 +220,10 @@ class PostController extends GetxController {
 
   Future<void> commentPost() async {
     try {
+      if (commentTextController.text.isEmpty) {
+        return;
+      }
+
       PostModel resp = await _postService.commentReply(
         postId: postDetail.value!.id!, 
         content: commentTextController.text, 

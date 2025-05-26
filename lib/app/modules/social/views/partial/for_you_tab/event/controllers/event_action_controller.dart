@@ -392,6 +392,13 @@ class EventActionController extends GetxController {
     );
   }
 
+  void createEventFromClub(ClubMiniModel club) {
+    form.value = form.value.copyWith(
+      isAutoPostToClub: true,
+      shareToClubs: [club],
+    );
+  }
+
   Future<File?> getCachedImageFile(String imageUrl) async {
     final fileInfo = await DefaultCacheManager().getFileFromCache(imageUrl);
     return fileInfo?.file;

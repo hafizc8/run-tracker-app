@@ -65,6 +65,7 @@ class UserService {
     int random = 1,
     String search = '',
     String? followStatus,
+    String? checkClub,
   }) async {
     try {
       final response = await _apiService.request<FormData>(
@@ -75,6 +76,7 @@ class UserService {
           'random': random.toString(),
           'search': search,
           if (followStatus != null) 'follow_status': followStatus,
+          if (checkClub != null) 'check_club': checkClub,
         },
       );
 

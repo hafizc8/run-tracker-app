@@ -204,7 +204,7 @@ class AppPages {
     ),
     GetPage(
       name: AppRoutes.detailClub,
-      page: () => const DetailClubView(),
+      page: () => DetailClubView(),
       binding: DetailClubBinding(),
     ),
     GetPage(

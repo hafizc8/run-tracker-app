@@ -1,8 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:zest_mobile/app/modules/club/partial/detail_club/partial/tab_bar_club/controllers/tab_bar_club_controller.dart';
-import 'package:zest_mobile/app/modules/club/partial/detail_club/partial/tab_bar_club/views/widgets/club_card_event.dart';
-import 'package:zest_mobile/app/routes/app_routes.dart';
+import 'package:zest_mobile/app/modules/club/partial/detail_club/partial/tab_bar_club/views/club_activity_tab_view.dart';
 
 class TabBarClub extends GetView<TabBarClubController> {
   TabBarClub({super.key});
@@ -62,43 +61,17 @@ class TabBarClub extends GetView<TabBarClubController> {
         Obx(() {
           switch (controller.selectedIndex.value) {
             case 0:
-              return Padding(
-                padding: const EdgeInsets.symmetric(horizontal: 16.0),
+              return ClubActivityTabView();
+            case 1:
+              return const Padding(
+                padding: EdgeInsets.symmetric(horizontal: 16.0),
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    const ClubCardEvent(),
-                    // const ClubCardChallenge(),
-                    // const SizedBox(height: 8),
-                  ],
-                ),
-              );
-            case 2:
-              return Padding(
-                padding: const EdgeInsets.symmetric(horizontal: 16.0),
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    const SizedBox(height: 8),
-                    const Text('leaderboard'),
-                    const SizedBox(height: 8),
-                    Center(
-                      child: TextButton(
-                        onPressed: () => Get.toNamed(AppRoutes.activity),
-                        child: Text(
-                          'See All',
-                          style: Theme.of(context)
-                              .textTheme
-                              .bodyLarge
-                              ?.copyWith(
-                                color: Theme.of(context).colorScheme.primary,
-                                decoration: TextDecoration.underline,
-                                decorationColor:
-                                    Theme.of(context).colorScheme.primary,
-                              ),
-                        ),
-                      ),
-                    ),
+                    SizedBox(height: 20),
+                    Text('leaderboard'),
+                    SizedBox(height: 20),
+                    SizedBox(height: 500),
                   ],
                 ),
               );

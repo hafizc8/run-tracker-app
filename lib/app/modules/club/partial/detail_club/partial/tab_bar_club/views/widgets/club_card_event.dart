@@ -1,10 +1,13 @@
 import 'package:flutter/material.dart';
+import 'package:zest_mobile/app/core/models/model/event_model.dart';
 import 'package:zest_mobile/app/modules/club/partial/detail_club/partial/tab_bar_club/views/widgets/activity_attribute.dart';
 import 'package:zest_mobile/app/modules/club/partial/detail_club/partial/tab_bar_club/views/widgets/badge_activity_type.dart';
 import 'package:zest_mobile/app/modules/club/partial/detail_club/partial/tab_bar_club/views/widgets/participants_avatars.dart';
 
 class ClubCardEvent extends StatelessWidget {
-  const ClubCardEvent({super.key});
+  const ClubCardEvent({super.key, required this.event});
+
+  final EventModel? event;
 
   @override
   Widget build(BuildContext context) {
@@ -27,7 +30,7 @@ class ClubCardEvent extends StatelessWidget {
             const BadgeActivityType(),
             const SizedBox(height: 16),
             Text(
-              'The Great Nusantara Sunrise Coastal Run 2025',
+              event?.title ?? '-',
               style: Theme.of(context).textTheme.bodyLarge,
             ),
             const SizedBox(height: 16),

@@ -66,4 +66,5 @@ class AppConstants {
   static String clubDetail(String clubId) => "/club/$clubId";
   static String clubGetAllMember(String clubId) => "/club/$clubId/user";
   static String clubInviteFollowersToClub(String clubId) => "/club/$clubId/invite";
+  static String clubGetActivity(String clubId) => "/club/$clubId/activity";
 }

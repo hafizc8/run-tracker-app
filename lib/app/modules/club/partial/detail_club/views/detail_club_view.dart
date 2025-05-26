@@ -9,29 +9,35 @@ import 'package:zest_mobile/app/core/shared/widgets/shimmer_loading_circle.dart'
 import 'package:zest_mobile/app/core/shared/widgets/shimmer_loading_list.dart';
 import 'package:zest_mobile/app/modules/club/partial/detail_club/controllers/detail_club_controller.dart';
 import 'package:zest_mobile/app/core/extension/date_extension.dart';
+import 'package:zest_mobile/app/modules/club/partial/detail_club/partial/tab_bar_club/controllers/club_activity_tab_controller.dart';
+import 'package:zest_mobile/app/modules/club/partial/detail_club/partial/tab_bar_club/controllers/tab_bar_club_controller.dart';
 import 'package:zest_mobile/app/modules/club/partial/detail_club/partial/tab_bar_club/views/tab_bar_club_view.dart';
 import 'package:zest_mobile/app/modules/social/views/partial/for_you_tab/event/controllers/event_action_controller.dart';
 import 'package:zest_mobile/app/modules/social/widgets/event_card_dialog.dart';
 import 'package:zest_mobile/app/routes/app_routes.dart';
 
 class DetailClubView extends GetView<DetailClubController> {
-  const DetailClubView({super.key});
+  DetailClubView({super.key});
+
+  final tabBarClubController = Get.find<TabBarClubController>();
+  final clubActivityTabController = Get.find<ClubActivityTabController>();
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: _buildAppBar(context),
-      body: SingleChildScrollView(
-        child: Obx(
-          () {
-            if (controller.isLoading.value) {
-              return const ShimmerLoadingList(
-                itemCount: 5,
-                itemHeight: 100,
-              );
-            }
-
-            return Visibility(
+      body: Obx(
+        () {
+          if (controller.isLoading.value) {
+            return const ShimmerLoadingList(
+              itemCount: 5,
+              itemHeight: 100,
+            );
+          }
+      
+          return SingleChildScrollView(
+            controller: (tabBarClubController.selectedIndex.value == 0) ? clubActivityTabController.clubActivityScrollController : null,
+            child: Visibility(
               visible: !controller.isLoading.value,
               child: Column(
                 children: [
@@ -39,9 +45,9 @@ class DetailClubView extends GetView<DetailClubController> {
                   _buildClubContent(),
                 ],
               ),
-            );
-          }
-        ),
+            ),
+          );
+        }
       ),
       floatingActionButton: Obx(
         () {

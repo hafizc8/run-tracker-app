@@ -3,6 +3,7 @@ import 'package:zest_mobile/app/core/models/enums/http_method_enum.dart';
 import 'package:zest_mobile/app/core/models/forms/create_club_form.dart';
 import 'package:zest_mobile/app/core/models/forms/update_club_form.dart';
 import 'package:zest_mobile/app/core/models/interface/pagination_response_model.dart';
+import 'package:zest_mobile/app/core/models/model/club_activities_model.dart';
 import 'package:zest_mobile/app/core/models/model/club_member_model.dart';
 import 'package:zest_mobile/app/core/models/model/club_model.dart';
 import 'package:zest_mobile/app/core/services/api_service.dart';
@@ -192,6 +193,34 @@ class ClubService {
       );
 
       return response.data['success'];
+    } catch (e) {
+      rethrow;
+    }
+  }
+
+  Future<PaginatedDataResponse<ClubActivitiesModel>> getClubActivity({
+    required String clubId,
+    required int page,
+    int limit = 0,
+  }) async {
+    try {
+      final response = await _apiService.request(
+        path: AppConstants.clubGetActivity(clubId),
+        method: HttpMethod.get,
+        queryParams: {
+          'page': page.toString(),
+          if (limit != 0) 'limit': limit.toString(),
+        },
+      );
+
+      if (response.statusCode != 200) {
+        throw Exception('Failed to load club list');
+      }
+
+      return PaginatedDataResponse<ClubActivitiesModel>.fromJson(
+        response.data['data'],
+        (json) => ClubActivitiesModel.fromJson(json),
+      );
     } catch (e) {
       rethrow;
     }

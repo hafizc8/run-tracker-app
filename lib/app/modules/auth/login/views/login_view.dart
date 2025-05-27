@@ -6,7 +6,6 @@ import 'package:zest_mobile/app/core/models/forms/login_form.dart';
 import 'package:zest_mobile/app/core/shared/widgets/custom_circular_progress_indicator.dart';
 import 'package:zest_mobile/app/core/shared/widgets/gradient_border_text_field.dart';
 import 'package:zest_mobile/app/core/shared/widgets/gradient_elevated_button.dart';
-import 'package:zest_mobile/app/core/shared/widgets/step_tracker_widget.dart';
 import 'package:zest_mobile/app/routes/app_routes.dart';
 
 import '../controllers/login_controller.dart';

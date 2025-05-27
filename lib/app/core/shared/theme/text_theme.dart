@@ -100,8 +100,8 @@ class TTextTheme {
     ),
 
     labelLarge: TextStyle(
-      fontSize: 16,
-      fontWeight: FontWeight.w600,
+      fontSize: 18,
+      fontWeight: FontWeight.w900,
       color: darkColorScheme.onPrimary, // Teks di atas tombol dengan background primary gelap
     ),
     labelMedium: TextStyle(

@@ -46,5 +46,5 @@ ColorScheme get darkColorScheme => const ColorScheme(
   onSurfaceVariant: Color(0xFF98989D), // Abu-abu muda untuk teks sekunder/placeholder
   outline: Color(0xFF48484A), // Abu-abu gelap untuk border
   onTertiary: Color(0xFF48484A), // Warna untuk elemen tersier jika diperlukan (gelap)
-  tertiary: Color(0xFF48484A), // Warna dasar elemen tersier jika diperlukan (gelap)
+  tertiary: Color(0xFF3D3D3D), // Warna dasar elemen tersier jika diperlukan (gelap)
 );

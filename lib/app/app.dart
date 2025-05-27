@@ -53,7 +53,7 @@ class _AppState extends State<App> {
         debugShowCheckedModeBanner: false,
         initialRoute: AppRoutes.splash,
         getPages: AppPages.pages,
-        theme: TAppTheme.lightTheme,
+        theme: TAppTheme.darkTheme,
         title: AppConstants.appName,
       ),
     );

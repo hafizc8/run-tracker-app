@@ -4,8 +4,7 @@ import 'package:zest_mobile/app/modules/main_profile/partials/profile/controller
 class ProfileBinding extends Bindings {
   @override
   void dependencies() {
-    Get.lazyPut<ProfileController>(
-      () => ProfileController(),
-    );
+    final userId = Get.arguments as String;
+    Get.put(ProfileController(userId: userId));
   }
 }

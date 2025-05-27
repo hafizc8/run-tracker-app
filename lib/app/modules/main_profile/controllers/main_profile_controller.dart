@@ -1,30 +1,146 @@
-import 'package:carousel_slider/carousel_controller.dart';
+import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:zest_mobile/app/core/di/service_locator.dart';
-import 'package:zest_mobile/app/core/models/model/user_model.dart';
+import 'package:zest_mobile/app/core/exception/app_exception.dart';
+import 'package:zest_mobile/app/core/exception/handler/app_exception_handler_info.dart';
+import 'package:zest_mobile/app/core/models/interface/pagination_response_model.dart';
+import 'package:zest_mobile/app/core/models/model/challenge_model.dart';
+import 'package:zest_mobile/app/core/models/model/event_model.dart';
+import 'package:zest_mobile/app/core/models/model/user_detail_model.dart';
 import 'package:zest_mobile/app/core/services/auth_service.dart';
+import 'package:zest_mobile/app/core/services/challenge_service.dart';
+import 'package:zest_mobile/app/core/services/event_service.dart';
+import 'package:zest_mobile/app/core/services/user_service.dart';
 import 'package:zest_mobile/app/modules/main_profile/widgets/custom_tab_bar/controllers/custom_tab_bar_controller.dart';
 
 class ProfileMainController extends GetxController {
-  ProfileMainController() {
-    Get.lazyPut(() => TabBarController());
-  }
   var activeIndex = 0.obs;
+  var pageEvent = 0;
+  var isLoadingEvent = false.obs;
+  var hasReacheMaxEvent = false.obs;
+  ScrollController eventController = ScrollController();
+
+  var isLoadingChallenge = false.obs;
+  var hasReacheMaxChallenge = false.obs;
+  var pageChallenge = 0;
+  ScrollController challengeController = ScrollController();
 
   final _authService = sl<AuthService>();
+  final _userService = sl<UserService>();
+  final _eventService = sl<EventService>();
+  final _challengeService = sl<ChallengeService>();
 
-  Rx<UserModel?> user = Rx<UserModel?>(null);
+  final TabBarController tabBarController = Get.put(TabBarController());
+
+  Rx<UserDetailModel?> user = Rx<UserDetailModel?>(null);
+  var events = <EventModel>[].obs;
+  var challenges = <ChallengeModel>[].obs;
 
   @override
   void onInit() {
+    init();
+    eventController.addListener(() {
+      var maxScroll = eventController.position.pixels >=
+          eventController.position.maxScrollExtent - 200;
+
+      if (maxScroll && !hasReacheMaxEvent.value) {
+        getEvents();
+      }
+    });
     super.onInit();
-    user.value = _authService.user;
   }
 
-  final CarouselSliderController controllerSlider = CarouselSliderController();
-  final List<String> items = [
-    'Item 1',
-    'Item 2',
-    'Item 3',
-  ];
+  Future<void> getDetailUser() async {
+    try {
+      user.value = await _userService.detailUser(_authService.user!.id!);
+    } on AppException catch (e) {
+      // show error snackbar, toast, etc
+      AppExceptionHandlerInfo.handle(e);
+    } catch (e) {
+      Get.snackbar(
+        'Error',
+        e.toString(),
+        backgroundColor: Colors.red,
+        colorText: Colors.white,
+      );
+    }
+  }
+
+  Future<void> getEvents({bool refresh = false}) async {
+    if (refresh) {
+      events.clear();
+      pageEvent = 1;
+      hasReacheMaxEvent.value = false;
+    }
+    if (isLoadingEvent.value || hasReacheMaxEvent.value) return;
+    isLoadingEvent.value = true;
+    try {
+      PaginatedDataResponse<EventModel> response =
+          await _eventService.getEvents(
+        page: pageEvent,
+        user: _authService.user!.id,
+        limit: 10,
+      );
+
+      if ((response.pagination.next == null ||
+              response.pagination.next == '') ||
+          response.pagination.total < 20) hasReacheMaxEvent.value = true;
+
+      events.value += response.data;
+
+      pageEvent++;
+    } catch (e) {
+      Get.snackbar(
+        'Error',
+        e.toString(),
+        backgroundColor: Colors.red,
+        colorText: Colors.white,
+      ); // show error snackbar, toast, etc (e.g.message)
+    } finally {
+      isLoadingEvent.value = false;
+    }
+  }
+
+  Future<void> getChallenges({bool refresh = false}) async {
+    if (refresh) {
+      challenges.clear();
+      pageChallenge = 1;
+      hasReacheMaxChallenge.value = false;
+    }
+    if (isLoadingChallenge.value || hasReacheMaxChallenge.value) return;
+    isLoadingChallenge.value = true;
+    try {
+      PaginatedDataResponse<ChallengeModel> response =
+          await _challengeService.getChallenges(
+        page: pageEvent,
+        status: 'joined',
+        limit: 10,
+      );
+
+      if ((response.pagination.next == null ||
+              response.pagination.next == '') ||
+          response.pagination.total < 20) hasReacheMaxChallenge.value = true;
+
+      challenges.value += response.data;
+
+      pageEvent++;
+    } catch (e) {
+      Get.snackbar(
+        'Error',
+        e.toString(),
+        backgroundColor: Colors.red,
+        colorText: Colors.white,
+      ); // show error snackbar, toast, etc (e.g.message)
+    } finally {
+      isLoadingChallenge.value = false;
+    }
+  }
+
+  Future<void> init() async {
+    Future.wait([
+      getDetailUser(),
+      getEvents(refresh: true),
+      getChallenges(refresh: true),
+    ]);
+  }
 }

@@ -122,11 +122,15 @@ class EventService {
 
   Future<PaginatedDataResponse<EventModel>> getEvents({
     int page = 1,
-    int random = 1,
+    int? random,
+    int limit = 20,
     String? activity,
     String? location,
     String? startDate,
     String? endDate,
+    String? status,
+    String? search,
+    String? user,
   }) async {
     try {
       final response = await _apiService.request(
@@ -138,7 +142,11 @@ class EventService {
           if (location != null) 'location': location,
           if (startDate != null) 'start_date': startDate,
           if (endDate != null) 'end_date': endDate,
-          'random': random.toString(),
+          if (status != null) 'join_status': status,
+          if (random != null) 'random': random.toString(),
+          'limit': limit.toString(),
+          if (search != null) 'search': search,
+          if (user != null) 'user': user,
         },
       );
 

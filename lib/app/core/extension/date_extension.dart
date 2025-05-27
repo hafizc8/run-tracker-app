@@ -18,6 +18,10 @@ extension DateFormatting on DateTime {
     return DateFormat('dd MMM yyyy').format(this);
   }
 
+  String todMMMyyyyString() {
+    return DateFormat('d MMM yyyy').format(this);
+  }
+
   String toHumanPostDate() {
     final now = DateTime.now();
     final difference = now.difference(this);

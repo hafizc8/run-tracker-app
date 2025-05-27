@@ -38,7 +38,7 @@ class SocialSearchController extends GetxController {
   var hasReacheMaxClub = false.obs;
   var resultSearchEmptyClub = false.obs;
   var clubId = ''.obs;
-  
+
   final _clubService = sl<ClubService>();
 
   var clubMayYouKnow = <ClubModel>[].obs;
@@ -156,7 +156,7 @@ class SocialSearchController extends GetxController {
           if (index != -1) {
             final user = friends[index];
             friends[index] = user.copyWith(
-              isFollowing: res ? 1 : 0,
+              isFollower: res ? 1 : 0,
             );
           }
         } else {
@@ -165,7 +165,7 @@ class SocialSearchController extends GetxController {
           if (index != -1) {
             final user = friendsPeopleYouMayKnow[index];
             friendsPeopleYouMayKnow[index] = user.copyWith(
-              isFollowing: res ? 1 : 0,
+              isFollower: res ? 1 : 0,
             );
           }
         }
@@ -195,7 +195,7 @@ class SocialSearchController extends GetxController {
           if (index != -1) {
             final user = friends[index];
             friends[index] = user.copyWith(
-              isFollowing: res ? 0 : 1,
+              isFollower: res ? 0 : 1,
             );
           }
         } else {
@@ -204,7 +204,7 @@ class SocialSearchController extends GetxController {
           if (index != -1) {
             final user = friendsPeopleYouMayKnow[index];
             friendsPeopleYouMayKnow[index] = user.copyWith(
-              isFollowing: res ? 0 : 1,
+              isFollower: res ? 0 : 1,
             );
           }
         }
@@ -239,7 +239,8 @@ class SocialSearchController extends GetxController {
   Future<void> searchClubYouMayKnow() async {
     isLoadingClubYouMayKnow.value = true;
     try {
-      PaginatedDataResponse<ClubModel> response = await _clubService.getAll(page: 1, joinStatus: 'unjoined', random: 1);
+      PaginatedDataResponse<ClubModel> response =
+          await _clubService.getAll(page: 1, joinStatus: 'unjoined', random: 1);
       List<ClubModel> clubs = response.data;
       if (response.data.length > 10) {
         clubs = response.data.sublist(0, 10);
@@ -267,20 +268,21 @@ class SocialSearchController extends GetxController {
     }
 
     if (isLoadingClubs.value || hasReacheMaxClub.value) return;
-    
+
     isLoadingClubs.value = true;
     resultSearchEmptyClub.value = false;
-    
+
     try {
-      PaginatedDataResponse<ClubModel> response =
-          await _clubService.getAll(
-            page: pageClub,
-            search: input,
-          );
+      PaginatedDataResponse<ClubModel> response = await _clubService.getAll(
+        page: pageClub,
+        search: input,
+      );
 
       pageClub++;
 
-      if ((response.pagination.next == null || response.pagination.next == '') || response.pagination.total < 20) {
+      if ((response.pagination.next == null ||
+              response.pagination.next == '') ||
+          response.pagination.total < 20) {
         hasReacheMaxClub.value = true;
       }
 
@@ -317,8 +319,7 @@ class SocialSearchController extends GetxController {
             );
           }
         } else {
-          int index =
-              clubMayYouKnow.indexWhere((element) => element.id == id);
+          int index = clubMayYouKnow.indexWhere((element) => element.id == id);
           if (index != -1) {
             final club = clubMayYouKnow[index];
             clubMayYouKnow[index] = club.copyWith(

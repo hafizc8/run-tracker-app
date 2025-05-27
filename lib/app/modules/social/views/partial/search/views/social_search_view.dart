@@ -1,5 +1,4 @@
 import 'package:cached_network_image/cached_network_image.dart';
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
 import 'package:get/get.dart';
@@ -210,7 +209,8 @@ class SocialSearchView extends GetView<SocialSearchController> {
                         UserMiniModel user =
                             controller.friendsPeopleYouMayKnow[index];
                         return InkWell(
-                          onTap: () => Get.toNamed(AppRoutes.profileUser, arguments: user.id),
+                          onTap: () => Get.toNamed(AppRoutes.profileUser,
+                              arguments: user.id),
                           child: Card(
                             surfaceTintColor:
                                 Theme.of(context).colorScheme.background,
@@ -255,11 +255,11 @@ class SocialSearchView extends GetView<SocialSearchController> {
                                         ),
                                   ),
                                   const SizedBox(height: 8),
-                                  Expanded(
+                                  Flexible(
                                     child: Obx(
                                       () => CustomChip(
                                         onTap: () {
-                                          if (user.isFollowing == 1) {
+                                          if (user.isFollower == 1) {
                                             controller.unFollow(user.id);
                                           } else {
                                             controller.follow(user.id);
@@ -270,11 +270,11 @@ class SocialSearchView extends GetView<SocialSearchController> {
                                             .primary
                                             .withOpacity(0.1),
                                         child: Visibility(
-                                          visible:
-                                              user.id == controller.userId.value,
+                                          visible: user.id ==
+                                              controller.userId.value,
                                           replacement: Text(
                                             {
-                                              'is_following': user.isFollowing,
+                                              'is_follower': user.isFollower,
                                               'is_followed': user.isFollowed
                                             }.followStatus,
                                             style: Theme.of(context)
@@ -354,7 +354,8 @@ class SocialSearchView extends GetView<SocialSearchController> {
                       UserMiniModel user = controller.friends[index];
 
                       return ListTile(
-                        onTap: () => Get.toNamed(AppRoutes.profileUser, arguments: user.id),
+                        onTap: () => Get.toNamed(AppRoutes.profileUser,
+                            arguments: user.id),
                         leading: ClipOval(
                           child: CachedNetworkImage(
                             imageUrl: user.imageUrl ?? '',
@@ -385,9 +386,9 @@ class SocialSearchView extends GetView<SocialSearchController> {
                           Obx(
                             () => CustomChip(
                               onTap: () {
-                                if (user.isFollowing == 1 &&
+                                if (user.isFollower == 1 &&
                                     user.isFollowed == 1) {
-                                } else if (user.isFollowing == 1) {
+                                } else if (user.isFollower == 1) {
                                   controller.unFollow(user.id);
                                 } else {
                                   controller.follow(user.id);
@@ -403,7 +404,7 @@ class SocialSearchView extends GetView<SocialSearchController> {
                                 visible: user.id == controller.userId.value,
                                 replacement: Text(
                                   {
-                                    'is_following': user.isFollowing,
+                                    'is_follower': user.isFollower,
                                     'is_followed': user.isFollowed
                                   }.followStatus,
                                   style: Theme.of(context)
@@ -540,7 +541,8 @@ class SocialSearchView extends GetView<SocialSearchController> {
                     itemBuilder: (context, index) {
                       ClubModel club = controller.clubMayYouKnow[index];
                       return InkWell(
-                        onTap: () => Get.toNamed(AppRoutes.previewClub, arguments: club.id),
+                        onTap: () => Get.toNamed(AppRoutes.previewClub,
+                            arguments: club.id),
                         child: Card(
                           surfaceTintColor:
                               Theme.of(context).colorScheme.onPrimary,
@@ -585,16 +587,19 @@ class SocialSearchView extends GetView<SocialSearchController> {
                                 ),
                                 const SizedBox(height: 16),
                                 Visibility(
-                                  visible: club.privacy == ClubPrivacyEnum.public,
+                                  visible:
+                                      club.privacy == ClubPrivacyEnum.public,
                                   child: CustomChip(
                                     onTap: () {
                                       if (!(club.isJoined ?? false)) {
                                         controller.joinClub(club.id ?? '');
                                       } else {
-                                        Get.snackbar('Error', 'You have joined the club');
+                                        Get.snackbar('Error',
+                                            'You have joined the club');
                                       }
                                     },
-                                    padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 4),
+                                    padding: const EdgeInsets.symmetric(
+                                        horizontal: 12, vertical: 4),
                                     backgroundColor: (club.isJoined ?? false)
                                         ? Colors.transparent
                                         : Theme.of(context)
@@ -602,7 +607,8 @@ class SocialSearchView extends GetView<SocialSearchController> {
                                             .primary
                                             .withOpacity(0.1),
                                     child: Visibility(
-                                      visible: club.id == controller.clubId.value,
+                                      visible:
+                                          club.id == controller.clubId.value,
                                       replacement: Text(
                                         (club.isJoined ?? false)
                                             ? 'Joined'
@@ -683,7 +689,8 @@ class SocialSearchView extends GetView<SocialSearchController> {
                     ClubModel club = controller.clubs[index];
 
                     return ListTile(
-                      onTap: () => Get.toNamed(AppRoutes.previewClub, arguments: club.id),
+                      onTap: () => Get.toNamed(AppRoutes.previewClub,
+                          arguments: club.id),
                       leading: ClipOval(
                         child: CachedNetworkImage(
                           imageUrl: club.imageUrl ?? '',
@@ -728,11 +735,15 @@ class SocialSearchView extends GetView<SocialSearchController> {
                             }
                           },
                           child: Container(
-                            padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 4),
+                            padding: const EdgeInsets.symmetric(
+                                horizontal: 16, vertical: 4),
                             decoration: BoxDecoration(
                               color: (club.isJoined ?? false)
-                                ? Colors.transparent
-                                : Theme.of(context).colorScheme.primary.withOpacity(0.1),
+                                  ? Colors.transparent
+                                  : Theme.of(context)
+                                      .colorScheme
+                                      .primary
+                                      .withOpacity(0.1),
                               borderRadius: BorderRadius.circular(100),
                               border: Border.all(color: Colors.transparent),
                             ),

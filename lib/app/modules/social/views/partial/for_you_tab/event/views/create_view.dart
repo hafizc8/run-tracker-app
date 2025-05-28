@@ -23,6 +23,7 @@ class EventCreateView extends GetView<EventActionController> {
           title:
               Text('${controller.isEdit.value ? 'Edit' : 'Create'} an Events'),
           automaticallyImplyLeading: false,
+          centerTitle: true,
           elevation: 4,
           leading: GestureDetector(
             onTap: () => Get.back(),

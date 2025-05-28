@@ -55,19 +55,20 @@ class TTextTheme {
     headlineLarge: TextStyle(
       fontSize: 24,
       fontWeight: FontWeight.bold,
-      color: darkColorScheme.primary, // Menggunakan primary dari darkColorScheme
+      color:
+          darkColorScheme.primary, // Menggunakan primary dari darkColorScheme
     ),
     headlineMedium: TextStyle(
       fontSize: 18,
       fontWeight: FontWeight.bold,
-      color: darkColorScheme.primary, // Menggunakan primary dari darkColorScheme
+      color:
+          darkColorScheme.primary, // Menggunakan primary dari darkColorScheme
     ),
     headlineSmall: TextStyle(
       fontSize: 15,
       fontWeight: FontWeight.w400,
       color: darkColorScheme.primary,
     ),
-
     titleLarge: TextStyle(
       fontSize: 24,
       fontWeight: FontWeight.w400,
@@ -83,7 +84,6 @@ class TTextTheme {
       fontWeight: FontWeight.w400,
       color: darkColorScheme.onBackground, // Teks utama di latar belakang gelap
     ),
-
     bodyLarge: TextStyle(
       fontSize: 16,
       fontWeight: FontWeight.bold,
@@ -92,17 +92,17 @@ class TTextTheme {
     bodyMedium: TextStyle(
       fontSize: 13,
       fontWeight: FontWeight.w400,
-      color: darkColorScheme.secondary,
+      color: darkColorScheme.onBackground,
     ),
     bodySmall: TextStyle(
       fontSize: 12,
       color: darkColorScheme.onBackground, // Teks utama di latar belakang gelap
     ),
-
     labelLarge: TextStyle(
       fontSize: 18,
       fontWeight: FontWeight.w900,
-      color: darkColorScheme.onPrimary, // Teks di atas tombol dengan background primary gelap
+      color: darkColorScheme
+          .onPrimary, // Teks di atas tombol dengan background primary gelap
     ),
     labelMedium: TextStyle(
       fontSize: 15,

@@ -2,7 +2,6 @@ import 'package:flutter/material.dart';
 import 'package:zest_mobile/app/core/shared/theme/color_schemes.dart';
 import 'package:zest_mobile/app/core/shared/theme/text_theme.dart';
 
-
 // Warna gradient yang Anda inginkan
 const List<Color> kDefaultGradientBorderColors = [
   Color(0xFFA2FF00),
@@ -14,7 +13,6 @@ const List<Color> kFocusedGradientBorderColors = [
   Color(0xFFA2FF00), // Atau warna lain yang lebih intens
   Color(0xFF00FF7F),
 ];
-
 
 class TInputDecorationTheme {
   const TInputDecorationTheme._();
@@ -48,14 +46,30 @@ class TInputDecorationTheme {
     ),
   );
 
-  static final InputDecorationTheme darkInputDecorationTheme = InputDecorationTheme(
+  static final InputDecorationTheme darkInputDecorationTheme =
+      InputDecorationTheme(
     // Menghilangkan border default atau membuatnya tidak terlihat
-    border: InputBorder.none, // Atau OutlineInputBorder(borderSide: BorderSide.none)
-    enabledBorder: InputBorder.none,
-    focusedBorder: InputBorder.none, // Border fokus akan di-handle oleh wrapper
-    errorBorder: OutlineInputBorder( // Error border bisa tetap solid sebagai fallback
+    border: InputBorder
+        .none, // Atau OutlineInputBorder(borderSide: BorderSide.none)
+    enabledBorder: OutlineInputBorder(
+      // Error border bisa tetap solid sebagai fallback
       borderRadius: BorderRadius.circular(8),
-      borderSide: BorderSide(color: darkColorScheme.error), // Menggunakan warna error dari scheme
+      borderSide: BorderSide(
+          color:
+              darkColorScheme.outline), // Menggunakan warna error dari scheme
+    ),
+    focusedBorder: OutlineInputBorder(
+      // Error border bisa tetap solid sebagai fallback
+      borderRadius: BorderRadius.circular(8),
+      borderSide: BorderSide(
+          color:
+              darkColorScheme.outline), // Menggunakan warna error dari scheme
+    ), // Border fokus akan di-handle oleh wrapper
+    errorBorder: OutlineInputBorder(
+      // Error border bisa tetap solid sebagai fallback
+      borderRadius: BorderRadius.circular(8),
+      borderSide: BorderSide(
+          color: darkColorScheme.error), // Menggunakan warna error dari scheme
     ),
     focusedErrorBorder: OutlineInputBorder(
       borderRadius: BorderRadius.circular(8),
@@ -65,7 +79,9 @@ class TInputDecorationTheme {
     filled: true,
     fillColor: const Color(0xFF2E2E2E), // Warna isian yang Anda inginkan
     contentPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
-    hintStyle: TTextTheme.darkTextTheme.bodyMedium,
+    hintStyle: TTextTheme.darkTextTheme.bodyMedium?.copyWith(
+      color: darkColorScheme.secondary,
+    ),
     labelStyle: TTextTheme.darkTextTheme.bodyMedium?.copyWith(
       color: darkColorScheme.onSurfaceVariant,
     ),
@@ -73,7 +89,8 @@ class TInputDecorationTheme {
       color: darkColorScheme.primary, // Warna label ketika fokus
     ),
     // Pastikan helperStyle, errorStyle, dll juga didefinisikan jika perlu
-    errorStyle: TTextTheme.darkTextTheme.bodyMedium?.copyWith( // Contoh untuk error style
+    errorStyle: TTextTheme.darkTextTheme.bodyMedium?.copyWith(
+      // Contoh untuk error style
       color: darkColorScheme.error,
     ),
   );

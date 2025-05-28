@@ -8,6 +8,7 @@ import 'package:zest_mobile/app/core/models/enums/club_privacy_enum.dart';
 import 'package:zest_mobile/app/core/models/model/club_model.dart';
 import 'package:zest_mobile/app/core/models/model/user_mini_model.dart';
 import 'package:zest_mobile/app/core/shared/widgets/custom_chip.dart';
+import 'package:zest_mobile/app/core/shared/widgets/custom_circular_progress_indicator.dart';
 import 'package:zest_mobile/app/core/shared/widgets/shimmer_loading_circle.dart';
 import 'package:zest_mobile/app/modules/social/views/partial/search/controllers/social_search_controller.dart';
 import 'package:zest_mobile/app/routes/app_routes.dart';
@@ -43,17 +44,18 @@ class SocialSearchView extends GetView<SocialSearchController> {
     return AppBar(
       title: Text(
         'Search',
-        style: Theme.of(context)
-            .textTheme
-            .headlineMedium
-            ?.copyWith(fontWeight: FontWeight.w600),
+        style: Theme.of(context).textTheme.headlineMedium?.copyWith(
+              fontWeight: FontWeight.w300,
+              color: Theme.of(context).colorScheme.onBackground,
+            ),
       ),
-      elevation: 4,
+      centerTitle: true,
       automaticallyImplyLeading: false,
       leading: IconButton(
         icon: Icon(
           Icons.chevron_left,
-          color: Theme.of(context).colorScheme.primary,
+          size: 27,
+          color: Theme.of(context).colorScheme.onBackground,
         ),
         onPressed: () => Get.back(),
       ),
@@ -68,34 +70,25 @@ class SocialSearchView extends GetView<SocialSearchController> {
       child: Container(
         height: 48,
         decoration: BoxDecoration(
-          color: Colors.grey.shade200,
-          borderRadius: const BorderRadius.only(
-              topLeft: Radius.circular(12), topRight: Radius.circular(12)),
+          border: Border.all(color: Theme.of(context).colorScheme.primary),
+          borderRadius: BorderRadius.circular(12),
         ),
-        child: Column(
-          children: [
-            TabBar(
-              indicator: BoxDecoration(
-                color: Theme.of(context).colorScheme.primary,
-                borderRadius: const BorderRadius.only(
-                    topLeft: Radius.circular(12),
-                    topRight: Radius.circular(12)),
-              ),
-              indicatorSize: TabBarIndicatorSize.tab,
-              indicatorWeight: 1,
-              labelColor: Colors.white,
-              unselectedLabelColor: Theme.of(context).colorScheme.primary,
-              labelStyle: Theme.of(context).textTheme.bodyLarge,
-              unselectedLabelStyle: Theme.of(context).textTheme.bodyLarge,
-              tabs: const [
-                Tab(text: 'Friends'),
-                Tab(text: 'Clubs'),
-              ],
+        child: TabBar(
+          indicator: BoxDecoration(
+            color: Theme.of(context).colorScheme.primary,
+            borderRadius: BorderRadius.only(
+              topLeft: Radius.circular(11),
+              bottomLeft: Radius.circular(11),
             ),
-            Container(
-              height: 1,
-              color: Theme.of(context).colorScheme.primary,
-            ),
+          ),
+          indicatorSize: TabBarIndicatorSize.tab,
+          labelColor: Theme.of(context).colorScheme.onPrimary,
+          unselectedLabelColor: Theme.of(context).colorScheme.primary,
+          labelStyle: Theme.of(context).textTheme.bodyLarge,
+          unselectedLabelStyle: Theme.of(context).textTheme.bodyLarge,
+          tabs: const [
+            Tab(text: 'Friends'),
+            Tab(text: 'Clubs'),
           ],
         ),
       ),
@@ -287,8 +280,9 @@ class SocialSearchView extends GetView<SocialSearchController> {
                                                   fontWeight: FontWeight.bold,
                                                 ),
                                           ),
-                                          child: const Center(
-                                            child: CircularProgressIndicator(),
+                                          child: Center(
+                                            child:
+                                                CustomCircularProgressIndicator(),
                                           ),
                                         ),
                                       ),

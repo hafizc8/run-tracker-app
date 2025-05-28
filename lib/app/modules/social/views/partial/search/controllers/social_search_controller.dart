@@ -28,6 +28,7 @@ class SocialSearchController extends GetxController {
   final scrollFriendsController = ScrollController();
 
   var pageFriend = 1;
+  var activeTab = 'Friends'.obs;
 
   final _debouncer = Debouncer(milliseconds: 400);
 

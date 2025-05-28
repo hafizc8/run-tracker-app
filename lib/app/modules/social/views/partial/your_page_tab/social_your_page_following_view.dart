@@ -7,6 +7,7 @@ import 'package:zest_mobile/app/core/models/model/user_mini_model.dart';
 import 'package:zest_mobile/app/core/shared/widgets/custom_chip.dart';
 import 'package:zest_mobile/app/core/shared/widgets/shimmer_loading_circle.dart';
 import 'package:zest_mobile/app/modules/social/controllers/social_following_controller.dart';
+import 'package:zest_mobile/app/routes/app_routes.dart';
 
 class SocialYourPageFollowingView extends GetView<SocialFollowingController> {
   const SocialYourPageFollowingView({super.key});
@@ -119,6 +120,7 @@ class SocialYourPageFollowingView extends GetView<SocialFollowingController> {
 
   Widget _buildFollowingListItem(BuildContext context, UserMiniModel user) {
     return ListTile(
+      onTap: () => Get.toNamed(AppRoutes.profileUser, arguments: user.id),
       leading: ClipOval(
         child: CachedNetworkImage(
           imageUrl: user.imageUrl ?? '',

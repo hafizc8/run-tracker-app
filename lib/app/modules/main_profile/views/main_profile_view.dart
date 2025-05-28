@@ -24,281 +24,323 @@ class MainProfileView extends GetView<ProfileMainController> {
           )
         ],
       ),
-      body: SingleChildScrollView(
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Obx(
-              () => Container(
-                padding: const EdgeInsets.only(
-                  left: 16,
-                  bottom: 16,
-                ),
-                width: double.infinity,
-                decoration: BoxDecoration(
-                  color: Theme.of(context).colorScheme.primary,
-                ),
-                child: Stack(
-                  children: [
-                    Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        Padding(
-                          padding: const EdgeInsets.only(top: 16),
-                          child: Row(
-                            children: [
-                              ClipOval(
-                                child: CachedNetworkImage(
-                                  imageUrl:
-                                      controller.user.value?.imageUrl ?? '',
-                                  width: 50,
-                                  height: 50,
-                                  fit: BoxFit.cover,
-                                  placeholder: (context, url) =>
-                                      const ShimmerLoadingCircle(size: 50),
-                                  errorWidget: (context, url, error) =>
-                                      const CircleAvatar(
-                                    radius: 32,
-                                    backgroundImage: AssetImage(
-                                        'assets/images/empty_profile.png'),
+      body: Obx(() {
+        ScrollController scrollController = ScrollController();
+        switch (controller.tabBarController.selectedIndex.value) {
+          case 1:
+            scrollController = controller.challengeController;
+            break;
+          case 2:
+            scrollController = controller.eventController;
+            break;
+          default:
+        }
+        return SingleChildScrollView(
+          controller: scrollController,
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Obx(
+                () => Container(
+                  padding: const EdgeInsets.only(
+                    left: 16,
+                    bottom: 16,
+                  ),
+                  width: double.infinity,
+                  decoration: BoxDecoration(
+                    color: Theme.of(context).colorScheme.primary,
+                  ),
+                  child: Stack(
+                    children: [
+                      Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Padding(
+                            padding: const EdgeInsets.only(top: 16),
+                            child: Row(
+                              children: [
+                                ClipOval(
+                                  child: CachedNetworkImage(
+                                    imageUrl:
+                                        controller.user.value?.imageUrl ?? '',
+                                    width: 50,
+                                    height: 50,
+                                    fit: BoxFit.cover,
+                                    placeholder: (context, url) =>
+                                        const ShimmerLoadingCircle(size: 50),
+                                    errorWidget: (context, url, error) =>
+                                        const CircleAvatar(
+                                      radius: 32,
+                                      backgroundImage: AssetImage(
+                                          'assets/images/empty_profile.png'),
+                                    ),
                                   ),
                                 ),
-                              ),
-                              const SizedBox(width: 8),
-                              Column(
-                                crossAxisAlignment: CrossAxisAlignment.start,
-                                children: [
-                                  Row(
-                                    mainAxisSize: MainAxisSize.min,
-                                    children: [
-                                      ConstrainedBox(
-                                        constraints:
-                                            const BoxConstraints(maxWidth: 150),
-                                        child: Text(
-                                          controller.user.value?.name ?? '-',
-                                          maxLines: 2,
-                                          overflow: TextOverflow.ellipsis,
-                                          style: Theme.of(context)
-                                              .textTheme
-                                              .headlineMedium
-                                              ?.copyWith(
-                                                color: Theme.of(context)
-                                                    .colorScheme
-                                                    .onPrimary,
-                                              ),
+                                const SizedBox(width: 8),
+                                Column(
+                                  crossAxisAlignment: CrossAxisAlignment.start,
+                                  children: [
+                                    Row(
+                                      mainAxisSize: MainAxisSize.min,
+                                      children: [
+                                        ConstrainedBox(
+                                          constraints: const BoxConstraints(
+                                              maxWidth: 150),
+                                          child: Text(
+                                            controller.user.value?.name ?? '-',
+                                            maxLines: 2,
+                                            overflow: TextOverflow.ellipsis,
+                                            style: Theme.of(context)
+                                                .textTheme
+                                                .headlineMedium
+                                                ?.copyWith(
+                                                  color: Theme.of(context)
+                                                      .colorScheme
+                                                      .onPrimary,
+                                                ),
+                                          ),
                                         ),
-                                      ),
-                                      const SizedBox(width: 8),
-                                      GestureDetector(
-                                        onTap: () async {
-                                          var res = await Get.toNamed(
-                                              AppRoutes.profileEdit);
-                                          if (res != null) {
-                                            controller.user.value = res;
-                                          }
-                                        },
-                                        child: Icon(
-                                          Icons.edit,
-                                          color: Theme.of(context)
-                                              .colorScheme
-                                              .onPrimary,
-                                        ),
-                                      ),
-                                    ],
-                                  ),
-                                  ConstrainedBox(
-                                    constraints:
-                                        const BoxConstraints(maxWidth: 150),
-                                    child: Text(
-                                      '${controller.user.value?.province ?? '-'}, ${controller.user.value?.country ?? '-'}',
-                                      maxLines: 2,
-                                      overflow: TextOverflow.ellipsis,
-                                      style: Theme.of(context)
-                                          .textTheme
-                                          .headlineSmall
-                                          ?.copyWith(
+                                        const SizedBox(width: 8),
+                                        GestureDetector(
+                                          onTap: () async {
+                                            var res = await Get.toNamed(
+                                                AppRoutes.profileEdit);
+                                            if (res != null) {
+                                              controller.user.value = res;
+                                            }
+                                          },
+                                          child: Icon(
+                                            Icons.edit,
                                             color: Theme.of(context)
                                                 .colorScheme
                                                 .onPrimary,
                                           ),
+                                        ),
+                                      ],
                                     ),
-                                  ),
-                                ],
-                              )
+                                    ConstrainedBox(
+                                      constraints:
+                                          const BoxConstraints(maxWidth: 150),
+                                      child: Text(
+                                        '${controller.user.value?.province ?? '-'}, ${controller.user.value?.country ?? '-'}',
+                                        maxLines: 2,
+                                        overflow: TextOverflow.ellipsis,
+                                        style: Theme.of(context)
+                                            .textTheme
+                                            .headlineSmall
+                                            ?.copyWith(
+                                              color: Theme.of(context)
+                                                  .colorScheme
+                                                  .onPrimary,
+                                            ),
+                                      ),
+                                    ),
+                                  ],
+                                )
+                              ],
+                            ),
+                          ),
+                          const SizedBox(height: 16),
+                          Text(
+                            controller.user.value?.bio ?? '',
+                            style: Theme.of(context)
+                                .textTheme
+                                .labelMedium
+                                ?.copyWith(
+                                  color:
+                                      Theme.of(context).colorScheme.onPrimary,
+                                ),
+                          ),
+                          const SizedBox(height: 16),
+                          Wrap(
+                            spacing: 5,
+                            runSpacing: 5,
+                            children: [
+                              CustomChip(
+                                child: Text(
+                                    '${controller.user.value?.followingCount ?? 0} Following'),
+                              ),
+                              CustomChip(
+                                child: Text(
+                                    '${controller.user.value?.followersCount ?? 0}  Followers'),
+                              ),
+                              CustomChip(
+                                child: Text(
+                                    '${controller.user.value?.clubsCount ?? 0} Clubs'),
+                              ),
+                              Container(
+                                padding: const EdgeInsets.symmetric(
+                                    horizontal: 12, vertical: 6),
+                                decoration: BoxDecoration(
+                                  color:
+                                      Theme.of(context).colorScheme.background,
+                                  borderRadius: BorderRadius.circular(100),
+                                ),
+                                child: FaIcon(
+                                  FontAwesomeIcons.shareFromSquare,
+                                  size: 20.0,
+                                  color: Theme.of(context).colorScheme.primary,
+                                ),
+                              ),
+                            ],
+                          )
+                        ],
+                      ),
+                      Align(
+                        alignment: Alignment.topRight,
+                        child: Container(
+                          height: 130,
+                          width: 130,
+                          decoration: const BoxDecoration(
+                            color: Colors.transparent,
+                          ),
+                          child: Stack(
+                            children: [
+                              Image.asset(
+                                'assets/images/star_profile.png',
+                                fit: BoxFit.cover,
+                              ),
+                              Positioned(
+                                top: 5,
+                                right: 15,
+                                child: Image.asset(
+                                  height: 65,
+                                  width: 65,
+                                  'assets/images/keong.png',
+                                  fit: BoxFit.cover,
+                                ),
+                              ),
                             ],
                           ),
                         ),
-                        const SizedBox(height: 16),
-                        Text(
-                          controller.user.value?.bio ?? '',
-                          style: Theme.of(context)
-                              .textTheme
-                              .labelMedium
-                              ?.copyWith(
-                                color: Theme.of(context).colorScheme.onPrimary,
-                              ),
-                        ),
-                        const SizedBox(height: 16),
-                        Wrap(
-                          spacing: 5,
-                          runSpacing: 5,
-                          children: [
-                            const CustomChip(
-                              child: Text('10k Following'),
-                            ),
-                            const CustomChip(
-                              child: Text('10k Following'),
-                            ),
-                            const CustomChip(
-                              child: Text('10 Clubs'),
-                            ),
-                            Container(
-                              padding: const EdgeInsets.symmetric(
-                                  horizontal: 12, vertical: 6),
-                              decoration: BoxDecoration(
-                                color: Theme.of(context).colorScheme.background,
-                                borderRadius: BorderRadius.circular(100),
-                              ),
-                              child: FaIcon(
-                                FontAwesomeIcons.shareFromSquare,
-                                size: 20.0,
-                                color: Theme.of(context).colorScheme.primary,
-                              ),
-                            ),
-                          ],
-                        )
-                      ],
+                      ),
+                    ],
+                  ),
+                ),
+              ),
+              Padding(
+                padding:
+                    const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: [
+                    Text(
+                      'Badges',
+                      style: Theme.of(context).textTheme.labelLarge?.copyWith(
+                            color: Theme.of(context).colorScheme.primary,
+                          ),
                     ),
-                    Align(
-                      alignment: Alignment.topRight,
-                      child: Container(
-                        height: 130,
-                        width: 130,
-                        decoration: const BoxDecoration(
-                          color: Colors.transparent,
-                        ),
-                        child: Stack(
-                          children: [
-                            Image.asset(
-                              'assets/images/star_profile.png',
-                              fit: BoxFit.cover,
+                    GestureDetector(
+                      onTap: () => Get.toNamed(AppRoutes.badges),
+                      child: Row(
+                        children: [
+                          Obx(
+                            () => Text(
+                              '${controller.user.value?.badgesCount ?? 0}',
+                              style: Theme.of(context)
+                                  .textTheme
+                                  .labelLarge
+                                  ?.copyWith(
+                                    color:
+                                        Theme.of(context).colorScheme.primary,
+                                  ),
                             ),
-                            Positioned(
-                              top: 5,
-                              right: 15,
-                              child: Image.asset(
-                                height: 65,
-                                width: 65,
-                                'assets/images/keong.png',
-                                fit: BoxFit.cover,
-                              ),
-                            ),
-                          ],
-                        ),
+                          ),
+                          Icon(
+                            Icons.chevron_right,
+                            color: Theme.of(context).colorScheme.primary,
+                          ),
+                        ],
                       ),
                     ),
                   ],
                 ),
               ),
-            ),
-            Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
-              child: Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                children: [
-                  Text(
-                    'Badges',
-                    style: Theme.of(context).textTheme.labelLarge?.copyWith(
-                          color: Theme.of(context).colorScheme.primary,
-                        ),
-                  ),
-                  GestureDetector(
-                    onTap: () => Get.toNamed(AppRoutes.badges),
-                    child: Row(
-                      children: [
-                        Text(
-                          '20',
-                          style: Theme.of(context)
-                              .textTheme
-                              .labelLarge
-                              ?.copyWith(
-                                color: Theme.of(context).colorScheme.primary,
-                              ),
-                        ),
-                        Icon(
-                          Icons.chevron_right,
-                          color: Theme.of(context).colorScheme.primary,
-                        ),
-                      ],
-                    ),
-                  ),
-                ],
-              ),
-            ),
-            Row(
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: controller.items
-                  .map(
-                    (e) => Container(
-                      margin: const EdgeInsets.symmetric(horizontal: 16),
-                      decoration: const BoxDecoration(
-                        color: Colors.transparent,
-                      ),
-                      child: Column(
-                        mainAxisAlignment: MainAxisAlignment.center,
-                        children: [
-                          const Placeholder(
-                              fallbackHeight: 40, fallbackWidth: 100),
-                          const SizedBox(height: 5),
-                          Text(
-                            e,
-                            textAlign: TextAlign.center,
+              Obx(
+                () => Row(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: (controller.user.value?.badges ?? [])
+                      .map(
+                        (e) => Flexible(
+                          child: Container(
+                            margin: const EdgeInsets.symmetric(horizontal: 16),
+                            decoration: const BoxDecoration(
+                              color: Colors.transparent,
+                            ),
+                            child: Column(
+                              mainAxisAlignment: MainAxisAlignment.center,
+                              children: [
+                                ClipOval(
+                                  child: CachedNetworkImage(
+                                    imageUrl: e.badgeIconUrl ?? '',
+                                    width: 50,
+                                    height: 50,
+                                    fit: BoxFit.cover,
+                                    placeholder: (context, url) =>
+                                        const ShimmerLoadingCircle(size: 50),
+                                    errorWidget: (context, url, error) =>
+                                        const CircleAvatar(
+                                      radius: 32,
+                                      backgroundImage: AssetImage(
+                                          'assets/images/empty_profile.png'),
+                                    ),
+                                  ),
+                                ),
+                                const SizedBox(height: 5),
+                                Text(
+                                  e.badgeName ?? '-',
+                                  maxLines: 1,
+                                  overflow: TextOverflow.ellipsis,
+                                  textAlign: TextAlign.center,
+                                ),
+                              ],
+                            ),
                           ),
-                        ],
-                      ),
-                    ),
-                  )
-                  .toList(),
-            ),
-            const SizedBox(height: 16),
-            Container(
-              height: 48,
-              padding: const EdgeInsets.symmetric(horizontal: 8),
-              margin: const EdgeInsets.symmetric(horizontal: 16),
-              decoration: BoxDecoration(
-                color: Theme.of(context).colorScheme.primary.withOpacity(.1),
-                borderRadius: BorderRadius.circular(12),
+                        ),
+                      )
+                      .toList(),
+                ),
               ),
-              child: Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                children: [
-                  Row(children: [
-                    SvgPicture.asset('assets/icons/ic_distance.svg'),
-                    const SizedBox(width: 8),
+              const SizedBox(height: 16),
+              Container(
+                height: 48,
+                padding: const EdgeInsets.symmetric(horizontal: 8),
+                margin: const EdgeInsets.symmetric(horizontal: 16),
+                decoration: BoxDecoration(
+                  color: Theme.of(context).colorScheme.primary.withOpacity(.1),
+                  borderRadius: BorderRadius.circular(12),
+                ),
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: [
+                    Row(children: [
+                      SvgPicture.asset('assets/icons/ic_distance.svg'),
+                      const SizedBox(width: 8),
+                      Text(
+                        'Distance',
+                        style: Theme.of(context).textTheme.bodyMedium?.copyWith(
+                              color: Theme.of(context).colorScheme.primary,
+                              fontWeight: FontWeight.bold,
+                            ),
+                      ),
+                    ]),
                     Text(
-                      'Distance',
+                      '${controller.user.value?.overallMileage ?? 0} km',
                       style: Theme.of(context).textTheme.bodyMedium?.copyWith(
                             color: Theme.of(context).colorScheme.primary,
                             fontWeight: FontWeight.bold,
                           ),
                     ),
-                  ]),
-                  Text(
-                    '8 km',
-                    style: Theme.of(context).textTheme.bodyMedium?.copyWith(
-                          color: Theme.of(context).colorScheme.primary,
-                          fontWeight: FontWeight.bold,
-                        ),
-                  ),
-                ],
+                  ],
+                ),
               ),
-            ),
-            const SizedBox(height: 16),
-            CustomTabBar(),
-            const SizedBox(height: 32),
-          ],
-        ),
-      ),
+              const SizedBox(height: 16),
+              CustomTabBar(),
+              const SizedBox(height: 32),
+            ],
+          ),
+        );
+      }),
     );
   }
 }

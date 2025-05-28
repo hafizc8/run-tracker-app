@@ -1,10 +1,8 @@
 import 'package:cached_network_image/cached_network_image.dart';
-import 'package:carousel_slider/carousel_slider.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:get/get.dart';
-import 'package:smooth_page_indicator/smooth_page_indicator.dart';
 import 'package:zest_mobile/app/core/shared/widgets/card_activity.dart';
 import 'package:zest_mobile/app/core/shared/widgets/custom_chip.dart';
 import 'package:zest_mobile/app/core/shared/widgets/shimmer_loading_circle.dart';
@@ -52,15 +50,21 @@ class ProfileView extends GetView<ProfileController> {
                           padding: const EdgeInsets.only(top: 16),
                           child: Row(
                             children: [
-                              CachedNetworkImage(
-                                imageUrl: controller.user.value?.imageUrl ?? '',
-                                placeholder: (context, url) =>
-                                    const ShimmerLoadingCircle(size: 64),
-                                errorWidget: (context, url, error) =>
-                                    const CircleAvatar(
-                                  radius: 32,
-                                  backgroundImage: AssetImage(
-                                      'assets/images/empty_profile.png'),
+                              ClipOval(
+                                child: CachedNetworkImage(
+                                  imageUrl:
+                                      controller.user.value?.imageUrl ?? '',
+                                  width: 50,
+                                  height: 50,
+                                  fit: BoxFit.cover,
+                                  placeholder: (context, url) =>
+                                      const ShimmerLoadingCircle(size: 50),
+                                  errorWidget: (context, url, error) =>
+                                      const CircleAvatar(
+                                    radius: 32,
+                                    backgroundImage: AssetImage(
+                                        'assets/images/empty_profile.png'),
+                                  ),
                                 ),
                               ),
                               const SizedBox(width: 8),
@@ -98,7 +102,7 @@ class ProfileView extends GetView<ProfileController> {
                         ),
                         const SizedBox(height: 16),
                         Text(
-                          controller.user.value?.bio ?? '',
+                          controller.user.value?.bio ?? 'No bio',
                           style: Theme.of(context)
                               .textTheme
                               .labelMedium
@@ -124,7 +128,7 @@ class ProfileView extends GetView<ProfileController> {
                                       ),
                                 ),
                                 Text(
-                                  '3.000',
+                                  '${controller.user.value?.followersCount ?? 0}',
                                   textAlign: TextAlign.center,
                                   style: Theme.of(context)
                                       .textTheme
@@ -153,7 +157,7 @@ class ProfileView extends GetView<ProfileController> {
                                       ),
                                 ),
                                 Text(
-                                  '3',
+                                  '${controller.user.value?.followingCount ?? 0}',
                                   textAlign: TextAlign.center,
                                   style: Theme.of(context)
                                       .textTheme
@@ -182,7 +186,7 @@ class ProfileView extends GetView<ProfileController> {
                                       ),
                                 ),
                                 Text(
-                                  '3',
+                                  '${controller.user.value?.clubsCount ?? 0}',
                                   textAlign: TextAlign.center,
                                   style: Theme.of(context)
                                       .textTheme
@@ -201,18 +205,34 @@ class ProfileView extends GetView<ProfileController> {
                         Row(
                           children: [
                             Expanded(
-                              child: CustomChip(
-                                child: Text(
-                                  'Follow',
-                                  textAlign: TextAlign.center,
-                                  style: Theme.of(context)
-                                      .textTheme
-                                      .labelMedium
-                                      ?.copyWith(
-                                        color: Theme.of(context)
-                                            .colorScheme
-                                            .primary,
+                              child: Visibility(
+                                visible: !controller.isLoadingFollowUnfollow.value,
+                                replacement: const CircularProgressIndicator(),
+                                child: CustomChip(
+                                  onTap: () {
+                                    if (controller.user.value?.isFollowing == 1) {
+                                      controller.unfollow();
+                                    } else {
+                                      controller.follow();
+                                    }
+                                  },
+                                  child: Visibility(
+                                    visible: (controller.user.value?.isFollowing == 1),
+                                    replacement: Text(
+                                      'Follow',
+                                      textAlign: TextAlign.center,
+                                      style: Theme.of(context).textTheme.labelMedium?.copyWith(
+                                        color: Theme.of(context).colorScheme.primary,
                                       ),
+                                    ),
+                                    child: Text(
+                                      'Unfollow',
+                                      textAlign: TextAlign.center,
+                                      style: Theme.of(context).textTheme.labelMedium?.copyWith(
+                                        color: Theme.of(context).colorScheme.primary,
+                                      ),
+                                    ),
+                                  ),
                                 ),
                               ),
                             ),
@@ -285,7 +305,8 @@ class ProfileView extends GetView<ProfileController> {
               ),
             ),
             Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+              padding:
+                  const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
               child: Row(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
@@ -299,14 +320,17 @@ class ProfileView extends GetView<ProfileController> {
                     onTap: () => Get.toNamed(AppRoutes.badges),
                     child: Row(
                       children: [
-                        Text(
-                          '20',
-                          style: Theme.of(context)
-                              .textTheme
-                              .labelLarge
-                              ?.copyWith(
-                                color: Theme.of(context).colorScheme.primary,
-                              ),
+                        Obx(
+                          () => Text(
+                            '${controller.user.value?.badgesCount ?? 0}',
+                            style: Theme.of(context)
+                                .textTheme
+                                .labelLarge
+                                ?.copyWith(
+                                  color:
+                                      Theme.of(context).colorScheme.primary,
+                                ),
+                          ),
                         ),
                         Icon(
                           Icons.chevron_right,
@@ -318,54 +342,49 @@ class ProfileView extends GetView<ProfileController> {
                 ],
               ),
             ),
-            CarouselSlider(
-              items: controller.items.map((item) {
-                return Container(
-                  width: 125,
-                  height: 80,
-                  margin: const EdgeInsets.symmetric(horizontal: 16),
-                  decoration: const BoxDecoration(
-                    color: Colors.transparent,
-                  ),
-                  child: Column(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    children: [
-                      const Placeholder(fallbackHeight: 40, fallbackWidth: 100),
-                      const SizedBox(height: 5),
-                      Text(
-                        item,
-                        textAlign: TextAlign.center,
+            Obx(
+              () => Row(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: (controller.user.value?.badges ?? [])
+                    .map(
+                      (e) => Flexible(
+                        child: Container(
+                          margin: const EdgeInsets.symmetric(horizontal: 16),
+                          decoration: const BoxDecoration(
+                            color: Colors.transparent,
+                          ),
+                          child: Column(
+                            mainAxisAlignment: MainAxisAlignment.center,
+                            children: [
+                              ClipOval(
+                                child: CachedNetworkImage(
+                                  imageUrl: e.badgeIconUrl ?? '',
+                                  width: 50,
+                                  height: 50,
+                                  fit: BoxFit.cover,
+                                  placeholder: (context, url) =>
+                                      const ShimmerLoadingCircle(size: 50),
+                                  errorWidget: (context, url, error) =>
+                                      const CircleAvatar(
+                                    radius: 32,
+                                    backgroundImage: AssetImage(
+                                        'assets/images/empty_profile.png'),
+                                  ),
+                                ),
+                              ),
+                              const SizedBox(height: 5),
+                              Text(
+                                e.badgeName ?? '-',
+                                maxLines: 1,
+                                overflow: TextOverflow.ellipsis,
+                                textAlign: TextAlign.center,
+                              ),
+                            ],
+                          ),
+                        ),
                       ),
-                    ],
-                  ),
-                );
-              }).toList(),
-              carouselController: controller.controllerSlider,
-              options: CarouselOptions(
-                height: 100,
-                enlargeCenterPage: false,
-                enableInfiniteScroll: false,
-                disableCenter: false,
-                padEnds: false,
-                viewportFraction: 125 / MediaQuery.of(context).size.width,
-                onPageChanged: (index, reason) {
-                  controller.activeIndex.value = index;
-                },
-              ),
-            ),
-            Center(
-              child: Obx(
-                () => AnimatedSmoothIndicator(
-                  activeIndex: (controller.activeIndex.value / 3).floor(),
-                  count: (controller.items.length / 3).ceil(),
-                  effect: WormEffect(
-                    dotHeight: 8,
-                    dotWidth: 8,
-                    activeDotColor: Theme.of(context).primaryColor,
-                  ),
-                  onDotClicked: (index) =>
-                      controller.controllerSlider.animateToPage(index),
-                ),
+                    )
+                    .toList(),
               ),
             ),
             const SizedBox(height: 16),
@@ -392,7 +411,7 @@ class ProfileView extends GetView<ProfileController> {
                     ),
                   ]),
                   Text(
-                    '8 km',
+                    '${controller.user.value?.overallMileage ?? 0} km',
                     style: Theme.of(context).textTheme.bodyMedium?.copyWith(
                           color: Theme.of(context).colorScheme.primary,
                           fontWeight: FontWeight.bold,

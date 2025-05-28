@@ -109,7 +109,7 @@ class AuthService {
   Future<UserModel> me() async {
     try {
       final response = await _apiService.request(
-        path: AppConstants.user,
+        path: AppConstants.me,
         method: HttpMethod.get,
       );
       final user = UserModel.fromJson(response.data['data']);

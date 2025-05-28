@@ -9,6 +9,7 @@ import 'package:zest_mobile/app/modules/social/widgets/post_media.dart';
 import 'package:zest_mobile/app/modules/social/widgets/social_action_button.dart';
 import 'package:zest_mobile/app/modules/social/widgets/statistic_column.dart';
 import 'package:zest_mobile/app/core/extension/date_extension.dart';
+import 'package:zest_mobile/app/routes/app_routes.dart';
 
 // ignore: must_be_immutable
 class ActivityCard extends StatelessWidget {
@@ -46,6 +47,7 @@ class ActivityCard extends StatelessWidget {
           children: [
             _buildCardHeader(
               context: context,
+              userId: postData.user?.id ?? '',
               userName: postData.user?.name ?? '',
               userImageUrl: postData.user?.imageUrl ?? '',
               createdAt: postData.createdAt?.toHumanPostDate() ?? '',
@@ -70,97 +72,101 @@ class ActivityCard extends StatelessWidget {
 
   Widget _buildCardHeader({
     required BuildContext context, 
+    required String userId,
     required String userName,
     required String userImageUrl,
     required String createdAt,
     required String district,
     required bool isOwner
   }) {
-    return SizedBox(
-      width: double.infinity,
-      child: Row(
-        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-        children: [
-          // CircleAvatar dan Column di kiri, tetap dekat
-          Row(
-            mainAxisSize: MainAxisSize.min,
-            children: [
-              ClipOval(
-                child: CachedNetworkImage(
-                  imageUrl: userImageUrl,
-                  width: 30,
-                  height: 30,
-                  fit: BoxFit.cover,
-                  placeholder: (context, url) => const ShimmerLoadingCircle(size: 30),
-                  errorWidget: (context, url, error) => const CircleAvatar(
-                    radius: 30,
-                    backgroundImage: AssetImage('assets/images/empty_profile.png'),
+    return InkWell(
+      onTap: () => Get.toNamed(AppRoutes.profileUser, arguments: userId),
+      child: SizedBox(
+        width: double.infinity,
+        child: Row(
+          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+          children: [
+            // CircleAvatar dan Column di kiri, tetap dekat
+            Row(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                ClipOval(
+                  child: CachedNetworkImage(
+                    imageUrl: userImageUrl,
+                    width: 30,
+                    height: 30,
+                    fit: BoxFit.cover,
+                    placeholder: (context, url) => const ShimmerLoadingCircle(size: 30),
+                    errorWidget: (context, url, error) => const CircleAvatar(
+                      radius: 30,
+                      backgroundImage: AssetImage('assets/images/empty_profile.png'),
+                    ),
                   ),
                 ),
+                const SizedBox(width: 8),
+                // Column di tengah
+                Flexible(
+                  fit: FlexFit.loose,
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Text(
+                        userName,
+                        maxLines: 1,
+                        overflow: TextOverflow.ellipsis,
+                        style: Theme.of(context).textTheme.bodyMedium?.copyWith(fontWeight: FontWeight.w600),
+                      ),
+                      Text(
+                        '$district, $createdAt',
+                        maxLines: 1,
+                        overflow: TextOverflow.ellipsis,
+                        style: Theme.of(context).textTheme.labelSmall?.copyWith(color: Theme.of(context).colorScheme.onTertiary),
+                      ),
+                    ],
+                  ),
+                ),
+              ],
+            ),
+            // PopupMenuButton di kanan
+            isOwner
+            ?
+            PopupMenuButton<String>(
+              onSelected: (value) {
+                // Handle the selection
+                if (value == 'edit') {
+                  postController.goToEditPost(postId: postData.id ?? '', isFromDetail: false);
+                } else if (value == 'delete') {
+                  postController.confirmAndDeletePost(postId: postData.id ?? '');
+                }
+              },
+              icon: Icon(
+                Icons.more_horiz,
+                color: Theme.of(context).colorScheme.primary,
               ),
-              const SizedBox(width: 8),
-              // Column di tengah
-              Flexible(
-                fit: FlexFit.loose,
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Text(
-                      userName,
-                      maxLines: 1,
-                      overflow: TextOverflow.ellipsis,
+              surfaceTintColor: Theme.of(context).colorScheme.onPrimary,
+              itemBuilder: (BuildContext context) {
+                return [
+                  PopupMenuItem<String>(
+                    value: 'edit',
+                    child: Text(
+                      'Edit Post',
                       style: Theme.of(context).textTheme.bodyMedium?.copyWith(fontWeight: FontWeight.w600),
                     ),
-                    Text(
-                      '$district, $createdAt',
-                      maxLines: 1,
-                      overflow: TextOverflow.ellipsis,
-                      style: Theme.of(context).textTheme.labelSmall?.copyWith(color: Theme.of(context).colorScheme.onTertiary),
+                  ),
+                  PopupMenuItem<String>(
+                    value: 'delete',
+                    child: Text(
+                      'Delete Post',
+                      style: Theme.of(context).textTheme.bodyMedium?.copyWith(fontWeight: FontWeight.w600),
                     ),
-                  ],
-                ),
-              ),
-            ],
-          ),
-          // PopupMenuButton di kanan
-          isOwner
-          ?
-          PopupMenuButton<String>(
-            onSelected: (value) {
-              // Handle the selection
-              if (value == 'edit') {
-                postController.goToEditPost(postId: postData.id ?? '', isFromDetail: false);
-              } else if (value == 'delete') {
-                postController.confirmAndDeletePost(postId: postData.id ?? '');
-              }
-            },
-            icon: Icon(
-              Icons.more_horiz,
-              color: Theme.of(context).colorScheme.primary,
-            ),
-            surfaceTintColor: Theme.of(context).colorScheme.onPrimary,
-            itemBuilder: (BuildContext context) {
-              return [
-                PopupMenuItem<String>(
-                  value: 'edit',
-                  child: Text(
-                    'Edit Post',
-                    style: Theme.of(context).textTheme.bodyMedium?.copyWith(fontWeight: FontWeight.w600),
                   ),
-                ),
-                PopupMenuItem<String>(
-                  value: 'delete',
-                  child: Text(
-                    'Delete Post',
-                    style: Theme.of(context).textTheme.bodyMedium?.copyWith(fontWeight: FontWeight.w600),
-                  ),
-                ),
-              ];
-            },
-          )
-          :
-          const SizedBox(),
-        ],
+                ];
+              },
+            )
+            :
+            const SizedBox(),
+          ],
+        ),
       ),
     );
   }

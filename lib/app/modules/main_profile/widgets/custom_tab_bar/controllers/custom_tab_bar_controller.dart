@@ -3,7 +3,6 @@ import 'package:zest_mobile/app/modules/main_profile/controllers/main_profile_co
 
 class TabBarController extends GetxController {
   final RxInt selectedIndex = 0.obs;
-  final ProfileMainController profileController = Get.find();
 
   void changeTabIndex(int index) {
     selectedIndex.value = index;

@@ -12,6 +12,7 @@ import 'package:zest_mobile/app/core/extension/date_extension.dart';
 import 'package:zest_mobile/app/core/models/enums/app_exception_enum.dart';
 import 'package:zest_mobile/app/core/models/enums/gender_enum.dart';
 import 'package:zest_mobile/app/core/models/forms/update_user_form.dart';
+import 'package:zest_mobile/app/core/models/model/user_detail_model.dart';
 import 'package:zest_mobile/app/core/models/model/user_model.dart';
 import 'package:zest_mobile/app/core/services/auth_service.dart';
 import 'package:zest_mobile/app/core/services/storage_service.dart';
@@ -165,7 +166,7 @@ class EditProfileController extends GetxController {
       if (resp) {
         var data = sl<StorageService>().read(StorageKeys.user);
         if (data != null) {
-          Get.back(result: UserModel.fromJson(data));
+          Get.back(result: UserDetailModel.fromJson(data));
         }
       }
     } on AppException catch (e) {

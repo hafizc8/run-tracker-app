@@ -1,7 +1,11 @@
 import 'package:flutter/material.dart';
+import 'package:zest_mobile/app/core/extension/date_extension.dart';
+import 'package:zest_mobile/app/core/models/enums/challenge_enum.dart';
+import 'package:zest_mobile/app/core/models/model/challenge_model.dart';
 
 class CardChallenge extends StatelessWidget {
-  const CardChallenge({super.key});
+  const CardChallenge({super.key, required this.challengeModel});
+  final ChallengeModel challengeModel;
 
   @override
   Widget build(BuildContext context) {
@@ -27,13 +31,16 @@ class CardChallenge extends StatelessWidget {
                     color: Colors.blue.shade50,
                     borderRadius: BorderRadius.circular(12),
                   ),
-                  child: const Row(
+                  child: Row(
                     children: [
-                      Icon(Icons.person, size: 16, color: Colors.blue),
-                      SizedBox(width: 6),
+                      const Icon(Icons.person, size: 16, color: Colors.blue),
+                      const SizedBox(width: 6),
                       Text(
-                        'Individual',
-                        style: TextStyle(
+                        ChallengeTypeEnum.fromValue(challengeModel.type ?? 0)
+                            .challengeType,
+                        maxLines: 1,
+                        overflow: TextOverflow.ellipsis,
+                        style: const TextStyle(
                           color: Colors.blue,
                           fontWeight: FontWeight.bold,
                         ),
@@ -42,13 +49,17 @@ class CardChallenge extends StatelessWidget {
                   ),
                 ),
                 const SizedBox(width: 12),
-                Text(
-                  'You are the Host',
-                  style: Theme.of(context).textTheme.bodyMedium?.copyWith(
-                        color: Theme.of(context).colorScheme.secondary,
-                        fontWeight: FontWeight.bold,
-                      ),
-                ),
+                if (challengeModel.isOwner == 1) ...[
+                  Text(
+                    'You are the Host',
+                    maxLines: 1,
+                    overflow: TextOverflow.ellipsis,
+                    style: Theme.of(context).textTheme.bodyMedium?.copyWith(
+                          color: Theme.of(context).colorScheme.secondary,
+                          fontWeight: FontWeight.bold,
+                        ),
+                  ),
+                ],
                 const Spacer(),
                 Icon(Icons.share, color: Theme.of(context).primaryColor),
                 const SizedBox(width: 8),
@@ -61,18 +72,11 @@ class CardChallenge extends StatelessWidget {
             const SizedBox(height: 16),
             // Judul
             Text(
-              'February Walk 50K Challenge',
+              challengeModel.title ?? '-',
+              maxLines: 1,
+              overflow: TextOverflow.ellipsis,
               style: Theme.of(context).textTheme.bodyLarge?.copyWith(
                     color: Theme.of(context).colorScheme.primary,
-                    fontWeight: FontWeight.bold,
-                  ),
-            ),
-            const SizedBox(height: 4),
-            // Subjudul
-            Text(
-              'FIRST TO FINISH CHALLENGE',
-              style: Theme.of(context).textTheme.bodyMedium?.copyWith(
-                    color: Theme.of(context).colorScheme.secondary,
                     fontWeight: FontWeight.bold,
                   ),
             ),
@@ -93,6 +97,8 @@ class CardChallenge extends StatelessWidget {
                       children: [
                         Text(
                           'TARGET',
+                          maxLines: 1,
+                          overflow: TextOverflow.ellipsis,
                           style: Theme.of(context)
                               .textTheme
                               .bodySmall
@@ -102,7 +108,9 @@ class CardChallenge extends StatelessWidget {
                               ),
                         ),
                         Text(
-                          '50000',
+                          challengeModel.target.toString(),
+                          maxLines: 1,
+                          overflow: TextOverflow.ellipsis,
                           style:
                               Theme.of(context).textTheme.bodyMedium?.copyWith(
                                     fontWeight: FontWeight.bold,
@@ -136,7 +144,10 @@ class CardChallenge extends StatelessWidget {
                               ),
                         ),
                         Text(
-                          '14 February 2025',
+                          (challengeModel.startDate ?? DateTime.now())
+                              .todMMMyyyyString(),
+                          maxLines: 1,
+                          overflow: TextOverflow.ellipsis,
                           style:
                               Theme.of(context).textTheme.bodyMedium?.copyWith(
                                     fontWeight: FontWeight.bold,

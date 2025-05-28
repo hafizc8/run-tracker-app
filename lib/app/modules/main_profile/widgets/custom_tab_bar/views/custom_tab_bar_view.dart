@@ -2,8 +2,9 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:zest_mobile/app/core/shared/widgets/card_activity.dart';
 import 'package:zest_mobile/app/core/shared/widgets/card_challenge.dart';
-import 'package:zest_mobile/app/core/shared/widgets/card_event.dart';
+import 'package:zest_mobile/app/modules/main_profile/controllers/main_profile_controller.dart';
 import 'package:zest_mobile/app/modules/main_profile/widgets/custom_tab_bar/controllers/custom_tab_bar_controller.dart';
+import 'package:zest_mobile/app/modules/social/widgets/event_card.dart';
 import 'package:zest_mobile/app/routes/app_routes.dart';
 
 class CustomTabBar extends GetView<TabBarController> {
@@ -11,6 +12,7 @@ class CustomTabBar extends GetView<TabBarController> {
 
   final List<String> tabs = ['Overview', 'Challenge', 'Events'];
 
+  final ProfileMainController profileController = Get.find();
   @override
   Widget build(BuildContext context) {
     return Column(
@@ -107,25 +109,30 @@ class CustomTabBar extends GetView<TabBarController> {
                       style: Theme.of(context).textTheme.headlineSmall,
                     ),
                     const SizedBox(height: 8),
-                    const CardChallenge(),
-                    const SizedBox(height: 8),
-                    Center(
-                      child: TextButton(
-                        onPressed: () => Get.toNamed(AppRoutes.activity),
-                        child: Text(
-                          'See All',
-                          style: Theme.of(context)
-                              .textTheme
-                              .bodyLarge
-                              ?.copyWith(
-                                color: Theme.of(context).colorScheme.primary,
-                                decoration: TextDecoration.underline,
-                                decorationColor:
-                                    Theme.of(context).colorScheme.primary,
-                              ),
+                    Obx(() {
+                      return ListView.separated(
+                        shrinkWrap: true,
+                        physics: const NeverScrollableScrollPhysics(),
+                        itemBuilder: (context, index) {
+                          if (index == profileController.challenges.length) {
+                            return const Center(
+                              child: CircularProgressIndicator(),
+                            );
+                          }
+                          final challenge = profileController.challenges[index];
+                          return CardChallenge(
+                            challengeModel: challenge,
+                          );
+                        },
+                        separatorBuilder: (context, index) => const SizedBox(
+                          height: 16,
                         ),
-                      ),
-                    ),
+                        itemCount: profileController.challenges.length +
+                            (profileController.hasReacheMaxChallenge.value
+                                ? 0
+                                : 1),
+                      );
+                    })
                   ],
                 ),
               );
@@ -254,25 +261,29 @@ class CustomTabBar extends GetView<TabBarController> {
                       style: Theme.of(context).textTheme.headlineSmall,
                     ),
                     const SizedBox(height: 8),
-                    const CardEvent(),
-                    const SizedBox(height: 8),
-                    Center(
-                      child: TextButton(
-                        onPressed: () => Get.toNamed(AppRoutes.activity),
-                        child: Text(
-                          'See All',
-                          style: Theme.of(context)
-                              .textTheme
-                              .bodyLarge
-                              ?.copyWith(
-                                color: Theme.of(context).colorScheme.primary,
-                                decoration: TextDecoration.underline,
-                                decorationColor:
-                                    Theme.of(context).colorScheme.primary,
-                              ),
+                    Obx(() {
+                      return ListView.separated(
+                        shrinkWrap: true,
+                        physics: const NeverScrollableScrollPhysics(),
+                        itemBuilder: (context, index) {
+                          if (index == profileController.events.length) {
+                            return const Center(
+                              child: CircularProgressIndicator(),
+                            );
+                          }
+                          final event = profileController.events[index];
+                          return EventCard(
+                            onTap: null,
+                            eventModel: event,
+                          );
+                        },
+                        separatorBuilder: (context, index) => const SizedBox(
+                          height: 16,
                         ),
-                      ),
-                    ),
+                        itemCount: profileController.events.length +
+                            (profileController.hasReacheMaxEvent.value ? 0 : 1),
+                      );
+                    })
                   ],
                 ),
               );

@@ -30,10 +30,12 @@ class AppConstants {
   static String selectPlace(String placeId) =>
       'https://maps.googleapis.com/maps/api/place/details/json?place_id=$placeId&key=${AppConstants.googleApiKey}';
   // User
-  static const String user = "/me";
+  static const String me = "/me";
   static const String userOther = "/user";
   static const String updateProfile = "/user";
-
+  static String badge(String id) => "/user/$id/badge";
+  static String user(String id) => "/user/$id";
+  static String follow(String id) => "/follow/$id";
   static String userFollow(String id) => "/follow/$id";
   static String userUnFollow(String id) => "/unfollow/$id";
 
@@ -55,16 +57,22 @@ class AppConstants {
   static String eventUsers(String id) => "/event/$id/user";
   static String event([String? id]) => id != null ? "/event/$id" : "/event";
 
+  // Challenge
+  static const String challenge = "/challange";
+
   // Clubs
   static const String clubsMini = "/club";
   static const String clubGetAll = "/club";
   static const String clubCreate = "/club";
   static String clubUpdate(String clubId) => "/club/$clubId";
   static String clubAccOrJoinOrLeave(String clubId) => "/club/$clubId/join";
-  static String clubAddOrRemoveAsAdmin(String clubId, String clubUserId) => "/club/$clubId/user/$clubUserId/admin";
-  static String clubRemoveUserInClub(String clubId, String clubUserId) => "/club/$clubId/user/$clubUserId";
+  static String clubAddOrRemoveAsAdmin(String clubId, String clubUserId) =>
+      "/club/$clubId/user/$clubUserId/admin";
+  static String clubRemoveUserInClub(String clubId, String clubUserId) =>
+      "/club/$clubId/user/$clubUserId";
   static String clubDetail(String clubId) => "/club/$clubId";
   static String clubGetAllMember(String clubId) => "/club/$clubId/user";
-  static String clubInviteFollowersToClub(String clubId) => "/club/$clubId/invite";
+  static String clubInviteFollowersToClub(String clubId) =>
+      "/club/$clubId/invite";
   static String clubGetActivity(String clubId) => "/club/$clubId/activity";
 }

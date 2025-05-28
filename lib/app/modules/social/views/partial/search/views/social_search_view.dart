@@ -1,5 +1,4 @@
 import 'package:cached_network_image/cached_network_image.dart';
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
 import 'package:get/get.dart';
@@ -209,90 +208,94 @@ class SocialSearchView extends GetView<SocialSearchController> {
                       itemBuilder: (context, index) {
                         UserMiniModel user =
                             controller.friendsPeopleYouMayKnow[index];
-                        return Card(
-                          surfaceTintColor:
-                              Theme.of(context).colorScheme.background,
-                          elevation: 2,
-                          shape: RoundedRectangleBorder(
-                            borderRadius: BorderRadius.circular(12),
-                          ),
-                          child: Container(
-                            constraints: const BoxConstraints(maxWidth: 130),
-                            padding: const EdgeInsets.all(12),
-                            alignment: Alignment.center,
-                            child: Column(
-                              mainAxisAlignment: MainAxisAlignment.center,
-                              children: [
-                                ClipOval(
-                                  child: CachedNetworkImage(
-                                    imageUrl: user.imageUrl ?? '',
-                                    width: 32,
-                                    height: 32,
-                                    fit: BoxFit.cover,
-                                    placeholder: (context, url) =>
-                                        const ShimmerLoadingCircle(size: 32),
-                                    errorWidget: (context, url, error) =>
-                                        const CircleAvatar(
-                                      radius: 16,
-                                      backgroundImage: AssetImage(
-                                          'assets/images/empty_profile.png'),
-                                    ),
-                                  ),
-                                ),
-                                const SizedBox(height: 8),
-                                Text(
-                                  user.name,
-                                  maxLines: 1,
-                                  overflow: TextOverflow.ellipsis,
-                                  textAlign: TextAlign.center,
-                                  style: Theme.of(context)
-                                      .textTheme
-                                      .bodyMedium
-                                      ?.copyWith(
-                                        fontWeight: FontWeight.bold,
-                                      ),
-                                ),
-                                const SizedBox(height: 8),
-                                Expanded(
-                                  child: Obx(
-                                    () => CustomChip(
-                                      onTap: () {
-                                        if (user.isFollowing == 1) {
-                                          controller.unFollow(user.id);
-                                        } else {
-                                          controller.follow(user.id);
-                                        }
-                                      },
-                                      backgroundColor: Theme.of(context)
-                                          .colorScheme
-                                          .primary
-                                          .withOpacity(0.1),
-                                      child: Visibility(
-                                        visible:
-                                            user.id == controller.userId.value,
-                                        replacement: Text(
-                                          {
-                                            'is_following': user.isFollowing,
-                                            'is_followed': user.isFollowed
-                                          }.followStatus,
-                                          style: Theme.of(context)
-                                              .textTheme
-                                              .bodyMedium
-                                              ?.copyWith(
-                                                color: Theme.of(context)
-                                                    .colorScheme
-                                                    .primary,
-                                                fontWeight: FontWeight.bold,
-                                              ),
-                                        ),
-                                        child: const Center(
-                                          child: CircularProgressIndicator(),
-                                        ),
+                        return InkWell(
+                          onTap: () => Get.toNamed(AppRoutes.profileUser,
+                              arguments: user.id),
+                          child: Card(
+                            surfaceTintColor:
+                                Theme.of(context).colorScheme.background,
+                            elevation: 2,
+                            shape: RoundedRectangleBorder(
+                              borderRadius: BorderRadius.circular(12),
+                            ),
+                            child: Container(
+                              constraints: const BoxConstraints(maxWidth: 130),
+                              padding: const EdgeInsets.all(12),
+                              alignment: Alignment.center,
+                              child: Column(
+                                mainAxisAlignment: MainAxisAlignment.center,
+                                children: [
+                                  ClipOval(
+                                    child: CachedNetworkImage(
+                                      imageUrl: user.imageUrl ?? '',
+                                      width: 32,
+                                      height: 32,
+                                      fit: BoxFit.cover,
+                                      placeholder: (context, url) =>
+                                          const ShimmerLoadingCircle(size: 32),
+                                      errorWidget: (context, url, error) =>
+                                          const CircleAvatar(
+                                        radius: 16,
+                                        backgroundImage: AssetImage(
+                                            'assets/images/empty_profile.png'),
                                       ),
                                     ),
                                   ),
-                                ),
-                              ],
+                                  const SizedBox(height: 8),
+                                  Text(
+                                    user.name,
+                                    maxLines: 1,
+                                    overflow: TextOverflow.ellipsis,
+                                    textAlign: TextAlign.center,
+                                    style: Theme.of(context)
+                                        .textTheme
+                                        .bodyMedium
+                                        ?.copyWith(
+                                          fontWeight: FontWeight.bold,
+                                        ),
+                                  ),
+                                  const SizedBox(height: 8),
+                                  Flexible(
+                                    child: Obx(
+                                      () => CustomChip(
+                                        onTap: () {
+                                          if (user.isFollower == 1) {
+                                            controller.unFollow(user.id);
+                                          } else {
+                                            controller.follow(user.id);
+                                          }
+                                        },
+                                        backgroundColor: Theme.of(context)
+                                            .colorScheme
+                                            .primary
+                                            .withOpacity(0.1),
+                                        child: Visibility(
+                                          visible: user.id ==
+                                              controller.userId.value,
+                                          replacement: Text(
+                                            {
+                                              'is_follower': user.isFollower,
+                                              'is_followed': user.isFollowed
+                                            }.followStatus,
+                                            style: Theme.of(context)
+                                                .textTheme
+                                                .bodyMedium
+                                                ?.copyWith(
+                                                  color: Theme.of(context)
+                                                      .colorScheme
+                                                      .primary,
+                                                  fontWeight: FontWeight.bold,
+                                                ),
+                                          ),
+                                          child: const Center(
+                                            child: CircularProgressIndicator(),
+                                          ),
+                                        ),
+                                      ),
+                                    ),
+                                  ),
+                                ],
+                              ),
                             ),
                           ),
                         );
@@ -351,6 +354,8 @@ class SocialSearchView extends GetView<SocialSearchController> {
                       UserMiniModel user = controller.friends[index];
 
                       return ListTile(
+                        onTap: () => Get.toNamed(AppRoutes.profileUser,
+                            arguments: user.id),
                         leading: ClipOval(
                           child: CachedNetworkImage(
                             imageUrl: user.imageUrl ?? '',
@@ -381,9 +386,9 @@ class SocialSearchView extends GetView<SocialSearchController> {
                           Obx(
                             () => CustomChip(
                               onTap: () {
-                                if (user.isFollowing == 1 &&
+                                if (user.isFollower == 1 &&
                                     user.isFollowed == 1) {
-                                } else if (user.isFollowing == 1) {
+                                } else if (user.isFollower == 1) {
                                   controller.unFollow(user.id);
                                 } else {
                                   controller.follow(user.id);
@@ -399,7 +404,7 @@ class SocialSearchView extends GetView<SocialSearchController> {
                                 visible: user.id == controller.userId.value,
                                 replacement: Text(
                                   {
-                                    'is_following': user.isFollowing,
+                                    'is_follower': user.isFollower,
                                     'is_followed': user.isFollowed
                                   }.followStatus,
                                   style: Theme.of(context)
@@ -536,7 +541,8 @@ class SocialSearchView extends GetView<SocialSearchController> {
                     itemBuilder: (context, index) {
                       ClubModel club = controller.clubMayYouKnow[index];
                       return InkWell(
-                        onTap: () => Get.toNamed(AppRoutes.previewClub, arguments: club.id),
+                        onTap: () => Get.toNamed(AppRoutes.previewClub,
+                            arguments: club.id),
                         child: Card(
                           surfaceTintColor:
                               Theme.of(context).colorScheme.onPrimary,
@@ -581,16 +587,19 @@ class SocialSearchView extends GetView<SocialSearchController> {
                                 ),
                                 const SizedBox(height: 16),
                                 Visibility(
-                                  visible: club.privacy == ClubPrivacyEnum.public,
+                                  visible:
+                                      club.privacy == ClubPrivacyEnum.public,
                                   child: CustomChip(
                                     onTap: () {
                                       if (!(club.isJoined ?? false)) {
                                         controller.joinClub(club.id ?? '');
                                       } else {
-                                        Get.snackbar('Error', 'You have joined the club');
+                                        Get.snackbar('Error',
+                                            'You have joined the club');
                                       }
                                     },
-                                    padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 4),
+                                    padding: const EdgeInsets.symmetric(
+                                        horizontal: 12, vertical: 4),
                                     backgroundColor: (club.isJoined ?? false)
                                         ? Colors.transparent
                                         : Theme.of(context)
@@ -598,7 +607,8 @@ class SocialSearchView extends GetView<SocialSearchController> {
                                             .primary
                                             .withOpacity(0.1),
                                     child: Visibility(
-                                      visible: club.id == controller.clubId.value,
+                                      visible:
+                                          club.id == controller.clubId.value,
                                       replacement: Text(
                                         (club.isJoined ?? false)
                                             ? 'Joined'
@@ -679,7 +689,8 @@ class SocialSearchView extends GetView<SocialSearchController> {
                     ClubModel club = controller.clubs[index];
 
                     return ListTile(
-                      onTap: () => Get.toNamed(AppRoutes.previewClub, arguments: club.id),
+                      onTap: () => Get.toNamed(AppRoutes.previewClub,
+                          arguments: club.id),
                       leading: ClipOval(
                         child: CachedNetworkImage(
                           imageUrl: club.imageUrl ?? '',
@@ -724,11 +735,15 @@ class SocialSearchView extends GetView<SocialSearchController> {
                             }
                           },
                           child: Container(
-                            padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 4),
+                            padding: const EdgeInsets.symmetric(
+                                horizontal: 16, vertical: 4),
                             decoration: BoxDecoration(
                               color: (club.isJoined ?? false)
-                                ? Colors.transparent
-                                : Theme.of(context).colorScheme.primary.withOpacity(0.1),
+                                  ? Colors.transparent
+                                  : Theme.of(context)
+                                      .colorScheme
+                                      .primary
+                                      .withOpacity(0.1),
                               borderRadius: BorderRadius.circular(100),
                               border: Border.all(color: Colors.transparent),
                             ),

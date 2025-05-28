@@ -9,6 +9,7 @@ import 'package:zest_mobile/app/modules/social/widgets/post_media.dart';
 import 'package:zest_mobile/app/modules/social/widgets/social_action_button.dart';
 import 'package:zest_mobile/app/modules/social/widgets/statistic_column.dart';
 import 'package:zest_mobile/app/core/extension/date_extension.dart';
+import 'package:zest_mobile/app/routes/app_routes.dart';
 
 // ignore: must_be_immutable
 class ActivityDetailCard extends StatelessWidget {
@@ -27,6 +28,7 @@ class ActivityDetailCard extends StatelessWidget {
         children: [
           _buildCardHeader(
             context: context,
+            userId: postData?.user?.id ?? '',
             userName: postData?.user?.name ?? '',
             userImageUrl: postData?.user?.imageUrl ?? '',
             createdAt: postData?.createdAt?.toHumanPostDate() ?? '',
@@ -80,45 +82,49 @@ class ActivityDetailCard extends StatelessWidget {
 
   Widget _buildCardHeader({
     required BuildContext context, 
+    required String userId,
     required String userName,
     required String userImageUrl,
     required String createdAt,
     required String district,
   }) {
-    return Row(
-      children: [
-        ClipOval(
-          child: CachedNetworkImage(
-            imageUrl: userImageUrl,
-            width: 30,
-            height: 30,
-            fit: BoxFit.cover,
-            placeholder: (context, url) => const ShimmerLoadingCircle(size: 30),
-            errorWidget: (context, url, error) => const CircleAvatar(
-              radius: 30,
-              backgroundImage: AssetImage('assets/images/empty_profile.png'),
+    return InkWell(
+      onTap: () => Get.toNamed(AppRoutes.profileUser, arguments: userId),
+      child: Row(
+        children: [
+          ClipOval(
+            child: CachedNetworkImage(
+              imageUrl: userImageUrl,
+              width: 30,
+              height: 30,
+              fit: BoxFit.cover,
+              placeholder: (context, url) => const ShimmerLoadingCircle(size: 30),
+              errorWidget: (context, url, error) => const CircleAvatar(
+                radius: 30,
+                backgroundImage: AssetImage('assets/images/empty_profile.png'),
+              ),
             ),
           ),
-        ),
-        const SizedBox(width: 8),
-        Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Text(
-              userName,
-              maxLines: 1,
-              overflow: TextOverflow.ellipsis,
-              style: Theme.of(context).textTheme.bodyMedium?.copyWith(fontWeight: FontWeight.w600),
-            ),
-            Text(
-              '$district, $createdAt',
-              maxLines: 1,
-              overflow: TextOverflow.ellipsis,
-              style: Theme.of(context).textTheme.labelSmall?.copyWith(color: Theme.of(context).colorScheme.onTertiary),
-            ),
-          ],
-        ),
-      ],
+          const SizedBox(width: 8),
+          Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Text(
+                userName,
+                maxLines: 1,
+                overflow: TextOverflow.ellipsis,
+                style: Theme.of(context).textTheme.bodyMedium?.copyWith(fontWeight: FontWeight.w600),
+              ),
+              Text(
+                '$district, $createdAt',
+                maxLines: 1,
+                overflow: TextOverflow.ellipsis,
+                style: Theme.of(context).textTheme.labelSmall?.copyWith(color: Theme.of(context).colorScheme.onTertiary),
+              ),
+            ],
+          ),
+        ],
+      ),
     );
   }
 

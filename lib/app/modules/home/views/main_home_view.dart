@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_svg/svg.dart';
 import 'package:get/get.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:zest_mobile/app/core/shared/theme/color_schemes.dart';
@@ -20,34 +21,49 @@ class MainHomeView extends GetView<MainHomeController> {
 
 
   Widget _buildNavItem(
-    BuildContext context, {
-    required IconData icon,
-    required String label,
-    required int index,
-    required Function() onTap,
-  }) {
-    final bool isSelected = controller.currentIndex.value == index;
-    final Color activeColor = Theme.of(context).colorScheme.primary;
-    final Color inactiveColor = Theme.of(context).colorScheme.secondary;
+  BuildContext context, {
+  required String svgPath,
+  required int index,
+  required Function() onTap,
+}) {
+  final bool isSelected = controller.currentIndex.value == index;
+  final Color inactiveColor = Theme.of(context).colorScheme.secondary;
 
-    return Expanded(
-      child: GestureDetector(
-        onTap: onTap,
-        behavior: HitTestBehavior.opaque,
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.center,
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            Icon(
-              icon,
-              color: isSelected ? activeColor : inactiveColor,
-              size: 28,
-            ),
-          ],
-        ),
+  Widget iconWidget;
+
+  if (isSelected) {
+    iconWidget = ShaderMask(
+      blendMode: BlendMode.srcIn,
+      shaderCallback: (Rect bounds) {
+        return kStartButtonGradient.createShader(bounds);
+      },
+      child: SvgPicture.asset(
+        svgPath,
+        colorFilter: const ColorFilter.mode(Colors.white, BlendMode.srcIn),
+        width: 28,
       ),
     );
+  } else {
+    iconWidget = SvgPicture.asset(
+      svgPath,
+      colorFilter: ColorFilter.mode(
+        inactiveColor,
+        BlendMode.srcIn,
+      ),
+      width: 28,
+    );
   }
+
+  return Expanded(
+    child: GestureDetector(
+      onTap: onTap,
+      behavior: HitTestBehavior.opaque,
+      child: Center(
+        child: iconWidget,
+      ),
+    ),
+  );
+}
 
   Widget _buildStartButton(BuildContext context) {
     return SizedBox(
@@ -115,12 +131,12 @@ class MainHomeView extends GetView<MainHomeController> {
                 ),
                 child: Row(
                   children: [
-                    _buildNavItem(context, icon: Icons.home_outlined, label: 'Home', index: 0, onTap: () => controller.changeTab(0)),
-                    _buildNavItem(context, icon: Icons.people_outline, label: 'Social', index: 1, onTap: () => controller.changeTab(1)),
+                    _buildNavItem(context, svgPath: 'assets/icons/ic_home.svg', index: 0, onTap: () => controller.changeTab(0)),
+                    _buildNavItem(context, svgPath: 'assets/icons/ic_social.svg', index: 1, onTap: () => controller.changeTab(1)),
                     // Spacer untuk tombol START di tengah, menggunakan _startButtonDiameter
                     const SizedBox(width: _startButtonDiameter),
-                    _buildNavItem(context, icon: Icons.shopping_bag_outlined, label: 'Shop', index: 2, onTap: () => controller.changeTab(2)),
-                    _buildNavItem(context, icon: Icons.person_outline, label: 'Profile', index: 3, onTap: () => controller.changeTab(3)),
+                    _buildNavItem(context, svgPath: 'assets/icons/ic_shop.svg', index: 2, onTap: () => controller.changeTab(2)),
+                    _buildNavItem(context, svgPath: 'assets/icons/ic_profile.svg', index: 3, onTap: () => controller.changeTab(3)),
                   ],
                 ),
               ),

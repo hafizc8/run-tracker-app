@@ -51,6 +51,7 @@ class SocialClubSearchController extends GetxController {
       hasReacheMax.value = false;
     }
     search.value = input;
+    searchController.text = input;
 
     _debouncer.run(() => searchClub(input));
   }
@@ -60,7 +61,6 @@ class SocialClubSearchController extends GetxController {
       clubs.clear();
       pageClub = 1;
       hasReacheMax.value = false;
-      return;
     }
 
     if (isLoading.value || hasReacheMax.value) return;

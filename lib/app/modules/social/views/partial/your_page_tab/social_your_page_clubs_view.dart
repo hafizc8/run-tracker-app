@@ -1,5 +1,6 @@
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_svg/flutter_svg.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:get/get.dart';
 import 'package:zest_mobile/app/core/models/model/club_model.dart';
@@ -18,11 +19,12 @@ class SocialYourPageClubsView extends GetView<SocialClubSearchController> {
           onChanged: (value) => controller.onSearchChanged(value),
           decoration: InputDecoration(
             hintText: 'Search',
-            border: OutlineInputBorder(borderRadius: BorderRadius.circular(12)),
+            border: OutlineInputBorder(borderRadius: BorderRadius.circular(10)),
             suffixIcon: Icon(
               Icons.search,
               color: Theme.of(context).colorScheme.primary,
             ),
+            fillColor: Theme.of(context).colorScheme.background,
           ),
         ),
         const SizedBox(height: 16),
@@ -47,31 +49,51 @@ class SocialYourPageClubsView extends GetView<SocialClubSearchController> {
         const SizedBox(height: 16),
         Obx(() {
           if (controller.resultSearchEmpty.value) {
-            return Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 16),
-              child: Text(
-                'No result for “${controller.search.value}”',
-                style: Theme.of(context).textTheme.bodyMedium?.copyWith(
-                      color: Theme.of(context).colorScheme.secondary,
-                      fontWeight: FontWeight.bold,
-                    ),
-              ),
+            return Column(
+              children: [
+                const SizedBox(height: 30),
+                SvgPicture.asset('assets/icons/ic_not_found.svg', width: 160),
+                const SizedBox(height: 16),
+                Text(
+                  'Nothing Here Yet',
+                  style: Theme.of(context).textTheme.titleMedium?.copyWith(
+                    color: const Color(0xFF5C5C5C),
+                    fontSize: 20,
+                  ),
+                ),
+                const SizedBox(height: 3),
+                Text(
+                  'Try a different keyword',
+                  style: Theme.of(context).textTheme.titleSmall?.copyWith(
+                    color: const Color(0xFF5C5C5C),
+                  ),
+                ),
+              ],
             );
           }
           if (controller.clubs.isEmpty &&
               controller.search.value.isEmpty &&
               !controller.isLoading.value) {
-            return SizedBox(
-              height: 300,
-              child: Center(
-                child: Text(
-                  'You Have Not Joined Any Club',
-                  style: Theme.of(context).textTheme.bodyLarge?.copyWith(
-                        fontWeight: FontWeight.bold,
-                        color: Theme.of(context).colorScheme.secondary,
-                      ),
+            return Column(
+              children: [
+                const SizedBox(height: 30),
+                SvgPicture.asset('assets/icons/ic_no_club_yet.svg', width: 160),
+                const SizedBox(height: 16),
+                Text(
+                  'Nothing Here Yet',
+                  style: Theme.of(context).textTheme.titleMedium?.copyWith(
+                    color: const Color(0xFF5C5C5C),
+                    fontSize: 20,
+                  ),
                 ),
-              ),
+                const SizedBox(height: 3),
+                Text(
+                  'Try a different keyword',
+                  style: Theme.of(context).textTheme.titleSmall?.copyWith(
+                    color: const Color(0xFF5C5C5C),
+                  ),
+                ),
+              ],
             );
           }
 
@@ -81,8 +103,8 @@ class SocialYourPageClubsView extends GetView<SocialClubSearchController> {
             physics: const NeverScrollableScrollPhysics(),
             gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
               crossAxisCount: 3,
-              mainAxisSpacing: 5,
-              crossAxisSpacing: 5,
+              mainAxisSpacing: 10,
+              crossAxisSpacing: 3,
             ),
             itemCount: controller.clubs.length + (controller.hasReacheMax.value ? 0 : 1),
             itemBuilder: (context, index) {
@@ -118,12 +140,12 @@ class SocialYourPageClubsView extends GetView<SocialClubSearchController> {
               ClipOval(
                 child: CachedNetworkImage(
                   imageUrl: club.imageUrl ?? '',
-                  width: 55,
-                  height: 55,
+                  width: 68,
+                  height: 68,
                   fit: BoxFit.cover,
-                  placeholder: (context, url) => const ShimmerLoadingCircle(size: 55),
+                  placeholder: (context, url) => const ShimmerLoadingCircle(size: 68),
                   errorWidget: (context, url, error) => const CircleAvatar(
-                    radius: 55,
+                    radius: 68,
                     backgroundImage: AssetImage('assets/images/empty_profile.png'),
                   ),
                 ),
@@ -150,7 +172,10 @@ class SocialYourPageClubsView extends GetView<SocialClubSearchController> {
         const SizedBox(height: 10),
         Text(
           club.name ?? '',
-          style: Theme.of(context).textTheme.bodyMedium?.copyWith(fontWeight: FontWeight.w600),
+          style: Theme.of(context).textTheme.bodySmall?.copyWith(
+            fontWeight: FontWeight.w400,
+            color: const Color(0xFFDCDCDC),
+          ),
           maxLines: 2,
           overflow: TextOverflow.ellipsis,
           textAlign: TextAlign.center,

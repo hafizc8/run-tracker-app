@@ -36,7 +36,7 @@ class ParticipantsAvatars extends StatelessWidget {
                   color: Colors.white,
                   shape: BoxShape.circle,
                 ),
-                padding: const EdgeInsets.all(2),
+                padding: const EdgeInsets.all(0),
                 child: CircleAvatar(
                   backgroundColor: Theme.of(context).colorScheme.primary,
                   child: Text(
@@ -57,7 +57,7 @@ class ParticipantsAvatars extends StatelessWidget {
             child: Container(
               width: avatarSize,
               height: avatarSize,
-              padding: const EdgeInsets.all(2),
+              padding: const EdgeInsets.all(0),
               decoration: const BoxDecoration(
                 color: Colors.white,
                 shape: BoxShape.circle,

@@ -11,7 +11,7 @@ import 'dart:async';
 
 import 'package:zest_mobile/app/core/shared/helpers/debouncer.dart';
 
-class SocialSearchController extends GetxController {
+class SocialSearchController extends GetxController with GetSingleTickerProviderStateMixin {
   var isLoadingPeopleYouMayKnow = false.obs;
   var isLoadingFriends = false.obs;
   var isLoadingFollow = false.obs;
@@ -50,7 +50,13 @@ class SocialSearchController extends GetxController {
 
   var pageClub = 1;
 
-  late TabController tabController;
+  late var tabBarController;
+
+  final RxInt selectedIndex = 0.obs;
+
+  void changeTabIndex(int index) {
+    selectedIndex.value = index;
+  }
 
   void onSearchChanged(String input) {
     if (search.value != input) {
@@ -66,6 +72,10 @@ class SocialSearchController extends GetxController {
   @override
   void onInit() {
     super.onInit();
+    tabBarController = TabController(length: 2, vsync: this);
+    tabBarController.addListener(() {
+      changeTabIndex(tabBarController.index);
+    });
     searchPeopleYouMayKnow();
     searchClubYouMayKnow();
   }

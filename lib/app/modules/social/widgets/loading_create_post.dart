@@ -46,25 +46,18 @@ class _LoadingCreatePostState extends State<LoadingCreatePost> with SingleTicker
           width: double.infinity,
           padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 16),
           decoration: BoxDecoration(
-            color: lightColorScheme.primary,
+            color: darkColorScheme.primary,
             borderRadius: BorderRadius.circular(16),
-            boxShadow: [
-              BoxShadow(
-                color: Colors.black.withOpacity(0.1),
-                blurRadius: 10,
-                offset: const Offset(0, 4),
-              ),
-            ],
           ),
           child: Row(
             mainAxisAlignment: MainAxisAlignment.center,
             mainAxisSize: MainAxisSize.min,
             children: [
-              const SizedBox(
+              SizedBox(
                 width: 18,
                 height: 18,
                 child: CircularProgressIndicator(
-                  valueColor: AlwaysStoppedAnimation<Color>(Colors.white),
+                  valueColor: AlwaysStoppedAnimation<Color>(darkColorScheme.onPrimary),
                   strokeWidth: 2,
                 ),
               ),
@@ -72,10 +65,7 @@ class _LoadingCreatePostState extends State<LoadingCreatePost> with SingleTicker
               Flexible(
                 child: Text(
                   'Creating your post...',
-                  style: Theme.of(context).textTheme.labelMedium?.copyWith(
-                    fontWeight: FontWeight.w600,
-                    color: lightColorScheme.onPrimary,
-                  ),
+                  style: Theme.of(context).textTheme.labelMedium?.copyWith(fontSize: 14),
                 ),
               ),
             ],

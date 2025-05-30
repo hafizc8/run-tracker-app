@@ -1,6 +1,7 @@
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
+import 'package:flutter_svg/svg.dart';
 import 'package:get/get.dart';
 import 'package:shimmer/shimmer.dart';
 import 'package:zest_mobile/app/core/extension/follow_extension.dart';
@@ -9,8 +10,10 @@ import 'package:zest_mobile/app/core/models/model/club_model.dart';
 import 'package:zest_mobile/app/core/models/model/user_mini_model.dart';
 import 'package:zest_mobile/app/core/shared/widgets/custom_chip.dart';
 import 'package:zest_mobile/app/core/shared/widgets/custom_circular_progress_indicator.dart';
+import 'package:zest_mobile/app/core/shared/widgets/gradient_outlined_button.dart';
 import 'package:zest_mobile/app/core/shared/widgets/shimmer_loading_circle.dart';
 import 'package:zest_mobile/app/modules/social/views/partial/search/controllers/social_search_controller.dart';
+import 'package:zest_mobile/app/modules/social/views/partial/search/views/widgets/search_club_card.dart';
 import 'package:zest_mobile/app/routes/app_routes.dart';
 
 class SocialSearchView extends GetView<SocialSearchController> {
@@ -29,10 +32,13 @@ class SocialSearchView extends GetView<SocialSearchController> {
             _buildCustomTabBar(context),
             const SizedBox(height: 16),
             Expanded(
-              child: TabBarView(children: [
-                _buildFriendsTab(context),
-                _buildClubsTab(context),
-              ]),
+              child: TabBarView(
+                controller: controller.tabBarController,
+                children: [
+                  _buildFriendsTab(context),
+                  _buildClubsTab(context),
+                ],
+              ),
             ),
           ],
         ),
@@ -65,33 +71,61 @@ class SocialSearchView extends GetView<SocialSearchController> {
   }
 
   Widget _buildCustomTabBar(BuildContext context) {
-    return Padding(
-      padding: const EdgeInsets.symmetric(horizontal: 16),
-      child: Container(
-        height: 48,
-        decoration: BoxDecoration(
-          border: Border.all(color: Theme.of(context).colorScheme.primary),
-          borderRadius: BorderRadius.circular(12),
-        ),
-        child: TabBar(
-          indicator: BoxDecoration(
-            color: Theme.of(context).colorScheme.primary,
-            borderRadius: BorderRadius.only(
-              topLeft: Radius.circular(11),
-              bottomLeft: Radius.circular(11),
+    return Obx(
+      () {
+        BorderRadiusGeometry indicatorBorderRadius;
+
+        int currentTab = controller.selectedIndex.value;
+
+        if (currentTab == 0) { 
+          indicatorBorderRadius = const BorderRadius.only(
+            topLeft: Radius.circular(11),
+            bottomLeft: Radius.circular(11),
+          );
+        } else {
+          indicatorBorderRadius = const BorderRadius.only(
+            topRight: Radius.circular(11),
+            bottomRight: Radius.circular(11),
+          );
+        }
+
+        return Container(
+          margin: const EdgeInsets.symmetric(horizontal: 16),
+          height: 38,
+          decoration: BoxDecoration(
+            border: Border.all(color: Theme.of(context).colorScheme.primary),
+            borderRadius: BorderRadius.circular(16),
+            color: Theme.of(context).colorScheme.onPrimary,
+          ),
+          child: ClipRRect(
+            borderRadius: BorderRadius.circular(15),
+            child: TabBar(
+              controller: controller.tabBarController,
+              indicator: BoxDecoration(
+                color: Theme.of(context).colorScheme.primary,
+                borderRadius: indicatorBorderRadius,
+              ),
+              automaticIndicatorColorAdjustment: false,
+              indicatorWeight: 0,
+              indicatorSize: TabBarIndicatorSize.tab,
+              dividerHeight: 0,
+              labelColor: Theme.of(context).colorScheme.onPrimary,
+              unselectedLabelColor: Theme.of(context).colorScheme.primary,
+              labelStyle: Theme.of(context).textTheme.bodySmall?.copyWith(
+                fontWeight: FontWeight.w400,
+              ),
+              unselectedLabelStyle: Theme.of(context).textTheme.bodySmall?.copyWith(
+                fontWeight: FontWeight.w400,
+              ),
+              
+              tabs: const [
+                Tab(text: 'Friends'),
+                Tab(text: 'Clubs'),
+              ],
             ),
           ),
-          indicatorSize: TabBarIndicatorSize.tab,
-          labelColor: Theme.of(context).colorScheme.onPrimary,
-          unselectedLabelColor: Theme.of(context).colorScheme.primary,
-          labelStyle: Theme.of(context).textTheme.bodyLarge,
-          unselectedLabelStyle: Theme.of(context).textTheme.bodyLarge,
-          tabs: const [
-            Tab(text: 'Friends'),
-            Tab(text: 'Clubs'),
-          ],
-        ),
-      ),
+        );
+      }
     );
   }
 
@@ -108,6 +142,7 @@ class SocialSearchView extends GetView<SocialSearchController> {
                 Icons.search,
                 color: Theme.of(context).colorScheme.primary,
               ),
+              fillColor: Theme.of(context).colorScheme.background,
             ),
           ),
         ),
@@ -442,6 +477,7 @@ class SocialSearchView extends GetView<SocialSearchController> {
               Icons.search,
               color: Theme.of(context).colorScheme.primary,
             ),
+            fillColor: Theme.of(context).colorScheme.background,
           ),
         ),
       ),
@@ -525,107 +561,20 @@ class SocialSearchView extends GetView<SocialSearchController> {
                   );
                 }
                 return SizedBox(
-                  height: 180, // Atur tinggi agar horizontal scroll terlihat
+                  height: 210, // Atur tinggi agar horizontal scroll terlihat
                   child: ListView.separated(
                     scrollDirection: Axis.horizontal,
                     itemCount: controller.clubMayYouKnow.length,
-                    separatorBuilder: (context, index) =>
-                        const SizedBox(width: 10),
+                    separatorBuilder: (context, index) => const SizedBox(width: 10),
                     padding: const EdgeInsets.symmetric(horizontal: 16),
                     itemBuilder: (context, index) {
                       ClubModel club = controller.clubMayYouKnow[index];
                       return InkWell(
-                        onTap: () => Get.toNamed(AppRoutes.previewClub,
-                            arguments: club.id),
-                        child: Card(
-                          surfaceTintColor:
-                              Theme.of(context).colorScheme.onPrimary,
-                          elevation: 2,
-                          shape: RoundedRectangleBorder(
-                              borderRadius: BorderRadius.circular(12)),
-                          child: Container(
-                            width: 120,
-                            padding: const EdgeInsets.all(12),
-                            alignment: Alignment.center,
-                            child: Column(
-                              mainAxisAlignment: MainAxisAlignment.center,
-                              children: [
-                                ClipOval(
-                                  child: CachedNetworkImage(
-                                    imageUrl: club.imageUrl ?? '',
-                                    width: 32,
-                                    height: 32,
-                                    fit: BoxFit.cover,
-                                    placeholder: (context, url) =>
-                                        const ShimmerLoadingCircle(size: 32),
-                                    errorWidget: (context, url, error) =>
-                                        const CircleAvatar(
-                                      radius: 16,
-                                      backgroundImage: AssetImage(
-                                          'assets/images/empty_profile.png'),
-                                    ),
-                                  ),
-                                ),
-                                const SizedBox(height: 8),
-                                Text(
-                                  club.name ?? '',
-                                  maxLines: 2,
-                                  overflow: TextOverflow.ellipsis,
-                                  textAlign: TextAlign.center,
-                                  style: Theme.of(context)
-                                      .textTheme
-                                      .bodyMedium
-                                      ?.copyWith(
-                                        fontWeight: FontWeight.bold,
-                                      ),
-                                ),
-                                const SizedBox(height: 16),
-                                Visibility(
-                                  visible:
-                                      club.privacy == ClubPrivacyEnum.public,
-                                  child: CustomChip(
-                                    onTap: () {
-                                      if (!(club.isJoined ?? false)) {
-                                        controller.joinClub(club.id ?? '');
-                                      } else {
-                                        Get.snackbar('Error',
-                                            'You have joined the club');
-                                      }
-                                    },
-                                    padding: const EdgeInsets.symmetric(
-                                        horizontal: 12, vertical: 4),
-                                    backgroundColor: (club.isJoined ?? false)
-                                        ? Colors.transparent
-                                        : Theme.of(context)
-                                            .colorScheme
-                                            .primary
-                                            .withOpacity(0.1),
-                                    child: Visibility(
-                                      visible:
-                                          club.id == controller.clubId.value,
-                                      replacement: Text(
-                                        (club.isJoined ?? false)
-                                            ? 'Joined'
-                                            : 'Join',
-                                        style: Theme.of(context)
-                                            .textTheme
-                                            .bodyMedium
-                                            ?.copyWith(
-                                              color: Theme.of(context)
-                                                  .colorScheme
-                                                  .primary,
-                                              fontWeight: FontWeight.bold,
-                                            ),
-                                      ),
-                                      child: const Center(
-                                        child: CircularProgressIndicator(),
-                                      ),
-                                    ),
-                                  ),
-                                ),
-                              ],
-                            ),
-                          ),
+                        onTap: () => Get.toNamed(AppRoutes.previewClub, arguments: club.id),
+                        child: SearchClubCard(
+                          club: club,
+                          cardWidth: 115,
+                          cardHeight: 190,
                         ),
                       );
                     },
@@ -636,15 +585,26 @@ class SocialSearchView extends GetView<SocialSearchController> {
           ),
           child: Obx(() {
             if (controller.resultSearchEmptyClub.value) {
-              return Padding(
-                padding: const EdgeInsets.symmetric(horizontal: 16),
-                child: Text(
-                  'No result for “${controller.search.value}”',
-                  style: Theme.of(context).textTheme.bodyMedium?.copyWith(
-                        color: Theme.of(context).colorScheme.secondary,
-                        fontWeight: FontWeight.bold,
-                      ),
-                ),
+              return Column(
+                children: [
+                  const SizedBox(height: 30),
+                  SvgPicture.asset('assets/icons/ic_no_club_yet.svg', width: 160),
+                  const SizedBox(height: 16),
+                  Text(
+                    'Nothing Here Yet',
+                    style: Theme.of(context).textTheme.titleMedium?.copyWith(
+                      color: const Color(0xFF5C5C5C),
+                      fontSize: 20,
+                    ),
+                  ),
+                  const SizedBox(height: 3),
+                  Text(
+                    'Try a different keyword',
+                    style: Theme.of(context).textTheme.titleSmall?.copyWith(
+                      color: const Color(0xFF5C5C5C),
+                    ),
+                  ),
+                ],
               );
             }
             return Obx(
@@ -653,10 +613,8 @@ class SocialSearchView extends GetView<SocialSearchController> {
                   physics: const BouncingScrollPhysics(
                     parent: AlwaysScrollableScrollPhysics(),
                   ),
-                  itemCount: controller.clubs.length +
-                      (controller.hasReacheMaxClub.value ? 0 : 1),
-                  separatorBuilder: (context, index) =>
-                      const SizedBox(height: 10),
+                  itemCount: controller.clubs.length + (controller.hasReacheMaxClub.value ? 0 : 1),
+                  separatorBuilder: (context, index) => const SizedBox(height: 10),
                   padding: const EdgeInsets.symmetric(horizontal: 16),
                   controller: controller.scrollClubsController
                     ..addListener(() {
@@ -706,53 +664,44 @@ class SocialSearchView extends GetView<SocialSearchController> {
                         maxLines: 1,
                         overflow: TextOverflow.ellipsis,
                         style: Theme.of(context).textTheme.bodyMedium?.copyWith(
-                              fontWeight: FontWeight.bold,
-                            ),
+                          fontWeight: FontWeight.bold,
+                          fontSize: 12,
+                        ),
                       ),
                       subtitle: Text(
                         '${club.province}, ${club.country}',
                         maxLines: 1,
                         overflow: TextOverflow.ellipsis,
-                        style: Theme.of(context).textTheme.bodySmall,
+                        style: Theme.of(context).textTheme.bodyMedium?.copyWith(
+                          color: const Color(0xFF858585),
+                          fontSize: 11,
+                        ),
                       ),
                       trailing: Visibility(
                         visible: club.privacy == ClubPrivacyEnum.public,
-                        child: GestureDetector(
-                          onTap: () {
-                            if (!(club.isJoined ?? false)) {
-                              controller.joinClub(club.id ?? '');
-                            } else {
-                              Get.snackbar(
-                                'Error',
-                                'You have joined the club',
-                              );
-                            }
-                          },
-                          child: Container(
-                            padding: const EdgeInsets.symmetric(
-                                horizontal: 16, vertical: 4),
-                            decoration: BoxDecoration(
-                              color: (club.isJoined ?? false)
-                                  ? Colors.transparent
-                                  : Theme.of(context)
-                                      .colorScheme
-                                      .primary
-                                      .withOpacity(0.1),
-                              borderRadius: BorderRadius.circular(100),
-                              border: Border.all(color: Colors.transparent),
-                            ),
+                        child: SizedBox(
+                          height: 35,
+                          width: 65,
+                          child: GradientOutlinedButton(
+                            onPressed: () {
+                              if (!(club.isJoined ?? false)) {
+                                controller.joinClub(club.id ?? '');
+                              } else {
+                                Get.snackbar(
+                                  'Error',
+                                  'You have joined the club',
+                                );
+                              }
+                            },
                             child: Visibility(
                               visible: club.id == controller.clubId.value,
                               replacement: Text(
                                 (club.isJoined ?? false) ? 'Joined' : 'Join',
-                                style: Theme.of(context)
-                                    .textTheme
-                                    .bodyMedium
-                                    ?.copyWith(
-                                      color:
-                                          Theme.of(context).colorScheme.primary,
-                                      fontWeight: FontWeight.bold,
-                                    ),
+                                style: Theme.of(context).textTheme.bodyMedium?.copyWith(
+                                  color: Theme.of(context).colorScheme.primary,
+                                  fontWeight: FontWeight.bold,
+                                  fontSize: 10,
+                                ),
                               ),
                               child: const Center(
                                 child: CircularProgressIndicator(),

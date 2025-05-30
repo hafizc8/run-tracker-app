@@ -16,7 +16,7 @@ class MainHomeView extends GetView<MainHomeController> {
 
   // Ukuran Tombol START (diameter)
   // Didefinisikan di sini agar konsisten digunakan di _buildStartButton dan di Row spacer
-  static const double _startButtonDiameter = 80.0;
+  static const double _startButtonDiameter = 88.0;
 
 
   Widget _buildNavItem(

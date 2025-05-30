@@ -38,7 +38,7 @@ ColorScheme get darkColorScheme => const ColorScheme(
   onSecondary: Colors.white,
   background: Color(0xFF292929), // Hitam pekat untuk latar belakang utama
   onBackground: Color(0xFFDCDCDC), // Putih gading untuk teks utama di latar belakang gelap
-  surface: Color(0xFF1C1C1E), // Abu-abu gelap untuk card, sheet (iOS dark mode style)
+  surface: Color(0xFF2E2E2E), // Abu-abu gelap untuk card, sheet (iOS dark mode style)
   onSurface: Color(0xFFE5E5EA), // Putih gading untuk teks di atas surface
   error: Color(0xFFFF453A), // Merah yang lebih cerah untuk dark mode
   onError: Colors.black, // Teks hitam di atas warna error (kontras lebih baik)

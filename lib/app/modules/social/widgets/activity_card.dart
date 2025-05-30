@@ -33,14 +33,7 @@ class ActivityCard extends StatelessWidget {
         padding: const EdgeInsets.all(16),
         decoration: BoxDecoration(
           borderRadius: BorderRadius.circular(10),
-          color: Theme.of(context).colorScheme.background,
-          boxShadow: [
-            BoxShadow(
-              color: Colors.grey.shade500,
-              blurRadius: 2,
-              offset: const Offset(0, 1),
-            ),
-          ],
+          color: Theme.of(context).colorScheme.surface,
         ),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
@@ -117,7 +110,7 @@ class ActivityCard extends StatelessWidget {
                         style: Theme.of(context).textTheme.bodyMedium?.copyWith(fontWeight: FontWeight.w600),
                       ),
                       Text(
-                        '$district, $createdAt',
+                        district,
                         maxLines: 1,
                         overflow: TextOverflow.ellipsis,
                         style: Theme.of(context).textTheme.labelSmall?.copyWith(color: Theme.of(context).colorScheme.onTertiary),
@@ -128,43 +121,54 @@ class ActivityCard extends StatelessWidget {
               ],
             ),
             // PopupMenuButton di kanan
-            isOwner
-            ?
-            PopupMenuButton<String>(
-              onSelected: (value) {
-                // Handle the selection
-                if (value == 'edit') {
-                  postController.goToEditPost(postId: postData.id ?? '', isFromDetail: false);
-                } else if (value == 'delete') {
-                  postController.confirmAndDeletePost(postId: postData.id ?? '');
-                }
-              },
-              icon: Icon(
-                Icons.more_horiz,
-                color: Theme.of(context).colorScheme.primary,
-              ),
-              surfaceTintColor: Theme.of(context).colorScheme.onPrimary,
-              itemBuilder: (BuildContext context) {
-                return [
-                  PopupMenuItem<String>(
-                    value: 'edit',
-                    child: Text(
-                      'Edit Post',
-                      style: Theme.of(context).textTheme.bodyMedium?.copyWith(fontWeight: FontWeight.w600),
+            Column(
+              crossAxisAlignment: CrossAxisAlignment.end,
+              children: [
+                Visibility(
+                  visible: isOwner,
+                  child: PopupMenuButton<String>(
+                    onSelected: (value) {
+                      // Handle the selection
+                      if (value == 'edit') {
+                        postController.goToEditPost(postId: postData.id ?? '', isFromDetail: false);
+                      } else if (value == 'delete') {
+                        postController.confirmAndDeletePost(postId: postData.id ?? '');
+                      }
+                    },
+                    padding: const EdgeInsets.all(0),
+                    icon: Icon(
+                      Icons.more_horiz,
+                      color: Theme.of(context).colorScheme.outline,
                     ),
+                    surfaceTintColor: Theme.of(context).colorScheme.onPrimary,
+                    itemBuilder: (BuildContext context) {
+                      return [
+                        PopupMenuItem<String>(
+                          value: 'edit',
+                          child: Text(
+                            'Edit Post',
+                            style: Theme.of(context).textTheme.bodyMedium?.copyWith(fontWeight: FontWeight.w600),
+                          ),
+                        ),
+                        PopupMenuItem<String>(
+                          value: 'delete',
+                          child: Text(
+                            'Delete Post',
+                            style: Theme.of(context).textTheme.bodyMedium?.copyWith(fontWeight: FontWeight.w600),
+                          ),
+                        ),
+                      ];
+                    },
                   ),
-                  PopupMenuItem<String>(
-                    value: 'delete',
-                    child: Text(
-                      'Delete Post',
-                      style: Theme.of(context).textTheme.bodyMedium?.copyWith(fontWeight: FontWeight.w600),
-                    ),
-                  ),
-                ];
-              },
-            )
-            :
-            const SizedBox(),
+                ),
+                Text(
+                  createdAt,
+                  maxLines: 1,
+                  overflow: TextOverflow.ellipsis,
+                  style: Theme.of(context).textTheme.labelSmall?.copyWith(color: Theme.of(context).colorScheme.onTertiary),
+                ),
+              ],
+            ),
           ],
         ),
       ),

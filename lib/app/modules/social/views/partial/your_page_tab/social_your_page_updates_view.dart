@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import 'package:zest_mobile/app/core/shared/theme/color_schemes.dart';
+import 'package:zest_mobile/app/core/shared/theme/elevated_btn_theme.dart';
 import 'package:zest_mobile/app/core/shared/widgets/shimmer_loading_list.dart';
 import 'package:zest_mobile/app/modules/social/controllers/post_controller.dart';
 import 'package:zest_mobile/app/modules/social/controllers/social_controller.dart';
@@ -74,22 +74,19 @@ class SocialYourPageUpdatesView extends GetView<SocialController> {
         postController.openCreatePostDialog();
       },
       borderRadius: BorderRadius.circular(12),
-      child: Container(
-        padding: const EdgeInsets.all(16),
+      child: Ink(
         decoration: BoxDecoration(
-          color: lightColorScheme.primary,
+          gradient: kAppDefaultButtonGradient,
           borderRadius: BorderRadius.circular(12),
         ),
-        child: Row(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            Icon(Icons.chat_bubble_outline, color: lightColorScheme.onPrimary),
-            const SizedBox(width: 8),
-            Text(
-              'Doing some sports today? Share it!',
-              style: Theme.of(context).textTheme.labelLarge?.copyWith(fontWeight: FontWeight.bold),
+        child: Container(
+          padding: const EdgeInsets.all(16),
+          child: Center(
+            child: Text(
+              'Share your today’s vibe!',
+              style: Theme.of(context).textTheme.labelMedium?.copyWith(fontSize: 14),
             ),
-          ],
+          ),
         ),
       ),
     );

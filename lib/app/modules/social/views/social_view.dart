@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:google_fonts/google_fonts.dart';
+import 'package:zest_mobile/app/core/shared/theme/color_schemes.dart';
 import 'package:zest_mobile/app/modules/social/views/partial/for_you_tab/social_for_you_view.dart';
 import 'package:zest_mobile/app/modules/social/views/partial/your_page_tab/social_your_page_view.dart';
 import 'package:zest_mobile/app/modules/social/widgets/event_card_dialog.dart';
@@ -33,12 +35,15 @@ class SocialView extends GetView<SocialController> {
     return AppBar(
       title: RichText(
         text: TextSpan(
-          style: Theme.of(context).textTheme.headlineMedium?.copyWith(
-            fontWeight: FontWeight.w700,
-            fontSize: 25,
-          ),
           children: <TextSpan>[
-            const TextSpan(text: 'ZEST+ '),
+            TextSpan(
+              text: 'ZEST+ ',
+              style: GoogleFonts.poppins(
+                fontWeight: FontWeight.w700,
+                fontSize: 25,
+                color: darkColorScheme.primary,
+              )
+            ),
             TextSpan(
               text: 'Social',
               style: Theme.of(context).textTheme.titleLarge,

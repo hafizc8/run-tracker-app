@@ -1,5 +1,6 @@
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
+import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:get/get.dart';
 import 'package:zest_mobile/app/core/models/model/post_model.dart';
 import 'package:zest_mobile/app/core/shared/theme/color_schemes.dart';
@@ -126,45 +127,53 @@ class ActivityCard extends StatelessWidget {
               children: [
                 Visibility(
                   visible: isOwner,
-                  child: PopupMenuButton<String>(
-                    onSelected: (value) {
-                      // Handle the selection
-                      if (value == 'edit') {
-                        postController.goToEditPost(postId: postData.id ?? '', isFromDetail: false);
-                      } else if (value == 'delete') {
-                        postController.confirmAndDeletePost(postId: postData.id ?? '');
-                      }
+                  child: InkWell(
+                    onTapDown: (details) async {
+                      await showMenu(
+                        context: context,
+                        position: RelativeRect.fromLTRB(
+                          details.globalPosition.dx,
+                          details.globalPosition.dy,
+                          0,
+                          0,
+                        ),
+                        surfaceTintColor: Theme.of(context).colorScheme.onPrimary,
+                        items: [
+                          PopupMenuItem<String>(
+                            value: 'edit',
+                            child: Text(
+                              'Edit Post',
+                              style: Theme.of(context).textTheme.bodyMedium?.copyWith(fontWeight: FontWeight.w600),
+                            ),
+                          ),
+                          PopupMenuItem<String>(
+                            value: 'delete',
+                            child: Text(
+                              'Delete Post',
+                              style: Theme.of(context).textTheme.bodyMedium?.copyWith(fontWeight: FontWeight.w600),
+                            ),
+                          ),
+                        ],
+                        elevation: 8.0,
+                      ).then((value) async {
+                        if (value == 'edit') {
+                          postController.goToEditPost(postId: postData.id ?? '', isFromDetail: false);
+                        } else if (value == 'delete') {
+                          postController.confirmAndDeletePost(postId: postData.id ?? '');
+                        }
+                      });
                     },
-                    padding: const EdgeInsets.all(0),
-                    icon: Icon(
+                    child: Icon(
                       Icons.more_horiz,
                       color: Theme.of(context).colorScheme.outline,
                     ),
-                    surfaceTintColor: Theme.of(context).colorScheme.onPrimary,
-                    itemBuilder: (BuildContext context) {
-                      return [
-                        PopupMenuItem<String>(
-                          value: 'edit',
-                          child: Text(
-                            'Edit Post',
-                            style: Theme.of(context).textTheme.bodyMedium?.copyWith(fontWeight: FontWeight.w600),
-                          ),
-                        ),
-                        PopupMenuItem<String>(
-                          value: 'delete',
-                          child: Text(
-                            'Delete Post',
-                            style: Theme.of(context).textTheme.bodyMedium?.copyWith(fontWeight: FontWeight.w600),
-                          ),
-                        ),
-                      ];
-                    },
                   ),
                 ),
                 Text(
                   createdAt,
                   maxLines: 1,
                   overflow: TextOverflow.ellipsis,
+                  textAlign: TextAlign.end,
                   style: Theme.of(context).textTheme.labelSmall?.copyWith(color: Theme.of(context).colorScheme.onTertiary),
                 ),
               ],
@@ -189,7 +198,7 @@ class ActivityCard extends StatelessWidget {
       ]
       :
       [
-        Text(title, style: Theme.of(context).textTheme.headlineMedium?.copyWith(fontSize: 18, color: Theme.of(context).colorScheme.onSurface)),
+        Text(title, style: Theme.of(context).textTheme.bodyMedium?.copyWith(fontSize: 13, color: Theme.of(context).colorScheme.onSurface)),
         const SizedBox(height: 5),
         Text(content, style: Theme.of(context).textTheme.bodySmall?.copyWith(fontWeight: FontWeight.w600, color: Theme.of(context).colorScheme.onSurface)),
       ],
@@ -265,43 +274,69 @@ class ActivityCard extends StatelessWidget {
 
   Widget _buildSocialActions() {
     return Row(
+      mainAxisSize: MainAxisSize.max,
       children: [
-        SocialActionButton(
-          icon: AnimatedSwitcher(
-            duration: const Duration(milliseconds: 400),
-            transitionBuilder: (child, animation) {
-              return FadeTransition(
-                opacity: animation,
-                child: ScaleTransition(scale: animation, child: child),
-              );
-            },
-            child: Icon(
-              postData.isLiked!
-                  ? Icons.local_fire_department
-                  : Icons.local_fire_department_outlined,
-              key: ValueKey(postData.isLiked),
-              color: lightColorScheme.primary,
-              size: 18,
+        Flexible(
+          flex: 1,
+          child: Container(
+            width: double.infinity,
+            margin: const EdgeInsets.symmetric(horizontal: 4),
+            child: SocialActionButton(
+              icon: AnimatedSwitcher(
+                duration: const Duration(milliseconds: 400),
+                transitionBuilder: (child, animation) {
+                  return FadeTransition(
+                    opacity: animation,
+                    child: ScaleTransition(scale: animation, child: child),
+                  );
+                },
+                child: FaIcon(
+                  FontAwesomeIcons.fire,
+                  size: 15,
+                  color: postData.isLiked! ? darkColorScheme.primary : darkColorScheme.onBackground,
+                  key: ValueKey(postData.isLiked),
+                ),
+              ),
+              label: 'Like',
+              onTap: () => postController.likePost(
+                postId: postData.id!,
+                isDislike: postData.isLiked! ? 1 : 0,
+              ),
+              selected: postData.isLiked!,
             ),
           ),
-          label: 'Like',
-          onTap: () => postController.likePost(
-            postId: postData.id!,
-            isDislike: postData.isLiked! ? 1 : 0,
+        ),
+        Flexible(
+          flex: 1,
+          child: Container(
+            width: double.infinity,
+            margin: const EdgeInsets.symmetric(horizontal: 4),
+            child: SocialActionButton(
+              icon: FaIcon(
+                FontAwesomeIcons.comment,
+                size: 15,
+                color: darkColorScheme.onBackground,
+              ),
+              label: 'Comment', 
+              onTap: () => postController.goToDetail(postId: postData.id!, isFocusComment: true),
+            ),
           ),
         ),
-
-        const SizedBox(width: 8),
-        SocialActionButton(
-          icon: Icon(Icons.chat_bubble_outline, size: 18, color: lightColorScheme.primary), 
-          label: 'Comment', 
-          onTap: () => postController.goToDetail(postId: postData.id!, isFocusComment: true),
-        ),
-        const SizedBox(width: 8),
-        SocialActionButton(
-          icon: Icon(Icons.share_outlined, size: 18, color: lightColorScheme.primary), 
-          label: 'Share', 
-          onTap: () {}
+        Flexible(
+          flex: 1,
+          child: Container(
+            width: double.infinity,
+            margin: const EdgeInsets.symmetric(horizontal: 4),
+            child: SocialActionButton(
+              icon: FaIcon(
+                FontAwesomeIcons.paperPlane,
+                size: 15,
+                color: darkColorScheme.onBackground,
+              ),
+              label: 'Share', 
+              onTap: () => Get.snackbar('Coming soon', 'Feature is coming soon'),
+            ),
+          ),
         ),
       ],
     );

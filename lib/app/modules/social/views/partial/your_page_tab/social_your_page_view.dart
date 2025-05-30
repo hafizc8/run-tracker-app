@@ -140,7 +140,12 @@ class SocialYourPageView extends GetView<SocialController> {
       child: Chip(
         label: Text(label),
         backgroundColor: const Color(0xFF393939),
-        labelStyle: Theme.of(context).textTheme.headlineSmall?.copyWith(fontSize: 12),
+        labelStyle: Theme.of(context).textTheme.headlineSmall?.copyWith(
+          fontSize: 12,
+          color: (controller.selectedChip.value == chipType)
+              ? darkColorScheme.primary
+              : const Color(0xFFA5A5A5),
+        ),
         shape: RoundedRectangleBorder(
           borderRadius: BorderRadius.circular(10),
           side: BorderSide(

@@ -108,13 +108,16 @@ class ActivityCard extends StatelessWidget {
                         userName,
                         maxLines: 1,
                         overflow: TextOverflow.ellipsis,
-                        style: Theme.of(context).textTheme.bodyMedium?.copyWith(fontWeight: FontWeight.w600),
+                        style: Theme.of(context).textTheme.bodyMedium?.copyWith(fontWeight: FontWeight.w700),
                       ),
                       Text(
                         district,
                         maxLines: 1,
                         overflow: TextOverflow.ellipsis,
-                        style: Theme.of(context).textTheme.labelSmall?.copyWith(color: Theme.of(context).colorScheme.onTertiary),
+                        style: Theme.of(context).textTheme.bodyMedium?.copyWith(
+                          color: const Color(0xFF6C6C6C),
+                          fontSize: 11,
+                        ),
                       ),
                     ],
                   ),
@@ -165,6 +168,7 @@ class ActivityCard extends StatelessWidget {
                     },
                     child: Icon(
                       Icons.more_horiz,
+                      size: 35,
                       color: Theme.of(context).colorScheme.outline,
                     ),
                   ),
@@ -174,7 +178,10 @@ class ActivityCard extends StatelessWidget {
                   maxLines: 1,
                   overflow: TextOverflow.ellipsis,
                   textAlign: TextAlign.end,
-                  style: Theme.of(context).textTheme.labelSmall?.copyWith(color: Theme.of(context).colorScheme.onTertiary),
+                  style: Theme.of(context).textTheme.bodyMedium?.copyWith(
+                    color: const Color(0xFF6C6C6C),
+                    fontSize: 11,
+                  ),
                 ),
               ],
             ),
@@ -194,13 +201,31 @@ class ActivityCard extends StatelessWidget {
       children: 
       title.isEmpty ? 
       [
-        Text(content, style: Theme.of(context).textTheme.headlineMedium?.copyWith(fontSize: 18, color: Theme.of(context).colorScheme.onSurface)),
+        Text(
+          content, 
+          style: Theme.of(context).textTheme.bodySmall?.copyWith(
+            fontSize: 12, 
+            fontWeight: FontWeight.w700,
+          ),
+        ),
       ]
       :
       [
-        Text(title, style: Theme.of(context).textTheme.bodyMedium?.copyWith(fontSize: 13, color: Theme.of(context).colorScheme.onSurface)),
+        Text(
+          title, 
+          style: Theme.of(context).textTheme.bodySmall?.copyWith(
+            fontSize: 12, 
+            fontWeight: FontWeight.w700,
+          ),
+        ),
         const SizedBox(height: 5),
-        Text(content, style: Theme.of(context).textTheme.bodySmall?.copyWith(fontWeight: FontWeight.w600, color: Theme.of(context).colorScheme.onSurface)),
+        Text(
+          content, 
+          style: Theme.of(context).textTheme.bodySmall?.copyWith(
+            fontSize: 12, 
+            fontWeight: FontWeight.w400,
+          ),
+        ),
       ],
     );
   }

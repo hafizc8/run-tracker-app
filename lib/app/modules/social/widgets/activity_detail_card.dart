@@ -1,5 +1,7 @@
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_svg/flutter_svg.dart';
+import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:get/get.dart';
 import 'package:zest_mobile/app/core/models/model/post_model.dart';
 import 'package:zest_mobile/app/core/shared/theme/color_schemes.dart';
@@ -113,13 +115,16 @@ class ActivityDetailCard extends StatelessWidget {
                 userName,
                 maxLines: 1,
                 overflow: TextOverflow.ellipsis,
-                style: Theme.of(context).textTheme.bodyMedium?.copyWith(fontWeight: FontWeight.w600),
+                style: Theme.of(context).textTheme.bodyMedium?.copyWith(fontWeight: FontWeight.w700),
               ),
               Text(
                 '$district, $createdAt',
                 maxLines: 1,
                 overflow: TextOverflow.ellipsis,
-                style: Theme.of(context).textTheme.labelSmall?.copyWith(color: Theme.of(context).colorScheme.onTertiary),
+                style: Theme.of(context).textTheme.bodyMedium?.copyWith(
+                  color: const Color(0xFF6C6C6C),
+                  fontSize: 11,
+                ),
               ),
             ],
           ),
@@ -138,13 +143,31 @@ class ActivityDetailCard extends StatelessWidget {
       children: 
       title.isEmpty ? 
       [
-        Text(content, style: Theme.of(context).textTheme.headlineMedium?.copyWith(fontSize: 18, color: Theme.of(context).colorScheme.onSurface)),
+        Text(
+          content, 
+          style: Theme.of(context).textTheme.bodySmall?.copyWith(
+            fontSize: 12, 
+            fontWeight: FontWeight.w700,
+          ),
+        ),
       ]
       :
       [
-        Text(title, style: Theme.of(context).textTheme.headlineMedium?.copyWith(fontSize: 18, color: Theme.of(context).colorScheme.onSurface)),
+        Text(
+          title, 
+          style: Theme.of(context).textTheme.bodySmall?.copyWith(
+            fontSize: 12, 
+            fontWeight: FontWeight.w700,
+          ),
+        ),
         const SizedBox(height: 5),
-        Text(content, style: Theme.of(context).textTheme.bodySmall?.copyWith(fontWeight: FontWeight.w600, color: Theme.of(context).colorScheme.onSurface)),
+        Text(
+          content, 
+          style: Theme.of(context).textTheme.bodySmall?.copyWith(
+            fontSize: 12, 
+            fontWeight: FontWeight.w400,
+          ),
+        ),
       ],
     );
   }
@@ -213,48 +236,69 @@ class ActivityDetailCard extends StatelessWidget {
     required PostModel? postData
   }) {
     return Row(
+      mainAxisSize: MainAxisSize.max,
       children: [
-        Expanded(
-          child: SocialActionButton(
-            icon: AnimatedSwitcher(
-              duration: const Duration(milliseconds: 400),
-              transitionBuilder: (child, animation) {
-                return FadeTransition(
-                  opacity: animation,
-                  child: ScaleTransition(scale: animation, child: child),
-                );
-              },
-              child: Icon(
-                (postData?.isLiked ?? false)
-                    ? Icons.local_fire_department
-                    : Icons.local_fire_department_outlined,
-                key: ValueKey(postData?.isLiked),
-                color: lightColorScheme.primary,
-                size: 18,
+        Flexible(
+          flex: 1,
+          child: Container(
+            width: double.infinity,
+            margin: const EdgeInsets.symmetric(horizontal: 4),
+            child: SocialActionButton(
+              icon: AnimatedSwitcher(
+                duration: const Duration(milliseconds: 400),
+                transitionBuilder: (child, animation) {
+                  return FadeTransition(
+                    opacity: animation,
+                    child: ScaleTransition(scale: animation, child: child),
+                  );
+                },
+                child: FaIcon(
+                  FontAwesomeIcons.fire,
+                  size: 15,
+                  color: (postData?.isLiked ?? false) ? darkColorScheme.primary : darkColorScheme.onBackground,
+                  key: ValueKey(postData?.isLiked),
+                ),
               ),
-            ),
-            label: 'Like',
-            onTap: () => controller.likePost(
+              label: 'Like',
+              onTap: () => controller.likePost(
               postId: postData?.id ?? '',
               isDislike: (postData?.isLiked ?? false) ? 1 : 0,
               isPostDetail: true
             ),
+              selected: postData?.isLiked ?? false,
+            ),
           ),
         ),
-        const SizedBox(width: 8),
-        Expanded(
-          child: SocialActionButton(
-            icon: Icon(Icons.chat_bubble_outline, size: 18, color: lightColorScheme.primary), 
-            label: 'Comment', 
-            onTap: () => controller.focusToComment(),
+        Flexible(
+          flex: 1,
+          child: Container(
+            width: double.infinity,
+            margin: const EdgeInsets.symmetric(horizontal: 4),
+            child: SocialActionButton(
+              icon: FaIcon(
+                FontAwesomeIcons.comment,
+                size: 15,
+                color: darkColorScheme.onBackground,
+              ),
+              label: 'Comment', 
+              onTap: () => controller.focusToComment(),
+            ),
           ),
         ),
-        const SizedBox(width: 8),
-        Expanded(
-          child: SocialActionButton(
-            icon: Icon(Icons.share_outlined, size: 18, color: lightColorScheme.primary), 
-            label: 'Share', 
-            onTap: () {}
+        Flexible(
+          flex: 1,
+          child: Container(
+            width: double.infinity,
+            margin: const EdgeInsets.symmetric(horizontal: 4),
+            child: SocialActionButton(
+              icon: FaIcon(
+                FontAwesomeIcons.paperPlane,
+                size: 15,
+                color: darkColorScheme.onBackground,
+              ),
+              label: 'Share', 
+              onTap: () => Get.snackbar('Coming soon', 'Feature is coming soon'),
+            ),
           ),
         ),
       ],
@@ -273,36 +317,45 @@ class ActivityDetailCard extends StatelessWidget {
         const SizedBox(height: 15),
         Text(
           'Comments',
-          style: Theme.of(context).textTheme.headlineSmall?.copyWith(fontWeight: FontWeight.bold),
+          style: Theme.of(context).textTheme.labelMedium?.copyWith(
+            color: Theme.of(context).colorScheme.primary
+          ),
         ),
         const SizedBox(height: 15),
         (comments ?? []).isNotEmpty
         ?
-        ListView.builder(
-          itemCount: comments?.length,
-          shrinkWrap: true,
-          physics: const NeverScrollableScrollPhysics(),
-          itemBuilder: (context, index) {
-            return _buildCommentItem(
-              context: context,
-              postId: postId,
-              comment: comments?[index],
-              replies: comments?[index].replies.map((e) {
-                return _buildCommentItem(
-                  context: context,
-                  postId: postId,
-                  comment: Comment(
-                    id: e.id, 
-                    content: e.content, 
-                    createdAt: e.createdAt, 
-                    user: e.user, 
-                    replies: const []
-                  ),
-                  isCommentReply: true
-                );
-              }).toList(),
-            );
-          },
+        Container(
+          decoration: BoxDecoration(
+            color: Theme.of(context).colorScheme.surface,
+            borderRadius: BorderRadius.circular(10),
+          ),
+          padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 16),
+          child: ListView.builder(
+            itemCount: comments?.length,
+            shrinkWrap: true,
+            physics: const NeverScrollableScrollPhysics(),
+            itemBuilder: (context, index) {
+              return _buildCommentItem(
+                context: context,
+                postId: postId,
+                comment: comments?[index],
+                replies: comments?[index].replies.map((e) {
+                  return _buildCommentItem(
+                    context: context,
+                    postId: postId,
+                    comment: Comment(
+                      id: e.id, 
+                      content: e.content, 
+                      createdAt: e.createdAt, 
+                      user: e.user, 
+                      replies: const []
+                    ),
+                    isCommentReply: true
+                  );
+                }).toList(),
+              );
+            },
+          ),
         )
         : 
         SizedBox(
@@ -310,6 +363,8 @@ class ActivityDetailCard extends StatelessWidget {
           child: Column(
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
+              SvgPicture.asset('assets/icons/ic_no_comment.svg', width: 74),
+              const SizedBox(height: 18),
               Text(
                 'No Comment',
                 style: Theme.of(context).textTheme.headlineMedium?.copyWith(color: Theme.of(context).colorScheme.onTertiary),
@@ -342,7 +397,7 @@ class ActivityDetailCard extends StatelessWidget {
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Row(
-            crossAxisAlignment: CrossAxisAlignment.center,
+            crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               // Foto Profil
               ClipOval(
@@ -362,16 +417,19 @@ class ActivityDetailCard extends StatelessWidget {
               // Name & Date
               Text(
                 comment?.user?.name ?? '',
-                style: Theme.of(context).textTheme.bodySmall?.copyWith(
-                  fontWeight: FontWeight.w600
+                style: Theme.of(context).textTheme.labelSmall?.copyWith(
+                  fontWeight: FontWeight.w700,
+                  fontSize: 11,
+                  color: const Color(0xFFA5A5A5),
                 ),
               ),
-              const SizedBox(width: 5),
+              const SizedBox(width: 10),
               Text(
                 comment?.createdAt?.toHumanPostDate() ?? '',
-                style: Theme.of(context).textTheme.bodySmall?.copyWith(
-                  fontWeight: FontWeight.w600,
-                  color: Theme.of(context).colorScheme.onTertiary
+                style: Theme.of(context).textTheme.labelMedium?.copyWith(
+                  fontWeight: FontWeight.w400,
+                  fontSize: 11,
+                  color: const Color(0xFFA5A5A5),
                 ),
               ),
             ],
@@ -385,7 +443,12 @@ class ActivityDetailCard extends StatelessWidget {
               children: [
                 Text(
                   comment?.content ?? '',
-                  style: Theme.of(context).textTheme.bodyMedium,
+                  style: Theme.of(context).textTheme.labelMedium?.copyWith(
+                    fontWeight: FontWeight.w400,
+                    fontSize: 11,
+                    color: const Color(0xFFA5A5A5),
+                    height: 1.8,
+                  ),
                 ),
                 const SizedBox(height: 6),
                 isCommentReply 
@@ -403,7 +466,7 @@ class ActivityDetailCard extends StatelessWidget {
                     style: Theme.of(context).textTheme.headlineSmall?.copyWith(fontSize: 12)
                   ),
                 ),
-                const SizedBox(height: 6),
+                const SizedBox(height: 10),
                 // Kalau ada balasan (nested replies)
                 if (replies != null) ...replies,
               ],

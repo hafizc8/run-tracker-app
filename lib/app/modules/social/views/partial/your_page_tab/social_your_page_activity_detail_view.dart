@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:zest_mobile/app/core/shared/widgets/gradient_border_text_field.dart';
 import 'package:zest_mobile/app/core/shared/widgets/shimmer_loading_list.dart';
 import 'package:zest_mobile/app/modules/social/controllers/post_controller.dart';
 import 'package:zest_mobile/app/modules/social/widgets/activity_detail_card.dart';
@@ -69,22 +70,16 @@ class SocialYourPageActivityDetailView extends GetView<PostController> {
                       Row(
                         children: [
                           Expanded(
-                            child: TextField(
+                            child: GradientBorderTextField(
                               focusNode: controller.commentFocusNode,
                               controller: controller.commentTextController,
-                              decoration: InputDecoration(
-                                hintText: 'Enter your comment',
-                                border: OutlineInputBorder(
-                                  borderRadius: BorderRadius.circular(30),
+                              hintText: 'Enter your comment',
+                              suffixIcon: IconButton(
+                                icon: Icon(
+                                  Icons.send,
+                                  color: Theme.of(context).colorScheme.primary,
                                 ),
-                                contentPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
-                                suffixIcon: IconButton(
-                                  icon: Icon(
-                                    Icons.send,
-                                    color: Theme.of(context).colorScheme.primary,
-                                  ),
-                                  onPressed: () => controller.commentPost(),
-                                ),
+                                onPressed: () => controller.commentPost(),
                               ),
                               onSubmitted: (value) => controller.commentPost(),
                             ),
@@ -107,21 +102,19 @@ class SocialYourPageActivityDetailView extends GetView<PostController> {
       leading: IconButton(
         icon: Icon(
           Icons.chevron_left,
-          color: Theme.of(context).colorScheme.primary,
+          color: Theme.of(context).colorScheme.onBackground,
           size: 35,
         ),
         onPressed: () => Get.back(),
       ),
       title: Text(
-        'Activity Details',
-        style: Theme.of(context)
-            .textTheme
-            .headlineMedium
-            ?.copyWith(fontWeight: FontWeight.w600),
+        'Post Details',
+        style: Theme.of(context).textTheme.headlineMedium?.copyWith(
+          fontWeight: FontWeight.w600,
+          color: Theme.of(context).colorScheme.onBackground,
+        ),
       ),
-      elevation: 4,
-      shadowColor: Colors.black.withOpacity(0.3),
-      surfaceTintColor: Colors.transparent,
+      centerTitle: true,
       actions: [
         PopupMenuButton<String>(
           onSelected: (value) {
@@ -135,7 +128,7 @@ class SocialYourPageActivityDetailView extends GetView<PostController> {
           icon: Icon(
             Icons.more_horiz,
             size: 30,
-            color: Theme.of(context).colorScheme.primary,
+            color: Theme.of(context).colorScheme.onBackground,
           ),
           surfaceTintColor: Theme.of(context).colorScheme.onPrimary,
           itemBuilder: (BuildContext context) {
@@ -143,7 +136,7 @@ class SocialYourPageActivityDetailView extends GetView<PostController> {
               PopupMenuItem<String>(
                 value: 'edit',
                 child: Text(
-                  'Edit Activity',
+                  'Edit Post',
                   style: Theme.of(context)
                       .textTheme
                       .bodyMedium
@@ -153,7 +146,7 @@ class SocialYourPageActivityDetailView extends GetView<PostController> {
               PopupMenuItem<String>(
                 value: 'delete',
                 child: Text(
-                  'Delete Activity',
+                  'Delete Post',
                   style: Theme.of(context)
                       .textTheme
                       .bodyMedium

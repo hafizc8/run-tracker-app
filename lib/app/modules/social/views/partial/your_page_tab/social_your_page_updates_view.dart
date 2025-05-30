@@ -80,7 +80,7 @@ class SocialYourPageUpdatesView extends GetView<SocialController> {
           borderRadius: BorderRadius.circular(12),
         ),
         child: Container(
-          padding: const EdgeInsets.all(16),
+          padding: const EdgeInsets.all(12),
           child: Center(
             child: Text(
               'Share your today’s vibe!',

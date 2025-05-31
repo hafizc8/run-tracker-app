@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_svg/flutter_svg.dart';
 import 'package:zest_mobile/app/core/extension/date_extension.dart';
 import 'package:zest_mobile/app/core/models/enums/challenge_enum.dart';
 import 'package:zest_mobile/app/core/models/model/challenge_model.dart';
@@ -28,22 +29,26 @@ class CardChallenge extends StatelessWidget {
                   padding:
                       const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
                   decoration: BoxDecoration(
-                    color: Colors.blue.shade50,
                     borderRadius: BorderRadius.circular(12),
+                    color: Theme.of(context).colorScheme.secondary,
                   ),
                   child: Row(
                     children: [
-                      const Icon(Icons.person, size: 16, color: Colors.blue),
+                      Icon(
+                        Icons.person,
+                        size: 16,
+                        color: Theme.of(context).colorScheme.onBackground,
+                      ),
                       const SizedBox(width: 6),
                       Text(
                         ChallengeTypeEnum.fromValue(challengeModel.type ?? 0)
                             .challengeType,
                         maxLines: 1,
                         overflow: TextOverflow.ellipsis,
-                        style: const TextStyle(
-                          color: Colors.blue,
-                          fontWeight: FontWeight.bold,
-                        ),
+                        style: Theme.of(context).textTheme.bodyMedium?.copyWith(
+                              color: Theme.of(context).colorScheme.onBackground,
+                              fontWeight: FontWeight.bold,
+                            ),
                       ),
                     ],
                   ),
@@ -61,11 +66,11 @@ class CardChallenge extends StatelessWidget {
                   ),
                 ],
                 const Spacer(),
-                Icon(Icons.share, color: Theme.of(context).primaryColor),
-                const SizedBox(width: 8),
-                Icon(
-                  Icons.more_horiz,
+                SvgPicture.asset(
+                  'assets/icons/share.svg',
                   color: Theme.of(context).colorScheme.primary,
+                  height: 24,
+                  width: 24,
                 ),
               ],
             ),
@@ -89,71 +94,39 @@ class CardChallenge extends StatelessWidget {
                   children: [
                     Icon(
                       Icons.track_changes,
-                      color: Theme.of(context).colorScheme.secondary,
+                      color: Theme.of(context).colorScheme.primary,
                     ),
                     const SizedBox(width: 4),
-                    Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        Text(
-                          'TARGET',
-                          maxLines: 1,
-                          overflow: TextOverflow.ellipsis,
-                          style: Theme.of(context)
-                              .textTheme
-                              .bodySmall
-                              ?.copyWith(
-                                color: Theme.of(context).colorScheme.secondary,
-                                fontWeight: FontWeight.bold,
-                              ),
-                        ),
-                        Text(
-                          challengeModel.target.toString(),
-                          maxLines: 1,
-                          overflow: TextOverflow.ellipsis,
-                          style:
-                              Theme.of(context).textTheme.bodyMedium?.copyWith(
-                                    fontWeight: FontWeight.bold,
-                                  ),
-                        ),
-                      ],
+                    Text(
+                      challengeModel.target.toString(),
+                      maxLines: 1,
+                      overflow: TextOverflow.ellipsis,
+                      style: Theme.of(context).textTheme.bodyMedium?.copyWith(
+                            color: Theme.of(context).colorScheme.onBackground,
+                            fontWeight: FontWeight.bold,
+                          ),
                     ),
                   ],
                 ),
-                const Spacer(),
+                const SizedBox(width: 16),
                 // Start Date
                 Row(
                   children: [
                     Icon(
                       Icons.calendar_today,
                       size: 18,
-                      color: Theme.of(context).colorScheme.secondary,
+                      color: Theme.of(context).colorScheme.primary,
                     ),
                     const SizedBox(width: 4),
-                    Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        Text(
-                          'START DATE',
-                          style: Theme.of(context)
-                              .textTheme
-                              .bodySmall
-                              ?.copyWith(
-                                color: Theme.of(context).colorScheme.secondary,
-                                fontWeight: FontWeight.bold,
-                              ),
-                        ),
-                        Text(
-                          (challengeModel.startDate ?? DateTime.now())
-                              .todMMMyyyyString(),
-                          maxLines: 1,
-                          overflow: TextOverflow.ellipsis,
-                          style:
-                              Theme.of(context).textTheme.bodyMedium?.copyWith(
-                                    fontWeight: FontWeight.bold,
-                                  ),
-                        ),
-                      ],
+                    Text(
+                      (challengeModel.startDate ?? DateTime.now())
+                          .todMMMyyyyString(),
+                      maxLines: 1,
+                      overflow: TextOverflow.ellipsis,
+                      style: Theme.of(context).textTheme.bodyMedium?.copyWith(
+                            color: Theme.of(context).colorScheme.onBackground,
+                            fontWeight: FontWeight.bold,
+                          ),
                     ),
                   ],
                 ),

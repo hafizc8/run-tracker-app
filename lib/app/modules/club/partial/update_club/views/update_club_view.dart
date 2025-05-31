@@ -4,6 +4,8 @@ import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:zest_mobile/app/core/models/enums/club_post_permission_enum.dart';
 import 'package:zest_mobile/app/core/models/enums/club_privacy_enum.dart';
 import 'package:zest_mobile/app/core/models/forms/update_club_form.dart';
+import 'package:zest_mobile/app/core/shared/widgets/custom_circular_progress_indicator.dart';
+import 'package:zest_mobile/app/core/shared/widgets/gradient_elevated_button.dart';
 import 'package:zest_mobile/app/core/shared/widgets/shimmer_loading_list.dart';
 import 'package:zest_mobile/app/modules/club/partial/update_club/controllers/update_club_controller.dart';
 import 'package:zest_mobile/app/routes/app_routes.dart';
@@ -16,13 +18,21 @@ class UpdateClubView extends GetView<UpdateClubController> {
     return Scaffold(
       appBar: AppBar(
         backgroundColor: Theme.of(context).colorScheme.background,
-        title: const Text('Edit Club'),
+        title: Text(
+          'Edit Club',
+          style: Theme.of(context).textTheme.headlineMedium?.copyWith(
+            fontWeight: FontWeight.w600,
+            color: Theme.of(context).colorScheme.onBackground,
+          ),
+        ),
+        centerTitle: true,
         automaticallyImplyLeading: false,
         elevation: 1,
         leading: GestureDetector(
           onTap: () => Get.back(),
-          child: const Icon(
+          child: Icon(
             Icons.chevron_left,
+            color: Theme.of(context).colorScheme.onBackground,
           ),
         ),
       ),
@@ -48,11 +58,13 @@ class UpdateClubView extends GetView<UpdateClubController> {
                   children: [
                     Text(
                       'Club Name',
-                      style: Theme.of(context).textTheme.titleSmall,
+                      style: Theme.of(context).textTheme.bodyMedium?.copyWith(
+                        fontSize: 15,
+                      ),
                     ),
                     const SizedBox(height: 12),
                     TextFormField(
-                      cursorColor: Colors.black,
+                      cursorColor: Colors.white,
                       initialValue: form.name,
                       onChanged: (value) {
                         controller.updateClubForm.value = form.copyWith(
@@ -60,9 +72,17 @@ class UpdateClubView extends GetView<UpdateClubController> {
                           field: 'name',
                         );
                       },
+                      style: Theme.of(context).textTheme.bodyMedium?.copyWith(color: Theme.of(context).colorScheme.onBackground),
                       decoration: InputDecoration(
                         hintText: 'Enter club name',
                         errorText: form.errors?['name'],
+                        border: InputBorder.none,
+                        enabledBorder: OutlineInputBorder(
+                          borderRadius: BorderRadius.circular(10),
+                          borderSide: const BorderSide(
+                            color: Colors.transparent,
+                          ),
+                        ),
                       ),
                     ),
                   ],
@@ -73,11 +93,13 @@ class UpdateClubView extends GetView<UpdateClubController> {
                   children: [
                     Text(
                       'Description',
-                      style: Theme.of(context).textTheme.titleSmall,
+                      style: Theme.of(context).textTheme.bodyMedium?.copyWith(
+                        fontSize: 15,
+                      ),
                     ),
                     const SizedBox(height: 12),
                     TextFormField(
-                      cursorColor: Colors.black,
+                      cursorColor: Colors.white,
                       maxLines: 3,
                       initialValue: form.description,
                       onChanged: (value) {
@@ -86,9 +108,17 @@ class UpdateClubView extends GetView<UpdateClubController> {
                           field: 'description',
                         );
                       },
+                      style: Theme.of(context).textTheme.bodyMedium?.copyWith(color: Theme.of(context).colorScheme.onBackground),
                       decoration: InputDecoration(
                         hintText: 'Enter club description',
                         errorText: form.errors?['description'],
+                        border: InputBorder.none,
+                        enabledBorder: OutlineInputBorder(
+                          borderRadius: BorderRadius.circular(10),
+                          borderSide: const BorderSide(
+                            color: Colors.transparent,
+                          ),
+                        ),
                       ),
                     ),
                   ],
@@ -116,21 +146,24 @@ class UpdateClubView extends GetView<UpdateClubController> {
                     decoration: BoxDecoration(
                       borderRadius: BorderRadius.circular(5),
                       border: Border.all(
-                        color: Colors.grey.shade400,
+                        color: Colors.grey.shade600,
                       ),
                     ),
                     padding: const EdgeInsets.symmetric(vertical: 10, horizontal: 10),
                     child: Row(
-                      mainAxisAlignment: MainAxisAlignment.start,
+                      mainAxisAlignment: MainAxisAlignment.center,
                       children: [
-                        const Icon(
+                        Icon(
                           Icons.upload_outlined,
+                          color: Colors.grey.shade600,
                         ),
                         const SizedBox(width: 8),
                         Text(
                           'Upload Logo',
-                          style: Theme.of(context).textTheme.bodyMedium?.copyWith(fontWeight: FontWeight.bold),
-                        )
+                          style: Theme.of(context).textTheme.bodyMedium?.copyWith(
+                            color: Colors.grey.shade600,
+                          ),
+                        ),
                       ],
                     ),
                   ),
@@ -141,12 +174,14 @@ class UpdateClubView extends GetView<UpdateClubController> {
                   children: [
                     Text(
                       'Location',
-                      style: Theme.of(context).textTheme.titleSmall,
+                      style: Theme.of(context).textTheme.bodyMedium?.copyWith(
+                        fontSize: 15,
+                      ),
                     ),
                     const SizedBox(height: 12),
                     TextFormField(
                       controller: controller.cityController,
-                      cursorColor: Colors.black,
+                      cursorColor: Colors.white,
                       readOnly: true,
                       onTap: () async {
                         final res = await Get.toNamed(AppRoutes.chooseLocation,
@@ -171,10 +206,18 @@ class UpdateClubView extends GetView<UpdateClubController> {
                           }
                         }
                       },
+                      style: Theme.of(context).textTheme.bodyMedium?.copyWith(color: Theme.of(context).colorScheme.onBackground),
                       decoration: InputDecoration(
                         hintText: 'Choose your location',
                         suffixIcon: const Icon(Icons.location_on),
                         errorText: form.errors?['city'],
+                        border: InputBorder.none,
+                        enabledBorder: OutlineInputBorder(
+                          borderRadius: BorderRadius.circular(10),
+                          borderSide: const BorderSide(
+                            color: Colors.transparent,
+                          ),
+                        ),
                       ),
                     ),
                   ],
@@ -185,11 +228,20 @@ class UpdateClubView extends GetView<UpdateClubController> {
                   children: [
                     Text(
                       'Privacy',
-                      style: Theme.of(context).textTheme.titleSmall,
+                      style: Theme.of(context).textTheme.bodyMedium?.copyWith(
+                        fontSize: 15,
+                      ),
                     ),
                     RadioListTile<ClubPrivacyEnum>(
                       contentPadding: EdgeInsets.zero,
-                      title: Text(ClubPrivacyEnum.public.name),
+                      dense: true,
+                      visualDensity: VisualDensity.compact,
+                      title: Text(
+                        ClubPrivacyEnum.public.name,
+                        style: Theme.of(context).textTheme.bodyMedium?.copyWith(
+                          color: Theme.of(context).colorScheme.onBackground
+                        ),
+                      ),
                       value: ClubPrivacyEnum.public,
                       groupValue: form.clubPrivacy,
                       onChanged: (val) {
@@ -201,7 +253,14 @@ class UpdateClubView extends GetView<UpdateClubController> {
                     ),
                     RadioListTile<ClubPrivacyEnum>(
                       contentPadding: EdgeInsets.zero,
-                      title: Text(ClubPrivacyEnum.private.name),
+                      dense: true,
+                      visualDensity: VisualDensity.compact,
+                      title: Text(
+                        ClubPrivacyEnum.private.name,
+                        style: Theme.of(context).textTheme.bodyMedium?.copyWith(
+                          color: Theme.of(context).colorScheme.onBackground
+                        ),
+                      ),
                       value: ClubPrivacyEnum.private,
                       groupValue: form.clubPrivacy,
                       onChanged: (val) {
@@ -225,11 +284,20 @@ class UpdateClubView extends GetView<UpdateClubController> {
                   children: [
                     Text(
                       'Post',
-                      style: Theme.of(context).textTheme.titleSmall,
+                      style: Theme.of(context).textTheme.bodyMedium?.copyWith(
+                        fontSize: 15,
+                      ),
                     ),
                     RadioListTile<ClubPostPermissionEnum>(
                       contentPadding: EdgeInsets.zero,
-                      title: Text(ClubPostPermissionEnum.onlyOwnerCanPost.name),
+                      dense: true,
+                      visualDensity: VisualDensity.compact,
+                      title: Text(
+                        ClubPostPermissionEnum.onlyOwnerCanPost.name,
+                        style: Theme.of(context).textTheme.bodyMedium?.copyWith(
+                          color: Theme.of(context).colorScheme.onBackground
+                        ),
+                      ),
                       value: ClubPostPermissionEnum.onlyOwnerCanPost,
                       groupValue: form.postPermission,
                       onChanged: (val) {
@@ -241,7 +309,14 @@ class UpdateClubView extends GetView<UpdateClubController> {
                     ),
                     RadioListTile<ClubPostPermissionEnum>(
                       contentPadding: EdgeInsets.zero,
-                      title: Text(ClubPostPermissionEnum.participantsCanPost.name),
+                      dense: true,
+                      visualDensity: VisualDensity.compact,
+                      title: Text(
+                        ClubPostPermissionEnum.participantsCanPost.name,
+                        style: Theme.of(context).textTheme.bodyMedium?.copyWith(
+                          color: Theme.of(context).colorScheme.onBackground
+                        ),
+                      ),
                       value: ClubPostPermissionEnum.participantsCanPost,
                       groupValue: form.postPermission,
                       onChanged: (val) {
@@ -264,10 +339,11 @@ class UpdateClubView extends GetView<UpdateClubController> {
           },
         ),
       ),
-      bottomNavigationBar: Padding(
-        padding: const EdgeInsets.all(16.0),
-        child: Obx(
-          () => ElevatedButton(
+      bottomNavigationBar: Obx(
+        () => Container(
+          margin: const EdgeInsets.symmetric(horizontal: 16, vertical: 16),
+          height: 55,
+          child: GradientElevatedButton(
             onPressed: !controller.isValidToUpdate
                 ? null : controller.isLoading.value
                     ? null
@@ -276,8 +352,11 @@ class UpdateClubView extends GetView<UpdateClubController> {
                       },
             child: Visibility(
               visible: controller.isLoading.value,
-              replacement: const Text('Update'),
-              child: const CircularProgressIndicator(),
+              replacement: Text(
+                'Update',
+                style: Theme.of(context).textTheme.labelMedium,
+              ),
+              child: CustomCircularProgressIndicator(),
             ),
           ),
         ),

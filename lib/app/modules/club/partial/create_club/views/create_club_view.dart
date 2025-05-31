@@ -4,8 +4,8 @@ import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:zest_mobile/app/core/models/enums/club_post_permission_enum.dart';
 import 'package:zest_mobile/app/core/models/enums/club_privacy_enum.dart';
 import 'package:zest_mobile/app/core/models/forms/create_club_form.dart';
+import 'package:zest_mobile/app/core/shared/widgets/custom_circular_progress_indicator.dart';
 import 'package:zest_mobile/app/core/shared/widgets/gradient_elevated_button.dart';
-import 'package:zest_mobile/app/core/shared/widgets/shimmer_loading_list.dart';
 import 'package:zest_mobile/app/modules/club/partial/create_club/controllers/create_club_controller.dart';
 import 'package:zest_mobile/app/routes/app_routes.dart';
 
@@ -349,7 +349,7 @@ class CreateClubView extends GetView<CreateClubController> {
                 'Create Club',
                 style: Theme.of(context).textTheme.labelMedium,
               ),
-              child: const CircularProgressIndicator(),
+              child: CustomCircularProgressIndicator(),
             ),
           ),
         ),

@@ -26,8 +26,9 @@ class ClubActivityTabView extends GetView<ClubActivityTabController> {
           }
 
           return ListView.builder(
-            shrinkWrap: true,
-            physics: const NeverScrollableScrollPhysics(),
+            physics: const BouncingScrollPhysics(
+              parent: AlwaysScrollableScrollPhysics(),
+            ),
             itemCount: controller.activities.length + (controller.hasReacheMax.value ? 0 : 1),
             itemBuilder: (context, index) {
               ClubActivitiesModel? activity = controller.activities[index];

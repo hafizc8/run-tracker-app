@@ -1,5 +1,6 @@
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/widgets.dart';
 import 'package:get/get.dart';
 import 'package:zest_mobile/app/core/models/enums/club_privacy_enum.dart';
 import 'package:zest_mobile/app/core/models/model/club_model.dart';
@@ -11,12 +12,13 @@ import 'package:zest_mobile/app/routes/app_routes.dart';
 
 // ignore: must_be_immutable
 class SearchClubCard extends StatelessWidget {
-  SearchClubCard({super.key, required this.club, this.cardWidth = 115, this.cardHeight = 190});
+  SearchClubCard({super.key, required this.club, this.cardWidth = 115, this.cardHeight = 190, this.showDescription = false});
 
   final ClubModel club;
   final controller = Get.find<SocialSearchController>();
   double cardWidth = 115;
   double cardHeight = 190;
+  bool showDescription = false;
 
   @override
   Widget build(BuildContext context) {
@@ -58,7 +60,7 @@ class SearchClubCard extends StatelessWidget {
               const SizedBox(height: 12),
               Text(
                 club.name ?? '',
-                maxLines: 2,
+                maxLines: 1,
                 overflow: TextOverflow.ellipsis,
                 textAlign: TextAlign.center,
                 style: Theme.of(context)
@@ -67,6 +69,26 @@ class SearchClubCard extends StatelessWidget {
                     ?.copyWith(
                       fontWeight: FontWeight.w400,
                     ),
+              ),
+              Visibility(
+                visible: showDescription,
+                child: Padding(
+                  padding: const EdgeInsets.only(top: 4),
+                  child: Text(
+                    club.description ?? 'No description',
+                    maxLines: 1,
+                    overflow: TextOverflow.ellipsis,
+                    textAlign: TextAlign.center,
+                    style: Theme.of(context)
+                        .textTheme
+                        .bodySmall
+                        ?.copyWith(
+                          fontWeight: FontWeight.w400,
+                          fontSize: 10,
+                          color: const Color(0xFF9E9E9E),
+                        ),
+                  ),
+                ),
               ),
             ],
           ),

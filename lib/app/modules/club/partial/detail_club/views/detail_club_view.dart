@@ -283,8 +283,9 @@ class DetailClubView extends GetView<DetailClubController> {
   Widget _buildFloatingActionButton(BuildContext context, ClubModel? club) {
     return Builder(
       builder: (context) => FloatingActionButton(
+        shape: const CircleBorder(),
         backgroundColor: Theme.of(context).colorScheme.primary,
-        child: const Icon(Icons.edit, color: Colors.white),
+        child: Icon(Icons.edit, color: Theme.of(context).colorScheme.onPrimary),
         onPressed: () async {
           await showMenu(
             context: context,
@@ -435,14 +436,11 @@ class DetailClubView extends GetView<DetailClubController> {
       children: [
         ClubActivityTabView(),
         const Padding(
-          padding: EdgeInsets.symmetric(horizontal: 16.0),
+          padding: EdgeInsets.symmetric(horizontal: 16.0, vertical: 32.0),
           child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
+            crossAxisAlignment: CrossAxisAlignment.center,
             children: [
-              SizedBox(height: 20),
-              Text('leaderboard'),
-              SizedBox(height: 20),
-              SizedBox(height: 500),
+              Text('leaderboard will be here'),
             ],
           ),
         ),

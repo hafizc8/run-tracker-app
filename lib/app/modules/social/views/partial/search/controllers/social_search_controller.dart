@@ -290,7 +290,6 @@ class SocialSearchController extends GetxController with GetSingleTickerProvider
           await _clubService.getAll(
             page: 1, 
             joinStatus: 'unjoined', 
-            random: 1,
             order: 'recomendation',
             limit: 10,
           );
@@ -321,6 +320,7 @@ class SocialSearchController extends GetxController with GetSingleTickerProvider
       PaginatedDataResponse<ClubModel> response = await _clubService.getAll(
         page: pageClubExplore,
         limit: 6,
+        joinStatus: 'unjoined',
       );
 
       pageClubExplore++;

@@ -1,14 +1,11 @@
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/widgets.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:get/get.dart';
 import 'package:shimmer/shimmer.dart';
-import 'package:zest_mobile/app/core/extension/follow_extension.dart';
 import 'package:zest_mobile/app/core/models/enums/club_privacy_enum.dart';
 import 'package:zest_mobile/app/core/models/model/club_model.dart';
 import 'package:zest_mobile/app/core/models/model/user_mini_model.dart';
-import 'package:zest_mobile/app/core/shared/widgets/custom_chip.dart';
 import 'package:zest_mobile/app/core/shared/widgets/custom_circular_progress_indicator.dart';
 import 'package:zest_mobile/app/core/shared/widgets/gradient_outlined_button.dart';
 import 'package:zest_mobile/app/core/shared/widgets/shimmer_loading_circle.dart';
@@ -136,6 +133,7 @@ class SocialSearchView extends GetView<SocialSearchController> {
           padding: const EdgeInsets.symmetric(horizontal: 16),
           child: TextFormField(
             onChanged: (value) => controller.onSearchChanged(value),
+            style: Theme.of(context).textTheme.bodyMedium?.copyWith(color: Theme.of(context).colorScheme.onBackground),
             decoration: InputDecoration(
               hintText: "Search for a friend",
               suffixIcon: Icon(
@@ -226,7 +224,7 @@ class SocialSearchView extends GetView<SocialSearchController> {
                     );
                   }
                   return SizedBox(
-                    height: 150, // Atur tinggi agar horizontal scroll terlihat
+                    height: 180, // Atur tinggi agar horizontal scroll terlihat
                     child: ListView.separated(
                       scrollDirection: Axis.horizontal,
                       itemCount: controller.friendsPeopleYouMayKnow.length,
@@ -256,68 +254,73 @@ class SocialSearchView extends GetView<SocialSearchController> {
                                   ClipOval(
                                     child: CachedNetworkImage(
                                       imageUrl: user.imageUrl ?? '',
-                                      width: 32,
-                                      height: 32,
+                                      width: 45,
+                                      height: 45,
                                       fit: BoxFit.cover,
                                       placeholder: (context, url) =>
-                                          const ShimmerLoadingCircle(size: 32),
+                                          const ShimmerLoadingCircle(size: 45),
                                       errorWidget: (context, url, error) =>
                                           const CircleAvatar(
-                                        radius: 16,
+                                        radius: 45,
                                         backgroundImage: AssetImage(
                                             'assets/images/empty_profile.png'),
                                       ),
                                     ),
                                   ),
-                                  const SizedBox(height: 8),
+                                  const SizedBox(height: 12),
                                   Text(
                                     user.name,
                                     maxLines: 1,
                                     overflow: TextOverflow.ellipsis,
                                     textAlign: TextAlign.center,
-                                    style: Theme.of(context)
-                                        .textTheme
-                                        .bodyMedium
-                                        ?.copyWith(
-                                          fontWeight: FontWeight.bold,
-                                        ),
+                                    style: Theme.of(context).textTheme.bodyMedium?.copyWith(
+                                      fontSize: 12,
+                                    ),
                                   ),
-                                  const SizedBox(height: 8),
+                                  const SizedBox(height: 24),
                                   Flexible(
                                     child: Obx(
-                                      () => CustomChip(
-                                        onTap: () {
-                                          if (user.isFollower == 1) {
-                                            controller.unFollow(user.id);
-                                          } else {
-                                            controller.follow(user.id);
-                                          }
-                                        },
-                                        backgroundColor: Theme.of(context)
-                                            .colorScheme
-                                            .primary
-                                            .withOpacity(0.1),
-                                        child: Visibility(
-                                          visible: user.id ==
-                                              controller.userId.value,
-                                          replacement: Text(
-                                            {
-                                              'is_follower': user.isFollower,
-                                              'is_followed': user.isFollowed
-                                            }.followStatus,
-                                            style: Theme.of(context)
-                                                .textTheme
-                                                .bodyMedium
-                                                ?.copyWith(
-                                                  color: Theme.of(context)
-                                                      .colorScheme
-                                                      .primary,
-                                                  fontWeight: FontWeight.bold,
+                                      () => SizedBox(
+                                        height: 38,
+                                        child: GradientOutlinedButton(
+                                          onPressed: () {
+                                            if (user.isFollowing == 1 && user.isFollower == 1) {
+                                              Get.snackbar('Coming soon', 'Feature chat coming soon');
+                                              return;
+                                            }
+
+                                            if (user.isFollowing == 1) {
+                                              controller.unFollow(user.id);
+                                            } else {
+                                              controller.follow(user.id);
+                                            }
+                                          },
+                                          child: Visibility(
+                                            visible: user.id == controller.userId.value,
+                                            replacement: Visibility(
+                                              visible: user.isFollowing == 0,
+                                              replacement: Visibility(
+                                                visible: user.isFollower == 0,
+                                                replacement: Icon(
+                                                  Icons.chat_bubble_outline,
+                                                  color: Theme.of(context).colorScheme.primary,
+                                                  size: 18,
                                                 ),
-                                          ),
-                                          child: Center(
-                                            child:
-                                                CustomCircularProgressIndicator(),
+                                                child: Icon(
+                                                  Icons.person_remove_alt_1_outlined,
+                                                  color: Theme.of(context).colorScheme.primary,
+                                                  size: 18,
+                                                ),
+                                              ),
+                                              child: Icon(
+                                                Icons.person_add_alt,
+                                                color: Theme.of(context).colorScheme.primary,
+                                                size: 18,
+                                              ),
+                                            ),
+                                            child: Center(
+                                              child: CustomCircularProgressIndicator(indicatorSize: 15),
+                                            ),
                                           ),
                                         ),
                                       ),
@@ -405,49 +408,51 @@ class SocialSearchView extends GetView<SocialSearchController> {
                           user.name,
                           maxLines: 1,
                           overflow: TextOverflow.ellipsis,
-                          style:
-                              Theme.of(context).textTheme.bodyMedium?.copyWith(
-                                    fontWeight: FontWeight.bold,
-                                  ),
+                          style: Theme.of(context).textTheme.bodyMedium?.copyWith(
+                            fontSize: 12,
+                          ),
                         ),
                         trailing:
                             Row(mainAxisSize: MainAxisSize.min, children: [
                           Obx(
-                            () => CustomChip(
+                            () => InkWell(
                               onTap: () {
-                                if (user.isFollower == 1 &&
-                                    user.isFollowed == 1) {
-                                } else if (user.isFollower == 1) {
+                                if (user.isFollowing == 1 && user.isFollower == 1) {
+                                  Get.snackbar('Coming soon', 'Feature chat coming soon');
+                                  return;
+                                }
+
+                                if (user.isFollowing == 1) {
                                   controller.unFollow(user.id);
                                 } else {
                                   controller.follow(user.id);
                                 }
                               },
-                              padding: const EdgeInsets.symmetric(
-                                  horizontal: 16, vertical: 8),
-                              backgroundColor: Theme.of(context)
-                                  .colorScheme
-                                  .primary
-                                  .withOpacity(0.1),
                               child: Visibility(
                                 visible: user.id == controller.userId.value,
-                                replacement: Text(
-                                  {
-                                    'is_follower': user.isFollower,
-                                    'is_followed': user.isFollowed
-                                  }.followStatus,
-                                  style: Theme.of(context)
-                                      .textTheme
-                                      .bodyMedium
-                                      ?.copyWith(
-                                        color: Theme.of(context)
-                                            .colorScheme
-                                            .primary,
-                                        fontWeight: FontWeight.bold,
-                                      ),
+                                replacement: Visibility(
+                                  visible: user.isFollowing == 0,
+                                  replacement: Visibility(
+                                    visible: user.isFollower == 0,
+                                    replacement: Icon(
+                                      Icons.chat_bubble_outline,
+                                      color: Theme.of(context).colorScheme.primary,
+                                      size: 23,
+                                    ),
+                                    child: Icon(
+                                      Icons.person_remove_alt_1_outlined,
+                                      color: Theme.of(context).colorScheme.primary,
+                                      size: 23,
+                                    ),
+                                  ),
+                                  child: Icon(
+                                    Icons.person_add_alt,
+                                    color: Theme.of(context).colorScheme.primary,
+                                    size: 23,
+                                  ),
                                 ),
-                                child: const Center(
-                                  child: CircularProgressIndicator(),
+                                child: Center(
+                                  child: CustomCircularProgressIndicator(indicatorSize: 15),
                                 ),
                               ),
                             ),
@@ -472,6 +477,7 @@ class SocialSearchView extends GetView<SocialSearchController> {
           padding: const EdgeInsets.symmetric(horizontal: 16),
           child: TextFormField(
             onChanged: (value) => controller.onSearchClubChanged(value),
+            style: Theme.of(context).textTheme.bodyMedium?.copyWith(color: Theme.of(context).colorScheme.onBackground),
             decoration: InputDecoration(
               hintText: "Search for a club",
               suffixIcon: Icon(

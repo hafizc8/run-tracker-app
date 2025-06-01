@@ -167,7 +167,7 @@ class SocialSearchController extends GetxController with GetSingleTickerProvider
           if (index != -1) {
             final user = friends[index];
             friends[index] = user.copyWith(
-              isFollower: res ? 1 : 0,
+              isFollowing: res ? 1 : 0,
             );
           }
         } else {
@@ -176,7 +176,7 @@ class SocialSearchController extends GetxController with GetSingleTickerProvider
           if (index != -1) {
             final user = friendsPeopleYouMayKnow[index];
             friendsPeopleYouMayKnow[index] = user.copyWith(
-              isFollower: res ? 1 : 0,
+              isFollowing: res ? 1 : 0,
             );
           }
         }
@@ -206,7 +206,7 @@ class SocialSearchController extends GetxController with GetSingleTickerProvider
           if (index != -1) {
             final user = friends[index];
             friends[index] = user.copyWith(
-              isFollower: res ? 0 : 1,
+              isFollowing: res ? 0 : 1,
             );
           }
         } else {
@@ -215,7 +215,7 @@ class SocialSearchController extends GetxController with GetSingleTickerProvider
           if (index != -1) {
             final user = friendsPeopleYouMayKnow[index];
             friendsPeopleYouMayKnow[index] = user.copyWith(
-              isFollower: res ? 0 : 1,
+              isFollowing: res ? 0 : 1,
             );
           }
         }

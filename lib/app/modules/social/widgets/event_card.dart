@@ -1,12 +1,15 @@
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_image_stack/flutter_image_stack.dart';
+import 'package:flutter_svg/flutter_svg.dart';
 import 'package:get/get.dart';
 import 'package:intl/intl.dart';
 import 'package:shimmer/shimmer.dart';
 import 'package:zest_mobile/app/core/extension/date_extension.dart';
 import 'package:zest_mobile/app/core/extension/event_extension.dart';
 import 'package:zest_mobile/app/core/models/model/event_model.dart';
+import 'package:zest_mobile/app/core/shared/widgets/custom_circular_progress_indicator.dart';
+import 'package:zest_mobile/app/core/shared/widgets/gradient_elevated_button.dart';
 import 'package:zest_mobile/app/core/shared/widgets/shimmer_loading_circle.dart';
 import 'package:zest_mobile/app/modules/social/views/partial/for_you_tab/event/controllers/event_action_controller.dart';
 import 'package:zest_mobile/app/modules/social/views/partial/for_you_tab/event/controllers/event_controller.dart';
@@ -37,13 +40,6 @@ class EventCard extends StatelessWidget {
         decoration: BoxDecoration(
           color: backgroundColor,
           borderRadius: BorderRadius.circular(12),
-          boxShadow: [
-            BoxShadow(
-              color: Colors.grey.shade500,
-              blurRadius: 2,
-              offset: const Offset(0, 1),
-            ),
-          ],
         ),
         padding: const EdgeInsets.all(16),
         child: Column(
@@ -54,31 +50,26 @@ class EventCard extends StatelessWidget {
             AspectRatio(
               aspectRatio: 1,
               child: ClipRRect(
-                // borderRadius: BorderRadius.circular(12),
-                child: Container(
-                  color: Colors.grey.shade300,
-                  child: CachedNetworkImage(
-                    imageUrl: eventModel?.imageUrl ?? '',
-                    width: 30,
-                    height: 30,
-                    fit: BoxFit.cover,
-                    placeholder: (context, url) => Shimmer.fromColors(
-                      baseColor: Colors.grey.shade300,
-                      highlightColor: Colors.grey.shade100,
-                      child: const SizedBox.shrink(),
-                    ),
-                    errorWidget: (context, url, error) => const Center(
-                      child: Column(
-                        mainAxisAlignment: MainAxisAlignment.center,
-                        children: [
-                          Icon(Icons.image, size: 64, color: Colors.grey),
-                          SizedBox(height: 8),
-                          Text('Image Placeholder',
-                              style: TextStyle(color: Colors.grey)),
-                        ],
-                      ),
+                borderRadius: BorderRadius.circular(12),
+                child: Image.network(
+                  eventModel?.imageUrl ?? '',
+                  fit: BoxFit.cover,
+                  errorBuilder: (context, error, stackTrace) => Container(
+                    color: Colors.grey.shade300,
+                    child: const Center(
+                      child: Icon(Icons.broken_image,
+                          size: 64, color: Colors.grey),
                     ),
                   ),
+                  loadingBuilder: (context, child, loadingProgress) {
+                    if (loadingProgress == null) return child;
+                    return Container(
+                      color: Colors.grey.shade300,
+                      child: const Center(
+                        child: CircularProgressIndicator(),
+                      ),
+                    );
+                  },
                 ),
               ),
             ),
@@ -88,14 +79,10 @@ class EventCard extends StatelessWidget {
               children: [
                 Container(
                   padding:
-                      const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
+                      const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
                   decoration: BoxDecoration(
-                    color:
-                        Theme.of(context).colorScheme.primary.withOpacity(.2),
-                    shape: BoxShape.rectangle,
-                    borderRadius: const BorderRadius.all(
-                      Radius.circular(8),
-                    ),
+                    borderRadius: BorderRadius.circular(12),
+                    color: Theme.of(context).colorScheme.secondary,
                   ),
                   child: Row(
                     children: [
@@ -117,7 +104,7 @@ class EventCard extends StatelessWidget {
                       Text(
                         eventModel?.activity ?? '-',
                         style: Theme.of(context).textTheme.bodyMedium?.copyWith(
-                              color: Theme.of(context).colorScheme.primary,
+                              color: Theme.of(context).colorScheme.onBackground,
                             ),
                       ),
                     ],
@@ -127,91 +114,72 @@ class EventCard extends StatelessWidget {
                   visible: !isAction,
                   child: Row(
                     children: [
-                      Container(
-                        padding: const EdgeInsets.symmetric(
-                            horizontal: 10, vertical: 4),
-                        decoration: const BoxDecoration(
-                          color: Colors.white,
-                          shape: BoxShape.rectangle,
-                          borderRadius: BorderRadius.all(Radius.circular(12)),
-                        ),
-                        child: Icon(
-                          Icons.share_outlined,
-                          size: 20,
-                          color: Theme.of(context).colorScheme.primary,
-                        ),
+                      Icon(
+                        Icons.share_outlined,
+                        size: 20,
+                        color: Theme.of(context).colorScheme.primary,
                       ),
-                      const SizedBox(width: 5),
+                      const SizedBox(width: 16),
                       Visibility(
                         visible: eventModel?.isOwner == 1 &&
                             (eventModel?.datetime ?? DateTime.now())
                                 .isDateTimePassed(
                                     eventModel?.startTime ?? TimeOfDay.now()) &&
                             eventModel?.cancelledAt == null,
-                        child: Container(
-                          padding: const EdgeInsets.symmetric(
-                              horizontal: 10, vertical: 4),
-                          decoration: const BoxDecoration(
-                            color: Colors.white,
-                            shape: BoxShape.rectangle,
-                            borderRadius: BorderRadius.all(Radius.circular(12)),
-                          ),
-                          child: PopupMenuButton<String>(
-                            onSelected: (value) async {
-                              // Handle the selection
-                              if (value == 'edit_event') {
-                                // Handle Edit Event action
-                                eventActionController.gotToEdit(eventModel!,
-                                    from: 'list');
-                              } else if (value == 'cancel_event') {
-                                // Handle Cancel Event action
-                                await eventController
-                                    .cancelEvent(eventModel?.id ?? '');
-                              }
-                            },
-                            surfaceTintColor:
-                                Theme.of(context).colorScheme.onPrimary,
-                            itemBuilder: (BuildContext context) {
-                              return [
-                                PopupMenuItem<String>(
-                                  value: 'edit_event',
-                                  child: Text(
-                                    'Edit Event',
-                                    style: Theme.of(context)
-                                        .textTheme
-                                        .bodyMedium
-                                        ?.copyWith(fontWeight: FontWeight.w600),
-                                  ),
+                        child: PopupMenuButton<String>(
+                          onSelected: (value) async {
+                            // Handle the selection
+                            if (value == 'edit_event') {
+                              // Handle Edit Event action
+                              eventActionController.gotToEdit(eventModel!,
+                                  from: 'list');
+                            } else if (value == 'cancel_event') {
+                              // Handle Cancel Event action
+                              await eventController
+                                  .cancelEvent(eventModel?.id ?? '');
+                            }
+                          },
+                          surfaceTintColor:
+                              Theme.of(context).colorScheme.onPrimary,
+                          itemBuilder: (BuildContext context) {
+                            return [
+                              PopupMenuItem<String>(
+                                value: 'edit_event',
+                                child: Text(
+                                  'Edit Event',
+                                  style: Theme.of(context)
+                                      .textTheme
+                                      .bodyMedium
+                                      ?.copyWith(fontWeight: FontWeight.w600),
                                 ),
-                                PopupMenuItem<String>(
-                                  value: 'cancel_event',
-                                  child: Obx(
-                                    () => Visibility(
-                                      visible:
-                                          eventController.isLoadingAction.value,
-                                      replacement: Text(
-                                        'Cancel Event',
-                                        style: Theme.of(context)
-                                            .textTheme
-                                            .bodyMedium
-                                            ?.copyWith(
-                                                fontWeight: FontWeight.w600),
-                                      ),
-                                      child: CircularProgressIndicator(
-                                        color: Theme.of(context)
-                                            .colorScheme
-                                            .primary,
-                                      ),
+                              ),
+                              PopupMenuItem<String>(
+                                value: 'cancel_event',
+                                child: Obx(
+                                  () => Visibility(
+                                    visible:
+                                        eventController.isLoadingAction.value,
+                                    replacement: Text(
+                                      'Cancel Event',
+                                      style: Theme.of(context)
+                                          .textTheme
+                                          .bodyMedium
+                                          ?.copyWith(
+                                              fontWeight: FontWeight.w600),
+                                    ),
+                                    child: CircularProgressIndicator(
+                                      color:
+                                          Theme.of(context).colorScheme.primary,
                                     ),
                                   ),
                                 ),
-                              ];
-                            },
-                            child: Icon(
-                              Icons.more_horiz_outlined,
-                              size: 20,
-                              color: Theme.of(context).colorScheme.primary,
-                            ),
+                              ),
+                            ];
+                          },
+                          child: Icon(
+                            Icons.more_horiz_outlined,
+                            size: 20,
+                            color: Theme.of(context).colorScheme.primary,
                           ),
                         ),
                       )
@@ -303,53 +271,92 @@ class EventCard extends StatelessWidget {
               ],
             ),
             const SizedBox(height: 15),
-            Visibility(
-              visible: !isAction,
-              replacement: ElevatedButton(
+            if (isAction) ...[
+              GradientElevatedButton(
                 onPressed: () {},
-                child: const Row(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: [
-                    Icon(Icons.share, size: 20),
-                    SizedBox(width: 8),
-                    Text('Share'),
-                  ],
+                child: SvgPicture.asset(
+                  'assets/icons/share.svg',
+                  color: Theme.of(context).colorScheme.primary,
+                  height: 24,
+                  width: 24,
                 ),
               ),
-              child: Visibility(
-                visible: eventModel?.cancelledAt != null,
-                replacement: Visibility(
-                  visible: (eventModel?.datetime ?? DateTime.now())
-                      .isDateTimePassed(
-                          eventModel?.startTime ?? TimeOfDay.now()),
-                  child: ElevatedButton(
-                    onPressed: eventModel?.isJoined == 0
-                        ? () {
-                            eventController
-                                .accLeaveJoinEvent(eventModel?.id ?? '');
-                          }
-                        : null,
-                    child: Obx(
-                      () => Visibility(
-                        visible: eventController.isLoadingAction.value,
-                        replacement:
-                            Text((eventModel?.isJoined ?? 0).toEventStatus),
-                        child: CircularProgressIndicator(
-                          color: Theme.of(context).colorScheme.onPrimary,
-                        ),
-                      ),
-                    ),
-                  ),
+            ],
+
+            if (eventModel?.cancelledAt != null) ...[
+              GradientElevatedButton(
+                onPressed: null,
+                child: Text(
+                  'Cancelled',
+                  style: Theme.of(context).textTheme.labelSmall,
                 ),
-                child: ElevatedButton(
-                  onPressed: null,
-                  child: Text(
-                    'Cancelled',
-                    style: Theme.of(context).textTheme.labelSmall,
+              ),
+            ],
+
+            if (eventModel?.cancelledAt == null &&
+                (eventModel?.datetime ?? DateTime.now()).isDateTimePassed(
+                    eventModel?.startTime ?? TimeOfDay.now())) ...[
+              GradientElevatedButton(
+                onPressed: eventModel?.isJoined == 0
+                    ? () {
+                        eventController.accLeaveJoinEvent(eventModel?.id ?? '');
+                      }
+                    : null,
+                child: Obx(
+                  () => Visibility(
+                    visible: eventController.isLoadingAction.value,
+                    replacement:
+                        Text((eventModel?.isJoined ?? 0).toEventStatus),
+                    child: CustomCircularProgressIndicator(),
                   ),
                 ),
               ),
-            ),
+            ]
+            // Visibility(
+            //   visible: !isAction,
+            //   replacement: GradientElevatedButton(
+            //     onPressed: () {},
+            //     child: SvgPicture.asset(
+            //       'assets/icons/share.svg',
+            //       color: Theme.of(context).colorScheme.primary,
+            //       height: 24,
+            //       width: 24,
+            //     ),
+            //   ),
+            //   child: Visibility(
+            //     visible: eventModel?.cancelledAt != null,
+            //     replacement: Visibility(
+            //       visible: (eventModel?.datetime ?? DateTime.now())
+            //           .isDateTimePassed(
+            //               eventModel?.startTime ?? TimeOfDay.now()),
+            //       child: GradientElevatedButton(
+            //         onPressed: eventModel?.isJoined == 0
+            //             ? () {
+            //                 eventController
+            //                     .accLeaveJoinEvent(eventModel?.id ?? '');
+            //               }
+            //             : null,
+            //         child: Obx(
+            //           () => Visibility(
+            //             visible: eventController.isLoadingAction.value,
+            //             replacement:
+            //                 Text((eventModel?.isJoined ?? 0).toEventStatus),
+            //             child: CircularProgressIndicator(
+            //               color: Theme.of(context).colorScheme.onPrimary,
+            //             ),
+            //           ),
+            //         ),
+            //       ),
+            //     ),
+            //     child: GradientElevatedButton(
+            //       onPressed: null,
+            //       child: Text(
+            //         'Cancelled',
+            //         style: Theme.of(context).textTheme.labelSmall,
+            //       ),
+            //     ),
+            //   ),
+            // ),
           ],
         ),
       ),
@@ -364,18 +371,16 @@ class EventCard extends StatelessWidget {
   }) {
     return Row(
       children: [
-        Icon(icon, size: 24),
+        Icon(
+          icon,
+          size: 24,
+          color: Theme.of(context).primaryColor,
+        ),
         const SizedBox(width: 8),
         Expanded(
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              Text(
-                title,
-                style: Theme.of(context).textTheme.labelSmall?.copyWith(
-                      color: Theme.of(context).colorScheme.onSurfaceVariant,
-                    ),
-              ),
               Text(
                 subtitle,
                 style: Theme.of(context).textTheme.bodyMedium?.copyWith(

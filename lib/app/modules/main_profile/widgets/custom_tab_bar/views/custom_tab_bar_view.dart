@@ -1,7 +1,10 @@
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:zest_mobile/app/core/extension/date_extension.dart';
 import 'package:zest_mobile/app/core/shared/widgets/card_activity.dart';
 import 'package:zest_mobile/app/core/shared/widgets/card_challenge.dart';
+import 'package:zest_mobile/app/core/shared/widgets/shimmer_loading_circle.dart';
 import 'package:zest_mobile/app/modules/main_profile/controllers/main_profile_controller.dart';
 import 'package:zest_mobile/app/modules/main_profile/widgets/custom_tab_bar/controllers/custom_tab_bar_controller.dart';
 import 'package:zest_mobile/app/modules/social/widgets/event_card.dart';
@@ -118,118 +121,77 @@ class CustomTabBar extends GetView<TabBarController> {
               return Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  Row(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    children: [
-                      Container(
-                        decoration: const BoxDecoration(
-                          color: Colors.transparent,
-                        ),
-                        child: const Column(
-                          mainAxisAlignment: MainAxisAlignment.center,
-                          children: [
-                            Placeholder(
-                              fallbackHeight: 40,
-                              fallbackWidth: 80,
-                            ),
-                            SizedBox(height: 5),
-                            Column(
-                              children: [
-                                Text(
-                                  'item',
-                                  textAlign: TextAlign.center,
+                  Obx(
+                    () => Visibility(
+                      visible: profileController.isLoadingUpComingEvent.value,
+                      replacement: Row(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: profileController.upComingEvents
+                            .map(
+                              (element) => Expanded(
+                                child: Container(
+                                  margin:
+                                      const EdgeInsets.symmetric(horizontal: 5),
+                                  decoration: const BoxDecoration(
+                                    color: Colors.transparent,
+                                  ),
+                                  child: Column(
+                                    mainAxisAlignment: MainAxisAlignment.center,
+                                    children: [
+                                      ClipOval(
+                                        child: CachedNetworkImage(
+                                          imageUrl: element.imageUrl ?? '',
+                                          width: 50,
+                                          height: 50,
+                                          fit: BoxFit.cover,
+                                          placeholder: (context, url) =>
+                                              const ShimmerLoadingCircle(
+                                                  size: 50),
+                                          errorWidget: (context, url, error) =>
+                                              const CircleAvatar(
+                                            radius: 32,
+                                            backgroundImage: AssetImage(
+                                                'assets/images/empty_profile.png'),
+                                          ),
+                                        ),
+                                      ),
+                                      const SizedBox(height: 5),
+                                      Column(
+                                        children: [
+                                          Text(
+                                            element.title ?? '-',
+                                            maxLines: 1,
+                                            overflow: TextOverflow.ellipsis,
+                                            textAlign: TextAlign.center,
+                                          ),
+                                          const SizedBox(height: 5),
+                                          Row(
+                                            children: [
+                                              const Icon(Icons.calendar_month),
+                                              const SizedBox(width: 5),
+                                              Text(
+                                                element.datetime
+                                                        ?.toDDMMMyyyyString() ??
+                                                    '-',
+                                                maxLines: 1,
+                                                overflow: TextOverflow.ellipsis,
+                                                textAlign: TextAlign.center,
+                                              ),
+                                            ],
+                                          ),
+                                        ],
+                                      ),
+                                    ],
+                                  ),
                                 ),
-                                Text(
-                                  'item',
-                                  textAlign: TextAlign.center,
-                                ),
-                              ],
-                            ),
-                          ],
-                        ),
+                              ),
+                            )
+                            .toList(),
                       ),
-                      Container(
-                        decoration: const BoxDecoration(
-                          color: Colors.transparent,
-                        ),
-                        child: const Column(
-                          mainAxisAlignment: MainAxisAlignment.center,
-                          children: [
-                            Placeholder(
-                              fallbackHeight: 40,
-                              fallbackWidth: 80,
-                            ),
-                            SizedBox(height: 5),
-                            Column(
-                              children: [
-                                Text(
-                                  'item',
-                                  textAlign: TextAlign.center,
-                                ),
-                                Text(
-                                  'item',
-                                  textAlign: TextAlign.center,
-                                ),
-                              ],
-                            ),
-                          ],
-                        ),
+                      child: const Center(
+                        child: CircularProgressIndicator(),
                       ),
-                      Container(
-                        decoration: const BoxDecoration(
-                          color: Colors.transparent,
-                        ),
-                        child: const Column(
-                          mainAxisAlignment: MainAxisAlignment.center,
-                          children: [
-                            Placeholder(
-                              fallbackHeight: 40,
-                              fallbackWidth: 80,
-                            ),
-                            SizedBox(height: 5),
-                            Column(
-                              children: [
-                                Text(
-                                  'item',
-                                  textAlign: TextAlign.center,
-                                ),
-                                Text(
-                                  'item',
-                                  textAlign: TextAlign.center,
-                                ),
-                              ],
-                            ),
-                          ],
-                        ),
-                      ),
-                      Container(
-                        decoration: const BoxDecoration(
-                          color: Colors.transparent,
-                        ),
-                        child: const Column(
-                          mainAxisAlignment: MainAxisAlignment.center,
-                          children: [
-                            Placeholder(
-                              fallbackHeight: 40,
-                              fallbackWidth: 80,
-                            ),
-                            SizedBox(height: 5),
-                            Column(
-                              children: [
-                                Text(
-                                  'item',
-                                  textAlign: TextAlign.center,
-                                ),
-                                Text(
-                                  'item',
-                                  textAlign: TextAlign.center,
-                                ),
-                              ],
-                            ),
-                          ],
-                        ),
-                      ),
-                    ],
+                    ),
                   ),
                   const SizedBox(height: 8),
                   Text(
@@ -249,6 +211,8 @@ class CustomTabBar extends GetView<TabBarController> {
                         }
                         final event = profileController.events[index];
                         return EventCard(
+                          backgroundColor:
+                              Theme.of(context).colorScheme.surface,
                           onTap: null,
                           eventModel: event,
                         );

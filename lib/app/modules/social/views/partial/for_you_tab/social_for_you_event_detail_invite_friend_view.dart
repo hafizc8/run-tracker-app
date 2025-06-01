@@ -3,6 +3,9 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:zest_mobile/app/core/models/model/user_mini_model.dart';
 import 'package:zest_mobile/app/core/shared/widgets/custom_blue_checkbox.dart';
+import 'package:zest_mobile/app/core/shared/widgets/custom_circular_progress_indicator.dart';
+import 'package:zest_mobile/app/core/shared/widgets/gradient_elevated_button.dart';
+import 'package:zest_mobile/app/core/shared/widgets/gradient_outlined_button.dart';
 import 'package:zest_mobile/app/core/shared/widgets/shimmer_loading_circle.dart';
 import 'package:zest_mobile/app/core/shared/widgets/shimmer_loading_list.dart';
 import 'package:zest_mobile/app/modules/social/views/partial/for_you_tab/event/controllers/event_invite_controller.dart';
@@ -104,20 +107,21 @@ class SocialForYouEventDetaiInviteFriendView
 
   PreferredSizeWidget _buildAppBar(BuildContext context) {
     return AppBar(
+      centerTitle: true,
       leading: IconButton(
         icon: Icon(
           Icons.chevron_left,
-          color: Theme.of(context).colorScheme.primary,
+          color: Theme.of(context).colorScheme.onBackground,
           size: 35,
         ),
         onPressed: () => Get.back(),
       ),
       title: Text(
-        'Invite a Friend',
-        style: Theme.of(context)
-            .textTheme
-            .headlineMedium
-            ?.copyWith(fontWeight: FontWeight.w600),
+        'Invite a Friends',
+        style: Theme.of(context).textTheme.headlineMedium?.copyWith(
+              fontWeight: FontWeight.w600,
+              color: Theme.of(context).colorScheme.onBackground,
+            ),
       ),
       elevation: 4,
       shadowColor: Colors.black.withOpacity(0.3),
@@ -129,29 +133,15 @@ class SocialForYouEventDetaiInviteFriendView
     return Container(
       padding: const EdgeInsets.all(16),
       decoration: BoxDecoration(
-        color: Colors.white,
-        boxShadow: [
-          BoxShadow(
-            color: Colors.grey.shade500,
-            blurRadius: 2,
-            offset: const Offset(0, 1),
-          ),
-        ],
+        color: Theme.of(context).colorScheme.background,
       ),
       child: Obx(
         () => Row(
           children: [
             Expanded(
-              child: OutlinedButtonTheme(
-                data: OutlinedButtonThemeData(
-                  style: OutlinedButton.styleFrom(
-                    backgroundColor: Theme.of(context).colorScheme.onPrimary,
-                    minimumSize: const Size.fromHeight(40),
-                    side: BorderSide(
-                        color: Theme.of(context).colorScheme.primary),
-                  ),
-                ),
-                child: OutlinedButton(
+              child: SizedBox(
+                height: 55,
+                child: GradientOutlinedButton(
                   onPressed: controller.invites.isEmpty ||
                           controller.isLoadingReserveFriend.value
                       ? null
@@ -160,7 +150,7 @@ class SocialForYouEventDetaiInviteFriendView
                         },
                   child: Visibility(
                     visible: !controller.isLoadingReserveFriend.value,
-                    replacement: const CircularProgressIndicator(),
+                    replacement: CustomCircularProgressIndicator(),
                     child: Text(
                       'Reserve',
                       style: Theme.of(context).textTheme.labelSmall?.copyWith(
@@ -173,15 +163,9 @@ class SocialForYouEventDetaiInviteFriendView
             ),
             const SizedBox(width: 10),
             Expanded(
-              child: ElevatedButtonTheme(
-                data: ElevatedButtonThemeData(
-                  style: ElevatedButton.styleFrom(
-                    backgroundColor: Theme.of(context).colorScheme.primary,
-                    foregroundColor: Theme.of(context).colorScheme.onPrimary,
-                    minimumSize: const Size.fromHeight(40),
-                  ),
-                ),
-                child: ElevatedButton(
+              child: SizedBox(
+                height: 55,
+                child: GradientElevatedButton(
                   onPressed: controller.invites.isEmpty ||
                           controller.isLoadingInviteFriend.value
                       ? null
@@ -237,7 +221,7 @@ class SocialForYouEventDetaiInviteFriendView
           const Spacer(),
           // checkbox
           Obx(
-            () => CustomBlueCheckbox(
+            () => Checkbox(
               value: controller.invites.contains(friend),
               onChanged: (val) {
                 controller.toggleInvite(friend);

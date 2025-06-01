@@ -11,16 +11,21 @@ class BadgesView extends GetView<BadgesController> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        backgroundColor: Theme.of(context).colorScheme.background,
-        title: const Text('Badges'),
+        title: Text(
+          'Badges',
+          style: Theme.of(context).textTheme.headlineSmall?.copyWith(
+                color: Color(0xFFA5A5A5),
+              ),
+        ),
         automaticallyImplyLeading: false,
-        elevation: 1,
+        centerTitle: true,
+        elevation: 4,
         leading: GestureDetector(
           onTap: () => Get.back(),
-          child: Icon(
+          child: const Icon(
             Icons.chevron_left,
             size: 48,
-            color: Theme.of(context).colorScheme.primary,
+            color: Color(0xFFA5A5A5),
           ),
         ),
       ),
@@ -31,7 +36,7 @@ class BadgesView extends GetView<BadgesController> {
           );
         }
         return GridView.builder(
-          padding: const EdgeInsets.only(bottom: 16),
+          padding: const EdgeInsets.all(16),
           shrinkWrap: true,
           physics: const NeverScrollableScrollPhysics(),
           gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
@@ -41,12 +46,13 @@ class BadgesView extends GetView<BadgesController> {
           ),
           itemCount: controller.badges.length,
           itemBuilder: (context, index) => Container(
-            margin: const EdgeInsets.symmetric(horizontal: 16),
+            margin: const EdgeInsets.symmetric(horizontal: 5),
+            padding: const EdgeInsets.only(left: 12, right: 12, bottom: 12),
             decoration: const BoxDecoration(
-              color: Colors.transparent,
+              borderRadius: BorderRadius.all(Radius.circular(10)),
+              color: Color(0xFF2E2E2E),
             ),
             child: Column(
-              mainAxisAlignment: MainAxisAlignment.center,
               children: [
                 ClipOval(
                   child: CachedNetworkImage(

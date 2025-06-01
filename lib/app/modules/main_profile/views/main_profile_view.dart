@@ -37,6 +37,7 @@ class MainProfileView extends GetView<ProfileMainController> {
         }
         return SingleChildScrollView(
           controller: scrollController,
+          padding: const EdgeInsets.all(16),
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
@@ -48,7 +49,8 @@ class MainProfileView extends GetView<ProfileMainController> {
                   ),
                   width: double.infinity,
                   decoration: BoxDecoration(
-                    color: Theme.of(context).colorScheme.primary,
+                    color: Theme.of(context).colorScheme.surface,
+                    borderRadius: BorderRadius.circular(8),
                   ),
                   child: Stack(
                     children: [
@@ -218,44 +220,41 @@ class MainProfileView extends GetView<ProfileMainController> {
                   ),
                 ),
               ),
-              Padding(
-                padding:
-                    const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
-                child: Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                  children: [
-                    Text(
-                      'Badges',
-                      style: Theme.of(context).textTheme.labelLarge?.copyWith(
-                            color: Theme.of(context).colorScheme.primary,
+              const SizedBox(height: 16),
+              Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: [
+                  Text(
+                    'Badges',
+                    style: Theme.of(context).textTheme.labelLarge?.copyWith(
+                          color: Color(0xFFA5A5A5),
+                        ),
+                  ),
+                  GestureDetector(
+                    onTap: () => Get.toNamed(AppRoutes.badges),
+                    child: Row(
+                      children: [
+                        Obx(
+                          () => Text(
+                            '${controller.user.value?.badgesCount ?? 0}',
+                            style: Theme.of(context)
+                                .textTheme
+                                .labelLarge
+                                ?.copyWith(
+                                  color: Color(0xFFA5A5A5),
+                                ),
                           ),
+                        ),
+                        Icon(
+                          Icons.chevron_right,
+                          color: Color(0xFFA5A5A5),
+                        ),
+                      ],
                     ),
-                    GestureDetector(
-                      onTap: () => Get.toNamed(AppRoutes.badges),
-                      child: Row(
-                        children: [
-                          Obx(
-                            () => Text(
-                              '${controller.user.value?.badgesCount ?? 0}',
-                              style: Theme.of(context)
-                                  .textTheme
-                                  .labelLarge
-                                  ?.copyWith(
-                                    color:
-                                        Theme.of(context).colorScheme.primary,
-                                  ),
-                            ),
-                          ),
-                          Icon(
-                            Icons.chevron_right,
-                            color: Theme.of(context).colorScheme.primary,
-                          ),
-                        ],
-                      ),
-                    ),
-                  ],
-                ),
+                  ),
+                ],
               ),
+              const SizedBox(height: 16),
               Obx(
                 () => Row(
                   mainAxisAlignment: MainAxisAlignment.center,
@@ -263,9 +262,13 @@ class MainProfileView extends GetView<ProfileMainController> {
                       .map(
                         (e) => Flexible(
                           child: Container(
-                            margin: const EdgeInsets.symmetric(horizontal: 16),
+                            margin: const EdgeInsets.symmetric(horizontal: 5),
+                            padding: EdgeInsets.only(
+                                left: 12, right: 12, bottom: 12),
                             decoration: const BoxDecoration(
-                              color: Colors.transparent,
+                              borderRadius:
+                                  BorderRadius.all(Radius.circular(10)),
+                              color: Color(0xFF2E2E2E),
                             ),
                             child: Column(
                               mainAxisAlignment: MainAxisAlignment.center,
@@ -305,19 +308,19 @@ class MainProfileView extends GetView<ProfileMainController> {
               Container(
                 height: 48,
                 padding: const EdgeInsets.symmetric(horizontal: 8),
-                margin: const EdgeInsets.symmetric(horizontal: 16),
                 decoration: BoxDecoration(
-                  color: Theme.of(context).colorScheme.primary.withOpacity(.1),
+                  border:
+                      Border.all(color: Theme.of(context).colorScheme.primary),
                   borderRadius: BorderRadius.circular(12),
                 ),
                 child: Row(
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
                     Row(children: [
-                      SvgPicture.asset('assets/icons/ic_distance.svg'),
+                      SvgPicture.asset('assets/icons/overall_mileage.svg'),
                       const SizedBox(width: 8),
                       Text(
-                        'Distance',
+                        'Overall Mileage',
                         style: Theme.of(context).textTheme.bodyMedium?.copyWith(
                               color: Theme.of(context).colorScheme.primary,
                               fontWeight: FontWeight.bold,

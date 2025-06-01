@@ -5,6 +5,8 @@ import 'package:zest_mobile/app/core/exception/app_exception.dart';
 import 'package:zest_mobile/app/core/exception/handler/app_exception_handler_info.dart';
 import 'package:zest_mobile/app/core/services/auth_service.dart';
 import 'package:zest_mobile/app/core/shared/components/privacy_policy.dart';
+import 'package:zest_mobile/app/core/shared/widgets/gradient_elevated_button.dart';
+import 'package:zest_mobile/app/core/shared/widgets/gradient_outlined_button.dart';
 import 'package:zest_mobile/app/routes/app_routes.dart';
 
 class SettingsController extends GetxController {
@@ -59,24 +61,19 @@ class SettingsController extends GetxController {
                     Flexible(
                       flex: 1,
                       child: Obx(
-                        () => OutlinedButton(
-                          style: OutlinedButton.styleFrom(
-                            shape: RoundedRectangleBorder(
-                              borderRadius: BorderRadius.circular(100),
+                        () => SizedBox(
+                          height: 55,
+                          child: GradientElevatedButton(
+                            onPressed: isLoading.value
+                                ? null
+                                : () {
+                                    logout();
+                                  },
+                            child: Visibility(
+                              visible: !isLoading.value,
+                              replacement: const CircularProgressIndicator(),
+                              child: const Text("Yes"),
                             ),
-                            side: BorderSide(
-                              color: Theme.of(context).colorScheme.primary,
-                            ),
-                          ),
-                          onPressed: isLoading.value
-                              ? null
-                              : () {
-                                  logout();
-                                },
-                          child: Visibility(
-                            visible: !isLoading.value,
-                            replacement: const CircularProgressIndicator(),
-                            child: const Text("Yes"),
                           ),
                         ),
                       ),
@@ -84,12 +81,22 @@ class SettingsController extends GetxController {
                     const SizedBox(width: 8),
                     Flexible(
                       flex: 2,
-                      child: ElevatedButton(
-                        onPressed: () {
-                          if (isLoading.value) return;
-                          Get.back();
-                        },
-                        child: const Text("No, keep me here"),
+                      child: SizedBox(
+                        height: 55,
+                        child: GradientOutlinedButton(
+                          style: ButtonStyle(
+                            shape: MaterialStateProperty.all(
+                              RoundedRectangleBorder(
+                                borderRadius: BorderRadius.circular(12),
+                              ),
+                            ),
+                          ),
+                          onPressed: () {
+                            if (isLoading.value) return;
+                            Get.back();
+                          },
+                          child: const Text("No, keep me here"),
+                        ),
                       ),
                     ),
                   ],
@@ -131,6 +138,7 @@ class SettingsController extends GetxController {
                       style: Theme.of(context).textTheme.bodyLarge,
                     ),
                     trailing: Switch(
+                      thumbColor: MaterialStateProperty.all(Colors.white),
                       value: allowNotif.value,
                       onChanged: (value) {
                         allowNotif.toggle();
@@ -146,6 +154,7 @@ class SettingsController extends GetxController {
                       style: Theme.of(context).textTheme.bodyLarge,
                     ),
                     trailing: Switch(
+                      thumbColor: MaterialStateProperty.all(Colors.white),
                       value: allowEmailnotif.value,
                       onChanged: (value) {
                         allowEmailnotif.toggle();
@@ -158,31 +167,40 @@ class SettingsController extends GetxController {
                   children: [
                     Flexible(
                       flex: 1,
-                      child: OutlinedButton(
-                        style: OutlinedButton.styleFrom(
-                          shape: RoundedRectangleBorder(
-                            borderRadius: BorderRadius.circular(100),
+                      child: SizedBox(
+                        height: 55,
+                        child: GradientOutlinedButton(
+                          style: ButtonStyle(
+                            shape: MaterialStateProperty.all(
+                              RoundedRectangleBorder(
+                                borderRadius: BorderRadius.circular(11),
+                              ),
+                            ),
                           ),
-                          side: BorderSide(
-                            color: Theme.of(context).colorScheme.primary,
+                          onPressed: () => Get.back(),
+                          child: Text(
+                            'Back',
+                            style: Theme.of(context)
+                                .textTheme
+                                .labelMedium
+                                ?.copyWith(
+                                  color: Theme.of(context).colorScheme.primary,
+                                ),
                           ),
-                        ),
-                        onPressed: () => Get.back(),
-                        child: Visibility(
-                          visible: !isLoading.value,
-                          replacement: const CircularProgressIndicator(),
-                          child: const Text("Back"),
                         ),
                       ),
                     ),
                     const SizedBox(width: 8),
                     Flexible(
                       flex: 2,
-                      child: ElevatedButton(
-                        onPressed: () {
-                          Get.back();
-                        },
-                        child: const Text("Update"),
+                      child: SizedBox(
+                        height: 55,
+                        child: GradientElevatedButton(
+                          onPressed: () {
+                            Get.back();
+                          },
+                          child: const Text("Update"),
+                        ),
                       ),
                     ),
                   ],

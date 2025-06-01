@@ -36,18 +36,21 @@ class GradientElevatedButton extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final ButtonStyle? themeButtonStyle = Theme.of(context).elevatedButtonTheme.style;
-    final ButtonStyle effectiveStyle = (themeButtonStyle ?? const ButtonStyle()).merge(style);
+    final ButtonStyle? themeButtonStyle =
+        Theme.of(context).elevatedButtonTheme.style;
+    final ButtonStyle effectiveStyle =
+        (themeButtonStyle ?? const ButtonStyle()).merge(style);
 
     final Gradient currentGradient = (onPressed == null
-            ? (disabledGradient ?? kAppDisabledButtonGradient)
-            : (gradient ?? kAppDefaultButtonGradient));
+        ? (disabledGradient ?? kAppDisabledButtonGradient)
+        : (gradient ?? kAppDefaultButtonGradient));
 
-    final EdgeInsetsGeometry finalContentPadding =
-        contentPadding ?? const EdgeInsets.symmetric(horizontal: 24, vertical: 16);
-    
+    final EdgeInsetsGeometry finalContentPadding = contentPadding ??
+        const EdgeInsets.symmetric(horizontal: 24, vertical: 16);
+
     BorderRadius borderRadius = BorderRadius.circular(100.0);
-    final MaterialStateProperty<OutlinedBorder?>? shapeProperty = effectiveStyle.shape;
+    final MaterialStateProperty<OutlinedBorder?>? shapeProperty =
+        effectiveStyle.shape;
     if (shapeProperty != null) {
       final OutlinedBorder? border = shapeProperty.resolve({});
       if (border is RoundedRectangleBorder) {
@@ -68,7 +71,7 @@ class GradientElevatedButton extends StatelessWidget {
           if (states.contains(MaterialState.pressed)) {
             return Colors.black.withOpacity(0.12); // Warna overlay saat ditekan
           }
-          return null; 
+          return null;
         }),
       ),
       child: Ink(
@@ -79,7 +82,9 @@ class GradientElevatedButton extends StatelessWidget {
         child: Container(
           padding: finalContentPadding,
           alignment: Alignment.center,
-          constraints: minSize != null ? BoxConstraints(minHeight: minSize.height) : null,
+          constraints: minSize != null
+              ? BoxConstraints(minHeight: minSize.height)
+              : null,
           child: child,
         ),
       ),

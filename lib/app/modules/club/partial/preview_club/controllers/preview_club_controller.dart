@@ -33,6 +33,10 @@ class PreviewClubController extends GetxController {
       isLoading.value = true;
       ClubModel resp = await _clubService.getDetail(clubId: clubId);
       club.value = resp;
+
+      if ((club.value?.isJoined ?? false)) {
+        await Get.offAndToNamed(AppRoutes.detailClub, arguments: clubId);
+      }
     } on AppException catch (e) {
       AppExceptionHandlerInfo.handle(e);
     } catch (e) {

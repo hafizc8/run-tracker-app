@@ -123,7 +123,7 @@ class ClubModel extends Model<ClubModel> {
       clubUsersCount: json["club_users_count"],
       challengeCount: json["challenge_count"],
       isPendingJoin: json["is_pending_join"] == 1,
-      isOwner: json["is_owner"] == 1,
+      isOwner: json["is_owner"] != null && json["is_owner"] == 1,
       isJoined: json["is_joined"] == 1,
       friendsTotal: json["friends_total"],
       friendsNames: json["friends_names"] == null ? [] : List<String>.from(json["friends_names"].map((x) => x)),

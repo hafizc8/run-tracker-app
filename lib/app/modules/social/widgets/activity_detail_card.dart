@@ -6,6 +6,7 @@ import 'package:get/get.dart';
 import 'package:zest_mobile/app/core/models/model/post_model.dart';
 import 'package:zest_mobile/app/core/shared/theme/color_schemes.dart';
 import 'package:zest_mobile/app/core/shared/widgets/shimmer_loading_circle.dart';
+import 'package:zest_mobile/app/modules/club/partial/detail_club/partial/tab_bar_club/views/widgets/participants_avatars.dart';
 import 'package:zest_mobile/app/modules/social/controllers/post_controller.dart';
 import 'package:zest_mobile/app/modules/social/widgets/post_media.dart';
 import 'package:zest_mobile/app/modules/social/widgets/social_action_button.dart';
@@ -64,10 +65,36 @@ class ActivityDetailCard extends StatelessWidget {
           //     ],
           //   ),
           // ),
-          const SizedBox(height: 15),
-          Text(
-            '${postData?.likesCount} likes',
-            style: Theme.of(context).textTheme.labelSmall?.copyWith(color: Theme.of(context).colorScheme.onTertiary),
+          Visibility(
+            visible: (postData?.likesCount ?? 0) > 0,
+            child: Row(
+              children: [
+                const SizedBox(height: 15),
+                ParticipantsAvatars(
+                  avatarSize: 20,
+                  maxVisible: 3,
+                  overlapOffset: 16,
+                  imageUrls: postData?.likes?.map((e) => e.imageUrl ?? '').toList() ?? [],
+                ),
+                RichText(
+                  text: TextSpan(
+                    style: Theme.of(context).textTheme.titleSmall?.copyWith(
+                      fontWeight: FontWeight.w700,
+                      fontSize: 13,
+                    ),
+                    children: <TextSpan>[
+                      TextSpan(text: postData?.likesCount.toString()),
+                      TextSpan(
+                        text: ' Likes',
+                        style: Theme.of(context).textTheme.titleSmall?.copyWith(
+                          fontSize: 13,
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+              ],
+            ),
           ),
           const SizedBox(height: 15),
           _buildSocialActions(postData: postData),

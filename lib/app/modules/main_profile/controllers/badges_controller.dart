@@ -1,5 +1,4 @@
 import 'package:get/get.dart';
-import 'package:zest_mobile/app/app.dart';
 import 'package:zest_mobile/app/core/di/service_locator.dart';
 import 'package:zest_mobile/app/core/exception/app_exception.dart';
 import 'package:zest_mobile/app/core/exception/handler/app_exception_handler_info.dart';

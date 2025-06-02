@@ -1,5 +1,4 @@
 import 'package:zest_mobile/app/core/models/enums/http_method_enum.dart';
-import 'package:zest_mobile/app/core/models/interface/pagination_response_model.dart';
 import 'package:zest_mobile/app/core/models/model/badge_model.dart';
 import 'package:zest_mobile/app/core/services/api_service.dart';
 import 'package:zest_mobile/app/core/values/app_constants.dart';

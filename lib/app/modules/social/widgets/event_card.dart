@@ -4,7 +4,6 @@ import 'package:flutter_image_stack/flutter_image_stack.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:get/get.dart';
 import 'package:intl/intl.dart';
-import 'package:shimmer/shimmer.dart';
 import 'package:zest_mobile/app/core/extension/date_extension.dart';
 import 'package:zest_mobile/app/core/extension/event_extension.dart';
 import 'package:zest_mobile/app/core/models/model/event_model.dart';

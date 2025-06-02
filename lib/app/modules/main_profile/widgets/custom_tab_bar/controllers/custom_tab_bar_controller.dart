@@ -1,5 +1,4 @@
 import 'package:get/get.dart';
-import 'package:zest_mobile/app/modules/main_profile/controllers/main_profile_controller.dart';
 
 class TabBarController extends GetxController {
   final RxInt selectedIndex = 0.obs;

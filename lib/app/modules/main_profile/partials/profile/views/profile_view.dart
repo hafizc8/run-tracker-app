@@ -1,11 +1,11 @@
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/widgets.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:get/get.dart';
+import 'package:zest_mobile/app/core/shared/theme/color_schemes.dart';
 import 'package:zest_mobile/app/core/shared/widgets/card_activity.dart';
-import 'package:zest_mobile/app/core/shared/widgets/custom_chip.dart';
+import 'package:zest_mobile/app/core/shared/widgets/gradient_outlined_button.dart';
 import 'package:zest_mobile/app/core/shared/widgets/shimmer_loading_circle.dart';
 import 'package:zest_mobile/app/modules/main_profile/partials/profile/controllers/profile_controller.dart';
 import 'package:zest_mobile/app/routes/app_routes.dart';
@@ -227,13 +227,80 @@ class ProfileView extends GetView<ProfileController> {
                                     ),
                                   ),
                                   const Spacer(),
+                                  ConstrainedBox(
+                                    constraints: BoxConstraints(
+                                      maxWidth: MediaQuery.of(context).size.width * 0.58,
+                                    ),
+                                    child: Row(
+                                      children: [
+                                        Visibility(
+                                          visible: controller.user.value?.isFollowing == 0,
+                                          replacement: InkWell(
+                                            onTap: () {
+                                              controller.unfollow();
+                                            },
+                                            child: Container(
+                                              decoration: BoxDecoration(
+                                                color: darkColorScheme.primary,
+                                                borderRadius: BorderRadius.circular(12),
+                                              ),
+                                              padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 7),
+                                              child: Row(
+                                                children: [
+                                                  FaIcon(
+                                                    FontAwesomeIcons.userCheck,
+                                                    size: 13,
+                                                    color: darkColorScheme.background,
+                                                  ),
+                                                  const SizedBox(width: 5),
+                                                  Text(
+                                                    'Following',
+                                                    style: Theme.of(context).textTheme.headlineSmall?.copyWith(
+                                                      fontSize: 12,
+                                                      fontWeight: FontWeight.w700,
+                                                      color: darkColorScheme.background
+                                                    ),
+                                                  ),
+                                                ]
+                                              ),
+                                            ),
+                                          ),
+                                          child: GradientOutlinedButton(
+                                            onPressed: () {
+                                              controller.follow();
+                                            },
+                                            child: Row(
+                                              children: [
+                                                const Icon(
+                                                  Icons.person_add_alt_1,
+                                                  size: 14,
+                                                ),
+                                                const SizedBox(width: 5),
+                                                Text(
+                                                  'Follow',
+                                                  style: Theme.of(context).textTheme.headlineSmall?.copyWith(
+                                                    fontSize: 12,
+                                                    fontWeight: FontWeight.w700,
+                                                  ),
+                                                ),
+                                              ]
+                                            ),
+                                          ),
+                                        ),
+                                        const SizedBox(width: 10),
+                                        InkWell(
+                                          onTap: () => Get.snackbar('Coming Soon', 'Feature coming soon'),
+                                          child: const Icon(
+                                            Icons.chat_bubble_outline,
+                                            size: 25,
+                                          ),
+                                        ),
+                                      ]
+                                    ),
+                                  ),
+                                  const Spacer(),
                                 ],
                               ),
-                              // IconButton(
-                              //   icon: const Icon(Icons.settings_outlined),
-                              //   onPressed: () =>
-                              //       Get.toNamed(AppRoutes.settings),
-                              // ),
                             ],
                           ),
                         ],

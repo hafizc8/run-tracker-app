@@ -11,6 +11,7 @@ import 'package:zest_mobile/app/core/models/enums/app_exception_enum.dart';
 import 'package:zest_mobile/app/core/models/forms/create_post_form.dart';
 import 'package:zest_mobile/app/core/models/forms/update_post_form.dart';
 import 'package:zest_mobile/app/core/models/model/post_model.dart';
+import 'package:zest_mobile/app/core/models/model/user_mini_model.dart';
 import 'package:zest_mobile/app/core/models/model/user_model.dart';
 import 'package:zest_mobile/app/core/services/auth_service.dart';
 import 'package:zest_mobile/app/core/services/location_service.dart';
@@ -166,13 +167,30 @@ class PostController extends GetxController {
         // update manual is_liked
         final index = posts.indexWhere((element) => element?.id == postId);
         if (index != -1) {
-          final updated = posts[index]!.copyWith(isLiked: isDislike == 0, likesCount: isDislike == 0 ? posts[index]!.likesCount! + 1 : posts[index]!.likesCount! - 1);
+          final updated = posts[index]!.copyWith(
+            isLiked: isDislike == 0, 
+            likesCount: isDislike == 0 ? posts[index]!.likesCount! + 1 : posts[index]!.likesCount! - 1,
+          );
           posts[index] = updated;
+          if (isDislike == 0) {
+            posts[index]!.likes?.add(UserMiniModel(id: user?.id ?? '', name: user?.name ?? '', imageUrl: user?.imageUrl ?? ''));
+          } else {
+            posts[index]!.likes?.removeWhere((element) => element.id == user?.id);
+          }
         }
 
         if (isPostDetail) {
           // update is_liked
-          postDetail.value = postDetail.value!.copyWith(isLiked: isDislike == 0, likesCount: isDislike == 0 ? postDetail.value!.likesCount! + 1 : postDetail.value!.likesCount! - 1);
+          postDetail.value = postDetail.value!.copyWith(
+            isLiked: isDislike == 0, 
+            likesCount: isDislike == 0 ? postDetail.value!.likesCount! + 1 : postDetail.value!.likesCount! - 1,
+          );
+
+          if (isDislike == 0) {
+            postDetail.value?.likes?.add(UserMiniModel(id: user?.id ?? '', name: user?.name ?? '', imageUrl: user?.imageUrl ?? ''));
+          } else {
+            postDetail.value?.likes?.removeWhere((element) => element.id == user?.id);
+          }
         }
       }
     } on AppException catch (e) {

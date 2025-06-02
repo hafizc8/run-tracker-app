@@ -118,7 +118,7 @@ class ProfileMainController extends GetxController {
           ),
         ),
         limit: 3,
-        // order: 'upcoming',
+        order: 'upcoming',
       );
 
       upComingEvents.value = response.data;

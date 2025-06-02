@@ -60,33 +60,35 @@ class ActivityCard extends StatelessWidget {
             postData.galleries.isNotEmpty ? PostMediaScroll(mediaUrls: postData.galleries.map((e) => e.url ?? '').toList()) : const SizedBox(),
             Visibility(
               visible: (postData.likesCount ?? 0) > 0,
-              child: Row(
-                children: [
-                  const SizedBox(height: 15),
-                  ParticipantsAvatars(
-                    avatarSize: 20,
-                    maxVisible: 3,
-                    overlapOffset: 16,
-                    imageUrls: postData.likes?.map((e) => e.imageUrl ?? '').toList() ?? [],
-                  ),
-                  RichText(
-                    text: TextSpan(
-                      style: Theme.of(context).textTheme.titleSmall?.copyWith(
-                        fontWeight: FontWeight.w700,
-                        fontSize: 13,
-                      ),
-                      children: <TextSpan>[
-                        TextSpan(text: postData.likesCount.toString()),
-                        TextSpan(
-                          text: ' Likes',
-                          style: Theme.of(context).textTheme.titleSmall?.copyWith(
-                            fontSize: 13,
-                          ),
-                        ),
-                      ],
+              child: Container(
+                margin: const EdgeInsets.only(top: 10),
+                child: Row(
+                  children: [
+                    ParticipantsAvatars(
+                      avatarSize: 20,
+                      maxVisible: 3,
+                      overlapOffset: 16,
+                      imageUrls: postData.likes?.map((e) => e.imageUrl ?? '').toList() ?? [],
                     ),
-                  ),
-                ],
+                    RichText(
+                      text: TextSpan(
+                        style: Theme.of(context).textTheme.titleSmall?.copyWith(
+                          fontWeight: FontWeight.w700,
+                          fontSize: 13,
+                        ),
+                        children: <TextSpan>[
+                          TextSpan(text: postData.likesCount.toString()),
+                          TextSpan(
+                            text: ' Likes',
+                            style: Theme.of(context).textTheme.titleSmall?.copyWith(
+                              fontSize: 13,
+                            ),
+                          ),
+                        ],
+                      ),
+                    ),
+                  ],
+                ),
               ),
             ),
             const SizedBox(height: 15),

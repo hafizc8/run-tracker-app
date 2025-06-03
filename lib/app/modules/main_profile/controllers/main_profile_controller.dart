@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:intl/intl.dart';
 import 'package:zest_mobile/app/core/di/service_locator.dart';
 import 'package:zest_mobile/app/core/exception/app_exception.dart';
 import 'package:zest_mobile/app/core/exception/handler/app_exception_handler_info.dart';
@@ -17,6 +18,7 @@ class ProfileMainController extends GetxController {
   var activeIndex = 0.obs;
   var pageEvent = 0;
   var isLoadingEvent = false.obs;
+  var isLoadingUpComingEvent = false.obs;
   var hasReacheMaxEvent = false.obs;
   ScrollController eventController = ScrollController();
 
@@ -34,6 +36,7 @@ class ProfileMainController extends GetxController {
 
   Rx<UserDetailModel?> user = Rx<UserDetailModel?>(null);
   var events = <EventModel>[].obs;
+  var upComingEvents = <EventModel>[].obs;
   var challenges = <ChallengeModel>[].obs;
 
   @override
@@ -67,6 +70,7 @@ class ProfileMainController extends GetxController {
   }
 
   Future<void> getEvents({bool refresh = false}) async {
+    getUpComingEvents();
     if (refresh) {
       events.clear();
       pageEvent = 1;
@@ -101,6 +105,37 @@ class ProfileMainController extends GetxController {
     }
   }
 
+  Future<void> getUpComingEvents() async {
+    isLoadingUpComingEvent.value = true;
+    try {
+      PaginatedDataResponse<EventModel> response =
+          await _eventService.getEvents(
+        page: pageEvent,
+        user: _authService.user!.id,
+        startDate: DateFormat('yyyy-MM-dd').format(
+          DateTime.now().add(
+            const Duration(days: 1),
+          ),
+        ),
+        limit: 3,
+        order: 'upcoming',
+      );
+
+      upComingEvents.value = response.data;
+
+      pageEvent++;
+    } catch (e) {
+      Get.snackbar(
+        'Error',
+        e.toString(),
+        backgroundColor: Colors.red,
+        colorText: Colors.white,
+      ); // show error snackbar, toast, etc (e.g.message)
+    } finally {
+      isLoadingUpComingEvent.value = false;
+    }
+  }
+
   Future<void> getChallenges({bool refresh = false}) async {
     if (refresh) {
       challenges.clear();
@@ -112,7 +147,7 @@ class ProfileMainController extends GetxController {
     try {
       PaginatedDataResponse<ChallengeModel> response =
           await _challengeService.getChallenges(
-        page: pageEvent,
+        page: pageChallenge,
         status: 'joined',
         limit: 10,
       );
@@ -123,7 +158,7 @@ class ProfileMainController extends GetxController {
 
       challenges.value += response.data;
 
-      pageEvent++;
+      pageChallenge++;
     } catch (e) {
       Get.snackbar(
         'Error',

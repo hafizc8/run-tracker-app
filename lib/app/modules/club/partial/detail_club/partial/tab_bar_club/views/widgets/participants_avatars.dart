@@ -4,13 +4,13 @@ import 'package:zest_mobile/app/core/shared/widgets/shimmer_loading_circle.dart'
 
 // ignore: must_be_immutable
 class ParticipantsAvatars extends StatelessWidget {
-  const ParticipantsAvatars({super.key, required this.imageUrls});
+  ParticipantsAvatars({super.key, required this.imageUrls, this.avatarSize = 35, this.overlapOffset = 23, this.maxVisible = 10});
 
   final List<String> imageUrls;
 
-  final double avatarSize = 35;
-  final double overlapOffset = 23;
-  final int maxVisible = 10;
+  double avatarSize = 35;
+  double overlapOffset = 23;
+  int maxVisible = 10;
 
   @override
   Widget build(BuildContext context) {
@@ -36,7 +36,7 @@ class ParticipantsAvatars extends StatelessWidget {
                   color: Colors.white,
                   shape: BoxShape.circle,
                 ),
-                padding: const EdgeInsets.all(2),
+                padding: const EdgeInsets.all(0),
                 child: CircleAvatar(
                   backgroundColor: Theme.of(context).colorScheme.primary,
                   child: Text(
@@ -57,7 +57,7 @@ class ParticipantsAvatars extends StatelessWidget {
             child: Container(
               width: avatarSize,
               height: avatarSize,
-              padding: const EdgeInsets.all(2),
+              padding: const EdgeInsets.all(0),
               decoration: const BoxDecoration(
                 color: Colors.white,
                 shape: BoxShape.circle,

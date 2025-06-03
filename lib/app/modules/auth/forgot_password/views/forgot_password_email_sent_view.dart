@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 
 import 'package:get/get.dart';
+import 'package:zest_mobile/app/core/shared/widgets/gradient_elevated_button.dart';
 import 'package:zest_mobile/app/routes/app_routes.dart';
 
 import '../controllers/forgot_password_controller.dart';
@@ -36,9 +37,9 @@ class ForgotPasswordEmailSentView extends GetView<ForgotPasswordController> {
                 ],
               ),
               const SizedBox(height: 24),
-              ElevatedButton(
+              GradientElevatedButton(
                 onPressed: () => Get.offAllNamed(AppRoutes.login),
-                child: const Text('Back to Login'),
+                child: const Text('Back to Sign In'),
               ),
             ],
           ),

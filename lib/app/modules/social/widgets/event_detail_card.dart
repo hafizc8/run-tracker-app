@@ -10,7 +10,6 @@ import 'package:zest_mobile/app/modules/social/views/partial/for_you_tab/event/c
 import 'package:zest_mobile/app/routes/app_routes.dart';
 
 class EventDetailCard extends GetView<EventDetailController> {
-  
   EventDetailCard({super.key, required this.event});
   final EventModel? event;
   final eventActionController = Get.find<EventActionController>();
@@ -46,7 +45,7 @@ class EventDetailCard extends GetView<EventDetailController> {
           AspectRatio(
             aspectRatio: 1,
             child: ClipRRect(
-              // borderRadius: BorderRadius.circular(12),
+              borderRadius: BorderRadius.circular(12),
               child: Container(
                 color: Colors.grey.shade300,
                 child: CachedNetworkImage(
@@ -222,7 +221,10 @@ class EventDetailCard extends GetView<EventDetailController> {
       required Widget Function(BuildContext, int) itemBuilder}) {
     return Container(
       padding: const EdgeInsets.all(15),
-      color: Colors.grey.shade200,
+      decoration: BoxDecoration(
+        borderRadius: BorderRadius.circular(12),
+        color: Theme.of(context).colorScheme.surface,
+      ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
@@ -271,18 +273,16 @@ class EventDetailCard extends GetView<EventDetailController> {
   }) {
     return Row(
       children: [
-        Icon(icon, size: 24),
+        Icon(
+          icon,
+          size: 24,
+          color: Theme.of(context).primaryColor,
+        ),
         const SizedBox(width: 8),
         Expanded(
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              Text(
-                title,
-                style: Theme.of(context).textTheme.labelSmall?.copyWith(
-                      color: Theme.of(context).colorScheme.onSurfaceVariant,
-                    ),
-              ),
               Text(
                 subtitle,
                 style: Theme.of(context).textTheme.bodyMedium?.copyWith(
@@ -302,15 +302,8 @@ class EventDetailCard extends GetView<EventDetailController> {
     return Container(
       padding: const EdgeInsets.all(8),
       decoration: BoxDecoration(
-        color: Colors.white,
         borderRadius: BorderRadius.circular(8),
-        boxShadow: [
-          BoxShadow(
-            color: Colors.grey.shade500,
-            blurRadius: 2,
-            offset: const Offset(0, 1),
-          ),
-        ],
+        color: Color(0xFF4C4C4C),
       ),
       child: Column(
         mainAxisAlignment: MainAxisAlignment.center,

@@ -5,6 +5,8 @@ import 'package:zest_mobile/app/core/models/forms/store_event_form.dart';
 import 'package:zest_mobile/app/core/models/model/club_mini_model.dart';
 import 'package:zest_mobile/app/core/models/model/event_activity_model.dart';
 import 'package:zest_mobile/app/core/shared/widgets/custom_chip.dart';
+import 'package:zest_mobile/app/core/shared/widgets/custom_circular_progress_indicator.dart';
+import 'package:zest_mobile/app/core/shared/widgets/gradient_elevated_button.dart';
 import 'package:zest_mobile/app/routes/app_routes.dart';
 
 import '../controllers/event_action_controller.dart';
@@ -20,16 +22,21 @@ class EventCreateView extends GetView<EventActionController> {
       },
       child: Scaffold(
         appBar: AppBar(
-          title:
-              Text('${controller.isEdit.value ? 'Edit' : 'Create'} an Events'),
+          title: Text(
+            '${controller.isEdit.value ? 'Edit' : 'Create'} an Events',
+            style: Theme.of(context).textTheme.headlineSmall?.copyWith(
+                  color: Color(0xFFA5A5A5),
+                ),
+          ),
           automaticallyImplyLeading: false,
+          centerTitle: true,
           elevation: 4,
           leading: GestureDetector(
             onTap: () => Get.back(),
             child: Icon(
               Icons.chevron_left,
               size: 48,
-              color: Theme.of(context).colorScheme.primary,
+              color: Color(0xFFA5A5A5),
             ),
           ),
         ),
@@ -313,6 +320,9 @@ class EventCreateView extends GetView<EventActionController> {
                   ),
                   trailing: Switch(
                     value: form.isPublic ?? false,
+                    thumbColor: MaterialStateProperty.all<Color>(
+                      Colors.white,
+                    ),
                     onChanged: (value) {
                       controller.form.value = form.copyWith(
                         isPublic: value,
@@ -342,6 +352,9 @@ class EventCreateView extends GetView<EventActionController> {
                     ),
                     trailing: Switch(
                       value: form.isAutoPostToClub ?? false,
+                      thumbColor: MaterialStateProperty.all<Color>(
+                        Colors.white,
+                      ),
                       onChanged: (value) {
                         controller.form.value = form.copyWith(
                           isAutoPostToClub: value,
@@ -376,7 +389,8 @@ class EventCreateView extends GetView<EventActionController> {
                           ...(clubs ?? []).map(
                             (club) => CustomChip(
                               border: Border.all(
-                                color: Theme.of(context).colorScheme.primary,
+                                color:
+                                    Theme.of(context).colorScheme.onBackground,
                               ),
                               child: Row(
                                 mainAxisSize: MainAxisSize.min,
@@ -415,10 +429,9 @@ class EventCreateView extends GetView<EventActionController> {
                             ),
                           ),
                           CustomChip(
-                            backgroundColor: Theme.of(context)
-                                .colorScheme
-                                .primary
-                                .withOpacity(.1),
+                            border: Border.all(
+                              color: Theme.of(context).colorScheme.primary,
+                            ),
                             onTap: () {
                               controller.showAddClubsDialog();
                               if (controller.eventClubs.isEmpty) {
@@ -453,41 +466,43 @@ class EventCreateView extends GetView<EventActionController> {
             );
           }),
         ),
-        bottomNavigationBar: Padding(
-          padding: const EdgeInsets.all(16.0),
-          child: Obx(
-            () => Visibility(
-              visible: controller.isEdit.value,
-              replacement: ElevatedButton(
-                onPressed: controller.isLoading.value
-                    ? null
-                    : () {
-                        controller.storeEvent();
-                      },
+        bottomNavigationBar: Obx(() {
+          if (controller.isEdit.value) {
+            return Container(
+              margin: const EdgeInsets.symmetric(horizontal: 16, vertical: 16),
+              height: 55,
+              child: GradientElevatedButton(
+                onPressed:
+                    !controller.isValidToUpdate || controller.isLoading.value
+                        ? null
+                        : () {
+                            controller.updateEvent();
+                          },
                 child: Visibility(
                   visible: controller.isLoading.value,
-                  replacement: const Text('Continue'),
-                  child: const CircularProgressIndicator(),
+                  replacement: const Text('Update'),
+                  child: CustomCircularProgressIndicator(),
                 ),
               ),
-              child: Obx(
-                () => ElevatedButton(
-                  onPressed:
-                      !controller.isValidToUpdate || controller.isLoading.value
-                          ? null
-                          : () {
-                              controller.updateEvent();
-                            },
-                  child: Visibility(
-                    visible: controller.isLoading.value,
-                    replacement: const Text('Update'),
-                    child: const CircularProgressIndicator(),
-                  ),
-                ),
+            );
+          }
+          return Container(
+            margin: const EdgeInsets.symmetric(horizontal: 16, vertical: 16),
+            height: 55,
+            child: GradientElevatedButton(
+              onPressed: controller.isLoading.value
+                  ? null
+                  : () {
+                      controller.storeEvent();
+                    },
+              child: Visibility(
+                visible: controller.isLoading.value,
+                replacement: const Text('Create Event'),
+                child: CustomCircularProgressIndicator(),
               ),
             ),
-          ),
-        ),
+          );
+        }),
       ),
     );
   }

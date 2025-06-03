@@ -10,39 +10,52 @@ class SettingsView extends GetView<SettingsController> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        backgroundColor: Theme.of(context).colorScheme.background,
-        title: const Text('Settings'),
+        title: Text(
+          'Settings',
+          style: Theme.of(context).textTheme.headlineSmall?.copyWith(
+                color: Color(0xFFA5A5A5),
+              ),
+        ),
         automaticallyImplyLeading: false,
-        elevation: 1,
+        centerTitle: true,
+        elevation: 4,
         leading: GestureDetector(
           onTap: () => Get.back(),
           child: Icon(
             Icons.chevron_left,
             size: 48,
-            color: Theme.of(context).colorScheme.primary,
+            color: Color(0xFFA5A5A5),
           ),
         ),
       ),
       body: Column(
         children: [
           ListTile(
-            title: Row(
-              children: [
-                FaIcon(
-                  FontAwesomeIcons.gauge,
-                  color: Theme.of(context).colorScheme.primary,
-                ),
-                const SizedBox(width: 5),
-                Text(
-                  'Units of Measurements',
-                  style: Theme.of(context).textTheme.labelLarge?.copyWith(
-                        color: Theme.of(context).colorScheme.onBackground,
-                      ),
-                ),
-              ],
+            title: Expanded(
+              child: Row(
+                children: [
+                  FaIcon(
+                    FontAwesomeIcons.gauge,
+                    color: Theme.of(context).colorScheme.primary,
+                  ),
+                  const SizedBox(width: 5),
+                  Expanded(
+                    child: Text(
+                      'Units of Measurements',
+                      maxLines: 1,
+                      overflow: TextOverflow.ellipsis,
+                      style: Theme.of(context).textTheme.labelLarge?.copyWith(
+                            color: Theme.of(context).colorScheme.onBackground,
+                          ),
+                    ),
+                  ),
+                ],
+              ),
             ),
             trailing: Text(
               'Kilometers',
+              maxLines: 1,
+              overflow: TextOverflow.ellipsis,
               style: Theme.of(context).textTheme.labelLarge?.copyWith(
                     color: Theme.of(context).colorScheme.primary,
                   ),

@@ -50,6 +50,5 @@ class EventActivityModel extends Model {
   List<Object?> get props => [
         value,
         label,
-        image,
       ];
 }

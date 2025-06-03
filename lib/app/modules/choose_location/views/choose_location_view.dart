@@ -3,6 +3,7 @@ import 'package:flutter_typeahead/flutter_typeahead.dart';
 import 'package:get/get.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:zest_mobile/app/core/models/model/location_model.dart';
+import 'package:zest_mobile/app/core/shared/widgets/gradient_elevated_button.dart';
 import 'package:zest_mobile/app/modules/choose_location/controllers/choose_location_controller.dart';
 
 class ChooseLocationView extends GetView<ChooseLocationController> {
@@ -14,13 +15,20 @@ class ChooseLocationView extends GetView<ChooseLocationController> {
       appBar: AppBar(
         leading: IconButton(
           onPressed: () => Get.back(),
-          icon: const Icon(Icons.chevron_left),
+          icon: Icon(
+            Icons.chevron_left,
+            size: 48,
+            color: Color(0xFFA5A5A5),
+          ),
         ),
-        title: const Text(
+        title: Text(
           'Location',
+          style: Theme.of(context).textTheme.headlineSmall?.copyWith(
+                color: Color(0xFFA5A5A5),
+              ),
         ),
         elevation: 1,
-        centerTitle: false,
+        centerTitle: true,
       ),
       body: SingleChildScrollView(
         child: Column(
@@ -97,6 +105,9 @@ class ChooseLocationView extends GetView<ChooseLocationController> {
             Padding(
               padding: const EdgeInsets.symmetric(horizontal: 16),
               child: OutlinedButton.icon(
+                style: OutlinedButton.styleFrom(
+                  minimumSize: const Size.fromHeight(40),
+                ),
                 onPressed: () => controller.setCurrentLocation(),
                 icon: const Icon(Icons.my_location_outlined),
                 label: const Text('Use Current Location'),
@@ -123,10 +134,11 @@ class ChooseLocationView extends GetView<ChooseLocationController> {
           ],
         ),
       ),
-      bottomNavigationBar: Padding(
-        padding: const EdgeInsets.all(16.0),
+      bottomNavigationBar: Container(
+        margin: const EdgeInsets.symmetric(horizontal: 16, vertical: 16),
+        height: 55,
         child: Obx(
-          () => ElevatedButton(
+          () => GradientElevatedButton(
             onPressed: !controller.canUpdate
                 ? null
                 : () => Get.back(result: {

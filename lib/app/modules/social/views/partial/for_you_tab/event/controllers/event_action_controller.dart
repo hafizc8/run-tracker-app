@@ -386,8 +386,13 @@ class EventActionController extends GetxController {
   void showAddClubsDialog() {
     tempSelectedIds.clear();
     tempSelectedIds.value = List.from(form.value.shareToClubs?.toList() ?? []);
-    Get.dialog(
-      const AddClubs(),
+    Get.bottomSheet(
+      backgroundColor: Color(0xFF4C4C4C),
+      FractionallySizedBox(
+        heightFactor: 0.5,
+        child: const AddClubs(),
+      ),
+      isScrollControlled: true,
     );
   }
 

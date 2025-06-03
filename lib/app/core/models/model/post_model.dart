@@ -16,7 +16,8 @@ class PostModel extends Model<PostModel> {
         required this.galleries,
         this.isLiked,
         this.isOwner = false,
-        this.comments
+        this.comments,
+        this.likes,
     });
 
     final String? id;
@@ -32,6 +33,7 @@ class PostModel extends Model<PostModel> {
     final List<Comment>? comments;
     bool? isOwner;
     bool? isLiked;
+    List<UserMiniModel>? likes;
 
     @override
   PostModel copyWith({
@@ -47,7 +49,8 @@ class PostModel extends Model<PostModel> {
         List<Gallery>? galleries,
         bool? isLiked,
         bool? isOwner,
-        List<Comment>? comments
+        List<Comment>? comments,
+        List<UserMiniModel>? likes
     }) {
         return PostModel(
             id: id ?? this.id,
@@ -62,7 +65,8 @@ class PostModel extends Model<PostModel> {
             galleries: galleries ?? this.galleries,
             isLiked: isLiked ?? this.isLiked,
             comments: comments ?? this.comments,
-            isOwner: isOwner ?? this.isOwner
+            isOwner: isOwner ?? this.isOwner,
+            likes: likes ?? this.likes
         );
     }
 
@@ -81,6 +85,7 @@ class PostModel extends Model<PostModel> {
             comments: json["comments"] == null ? [] : List<Comment>.from(json["comments"]!.map((x) => Comment.fromJson(x))),
             isLiked: json['is_liked'] == 1,
             isOwner: false,
+            likes: json["likes"] == null ? [] : List<UserMiniModel>.from(json["likes"]!.map((x) => UserMiniModel.fromJson(x['user']))),
         );
     }
 
@@ -100,7 +105,7 @@ class PostModel extends Model<PostModel> {
 
     @override
     List<Object?> get props => [
-    id, title, content, district, likesCount, commentsCount, createdAt, updatedAt, user, galleries, comments, isLiked];
+    id, title, content, district, likesCount, commentsCount, createdAt, updatedAt, user, galleries, comments, isLiked, isOwner, likes];
 }
 
 class Gallery extends Model<Gallery> {

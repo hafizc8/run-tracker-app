@@ -3,6 +3,8 @@ import 'package:get/get.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:zest_mobile/app/core/models/enums/gender_enum.dart';
 import 'package:zest_mobile/app/core/models/forms/registe_create_profile_form.dart';
+import 'package:zest_mobile/app/core/shared/widgets/custom_circular_progress_indicator.dart';
+import 'package:zest_mobile/app/core/shared/widgets/gradient_elevated_button.dart';
 import 'package:zest_mobile/app/modules/auth/register/controllers/register_create_profile_controller.dart';
 import 'package:zest_mobile/app/routes/app_routes.dart';
 
@@ -34,20 +36,30 @@ class RegisterCreateProfileView
                     children: [
                       Text(
                         'Name',
-                        style: Theme.of(context).textTheme.titleSmall,
+                        style: Theme.of(context).textTheme.bodyMedium?.copyWith(
+                          fontSize: 15,
+                        ),
                       ),
                       const SizedBox(height: 12),
                       TextFormField(
-                        cursorColor: Colors.black,
+                        cursorColor: Colors.white,
                         onChanged: (value) {
                           controller.form.value = form.copyWith(
                             name: value,
                             field: 'name',
                           );
                         },
+                        style: Theme.of(context).textTheme.bodyMedium?.copyWith(color: Theme.of(context).colorScheme.onBackground),
                         decoration: InputDecoration(
                           hintText: 'Enter your name',
                           errorText: form.errors?['name'],
+                          border: InputBorder.none,
+                          enabledBorder: OutlineInputBorder(
+                            borderRadius: BorderRadius.circular(10),
+                            borderSide: const BorderSide(
+                              color: Colors.transparent,
+                            ),
+                          ),
                         ),
                       ),
                     ],
@@ -58,20 +70,30 @@ class RegisterCreateProfileView
                     children: [
                       Text(
                         'Birthday',
-                        style: Theme.of(context).textTheme.titleSmall,
+                        style: Theme.of(context).textTheme.bodyMedium?.copyWith(
+                          fontSize: 15,
+                        ),
                       ),
                       const SizedBox(height: 12),
                       TextFormField(
-                        cursorColor: Colors.black,
+                        cursorColor: Colors.white,
                         readOnly: true,
                         controller: controller.dateController,
                         onTap: () {
                           controller.setDate(context);
                         },
+                        style: Theme.of(context).textTheme.bodyMedium?.copyWith(color: Theme.of(context).colorScheme.onBackground),
                         decoration: InputDecoration(
                           hintText: 'Enter your birthday',
                           suffixIcon: const Icon(Icons.calendar_today),
                           errorText: form.errors?['birthday'],
+                          border: InputBorder.none,
+                          enabledBorder: OutlineInputBorder(
+                            borderRadius: BorderRadius.circular(10),
+                            borderSide: const BorderSide(
+                              color: Colors.transparent,
+                            ),
+                          ),
                         ),
                       ),
                     ],
@@ -82,11 +104,20 @@ class RegisterCreateProfileView
                     children: [
                       Text(
                         'Gender',
-                        style: Theme.of(context).textTheme.titleSmall,
+                        style: Theme.of(context).textTheme.bodyMedium?.copyWith(
+                          fontSize: 15,
+                        ),
                       ),
                       RadioListTile<GenderEnum>(
                         contentPadding: EdgeInsets.zero,
-                        title: Text(GenderEnum.male.name),
+                        dense: true,
+                        visualDensity: VisualDensity.compact,
+                        title: Text(
+                          GenderEnum.male.name,
+                          style: Theme.of(context).textTheme.bodyMedium?.copyWith(
+                            color: Theme.of(context).colorScheme.onBackground
+                          ),
+                        ),
                         value: GenderEnum.male,
                         groupValue: form.gender,
                         onChanged: (val) {
@@ -98,7 +129,14 @@ class RegisterCreateProfileView
                       ),
                       RadioListTile<GenderEnum>(
                         contentPadding: EdgeInsets.zero,
-                        title: Text(GenderEnum.female.name),
+                        dense: true,
+                        visualDensity: VisualDensity.compact,
+                        title: Text(
+                          GenderEnum.female.name,
+                          style: Theme.of(context).textTheme.bodyMedium?.copyWith(
+                            color: Theme.of(context).colorScheme.onBackground
+                          ),
+                        ),
                         value: GenderEnum.female,
                         groupValue: form.gender,
                         onChanged: (val) {
@@ -110,7 +148,14 @@ class RegisterCreateProfileView
                       ),
                       RadioListTile<GenderEnum>(
                         contentPadding: EdgeInsets.zero,
-                        title: Text(GenderEnum.unknown.name),
+                        dense: true,
+                        visualDensity: VisualDensity.compact,
+                        title: Text(
+                          GenderEnum.unknown.name,
+                          style: Theme.of(context).textTheme.bodyMedium?.copyWith(
+                            color: Theme.of(context).colorScheme.onBackground
+                          ),
+                        ),
                         value: GenderEnum.unknown,
                         groupValue: form.gender,
                         onChanged: (val) {
@@ -128,12 +173,14 @@ class RegisterCreateProfileView
                     children: [
                       Text(
                         'Location',
-                        style: Theme.of(context).textTheme.titleSmall,
+                        style: Theme.of(context).textTheme.bodyMedium?.copyWith(
+                          fontSize: 15,
+                        ),
                       ),
                       const SizedBox(height: 12),
                       TextFormField(
                         controller: controller.addressController,
-                        cursorColor: Colors.black,
+                        cursorColor: Colors.white,
                         readOnly: true,
                         onTap: () async {
                           final res = await Get.toNamed(
@@ -159,9 +206,17 @@ class RegisterCreateProfileView
                             }
                           }
                         },
-                        decoration: const InputDecoration(
+                        style: Theme.of(context).textTheme.bodyMedium?.copyWith(color: Theme.of(context).colorScheme.onBackground),
+                        decoration: InputDecoration(
                           hintText: 'Choose your location',
-                          suffixIcon: Icon(Icons.location_on),
+                          suffixIcon: const Icon(Icons.location_on),
+                          border: InputBorder.none,
+                          enabledBorder: OutlineInputBorder(
+                            borderRadius: BorderRadius.circular(10),
+                            borderSide: const BorderSide(
+                              color: Colors.transparent,
+                            ),
+                          ),
                         ),
                       ),
                     ],
@@ -172,10 +227,11 @@ class RegisterCreateProfileView
           ],
         ),
       ),
-      bottomNavigationBar: Padding(
-        padding: const EdgeInsets.all(16.0),
+      bottomNavigationBar: Container(
+        height: 55,
+        margin: const EdgeInsets.symmetric(horizontal: 16, vertical: 16),
         child: Obx(
-          () => ElevatedButton(
+          () => GradientElevatedButton(
             onPressed: !controller.isValid
                 ? null
                 : controller.isLoading.value
@@ -186,7 +242,7 @@ class RegisterCreateProfileView
             child: Visibility(
               visible: controller.isLoading.value,
               replacement: const Text('Continue'),
-              child: const CircularProgressIndicator(),
+              child: CustomCircularProgressIndicator(),
             ),
           ),
         ),

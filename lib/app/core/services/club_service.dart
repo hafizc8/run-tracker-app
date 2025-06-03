@@ -34,6 +34,8 @@ class ClubService {
     int joined = 0,
     int random = 1,
     String joinStatus = '',
+    String? order,
+    int? limit
   }) async {
     try {
       final response = await _apiService.request(
@@ -45,6 +47,8 @@ class ClubService {
           'joined': joined.toString(),
           'random': random.toString(),
           'join_status': joinStatus,
+          if (order != null) 'order': order,
+          if (limit != null) 'limit': limit.toString(),
         },
       );
 

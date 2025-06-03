@@ -98,7 +98,7 @@ class SocialForYouView extends GetView<SocialController> {
                       },
                       decoration: InputDecoration(
                         isDense: true,
-                        contentPadding: const EdgeInsets.symmetric(vertical: 8),
+                        contentPadding: const EdgeInsets.all(8),
                         enabledBorder: UnderlineInputBorder(
                           borderSide: BorderSide(
                               color: Theme.of(context).colorScheme.tertiary),
@@ -129,10 +129,10 @@ class SocialForYouView extends GetView<SocialController> {
                       },
                       decoration: InputDecoration(
                         isDense: true,
-                        contentPadding: const EdgeInsets.symmetric(vertical: 8),
+                        contentPadding: const EdgeInsets.all(8),
                         suffixIcon: Icon(
                           Icons.date_range_outlined,
-                          size: 24,
+                          size: 18,
                           color: Theme.of(context).colorScheme.primary,
                         ),
                         enabledBorder: UnderlineInputBorder(
@@ -211,7 +211,7 @@ class SocialForYouView extends GetView<SocialController> {
                       },
                       decoration: InputDecoration(
                         isDense: true,
-                        contentPadding: const EdgeInsets.symmetric(vertical: 8),
+                        contentPadding: const EdgeInsets.all(8),
                         enabledBorder: UnderlineInputBorder(
                           borderSide: BorderSide(
                               color: Theme.of(context).colorScheme.tertiary),
@@ -264,6 +264,7 @@ class SocialForYouView extends GetView<SocialController> {
                     );
                   }
                   return EventCard(
+                    backgroundColor: Theme.of(context).colorScheme.surface,
                     eventModel: eventController.events[index],
                     onTap: () {
                       Get.toNamed(AppRoutes.socialYourPageEventDetail,

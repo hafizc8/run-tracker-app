@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:get/get_rx/get_rx.dart';
 import 'package:zest_mobile/app/core/di/service_locator.dart';
 import 'package:zest_mobile/app/core/models/interface/pagination_response_model.dart';
 import 'package:zest_mobile/app/core/models/model/club_model.dart';
@@ -11,7 +12,7 @@ import 'dart:async';
 
 import 'package:zest_mobile/app/core/shared/helpers/debouncer.dart';
 
-class SocialSearchController extends GetxController {
+class SocialSearchController extends GetxController with GetSingleTickerProviderStateMixin {
   var isLoadingPeopleYouMayKnow = false.obs;
   var isLoadingFriends = false.obs;
   var isLoadingFollow = false.obs;
@@ -28,28 +29,47 @@ class SocialSearchController extends GetxController {
   final scrollFriendsController = ScrollController();
 
   var pageFriend = 1;
+  var activeTab = 'Friends'.obs;
 
   final _debouncer = Debouncer(milliseconds: 400);
 
   // for search club
   var isLoadingClubYouMayKnow = false.obs;
+  var isLoadingExploreClub = false.obs;
   var isLoadingClubs = false.obs;
   var isLoadingClubJoin = false.obs;
   var hasReacheMaxClub = false.obs;
+  var hasReacheMaxExploreClub = false.obs;
   var resultSearchEmptyClub = false.obs;
   var clubId = ''.obs;
 
   final _clubService = sl<ClubService>();
 
   var clubMayYouKnow = <ClubModel>[].obs;
+  var clubExplore = <ClubModel>[].obs;
   var clubs = <ClubModel>[].obs;
   var searchClub = ''.obs;
 
   final scrollClubsController = ScrollController();
+  final scrollExploreClubController = ScrollController();
 
   var pageClub = 1;
+  var pageClubExplore = 1;
+  RxBool hasLoadedClub = false.obs;
 
-  late TabController tabController;
+  late var tabBarController;
+
+  final RxInt selectedIndex = 0.obs;
+
+  void changeTabIndex(int index) {
+    selectedIndex.value = index;
+
+    if (index == 1 && !hasLoadedClub.value) {
+      searchClubYouMayKnow();
+      getExploreClub();
+      hasLoadedClub.value = true;
+    }
+  }
 
   void onSearchChanged(String input) {
     if (search.value != input) {
@@ -65,14 +85,41 @@ class SocialSearchController extends GetxController {
   @override
   void onInit() {
     super.onInit();
+    tabBarController = TabController(length: 2, vsync: this);
+    tabBarController.addListener(() {
+      changeTabIndex(tabBarController.index);
+    });
+
+    scrollExploreClubController.addListener(() {
+      var maxScroll = scrollExploreClubController.position.pixels >=
+          scrollExploreClubController.position.maxScrollExtent - 200;
+
+      print('[explore] maxScroll: $maxScroll');
+
+      if (maxScroll && !hasReacheMaxExploreClub.value) {
+        getExploreClub();
+      }
+    });
+
+    scrollClubsController.addListener(() {
+      var maxScroll = scrollClubsController.position.pixels >= 
+        scrollClubsController.position.maxScrollExtent - 200;
+      
+      print('[search-club] maxScroll: $maxScroll');
+
+      if (maxScroll && !hasReacheMaxClub.value) {
+        searchClubs(searchClub.value);
+      }
+    });
+
     searchPeopleYouMayKnow();
-    searchClubYouMayKnow();
   }
 
   @override
   void onClose() {
     scrollFriendsController.dispose();
     scrollClubsController.dispose();
+    scrollExploreClubController.dispose();
     _debouncer.dispose();
     super.onClose();
   }
@@ -156,7 +203,7 @@ class SocialSearchController extends GetxController {
           if (index != -1) {
             final user = friends[index];
             friends[index] = user.copyWith(
-              isFollower: res ? 1 : 0,
+              isFollowing: res ? 1 : 0,
             );
           }
         } else {
@@ -165,7 +212,7 @@ class SocialSearchController extends GetxController {
           if (index != -1) {
             final user = friendsPeopleYouMayKnow[index];
             friendsPeopleYouMayKnow[index] = user.copyWith(
-              isFollower: res ? 1 : 0,
+              isFollowing: res ? 1 : 0,
             );
           }
         }
@@ -195,7 +242,7 @@ class SocialSearchController extends GetxController {
           if (index != -1) {
             final user = friends[index];
             friends[index] = user.copyWith(
-              isFollower: res ? 0 : 1,
+              isFollowing: res ? 0 : 1,
             );
           }
         } else {
@@ -204,7 +251,7 @@ class SocialSearchController extends GetxController {
           if (index != -1) {
             final user = friendsPeopleYouMayKnow[index];
             friendsPeopleYouMayKnow[index] = user.copyWith(
-              isFollower: res ? 0 : 1,
+              isFollowing: res ? 0 : 1,
             );
           }
         }
@@ -240,7 +287,12 @@ class SocialSearchController extends GetxController {
     isLoadingClubYouMayKnow.value = true;
     try {
       PaginatedDataResponse<ClubModel> response =
-          await _clubService.getAll(page: 1, joinStatus: 'unjoined', random: 1);
+          await _clubService.getAll(
+            page: 1, 
+            joinStatus: 'unjoined', 
+            order: 'recomendation',
+            limit: 10,
+          );
       List<ClubModel> clubs = response.data;
       if (response.data.length > 10) {
         clubs = response.data.sublist(0, 10);
@@ -256,6 +308,42 @@ class SocialSearchController extends GetxController {
       ); // show error snackbar, toast, etc (e.g.message)
     } finally {
       isLoadingClubYouMayKnow.value = false;
+    }
+  }
+
+  Future<void> getExploreClub() async {
+    if (isLoadingExploreClub.value || hasReacheMaxExploreClub.value) return;
+
+    isLoadingExploreClub.value = true;
+
+    try {
+      PaginatedDataResponse<ClubModel> response = await _clubService.getAll(
+        page: pageClubExplore,
+        limit: 6,
+        joinStatus: 'unjoined',
+      );
+
+      pageClubExplore++;
+
+      if (
+        (response.pagination.next == null || response.pagination.next == '') || 
+        response.pagination.total < 6) 
+      {
+        hasReacheMaxExploreClub.value = true;
+      }
+
+      if (response.data.isNotEmpty) {
+        clubExplore.value += response.data;
+      }
+    } catch (e) {
+      Get.snackbar(
+        'Error',
+        e.toString(),
+        backgroundColor: Colors.red,
+        colorText: Colors.white,
+      ); // show error snackbar, toast, etc (e.g.message)
+    } finally {
+      isLoadingExploreClub.value = false;
     }
   }
 
@@ -276,6 +364,7 @@ class SocialSearchController extends GetxController {
       PaginatedDataResponse<ClubModel> response = await _clubService.getAll(
         page: pageClub,
         search: input,
+        joinStatus: 'unjoined',
       );
 
       pageClub++;

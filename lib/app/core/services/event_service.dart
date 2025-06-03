@@ -131,6 +131,7 @@ class EventService {
     String? status,
     String? search,
     String? user,
+    String? order,
   }) async {
     try {
       final response = await _apiService.request(
@@ -147,6 +148,7 @@ class EventService {
           'limit': limit.toString(),
           if (search != null) 'search': search,
           if (user != null) 'user': user,
+          if (order != null) 'order': order,
         },
       );
 

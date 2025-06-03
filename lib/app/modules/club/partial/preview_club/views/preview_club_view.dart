@@ -1,9 +1,11 @@
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
-import 'package:font_awesome_flutter/font_awesome_flutter.dart';
+import 'package:flutter_svg/svg.dart';
 import 'package:get/get.dart';
 import 'package:zest_mobile/app/core/models/enums/club_privacy_enum.dart';
 import 'package:zest_mobile/app/core/models/model/club_model.dart';
+import 'package:zest_mobile/app/core/shared/helpers/number_helper.dart';
+import 'package:zest_mobile/app/core/shared/widgets/gradient_elevated_button.dart';
 import 'package:zest_mobile/app/core/shared/widgets/shimmer_loading_circle.dart';
 import 'package:zest_mobile/app/core/shared/widgets/shimmer_loading_list.dart';
 import 'package:zest_mobile/app/core/extension/date_extension.dart';
@@ -18,15 +20,25 @@ class PreviewClubView extends GetView<PreviewClubController> {
     return Scaffold(
       appBar: AppBar(
         backgroundColor: Theme.of(context).colorScheme.background,
-        title: const Text('Club Details'),
-        automaticallyImplyLeading: false,
-        elevation: 1,
-        leading: GestureDetector(
-          onTap: () => Get.back(),
-          child: const Icon(
-            Icons.chevron_left,
-          ),
+        title: Text(
+          'Club Details',
+          style: Theme.of(context).textTheme.headlineMedium?.copyWith(
+                fontWeight: FontWeight.w300,
+                color: Theme.of(context).colorScheme.onBackground,
+              ),
         ),
+        centerTitle: true,
+        automaticallyImplyLeading: false,
+        leading: IconButton(
+          icon: Icon(
+            Icons.chevron_left,
+            size: 27,
+            color: Theme.of(context).colorScheme.onBackground,
+          ),
+          onPressed: () => Get.back(),
+        ),
+        shadowColor: Colors.black.withOpacity(0.3),
+        surfaceTintColor: Colors.transparent,
       ),
       body: SingleChildScrollView(
         child: Obx(
@@ -65,97 +77,133 @@ class PreviewClubView extends GetView<PreviewClubController> {
     required BuildContext context,
     required ClubModel? club
   }) {
-    return Container(
-      padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 45),
-      color: Theme.of(context).colorScheme.primary,
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.center,
-        children: [
-          ClipOval(
-            child: CachedNetworkImage(
-              imageUrl: club?.imageUrl ?? '',
-              width: 90,
-              height: 90,
-              fit: BoxFit.cover,
-              placeholder: (context, url) => const ShimmerLoadingCircle(size: 90),
-              errorWidget: (context, url, error) => const CircleAvatar(
-                radius: 90,
-                backgroundImage: AssetImage('assets/images/empty_profile.png'),
-              ),
-            ),
+    return Stack(
+      children: [
+        Container(
+          margin: const EdgeInsets.symmetric(horizontal: 16, vertical: 20),
+          decoration: BoxDecoration(
+            color: Theme.of(context).colorScheme.surface,
+            borderRadius: BorderRadius.circular(16),
           ),
-
-          const SizedBox(height: 16),
-
-          Text(
-            club?.name ?? '',
-            maxLines: 2,
-            overflow: TextOverflow.ellipsis,
-            style: Theme.of(context).textTheme.headlineMedium?.copyWith(
-              color: Theme.of(context).colorScheme.onPrimary,
-              fontSize: 20
-            ),
-          ),
-
-          const SizedBox(height: 5),
-
-          Row(
-            mainAxisAlignment: MainAxisAlignment.center,
+          clipBehavior: Clip.antiAlias,
+          child: Stack(
             children: [
-              Icon(
-                Icons.date_range,
-                color: Theme.of(context).colorScheme.onPrimary,
-                size: 16,
+              Positioned(
+                top: 0,
+                right: 0,
+                child: SvgPicture.asset(
+                  'assets/images/z-background-2.svg',
+                ),
               ),
-              const SizedBox(width: 8),
-              Flexible(
-                child: Text(
-                  '${club?.createdAt?.toDDMMMyyyyString()} - ${club?.province}, ${club?.country}',
-                  style: Theme.of(context).textTheme.labelSmall,
+              Positioned(
+                top: 20,
+                right: 20,
+                child: SvgPicture.asset(
+                  'assets/icons/ic_share-2.svg',
+                ),
+              ),
+              Padding(
+                padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 30),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.center,
+                  children: [
+                    ClipOval(
+                      child: CachedNetworkImage(
+                        imageUrl: club?.imageUrl ?? '',
+                        width: 65,
+                        height: 65,
+                        fit: BoxFit.cover,
+                        placeholder: (context, url) => const ShimmerLoadingCircle(size: 65),
+                        errorWidget: (context, url, error) => const CircleAvatar(
+                          radius: 65,
+                          backgroundImage: AssetImage('assets/images/empty_profile.png'),
+                        ),
+                      ),
+                    ),
+                
+                    const SizedBox(height: 16),
+                
+                    Text(
+                      club?.name ?? '',
+                      maxLines: 2,
+                      overflow: TextOverflow.ellipsis,
+                      style: Theme.of(context).textTheme.titleSmall?.copyWith(
+                        fontWeight: FontWeight.w700,
+                      ),
+                    ),
+                
+                    const SizedBox(height: 5),
+                
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        const Icon(
+                          Icons.date_range,
+                          color: Color(0xFF6C6C6C),
+                          size: 16,
+                        ),
+                        const SizedBox(width: 8),
+                        Flexible(
+                          child: Text(
+                            '${club?.createdAt?.toDDMMMyyyyString()} - ${club?.province}, ${club?.country}',
+                            style: Theme.of(context).textTheme.bodyMedium?.copyWith(
+                              color: const Color(0xFF6C6C6C),
+                            ),
+                          ),
+                        ),
+                      ],
+                    ),
+
+                    const SizedBox(height: 25),
+                  ],
                 ),
               ),
             ],
           ),
-
-          const SizedBox(height: 16),
-
-          Wrap(
-            spacing: 8,
-            runSpacing: 8,
-            children: [
-              Container(
-                padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
-                decoration: BoxDecoration(
-                  color: Colors.white,
-                  borderRadius: BorderRadius.circular(100),
-                  border: Border.all(color: Colors.transparent),
+        ),
+        // Container "Members" yang diposisikan
+        Positioned(
+          bottom: 0,
+          left: 0,
+          right: 0,
+          child: Container(
+            decoration: BoxDecoration(
+              color: const Color(0xFF404040),
+              borderRadius: BorderRadius.circular(10),
+            ),
+            margin: const EdgeInsets.symmetric(horizontal: 16, vertical: 4),
+            padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 15),
+            child: Row(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                const Icon(
+                  Icons.groups_outlined,
+                  size: 25,
                 ),
-                child: Text(
-                  '${club?.clubUsersCount ?? 0} Members',
-                  style: Theme.of(context).textTheme.labelSmall?.copyWith(
-                    color: Theme.of(context).colorScheme.primary,
+                const SizedBox(width: 10),
+                RichText(
+                  text: TextSpan(
+                    style: Theme.of(context).textTheme.bodySmall?.copyWith(
+                      fontWeight: FontWeight.w700,
+                      fontSize: 12,
+                    ),
+                    children: <TextSpan>[
+                      TextSpan(text: '${NumberHelper().formatNumberToK(club?.clubUsersCount ?? 0)} '),
+                      TextSpan(
+                        text: 'Members',
+                        style: Theme.of(context).textTheme.bodySmall?.copyWith(
+                          fontWeight: FontWeight.w400,
+                          fontSize: 12,
+                        ),
+                      ),
+                    ],
                   ),
                 ),
-              ),
-              InkWell(
-                onTap: () => Get.snackbar('Coming soon', 'Feature is coming soon'),
-                child: Container(
-                  padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
-                  decoration: BoxDecoration(
-                    color: Theme.of(context).colorScheme.background,
-                    borderRadius: BorderRadius.circular(100),
-                  ),
-                  child: FaIcon(
-                    FontAwesomeIcons.shareFromSquare,
-                    size: 14.0,
-                    color: Theme.of(context).colorScheme.primary,
-                  ),
-                ),
-              ),
-            ],
+              ],
+            ),
           ),
-        ],
-      ),
+        ),
+      ],
     );
   }
 
@@ -172,53 +220,86 @@ class PreviewClubView extends GetView<PreviewClubController> {
           const SizedBox(height: 10),
           Text(
             'About Club',
-            style: Theme.of(context).textTheme.bodySmall?.copyWith(
-              fontWeight: FontWeight.bold,
+            style: Theme.of(context).textTheme.headlineSmall?.copyWith(
+              fontSize: 17,
             ),
           ),
-          const SizedBox(height: 6),
+          const SizedBox(height: 12),
           Text(
             club?.description ?? 'No description',
-            style: Theme.of(context).textTheme.bodySmall,
+            style: Theme.of(context).textTheme.bodySmall?.copyWith(
+              fontWeight: FontWeight.w400,
+              color: const Color(0xFFA5A5A5),
+              height: 2.3,
+            ),
           ),
 
 
           const SizedBox(height: 24),
-          Text(
-            'Event Created',
-            style: Theme.of(context).textTheme.bodySmall?.copyWith(
-              fontWeight: FontWeight.bold,
-            ),
+          Row(
+            children: [
+              SizedBox(
+                width: 26,
+                child: SvgPicture.asset('assets/icons/ic_shoes.svg', width: 26),
+              ),
+              const SizedBox(width: 12),
+              RichText(
+                text: TextSpan(
+                  style: Theme.of(context).textTheme.bodySmall?.copyWith(
+                    fontWeight: FontWeight.w700,
+                    fontSize: 13,
+                  ),
+                  children: <TextSpan>[
+                    TextSpan(text: '${NumberHelper().formatNumberToK(club?.eventsCount ?? 0)} '),
+                    TextSpan(
+                      text: 'Events Created',
+                      style: Theme.of(context).textTheme.bodySmall?.copyWith(
+                        fontWeight: FontWeight.w400,
+                        fontSize: 13,
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+            ],
           ),
-          const SizedBox(height: 6),
-          Text(
-            (club?.eventsCount ?? 0).toString(),
-            style: Theme.of(context).textTheme.bodySmall,
+          const SizedBox(height: 16),
+          Row(
+            children: [
+              SizedBox(
+                width: 26,
+                child: SvgPicture.asset('assets/icons/ic_trophies.svg', width: 22),
+              ),
+              const SizedBox(width: 12),
+              RichText(
+                text: TextSpan(
+                  style: Theme.of(context).textTheme.bodySmall?.copyWith(
+                    fontWeight: FontWeight.w700,
+                    fontSize: 13,
+                  ),
+                  children: <TextSpan>[
+                    TextSpan(text: '${NumberHelper().formatNumberToK(club?.challengeCount ?? 0)} '),
+                    TextSpan(
+                      text: 'Challanges Created',
+                      style: Theme.of(context).textTheme.bodySmall?.copyWith(
+                        fontWeight: FontWeight.w400,
+                        fontSize: 13,
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+            ],
           ),
-
-
-          const SizedBox(height: 24),
-          Text(
-            'Challange Created',
-            style: Theme.of(context).textTheme.bodySmall?.copyWith(
-              fontWeight: FontWeight.bold,
-            ),
-          ),
-          const SizedBox(height: 6),
-          Text(
-            (club?.challengeCount ?? 0).toString(),
-            style: Theme.of(context).textTheme.bodySmall,
-          ),
-
 
           const SizedBox(height: 24),
           Text(
             'Members',
-            style: Theme.of(context).textTheme.bodySmall?.copyWith(
-              fontWeight: FontWeight.bold,
+            style: Theme.of(context).textTheme.headlineSmall?.copyWith(
+              fontSize: 17,
             ),
           ),
-          const SizedBox(height: 6),
+          const SizedBox(height: 16),
           Obx(
             () {
               if (controller.isLoadingMembers.value) {
@@ -230,12 +311,12 @@ class PreviewClubView extends GetView<PreviewClubController> {
               return ParticipantsAvatars(imageUrls: controller.memberAvatars);
             }
           ),
-          const SizedBox(height: 3),
+          const SizedBox(height: 10),
           Text(
             controller.formatFriendsText(friendsNames: club?.friendsNames, friendsTotal: club?.friendsTotal),
             style: Theme.of(context).textTheme.bodySmall?.copyWith(
-              fontWeight: FontWeight.bold,
-              color: Theme.of(context).colorScheme.tertiary
+              fontWeight: FontWeight.w400,
+              color: const Color(0xFFA5A5A5),
             ),
           ),
         ],
@@ -263,18 +344,14 @@ class PreviewClubView extends GetView<PreviewClubController> {
         if (isPublic || isPrivatePending) {
           final buttonText = isPublic ? 'Join Club' : 'Accept Invitation';
 
-          return Padding(
-            padding: const EdgeInsets.all(16.0),
-            child: ElevatedButton(
-              style: ElevatedButton.styleFrom(
-                backgroundColor: theme.colorScheme.primary,
-                foregroundColor: theme.colorScheme.onPrimary,
-                minimumSize: const Size.fromHeight(40),
-              ),
+          return Container(
+            margin: const EdgeInsets.symmetric(horizontal: 16, vertical: 16),
+            height: 50,
+            child: GradientElevatedButton(
               onPressed: () => controller.joinClub(),
               child: Text(
                 buttonText,
-                style: theme.textTheme.labelSmall,
+                style: Theme.of(context).textTheme.labelMedium,
               ),
             ),
           );

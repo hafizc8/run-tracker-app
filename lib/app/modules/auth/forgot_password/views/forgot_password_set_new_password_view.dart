@@ -1,6 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:zest_mobile/app/core/models/forms/reset_password_form.dart';
+import 'package:zest_mobile/app/core/shared/widgets/custom_circular_progress_indicator.dart';
+import 'package:zest_mobile/app/core/shared/widgets/gradient_border_text_field.dart';
+import 'package:zest_mobile/app/core/shared/widgets/gradient_elevated_button.dart';
 
 import '../controllers/forgot_password_controller.dart';
 
@@ -36,7 +39,7 @@ class ForgotPasswordSetNewPasswordView
                           style: Theme.of(context).textTheme.titleSmall,
                         ),
                         const SizedBox(height: 12),
-                        TextFormField(
+                        GradientBorderTextField(
                           cursorColor: Colors.black,
                           obscureText: controller.isVisiblePassword.value,
                           onChanged: (value) {
@@ -46,19 +49,17 @@ class ForgotPasswordSetNewPasswordView
                               field: 'password',
                             );
                           },
-                          decoration: InputDecoration(
-                            suffixIcon: IconButton(
-                              icon: Icon(
-                                controller.isVisiblePassword.value
-                                    ? Icons.visibility
-                                    : Icons.visibility_off,
-                              ),
-                              onPressed: () =>
-                                  controller.isVisiblePassword.toggle(),
+                          suffixIcon: IconButton(
+                            icon: Icon(
+                              controller.isVisiblePassword.value
+                                  ? Icons.visibility
+                                  : Icons.visibility_off,
                             ),
-                            hintText: 'Enter your new password',
-                            errorText: form.errors?['password'],
+                            onPressed: () =>
+                                controller.isVisiblePassword.toggle(),
                           ),
+                          hintText: 'Enter your new password',
+                          errorText: form.errors?['password'],
                           textInputAction: TextInputAction.next,
                         ),
                         const SizedBox(height: 16),
@@ -67,7 +68,7 @@ class ForgotPasswordSetNewPasswordView
                           style: Theme.of(context).textTheme.titleSmall,
                         ),
                         const SizedBox(height: 12),
-                        TextFormField(
+                        GradientBorderTextField(
                           cursorColor: Colors.black,
                           obscureText:
                               controller.isVisiblePasswordConfirmation.value,
@@ -78,20 +79,18 @@ class ForgotPasswordSetNewPasswordView
                               field: 'password_confirmation',
                             );
                           },
-                          decoration: InputDecoration(
-                            suffixIcon: IconButton(
-                              icon: Icon(
-                                controller.isVisiblePasswordConfirmation.value
-                                    ? Icons.visibility
-                                    : Icons.visibility_off,
-                              ),
-                              onPressed: () => controller
-                                  .isVisiblePasswordConfirmation
-                                  .toggle(),
+                          suffixIcon: IconButton(
+                            icon: Icon(
+                              controller.isVisiblePasswordConfirmation.value
+                                  ? Icons.visibility
+                                  : Icons.visibility_off,
                             ),
-                            hintText: 'Confirm your new password',
-                            errorText: form.errors?['password_confirmation'],
+                            onPressed: () => controller
+                                .isVisiblePasswordConfirmation
+                                .toggle(),
                           ),
+                          hintText: 'Confirm your new password',
+                          errorText: form.errors?['password_confirmation'],
                           textInputAction: TextInputAction.done,
                         ),
                       ],
@@ -101,7 +100,7 @@ class ForgotPasswordSetNewPasswordView
               }),
               const SizedBox(height: 24),
               Obx(
-                () => ElevatedButton(
+                () => GradientElevatedButton(
                   onPressed: controller.isLoading.value
                       ? null
                       : () {
@@ -110,7 +109,7 @@ class ForgotPasswordSetNewPasswordView
                   child: Visibility(
                     visible: controller.isLoading.value,
                     replacement: const Text('Update Password'),
-                    child: const CircularProgressIndicator(),
+                    child: CustomCircularProgressIndicator(),
                   ),
                 ),
               ),

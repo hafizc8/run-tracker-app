@@ -2,11 +2,13 @@ import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 
 import 'package:get/get.dart';
+import 'package:zest_mobile/app/core/shared/widgets/gradient_elevated_button.dart';
 import 'package:zest_mobile/app/routes/app_routes.dart';
 
 import '../controllers/forgot_password_controller.dart';
 
-class ForgotPasswordPasswordUpdatedView extends GetView<ForgotPasswordController> {
+class ForgotPasswordPasswordUpdatedView
+    extends GetView<ForgotPasswordController> {
   const ForgotPasswordPasswordUpdatedView({super.key});
 
   @override
@@ -23,7 +25,8 @@ class ForgotPasswordPasswordUpdatedView extends GetView<ForgotPasswordController
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.center,
                   children: [
-                    SvgPicture.asset('assets/icons/check_circle.svg', width: 72),
+                    SvgPicture.asset('assets/icons/check_circle.svg',
+                        width: 72),
                     const SizedBox(height: 24),
                     Text(
                       'Password Updated!',
@@ -32,13 +35,14 @@ class ForgotPasswordPasswordUpdatedView extends GetView<ForgotPasswordController
                     const SizedBox(height: 18),
                     Text(
                       'You\'re all set! Your new password is locked in and ready to go.',
+                      textAlign: TextAlign.center,
                       style: Theme.of(context).textTheme.bodyMedium,
                     ),
                   ],
                 ),
               ),
               const SizedBox(height: 24),
-              ElevatedButton(
+              GradientElevatedButton(
                 onPressed: () => Get.offAllNamed(AppRoutes.login),
                 child: const Text('Back to Login'),
               ),

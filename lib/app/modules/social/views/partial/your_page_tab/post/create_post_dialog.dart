@@ -3,6 +3,8 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:zest_mobile/app/core/models/forms/create_post_form.dart';
+import 'package:zest_mobile/app/core/shared/widgets/gradient_elevated_button.dart';
+import 'package:zest_mobile/app/core/shared/widgets/gradient_outlined_button.dart';
 import 'package:zest_mobile/app/core/shared/widgets/shimmer_loading_circle.dart';
 import 'package:zest_mobile/app/modules/social/controllers/post_controller.dart';
 import 'package:zest_mobile/app/modules/social/controllers/social_controller.dart';
@@ -157,21 +159,20 @@ class CreatePostDialog extends GetView<SocialController> {
                 // Tombol Back (30%)
                 Expanded(
                   flex: 3,
-                  child: OutlinedButtonTheme(
-                    data: OutlinedButtonThemeData(
-                      style: OutlinedButton.styleFrom(
-                        backgroundColor:
-                            Theme.of(context).colorScheme.onPrimary,
-                        minimumSize: const Size.fromHeight(40),
-                        side: BorderSide(
-                            color: Theme.of(context).colorScheme.primary),
-                      ),
-                    ),
-                    child: OutlinedButton(
+                  child: SizedBox(
+                    height: 50,
+                    child: GradientOutlinedButton(
                       onPressed: () {
                         Get.back();
                       },
-                      child: const Text('Back'),
+                      child: Text(
+                        'Back',
+                        style: Theme.of(context).textTheme.bodyMedium?.copyWith(
+                          fontWeight: FontWeight.w600,
+                          fontSize: 12,
+                          color: Theme.of(context).colorScheme.primary,
+                        ),
+                      ),
                     ),
                   ),
                 ),
@@ -180,20 +181,24 @@ class CreatePostDialog extends GetView<SocialController> {
                 // Tombol Post (70%)
                 Expanded(
                   flex: 7,
-                  child: ElevatedButtonTheme(
-                    data: ElevatedButtonThemeData(
-                      style: ElevatedButton.styleFrom(
-                        backgroundColor: Theme.of(context).colorScheme.primary,
-                        foregroundColor:
-                            Theme.of(context).colorScheme.onPrimary,
-                        minimumSize: const Size.fromHeight(40),
-                      ),
+                  child: Container(
+                    height: 50,
+                    decoration: BoxDecoration(
+                      borderRadius: BorderRadius.circular(100),
                     ),
-                    child: ElevatedButton(
+                    clipBehavior: Clip.hardEdge,
+                    child: GradientElevatedButton(
                       onPressed: () {
                         postController.createPost(context);
                       },
-                      child: const Text('Post'),
+                      child: Text(
+                        'Post',
+                        style: Theme.of(context).textTheme.bodyMedium?.copyWith(
+                          fontWeight: FontWeight.w600,
+                          fontSize: 12,
+                          color: Theme.of(context).colorScheme.onPrimary,
+                        ),
+                      ),
                     ),
                   ),
                 ),

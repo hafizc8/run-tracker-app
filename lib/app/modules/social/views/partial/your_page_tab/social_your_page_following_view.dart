@@ -1,10 +1,7 @@
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/widgets.dart';
 import 'package:get/get.dart';
-import 'package:zest_mobile/app/core/extension/follow_extension.dart';
 import 'package:zest_mobile/app/core/models/model/user_mini_model.dart';
-import 'package:zest_mobile/app/core/shared/widgets/custom_chip.dart';
 import 'package:zest_mobile/app/core/shared/widgets/shimmer_loading_circle.dart';
 import 'package:zest_mobile/app/modules/social/controllers/social_following_controller.dart';
 import 'package:zest_mobile/app/routes/app_routes.dart';
@@ -30,6 +27,7 @@ class SocialYourPageFollowingView extends GetView<SocialFollowingController> {
                   Icons.search,
                   color: Theme.of(context).colorScheme.primary,
                 ),
+                fillColor: Theme.of(context).colorScheme.background,
               ),
             ),
           ),
@@ -124,45 +122,44 @@ class SocialYourPageFollowingView extends GetView<SocialFollowingController> {
       leading: ClipOval(
         child: CachedNetworkImage(
           imageUrl: user.imageUrl ?? '',
-          width: 37,
-          height: 37,
+          width: 35,
+          height: 35,
           fit: BoxFit.cover,
-          placeholder: (context, url) => const ShimmerLoadingCircle(size: 37),
+          placeholder: (context, url) => const ShimmerLoadingCircle(size: 35),
           errorWidget: (context, url, error) => const CircleAvatar(
-            radius: 37,
+            radius: 35,
             backgroundImage: AssetImage('assets/images/empty_profile.png'),
           ),
         ),
       ),
       title: Text(
         user.name,
-        style: Theme.of(context)
-            .textTheme
-            .bodyMedium
-            ?.copyWith(fontWeight: FontWeight.w600),
+        style: Theme.of(context).textTheme.bodyMedium?.copyWith(fontSize: 12),
       ),
       trailing: Row(
         mainAxisSize: MainAxisSize.min,
         children: [
           Obx(
-            () => CustomChip(
+            () => InkWell(
               onTap: () {
                 if (user.isFollowing == 0) {
                   controller.follow(user.id);
                 }
               },
-              backgroundColor:
-                  Theme.of(context).colorScheme.primary.withOpacity(0.1),
               child: Visibility(
                 visible: user.id == controller.userId.value,
-                replacement: Text(
-                  {
-                    'is_follower': user.isFollowing,
-                  }.followingStatus,
-                  style: Theme.of(context).textTheme.bodyMedium?.copyWith(
-                        color: Theme.of(context).colorScheme.primary,
-                        fontWeight: FontWeight.bold,
-                      ),
+                replacement: Visibility(
+                  visible: user.isFollowing == 0,
+                  replacement: Icon(
+                    Icons.chat_bubble_outline,
+                    color: Theme.of(context).colorScheme.primary,
+                    size: 22,
+                  ),
+                  child: Icon(
+                    Icons.person_add_alt_1_outlined,
+                    color: Theme.of(context).colorScheme.primary,
+                    size: 22,
+                  )
                 ),
                 child: const Center(
                   child: CircularProgressIndicator(),
@@ -209,9 +206,9 @@ class SocialYourPageFollowingView extends GetView<SocialFollowingController> {
                     ];
                   },
                   child: Icon(
-                    Icons.more_horiz_outlined,
-                    size: 20,
-                    color: Theme.of(context).colorScheme.primary,
+                    Icons.more_vert,
+                    size: 22,
+                    color: Theme.of(context).colorScheme.onBackground,
                   ),
                 ),
               ],

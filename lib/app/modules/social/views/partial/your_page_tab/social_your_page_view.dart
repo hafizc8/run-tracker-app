@@ -136,17 +136,21 @@ class SocialYourPageView extends GetView<SocialController> {
       onTap: () {
         controller.selectChip(chipType);
       },
-      borderRadius: BorderRadius.circular(20),
+      borderRadius: BorderRadius.circular(10),
       child: Chip(
         label: Text(label),
-        backgroundColor: const Color(0xFFdaebfe),
-        labelStyle:
-            Theme.of(context).textTheme.headlineSmall?.copyWith(fontSize: 12),
+        backgroundColor: const Color(0xFF393939),
+        labelStyle: Theme.of(context).textTheme.headlineSmall?.copyWith(
+          fontSize: 12,
+          color: (controller.selectedChip.value == chipType)
+              ? darkColorScheme.primary
+              : const Color(0xFFA5A5A5),
+        ),
         shape: RoundedRectangleBorder(
-          borderRadius: BorderRadius.circular(20),
+          borderRadius: BorderRadius.circular(10),
           side: BorderSide(
             color: (controller.selectedChip.value == chipType)
-                ? lightColorScheme.primary
+                ? darkColorScheme.primary
                 : Colors.transparent,
             width: 1,
           ),

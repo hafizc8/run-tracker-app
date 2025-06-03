@@ -26,4 +26,22 @@ class TAppTheme {
       fontFamily: GoogleFonts.quicksand().fontFamily,
     );
   }
+
+  // Tema Gelap - BARU (dan akan menjadi tema utama)
+  static ThemeData get darkTheme {
+    return ThemeData(
+      useMaterial3: true, // Direkomendasikan untuk Flutter modern
+      brightness: Brightness.dark,
+      colorScheme: darkColorScheme,
+      scaffoldBackgroundColor: darkColorScheme.background,
+      primaryColor: darkColorScheme.primary, // primaryColor usang, gunakan colorScheme.primary
+      appBarTheme: TAppBarTheme.darkAppBarTheme,
+      textTheme: TTextTheme.darkTextTheme.apply(fontFamily: GoogleFonts.poppins().fontFamily),
+      elevatedButtonTheme: TElevatedButtonTheme.darkElevatedButtonTheme,
+      // outlinedButtonTheme: TOutlinedButtonTheme.darkOutlinedButtonTheme,
+      inputDecorationTheme: TInputDecorationTheme.darkInputDecorationTheme,
+      // checkboxTheme: TCheckboxTheme.darkCheckboxTheme,
+      fontFamily: GoogleFonts.poppins().fontFamily,
+    );
+  }
 }

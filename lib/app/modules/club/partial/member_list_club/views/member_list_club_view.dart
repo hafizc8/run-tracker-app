@@ -14,15 +14,25 @@ class MemberListClubView extends GetView<MemberListClubController> {
     return Scaffold(
       appBar: AppBar(
         backgroundColor: Theme.of(context).colorScheme.background,
-        title: const Text('Members'),
-        automaticallyImplyLeading: false,
-        elevation: 1,
-        leading: GestureDetector(
-          onTap: () => Get.back(),
-          child: const Icon(
-            Icons.chevron_left,
-          ),
+        title: Text(
+          'Members',
+          style: Theme.of(context).textTheme.headlineMedium?.copyWith(
+                fontWeight: FontWeight.w300,
+                color: Theme.of(context).colorScheme.onBackground,
+              ),
         ),
+        centerTitle: true,
+        automaticallyImplyLeading: false,
+        leading: IconButton(
+          icon: Icon(
+            Icons.chevron_left,
+            size: 27,
+            color: Theme.of(context).colorScheme.onBackground,
+          ),
+          onPressed: () => Get.back(),
+        ),
+        shadowColor: Colors.black.withOpacity(0.3),
+        surfaceTintColor: Colors.transparent,
       ),
       body: SingleChildScrollView(
         controller: controller.memberListScrollController,
@@ -44,12 +54,18 @@ class MemberListClubView extends GetView<MemberListClubController> {
                     children: [
                       Text(
                         'Participants',
-                        style: Theme.of(context).textTheme.headlineSmall?.copyWith(fontWeight: FontWeight.bold),
+                        style: Theme.of(context).textTheme.headlineSmall?.copyWith(
+                          fontWeight: FontWeight.w700, 
+                          fontSize: 12,
+                        ),
                       ),
                       Obx(
                         () => Text(
                           '(${controller.clubMembers.length})',
-                          style: Theme.of(context).textTheme.headlineSmall?.copyWith(fontWeight: FontWeight.bold),
+                          style: Theme.of(context).textTheme.headlineSmall?.copyWith(
+                            fontWeight: FontWeight.w700, 
+                            fontSize: 12,
+                          ),
                         ),
                       ),
                     ],
@@ -151,17 +167,17 @@ class MemberListClubView extends GetView<MemberListClubController> {
         ),
         title: Text(
           members?.user?.name ?? '',
-          style: Theme.of(context).textTheme.bodyMedium?.copyWith(fontWeight: FontWeight.w600),
+          style: Theme.of(context).textTheme.bodyMedium,
         ),
         trailing: Visibility(
           visible: members?.status == 0,
           replacement: Text(
             members?.roleText ?? '',
-            style: Theme.of(context).textTheme.labelMedium?.copyWith(color: Colors.grey),
+            style: Theme.of(context).textTheme.bodyMedium?.copyWith(color: Colors.grey),
           ),
           child: Text(
             members?.status == 0 ? members?.statusText ?? '' : '',
-            style: Theme.of(context).textTheme.labelMedium?.copyWith(color: Colors.grey),
+            style: Theme.of(context).textTheme.bodyMedium?.copyWith(color: Colors.grey),
           ),
         ),
       ),

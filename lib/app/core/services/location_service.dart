@@ -77,7 +77,8 @@ class LocationService {
         return 'Kota tidak ditemukan';
       }
 
-      final addressComponents = results.first['address_components'] as List<dynamic>;
+      final addressComponents =
+          results.first['address_components'] as List<dynamic>;
       for (var component in addressComponents) {
         final types = component['types'] as List<dynamic>;
         if (types.contains('administrative_area_level_2')) {

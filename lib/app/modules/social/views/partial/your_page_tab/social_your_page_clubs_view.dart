@@ -33,7 +33,10 @@ class SocialYourPageClubsView extends GetView<SocialClubSearchController> {
           children: [
             Text(
               'Clubs',
-              style: Theme.of(context).textTheme.headlineSmall?.copyWith(fontWeight: FontWeight.bold),
+              style: Theme.of(context)
+                  .textTheme
+                  .headlineSmall
+                  ?.copyWith(fontWeight: FontWeight.bold),
             ),
             Obx(
               () => Text(
@@ -57,16 +60,16 @@ class SocialYourPageClubsView extends GetView<SocialClubSearchController> {
                 Text(
                   'Nothing Here Yet',
                   style: Theme.of(context).textTheme.titleMedium?.copyWith(
-                    color: const Color(0xFF5C5C5C),
-                    fontSize: 20,
-                  ),
+                        color: const Color(0xFF5C5C5C),
+                        fontSize: 20,
+                      ),
                 ),
                 const SizedBox(height: 3),
                 Text(
                   'Try a different keyword',
                   style: Theme.of(context).textTheme.titleSmall?.copyWith(
-                    color: const Color(0xFF5C5C5C),
-                  ),
+                        color: const Color(0xFF5C5C5C),
+                      ),
                 ),
               ],
             );
@@ -82,16 +85,16 @@ class SocialYourPageClubsView extends GetView<SocialClubSearchController> {
                 Text(
                   'Nothing Here Yet',
                   style: Theme.of(context).textTheme.titleMedium?.copyWith(
-                    color: const Color(0xFF5C5C5C),
-                    fontSize: 20,
-                  ),
+                        color: const Color(0xFF5C5C5C),
+                        fontSize: 20,
+                      ),
                 ),
                 const SizedBox(height: 3),
                 Text(
                   'Try a different keyword',
                   style: Theme.of(context).textTheme.titleSmall?.copyWith(
-                    color: const Color(0xFF5C5C5C),
-                  ),
+                        color: const Color(0xFF5C5C5C),
+                      ),
                 ),
               ],
             );
@@ -106,7 +109,8 @@ class SocialYourPageClubsView extends GetView<SocialClubSearchController> {
               mainAxisSpacing: 10,
               crossAxisSpacing: 3,
             ),
-            itemCount: controller.clubs.length + (controller.hasReacheMax.value ? 0 : 1),
+            itemCount: controller.clubs.length +
+                (controller.hasReacheMax.value ? 0 : 1),
             itemBuilder: (context, index) {
               if (index == controller.clubs.length) {
                 return Center(
@@ -129,7 +133,8 @@ class SocialYourPageClubsView extends GetView<SocialClubSearchController> {
     );
   }
 
-  Widget _buildClubsListItem({required BuildContext context, required ClubModel club}) {
+  Widget _buildClubsListItem(
+      {required BuildContext context, required ClubModel club}) {
     return Column(
       children: [
         Padding(
@@ -143,29 +148,32 @@ class SocialYourPageClubsView extends GetView<SocialClubSearchController> {
                   width: 68,
                   height: 68,
                   fit: BoxFit.cover,
-                  placeholder: (context, url) => const ShimmerLoadingCircle(size: 68),
+                  placeholder: (context, url) =>
+                      const ShimmerLoadingCircle(size: 68),
                   errorWidget: (context, url, error) => const CircleAvatar(
                     radius: 68,
-                    backgroundImage: AssetImage('assets/images/empty_profile.png'),
+                    backgroundImage:
+                        AssetImage('assets/images/empty_profile.png'),
                   ),
                 ),
               ),
-              (club.isOwner ?? false) ? Positioned(
-                bottom: 0,
-                right: -5,
-                child: Container(
-                  padding: const EdgeInsets.all(6),
-                  decoration: BoxDecoration(
-                    color: Theme.of(context).colorScheme.primary,
-                    shape: BoxShape.circle,
-                  ),
-                  child: FaIcon(
-                    FontAwesomeIcons.crown,
-                    size: 12,
-                    color: Theme.of(context).colorScheme.onPrimary,
-                  )
-                ),
-              ) : const SizedBox(),
+              (club.isOwner ?? false)
+                  ? Positioned(
+                      bottom: 0,
+                      right: -5,
+                      child: Container(
+                          padding: const EdgeInsets.all(6),
+                          decoration: BoxDecoration(
+                            color: Theme.of(context).colorScheme.primary,
+                            shape: BoxShape.circle,
+                          ),
+                          child: FaIcon(
+                            FontAwesomeIcons.crown,
+                            size: 12,
+                            color: Theme.of(context).colorScheme.onPrimary,
+                          )),
+                    )
+                  : const SizedBox(),
             ],
           ),
         ),
@@ -173,9 +181,9 @@ class SocialYourPageClubsView extends GetView<SocialClubSearchController> {
         Text(
           club.name ?? '',
           style: Theme.of(context).textTheme.bodySmall?.copyWith(
-            fontWeight: FontWeight.w400,
-            color: const Color(0xFFDCDCDC),
-          ),
+                fontWeight: FontWeight.w400,
+                color: const Color(0xFFDCDCDC),
+              ),
           maxLines: 2,
           overflow: TextOverflow.ellipsis,
           textAlign: TextAlign.center,

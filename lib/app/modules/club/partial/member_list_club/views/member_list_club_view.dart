@@ -36,69 +36,70 @@ class MemberListClubView extends GetView<MemberListClubController> {
       ),
       body: SingleChildScrollView(
         controller: controller.memberListScrollController,
-        child: Obx(
-          () {
-            if (controller.isLoading.value) {
-              return const ShimmerLoadingList(
-                itemCount: 10,
-                itemHeight: 60,
-              );
-            }
-
-            return Container(
-              padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 20),
-              child: Column(
-                children: [
-                  Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                    children: [
-                      Text(
-                        'Participants',
-                        style: Theme.of(context).textTheme.headlineSmall?.copyWith(
-                          fontWeight: FontWeight.w700, 
-                          fontSize: 12,
-                        ),
-                      ),
-                      Obx(
-                        () => Text(
-                          '(${controller.clubMembers.length})',
-                          style: Theme.of(context).textTheme.headlineSmall?.copyWith(
-                            fontWeight: FontWeight.w700, 
-                            fontSize: 12,
-                          ),
-                        ),
-                      ),
-                    ],
-                  ),
-                  const SizedBox(height: 20),
-                  ListView.builder(
-                    shrinkWrap: true,
-                    itemCount: controller.clubMembers.length + (controller.hasReacheMax.value ? 0 : 1),
-                    physics: const NeverScrollableScrollPhysics(),
-                    itemBuilder: (context, index) {
-                      if (index == controller.clubMembers.length) {
-                        return Center(
-                          child: Container(
-                            margin: const EdgeInsets.symmetric(vertical: 10),
-                            child: const CircularProgressIndicator(),
-                          ),
-                        );
-                      }
-              
-                      final member = controller.clubMembers[index];
-                      return Column(
-                        children: [
-                          _buildMemberListItem(context, member),
-                          const SizedBox(height: 8),
-                        ],
-                      );
-                    },
-                  ),
-                ],
-              ),
+        child: Obx(() {
+          if (controller.isLoading.value) {
+            return const ShimmerLoadingList(
+              itemCount: 10,
+              itemHeight: 60,
             );
           }
-        ),
+
+          return Container(
+            padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 20),
+            child: Column(
+              children: [
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: [
+                    Text(
+                      'Participants',
+                      style:
+                          Theme.of(context).textTheme.headlineSmall?.copyWith(
+                                fontWeight: FontWeight.w700,
+                                fontSize: 12,
+                              ),
+                    ),
+                    Obx(
+                      () => Text(
+                        '(${controller.clubMembers.length})',
+                        style:
+                            Theme.of(context).textTheme.headlineSmall?.copyWith(
+                                  fontWeight: FontWeight.w700,
+                                  fontSize: 12,
+                                ),
+                      ),
+                    ),
+                  ],
+                ),
+                const SizedBox(height: 20),
+                ListView.builder(
+                  shrinkWrap: true,
+                  itemCount: controller.clubMembers.length +
+                      (controller.hasReacheMax.value ? 0 : 1),
+                  physics: const NeverScrollableScrollPhysics(),
+                  itemBuilder: (context, index) {
+                    if (index == controller.clubMembers.length) {
+                      return Center(
+                        child: Container(
+                          margin: const EdgeInsets.symmetric(vertical: 10),
+                          child: const CircularProgressIndicator(),
+                        ),
+                      );
+                    }
+
+                    final member = controller.clubMembers[index];
+                    return Column(
+                      children: [
+                        _buildMemberListItem(context, member),
+                        const SizedBox(height: 8),
+                      ],
+                    );
+                  },
+                ),
+              ],
+            ),
+          );
+        }),
       ),
     );
   }
@@ -173,11 +174,17 @@ class MemberListClubView extends GetView<MemberListClubController> {
           visible: members?.status == 0,
           replacement: Text(
             members?.roleText ?? '',
-            style: Theme.of(context).textTheme.bodyMedium?.copyWith(color: Colors.grey),
+            style: Theme.of(context)
+                .textTheme
+                .bodyMedium
+                ?.copyWith(color: Colors.grey),
           ),
           child: Text(
             members?.status == 0 ? members?.statusText ?? '' : '',
-            style: Theme.of(context).textTheme.bodyMedium?.copyWith(color: Colors.grey),
+            style: Theme.of(context)
+                .textTheme
+                .bodyMedium
+                ?.copyWith(color: Colors.grey),
           ),
         ),
       ),

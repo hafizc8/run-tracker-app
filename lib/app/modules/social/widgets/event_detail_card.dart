@@ -1,11 +1,14 @@
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_svg/flutter_svg.dart';
 import 'package:get/get.dart';
 import 'package:intl/intl.dart';
 import 'package:shimmer/shimmer.dart';
+import 'package:zest_mobile/app/core/extension/date_extension.dart';
 import 'package:zest_mobile/app/core/models/model/event_model.dart';
 import 'package:zest_mobile/app/core/shared/widgets/shimmer_loading_circle.dart';
 import 'package:zest_mobile/app/modules/social/views/partial/for_you_tab/event/controllers/event_action_controller.dart';
+import 'package:zest_mobile/app/modules/social/views/partial/for_you_tab/event/controllers/event_controller.dart';
 import 'package:zest_mobile/app/modules/social/views/partial/for_you_tab/event/controllers/event_detail_controller.dart';
 import 'package:zest_mobile/app/routes/app_routes.dart';
 
@@ -13,6 +16,7 @@ class EventDetailCard extends GetView<EventDetailController> {
   EventDetailCard({super.key, required this.event});
   final EventModel? event;
   final eventActionController = Get.find<EventActionController>();
+  final eventController = Get.find<EventController>();
 
   @override
   Widget build(BuildContext context) {
@@ -22,25 +26,6 @@ class EventDetailCard extends GetView<EventDetailController> {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          // header
-          Row(
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-            children: [
-              Expanded(
-                child: Text(
-                  event?.title ?? '-',
-                  maxLines: 1,
-                  overflow: TextOverflow.ellipsis,
-                  style: Theme.of(context).textTheme.headlineMedium,
-                ),
-              ),
-              Icon(
-                Icons.share_outlined,
-                color: Theme.of(context).colorScheme.primary,
-              ),
-            ],
-          ),
-          const SizedBox(height: 15),
           // Image
           AspectRatio(
             aspectRatio: 1,
@@ -52,8 +37,8 @@ class EventDetailCard extends GetView<EventDetailController> {
                   imageUrl: event?.imageUrl ?? '',
                   fit: BoxFit.cover,
                   placeholder: (context, url) => Shimmer.fromColors(
-                    baseColor: Colors.grey.shade300,
-                    highlightColor: Colors.grey.shade100,
+                    baseColor: Colors.grey.shade800,
+                    highlightColor: Colors.grey.shade700,
                     child: const SizedBox.shrink(),
                   ),
                   errorWidget: (context, url, error) => const Center(
@@ -72,54 +57,193 @@ class EventDetailCard extends GetView<EventDetailController> {
             ),
           ),
           const SizedBox(height: 15),
-          // title
           Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
-              ClipOval(
-                child: CachedNetworkImage(
-                  imageUrl: event?.user?.imageUrl ?? '',
-                  width: 50,
-                  height: 50,
-                  fit: BoxFit.cover,
-                  placeholder: (context, url) => Shimmer.fromColors(
-                    baseColor: Colors.grey.shade300,
-                    highlightColor: Colors.grey.shade100,
-                    child: const SizedBox.shrink(),
+              Container(
+                padding: const EdgeInsets.all(2), // Lebar border
+                decoration: BoxDecoration(
+                  gradient: const LinearGradient(
+                    colors: [Color(0xFFA2FF00), Color(0xFF00FF7F)],
+                    begin: Alignment.centerLeft,
+                    end: Alignment.centerRight,
                   ),
-                  errorWidget: (context, url, error) => const Center(
-                    child: Column(
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      children: [
-                        Icon(
-                          Icons.person,
-                          size: 24,
-                          color: Colors.grey,
+                  borderRadius: BorderRadius.circular(12),
+                ),
+                child: Container(
+                  padding:
+                      const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
+                  decoration: BoxDecoration(
+                    color: Theme.of(context).colorScheme.background,
+                    borderRadius: BorderRadius.circular(10),
+                  ),
+                  child: Row(
+                    children: [
+                      CachedNetworkImage(
+                        imageUrl: event?.activity ?? '',
+                        width: 13,
+                        height: 13,
+                        fit: BoxFit.cover,
+                        placeholder: (context, url) =>
+                            const ShimmerLoadingCircle(size: 13),
+                        errorWidget: (context, url, error) => const Icon(
+                          size: 13,
+                          Icons.error,
                         ),
-                      ],
-                    ),
+                      ),
+                      const SizedBox(width: 8),
+                      Text(
+                        event?.activity ?? '-',
+                        style: Theme.of(context).textTheme.bodyMedium?.copyWith(
+                              color: Theme.of(context).colorScheme.primary,
+                            ),
+                      ),
+                    ],
                   ),
                 ),
               ),
-              const SizedBox(width: 8),
-              Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
+              Row(
                 children: [
-                  Text('ORGANIZED BY',
-                      style: Theme.of(context).textTheme.labelSmall?.copyWith(
-                          color: Theme.of(context).colorScheme.onTertiary)),
-                  Text('[${event?.user?.name}]',
-                      style: Theme.of(context)
-                          .textTheme
-                          .bodyMedium
-                          ?.copyWith(fontWeight: FontWeight.w600)),
+                  SvgPicture.asset(
+                    'assets/icons/share.svg',
+                    color: Theme.of(context).colorScheme.primary,
+                    height: 22,
+                    width: 27,
+                  ),
+                  const SizedBox(width: 16),
+                  Visibility(
+                    visible: event?.isOwner == 1 &&
+                        (event?.datetime ?? DateTime.now()).isDateTimePassed(
+                            event?.startTime ?? TimeOfDay.now()) &&
+                        event?.cancelledAt == null,
+                    child: PopupMenuButton<String>(
+                      onSelected: (value) async {
+                        // Handle the selection
+                        if (value == 'edit_event') {
+                          // Handle Edit Event action
+                          eventActionController.gotToEdit(event!, from: 'list');
+                        } else if (value == 'cancel_event') {
+                          // Handle Cancel Event action
+                          await eventController.cancelEvent(event?.id ?? '');
+                        }
+                      },
+                      surfaceTintColor: Theme.of(context).colorScheme.onPrimary,
+                      itemBuilder: (BuildContext context) {
+                        return [
+                          PopupMenuItem<String>(
+                            value: 'edit_event',
+                            child: Text(
+                              'Edit Event',
+                              style: Theme.of(context)
+                                  .textTheme
+                                  .bodyMedium
+                                  ?.copyWith(fontWeight: FontWeight.w600),
+                            ),
+                          ),
+                          PopupMenuItem<String>(
+                            value: 'cancel_event',
+                            child: Obx(
+                              () => Visibility(
+                                visible: eventController.isLoadingAction.value,
+                                replacement: Text(
+                                  'Cancel Event',
+                                  style: Theme.of(context)
+                                      .textTheme
+                                      .bodyMedium
+                                      ?.copyWith(fontWeight: FontWeight.w600),
+                                ),
+                                child: CircularProgressIndicator(
+                                  color: Theme.of(context).colorScheme.primary,
+                                ),
+                              ),
+                            ),
+                          ),
+                        ];
+                      },
+                      child: Icon(
+                        Icons.more_vert,
+                        size: 27,
+                        color: Theme.of(context).colorScheme.primary,
+                      ),
+                    ),
+                  )
                 ],
               ),
             ],
           ),
+          const SizedBox(height: 16),
+          // title text
+          Text(
+            event?.title ?? '-',
+            style: Theme.of(context).textTheme.bodyMedium?.copyWith(
+                  fontWeight: FontWeight.w600,
+                  fontSize: 17,
+                  color: Theme.of(context).colorScheme.primary,
+                ),
+          ),
+          const SizedBox(height: 16),
+          Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Text(
+                'Organized By',
+                style: Theme.of(context).textTheme.labelSmall?.copyWith(
+                      fontSize: 12,
+                      fontWeight: FontWeight.w400,
+                      color: Color(0xFFA5A5A5),
+                    ),
+              ),
+              const SizedBox(height: 8),
+              Row(
+                children: [
+                  ClipOval(
+                    child: CachedNetworkImage(
+                      imageUrl: event?.user?.imageUrl ?? '',
+                      width: 50,
+                      height: 50,
+                      fit: BoxFit.cover,
+                      placeholder: (context, url) => Shimmer.fromColors(
+                        baseColor: Colors.grey.shade800,
+                        highlightColor: Colors.grey.shade700,
+                        child: const SizedBox.shrink(),
+                      ),
+                      errorWidget: (context, url, error) => const Center(
+                        child: Column(
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          children: [
+                            Icon(
+                              Icons.person,
+                              size: 24,
+                              color: Colors.grey,
+                            ),
+                          ],
+                        ),
+                      ),
+                    ),
+                  ),
+                  const SizedBox(width: 8),
+                  Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Text(
+                        event?.user?.name ?? '-',
+                        style: Theme.of(context).textTheme.bodyMedium?.copyWith(
+                              fontWeight: FontWeight.w600,
+                            ),
+                      ),
+                    ],
+                  ),
+                ],
+              ),
+            ],
+          ),
+
           const SizedBox(height: 15),
           // description
           Text(
             event?.description ?? '-',
+            maxLines: 6,
+            overflow: TextOverflow.ellipsis,
             style: Theme.of(context).textTheme.titleSmall,
           ),
           const SizedBox(height: 15),
@@ -128,30 +252,35 @@ class EventDetailCard extends GetView<EventDetailController> {
             children: [
               _buildInfoItem(
                 context,
-                icon: Icons.track_changes_outlined,
-                title: 'QUOTA',
-                subtitle: event?.quota.toString() ?? '-',
-              ),
-              const SizedBox(height: 16),
-              _buildInfoItem(
-                context,
-                icon: Icons.date_range_outlined,
-                title: 'PERIOD',
+                icon: SvgPicture.asset(
+                  'assets/icons/calendar.svg',
+                  height: 22,
+                  width: 27,
+                ),
+                title: 'Date & Time',
                 subtitle:
                     '${DateFormat('d MMM yyyy').format(event!.datetime!)}, ${eventActionController.formatTime(event!.startTime!)}–${eventActionController.formatTime(event!.endTime!)}',
               ),
               const SizedBox(height: 12),
               _buildInfoItem(
                 context,
-                icon: Icons.map_outlined,
-                title: 'LOCATION',
+                icon: SvgPicture.asset(
+                  'assets/icons/pin_location.svg',
+                  height: 22,
+                  width: 27,
+                ),
+                title: 'Location',
                 subtitle: event?.address ?? '-',
               ),
               const SizedBox(height: 16),
               _buildInfoItem(
                 context,
-                icon: Icons.confirmation_num_outlined,
-                title: 'HTM',
+                icon: SvgPicture.asset(
+                  'assets/icons/dollar.svg',
+                  height: 22,
+                  width: 27,
+                ),
+                title: 'Fee',
                 subtitle:
                     "${(event?.price == null || event?.price == 0) ? 'Free' : event?.price}",
               ),
@@ -162,8 +291,8 @@ class EventDetailCard extends GetView<EventDetailController> {
           Obx(() {
             if (controller.isLoading.value) {
               return Shimmer.fromColors(
-                baseColor: Colors.grey.shade300,
-                highlightColor: Colors.grey.shade100,
+                baseColor: Colors.grey.shade800,
+                highlightColor: Colors.grey.shade700,
                 child: _personGridList(
                   context: context,
                   title: 'Going',
@@ -188,8 +317,8 @@ class EventDetailCard extends GetView<EventDetailController> {
           Obx(() {
             if (controller.isLoadingWaitList.value) {
               return Shimmer.fromColors(
-                baseColor: Colors.grey.shade300,
-                highlightColor: Colors.grey.shade100,
+                baseColor: Colors.grey.shade800,
+                highlightColor: Colors.grey.shade700,
                 child: _personGridList(
                   context: context,
                   title: 'Waitlist',
@@ -223,7 +352,6 @@ class EventDetailCard extends GetView<EventDetailController> {
       padding: const EdgeInsets.all(15),
       decoration: BoxDecoration(
         borderRadius: BorderRadius.circular(12),
-        color: Theme.of(context).colorScheme.surface,
       ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
@@ -239,9 +367,19 @@ class EventDetailCard extends GetView<EventDetailController> {
                 GestureDetector(
                   onTap: () => Get.toNamed(AppRoutes.eventSeeAllParticipant,
                       arguments: {'eventId': event?.id}),
-                  child: Text(
-                    'See all',
-                    style: Theme.of(context).textTheme.headlineSmall,
+                  child: Row(
+                    children: [
+                      Text(
+                        'See all',
+                        style: Theme.of(context).textTheme.headlineSmall,
+                      ),
+                      const SizedBox(width: 5),
+                      Icon(
+                        Icons.arrow_forward_ios,
+                        size: 16,
+                        color: Theme.of(context).colorScheme.primary,
+                      ),
+                    ],
                   ),
                 ),
               ]
@@ -267,26 +405,34 @@ class EventDetailCard extends GetView<EventDetailController> {
 
   Widget _buildInfoItem(
     BuildContext context, {
-    required IconData icon,
+    required SvgPicture icon,
     required String title,
     required String subtitle,
   }) {
     return Row(
       children: [
-        Icon(
-          icon,
-          size: 24,
-          color: Theme.of(context).primaryColor,
-        ),
+        icon,
         const SizedBox(width: 8),
         Expanded(
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               Text(
+                title,
+                style: Theme.of(context).textTheme.bodyMedium?.copyWith(
+                      fontWeight: FontWeight.w400,
+                      color: Theme.of(context).colorScheme.secondary,
+                      fontSize: 12,
+                    ),
+                maxLines: 1,
+                overflow: TextOverflow.ellipsis,
+              ),
+              Text(
                 subtitle,
                 style: Theme.of(context).textTheme.bodyMedium?.copyWith(
-                      fontWeight: FontWeight.w600,
+                      fontWeight: FontWeight.w400,
+                      color: Theme.of(context).colorScheme.onBackground,
+                      fontSize: 12,
                     ),
                 maxLines: 1,
                 overflow: TextOverflow.ellipsis,

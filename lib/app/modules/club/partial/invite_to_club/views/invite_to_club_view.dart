@@ -47,8 +47,8 @@ class InviteToClubView extends GetView<InviteToClubController> {
                 onChanged: (value) => controller.onSearchChanged(value),
                 decoration: InputDecoration(
                   hintText: 'Search',
-                  border:
-                      OutlineInputBorder(borderRadius: BorderRadius.circular(12)),
+                  border: OutlineInputBorder(
+                      borderRadius: BorderRadius.circular(12)),
                   suffixIcon: Icon(
                     Icons.search,
                     color: Theme.of(context).colorScheme.primary,
@@ -63,17 +63,18 @@ class InviteToClubView extends GetView<InviteToClubController> {
                   Text(
                     'Select Friend',
                     style: Theme.of(context).textTheme.headlineSmall?.copyWith(
-                      fontWeight: FontWeight.w700, 
-                      fontSize: 12,
-                    ),
+                          fontWeight: FontWeight.w700,
+                          fontSize: 12,
+                        ),
                   ),
                   Obx(
                     () => Text(
                       '(${controller.selectedUser.length} Selected)',
-                      style: Theme.of(context).textTheme.headlineSmall?.copyWith(
-                        fontWeight: FontWeight.w700, 
-                        fontSize: 12,
-                      ),
+                      style:
+                          Theme.of(context).textTheme.headlineSmall?.copyWith(
+                                fontWeight: FontWeight.w700,
+                                fontSize: 12,
+                              ),
                     ),
                   ),
                 ],
@@ -105,7 +106,8 @@ class InviteToClubView extends GetView<InviteToClubController> {
                 }
                 return ListView.builder(
                   shrinkWrap: true,
-                  itemCount: controller.userFollowers.length + (controller.hasReacheMax.value ? 0 : 1),
+                  itemCount: controller.userFollowers.length +
+                      (controller.hasReacheMax.value ? 0 : 1),
                   physics: const NeverScrollableScrollPhysics(),
                   itemBuilder: (context, index) {
                     if (index == controller.userFollowers.length) {
@@ -116,9 +118,10 @@ class InviteToClubView extends GetView<InviteToClubController> {
                         ),
                       );
                     }
-          
+
                     final user = controller.userFollowers[index];
-                    final isChecked = controller.selectedUser.contains(user?.id);
+                    final isChecked =
+                        controller.selectedUser.contains(user?.id);
 
                     return Column(
                       children: [
@@ -140,8 +143,10 @@ class InviteToClubView extends GetView<InviteToClubController> {
     );
   }
 
-  Widget _buildMemberListItem({required BuildContext context, UserMiniModel? friend, bool isChecked = false}) {
-    print('friend.id: ${friend?.id}, isChecked: $isChecked');
+  Widget _buildMemberListItem(
+      {required BuildContext context,
+      UserMiniModel? friend,
+      bool isChecked = false}) {
     return ListTile(
       leading: ClipOval(
         child: CachedNetworkImage(
@@ -158,21 +163,27 @@ class InviteToClubView extends GetView<InviteToClubController> {
       ),
       title: Text(
         friend?.name ?? '',
-        style: Theme.of(context).textTheme.bodyMedium?.copyWith(fontWeight: FontWeight.w600),
+        style: Theme.of(context)
+            .textTheme
+            .bodyMedium
+            ?.copyWith(fontWeight: FontWeight.w600),
       ),
-      trailing: !(friend?.isJoinedToClub ?? false) ? CustomBlueCheckbox(
-        value: isChecked,
-        onChanged: (_) => controller.toggleSelection(friend?.id ?? ''),
-      ) :
-      Text(
-        'Joined',
-        style: Theme.of(context).textTheme.labelMedium?.copyWith(
-          fontSize: 13,
-          fontWeight: FontWeight.w400,
-          color: Theme.of(context).colorScheme.onBackground,
-        ),
-      ),
-      onTap: () => !(friend?.isJoinedToClub ?? false) ? controller.toggleSelection(friend?.id ?? '') : null,
+      trailing: !(friend?.isJoinedToClub ?? false)
+          ? Checkbox(
+              value: isChecked,
+              onChanged: (_) => controller.toggleSelection(friend?.id ?? ''),
+            )
+          : Text(
+              'Joined',
+              style: Theme.of(context).textTheme.labelMedium?.copyWith(
+                    fontSize: 13,
+                    fontWeight: FontWeight.w400,
+                    color: Theme.of(context).colorScheme.onBackground,
+                  ),
+            ),
+      onTap: () => !(friend?.isJoinedToClub ?? false)
+          ? controller.toggleSelection(friend?.id ?? '')
+          : null,
     );
   }
 

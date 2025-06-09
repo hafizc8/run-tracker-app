@@ -29,7 +29,7 @@ class EventStoreFormModel extends FormModel<EventStoreFormModel>
   EventStoreFormModel({
     this.price,
     this.quota,
-    this.isPublic,
+    this.isPublic = true,
     this.isAutoPostToClub,
     this.latitude,
     this.longitude,

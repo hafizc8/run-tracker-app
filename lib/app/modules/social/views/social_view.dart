@@ -37,13 +37,12 @@ class SocialView extends GetView<SocialController> {
         text: TextSpan(
           children: <TextSpan>[
             TextSpan(
-              text: 'ZEST+ ',
-              style: GoogleFonts.poppins(
-                fontWeight: FontWeight.w700,
-                fontSize: 25,
-                color: darkColorScheme.primary,
-              )
-            ),
+                text: 'ZEST+ ',
+                style: GoogleFonts.poppins(
+                  fontWeight: FontWeight.w700,
+                  fontSize: 25,
+                  color: darkColorScheme.primary,
+                )),
             TextSpan(
               text: 'Social',
               style: Theme.of(context).textTheme.titleLarge,
@@ -68,9 +67,10 @@ class SocialView extends GetView<SocialController> {
                         surfaceTintColor: Colors.transparent,
                         backgroundColor: Colors.transparent,
                         child: EventCardDialog(
+                          backgroundColor:
+                              Theme.of(context).colorScheme.surface,
                           eventModel: res,
                           onTap: null,
-                          isAction: true,
                         ),
                       );
                     });
@@ -114,7 +114,7 @@ class SocialView extends GetView<SocialController> {
             ),
             child: Icon(
               Icons.add,
-              size: 18, 
+              size: 18,
               color: Theme.of(context).colorScheme.onBackground,
             ),
           ),
@@ -132,7 +132,7 @@ class SocialView extends GetView<SocialController> {
               ),
               child: Icon(
                 Icons.search,
-                size: 18, 
+                size: 18,
                 color: Theme.of(context).colorScheme.onBackground,
               ),
             ),
@@ -157,62 +157,59 @@ class SocialView extends GetView<SocialController> {
   }
 
   Widget _buildCustomTabBar(BuildContext context) {
-    return Obx(
-      () {
-        BorderRadiusGeometry indicatorBorderRadius;
+    return Obx(() {
+      BorderRadiusGeometry indicatorBorderRadius;
 
-        int currentTab = controller.selectedIndex.value;
+      int currentTab = controller.selectedIndex.value;
 
-        if (currentTab == 0) { 
-          indicatorBorderRadius = const BorderRadius.only(
-            topLeft: Radius.circular(11),
-            bottomLeft: Radius.circular(11),
-          );
-        } else {
-          indicatorBorderRadius = const BorderRadius.only(
-            topRight: Radius.circular(11),
-            bottomRight: Radius.circular(11),
-          );
-        }
-
-        return Container(
-          margin: const EdgeInsets.symmetric(horizontal: 16),
-          height: 38,
-          decoration: BoxDecoration(
-            border: Border.all(color: Theme.of(context).colorScheme.primary),
-            borderRadius: BorderRadius.circular(16),
-            color: Theme.of(context).colorScheme.onPrimary,
-          ),
-          child: ClipRRect(
-            borderRadius: BorderRadius.circular(15),
-            child: TabBar(
-              controller: controller.tabBarController,
-              indicator: BoxDecoration(
-                color: Theme.of(context).colorScheme.primary,
-                borderRadius: indicatorBorderRadius,
-              ),
-              automaticIndicatorColorAdjustment: false,
-              indicatorWeight: 0,
-              indicatorSize: TabBarIndicatorSize.tab,
-              dividerHeight: 0,
-              labelColor: Theme.of(context).colorScheme.onPrimary,
-              unselectedLabelColor: Theme.of(context).colorScheme.primary,
-              labelStyle: Theme.of(context).textTheme.bodySmall?.copyWith(
-                fontWeight: FontWeight.w400,
-              ),
-              unselectedLabelStyle: Theme.of(context).textTheme.bodySmall?.copyWith(
-                fontWeight: FontWeight.w400,
-              ),
-              
-              tabs: const [
-                Tab(text: 'Your Page'),
-                Tab(text: 'For You'),
-              ],
-            ),
-          ),
+      if (currentTab == 0) {
+        indicatorBorderRadius = const BorderRadius.only(
+          topLeft: Radius.circular(11),
+          bottomLeft: Radius.circular(11),
+        );
+      } else {
+        indicatorBorderRadius = const BorderRadius.only(
+          topRight: Radius.circular(11),
+          bottomRight: Radius.circular(11),
         );
       }
-    );
+
+      return Container(
+        margin: const EdgeInsets.symmetric(horizontal: 16),
+        height: 38,
+        decoration: BoxDecoration(
+          border: Border.all(color: Theme.of(context).colorScheme.primary),
+          borderRadius: BorderRadius.circular(16),
+          color: Theme.of(context).colorScheme.onPrimary,
+        ),
+        child: ClipRRect(
+          borderRadius: BorderRadius.circular(15),
+          child: TabBar(
+            controller: controller.tabBarController,
+            indicator: BoxDecoration(
+              color: Theme.of(context).colorScheme.primary,
+              borderRadius: indicatorBorderRadius,
+            ),
+            automaticIndicatorColorAdjustment: false,
+            indicatorWeight: 0,
+            indicatorSize: TabBarIndicatorSize.tab,
+            dividerHeight: 0,
+            labelColor: Theme.of(context).colorScheme.onPrimary,
+            unselectedLabelColor: Theme.of(context).colorScheme.primary,
+            labelStyle: Theme.of(context).textTheme.bodySmall?.copyWith(
+                  fontWeight: FontWeight.w400,
+                ),
+            unselectedLabelStyle:
+                Theme.of(context).textTheme.bodySmall?.copyWith(
+                      fontWeight: FontWeight.w400,
+                    ),
+            tabs: const [
+              Tab(text: 'Your Page'),
+              Tab(text: 'For You'),
+            ],
+          ),
+        ),
+      );
+    });
   }
 }
-

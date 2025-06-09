@@ -98,7 +98,7 @@ class EventCreateView extends GetView<EventActionController> {
                     ),
                     const SizedBox(height: 12),
                     TextFormField(
-                      cursorColor: Colors.black,
+                      cursorColor: Colors.white,
                       keyboardType: TextInputType.text,
                       initialValue: form.title,
                       onChanged: (value) {
@@ -128,7 +128,7 @@ class EventCreateView extends GetView<EventActionController> {
                     ),
                     const SizedBox(height: 12),
                     TextFormField(
-                      cursorColor: Colors.black,
+                      cursorColor: Colors.white,
                       maxLines: 3,
                       initialValue: form.description,
                       onChanged: (value) {
@@ -149,12 +149,12 @@ class EventCreateView extends GetView<EventActionController> {
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     TextFormField(
-                      cursorColor: Colors.black,
+                      cursorColor: Colors.white,
                       readOnly: true,
                       controller: controller.imageController,
                       onTap: () => controller.imagePicker(context),
                       decoration: InputDecoration(
-                        hintText: 'Upload Image',
+                        hintText: 'Upload Image (Optional)',
                         prefixIcon: const Icon(Icons.file_upload_outlined),
                         errorText: form.errors?['image'],
                       ),
@@ -188,7 +188,7 @@ class EventCreateView extends GetView<EventActionController> {
                     const SizedBox(height: 12),
                     TextFormField(
                       controller: controller.addressController,
-                      cursorColor: Colors.black,
+                      cursorColor: Colors.white,
                       readOnly: true,
                       onTap: () async {
                         final res = await Get.toNamed(
@@ -232,7 +232,7 @@ class EventCreateView extends GetView<EventActionController> {
                     ),
                     const SizedBox(height: 12),
                     TextFormField(
-                      cursorColor: Colors.black,
+                      cursorColor: Colors.white,
                       readOnly: true,
                       controller: controller.dateController,
                       onTap: () => controller.setDate(context),
@@ -256,7 +256,7 @@ class EventCreateView extends GetView<EventActionController> {
                     ),
                     const SizedBox(height: 12),
                     TextFormField(
-                      cursorColor: Colors.black,
+                      cursorColor: Colors.white,
                       keyboardType: TextInputType.number,
                       initialValue: (form.price == null || form.price == 0)
                           ? ''
@@ -288,7 +288,7 @@ class EventCreateView extends GetView<EventActionController> {
                     ),
                     const SizedBox(height: 12),
                     TextFormField(
-                      cursorColor: Colors.black,
+                      cursorColor: Colors.white,
                       keyboardType: TextInputType.number,
                       initialValue: (form.quota ?? '').toString(),
                       onChanged: (value) {
@@ -315,17 +315,17 @@ class EventCreateView extends GetView<EventActionController> {
                 ListTile(
                   contentPadding: EdgeInsets.zero,
                   title: Text(
-                    "Post this event to public",
+                    "Set event to private",
                     style: Theme.of(context).textTheme.bodyLarge,
                   ),
                   trailing: Switch(
-                    value: form.isPublic ?? false,
+                    value: !(form.isPublic ?? false),
                     thumbColor: MaterialStateProperty.all<Color>(
                       Colors.white,
                     ),
                     onChanged: (value) {
                       controller.form.value = form.copyWith(
-                        isPublic: value,
+                        isPublic: !value,
                         errors: form.errors,
                         field: 'is_public',
                       );

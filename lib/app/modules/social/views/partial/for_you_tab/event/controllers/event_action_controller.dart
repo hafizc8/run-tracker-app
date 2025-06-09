@@ -82,7 +82,7 @@ class EventActionController extends GetxController {
       TimeOfDay? startTime;
       TimeOfDay? endTime;
 
-      await showDialog(
+      bool? resp = await showDialog(
         context: context,
         barrierDismissible: false,
         builder: (context) {
@@ -115,13 +115,13 @@ class EventActionController extends GetxController {
                     ),
                     // Waktu Berakhir
                     ListTile(
-                      title: Text('End Time'),
+                      title: const Text('End Time'),
                       subtitle: Text(
                         endTime != null
                             ? '${endTime!.hour.toString().padLeft(2, '0')}.${endTime!.minute.toString().padLeft(2, '0')}'
                             : 'No time selected',
                       ),
-                      trailing: Icon(Icons.access_time),
+                      trailing: const Icon(Icons.access_time),
                       onTap: () async {
                         final picked = await showTimePicker(
                           context: context,
@@ -136,18 +136,18 @@ class EventActionController extends GetxController {
                 ),
                 actions: [
                   TextButton(
-                    onPressed: () => Get.back(),
-                    child: Text('Batal'),
+                    onPressed: () => Get.back(result: false),
+                    child: const Text('Batal'),
                   ),
                   TextButton(
-                    onPressed: startTime == null || endTime == null
+                    onPressed: startTime == null
                         ? null
                         : () {
-                            if (startTime != null && endTime != null) {
-                              Get.back();
+                            if (startTime != null) {
+                              Get.back(result: true);
                             }
                           },
-                    child: Text('Simpan'),
+                    child: const Text('Simpan'),
                   ),
                 ],
               );
@@ -156,17 +156,24 @@ class EventActionController extends GetxController {
         },
       );
 
-      if (startTime != null && endTime != null) {
+      if (resp != null && !resp) {
+        return;
+      }
+      if (startTime != null) {
         String formattedDate = DateFormat('d MMM yyyy').format(pickedDate);
-
-        String result =
-            '$formattedDate, ${formatTime(startTime!)}–${formatTime(endTime!)}';
+        String result;
+        if (startTime != null && endTime != null) {
+          result =
+              '$formattedDate, ${formatTime(startTime!)}–${formatTime(endTime!)}';
+        } else {
+          result = '$formattedDate, ${formatTime(startTime!)}-Finish';
+        }
 
         dateController.text = result;
         form.value = form.value.copyWith(
           datetime: pickedDate,
           startTime: formatTimeOfDayToHms(startTime!),
-          endTime: formatTimeOfDayToHms(endTime!),
+          endTime: endTime == null ? null : formatTimeOfDayToHms(endTime!),
           errors: form.value.errors,
           field: 'date',
         );
@@ -188,12 +195,12 @@ class EventActionController extends GetxController {
     Get.bottomSheet(
       Container(
         padding: const EdgeInsets.all(16),
-        decoration: const BoxDecoration(
-          borderRadius: BorderRadius.only(
+        decoration: BoxDecoration(
+          borderRadius: const BorderRadius.only(
             topLeft: Radius.circular(16),
             topRight: Radius.circular(16),
           ),
-          color: Colors.white,
+          color: Theme.of(context).colorScheme.background,
         ),
         child: Column(
           mainAxisSize: MainAxisSize.min,
@@ -222,11 +229,14 @@ class EventActionController extends GetxController {
                   imageController.text = image.path.split('/').last;
                 }
               },
-              child: const Row(
+              child: Row(
                 children: [
-                  Icon(Icons.photo_library_outlined),
-                  SizedBox(width: 8),
-                  Text('Gallery'),
+                  const Icon(Icons.photo_library_outlined),
+                  const SizedBox(width: 8),
+                  Text(
+                    'Gallery',
+                    style: Theme.of(context).textTheme.bodyMedium,
+                  ),
                 ],
               ),
             ),
@@ -241,11 +251,14 @@ class EventActionController extends GetxController {
                   form.value = form.value.copyWith(image: File(image.path));
                 }
               },
-              child: const Row(
+              child: Row(
                 children: [
-                  Icon(Icons.camera_alt_outlined),
-                  SizedBox(width: 8),
-                  Text('Camera'),
+                  const Icon(Icons.camera_alt_outlined),
+                  const SizedBox(width: 8),
+                  Text(
+                    'Camera',
+                    style: Theme.of(context).textTheme.bodyMedium,
+                  ),
                 ],
               ),
             ),

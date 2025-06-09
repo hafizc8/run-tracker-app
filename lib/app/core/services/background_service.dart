@@ -78,7 +78,7 @@ void onStart(ServiceInstance service) async {
   positionSubscription = Geolocator.getPositionStream(
     locationSettings: const LocationSettings(
       accuracy: LocationAccuracy.bestForNavigation,
-      distanceFilter: 10,
+      distanceFilter: 0,
     ),
   ).listen((Position position) {
     if (isPaused) return;
@@ -98,7 +98,7 @@ void onStart(ServiceInstance service) async {
         newPoint.longitude,
       );
 
-      if (distanceInMeter > 10) {
+      if (distanceInMeter > 5) {
         currentDistanceInMeters += distanceInMeter;
       }
     }

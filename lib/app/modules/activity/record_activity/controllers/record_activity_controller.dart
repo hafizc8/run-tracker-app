@@ -159,7 +159,7 @@ class RecordActivityController extends GetxController {
           Get.snackbar("Berhasil", "Aktivitas berhasil direkam dan disinkronkan!");
 
           // redirect to edit activity
-          Get.toNamed(AppRoutes.activityEdit, arguments: recordActivityData);
+          Get.offAndToNamed(AppRoutes.activityEdit, arguments: recordActivityData);
         } else {
           Get.snackbar("Gagal", "Gagal mengakhiri sesi di server. Data masih tersimpan lokal.");
         }

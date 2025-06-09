@@ -39,7 +39,7 @@ class RecordActivityService {
       final response = await _apiService.request(
         path: AppConstants.recordActivitySyncRecord(recordActivityId),
         method: HttpMethod.post,
-        data: jsonEncode(data),
+        data: data,
       );
 
       return response.data['success'];

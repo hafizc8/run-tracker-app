@@ -98,9 +98,8 @@ void onStart(ServiceInstance service) async {
         newPoint.longitude,
       );
 
-      if (distanceInMeter > 10) {
-        currentDistanceInMeters += distanceInMeter;
-      }
+      if (distanceInMeter < 0) return;
+      currentDistanceInMeters += distanceInMeter;
     }
     currentPath.add(newPoint);
 

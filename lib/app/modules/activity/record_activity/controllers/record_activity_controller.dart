@@ -1,4 +1,5 @@
 import 'dart:async';
+import 'package:firebase_crashlytics/firebase_crashlytics.dart';
 import 'package:flutter_background_service/flutter_background_service.dart';
 import 'package:get/get.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
@@ -42,7 +43,7 @@ class RecordActivityController extends GetxController {
       isTracking.value = true;
       elapsedTimeInSeconds.value = data['elapsedTime'];
       stepsInSession.value = data['steps'];
-      currentDistanceInMeters.value = data['distance'];
+      currentDistanceInMeters.value = double.parse(data['distance'].toString());
 
       // ✨ DIUBAH: Terima titik lokasi baru dari service
       if (data['location'] != null) {
@@ -92,6 +93,7 @@ class RecordActivityController extends GetxController {
   }
 
   Future<void> startActivity() async {
+    FirebaseCrashlytics.instance.log("Attempting to create session.");
     bool permissionsGranted = await _requestPermissions();
     if (!permissionsGranted) return;
 
@@ -105,6 +107,7 @@ class RecordActivityController extends GetxController {
       LatLng startPosition = await _locationService.getCurrentLocation();
       var response = await _recordActivityService.createSession(latitude: startPosition.latitude, longitude: startPosition.longitude, stamina: 0);
       _recordActivityId = response['id'];
+      FirebaseCrashlytics.instance.log("Session created successfully with ID: $_recordActivityId");
     } catch (e) {
       Get.back();
       Get.snackbar('Error', 'Failed to create activity session. Please try again.');

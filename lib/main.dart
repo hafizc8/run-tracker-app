@@ -1,19 +1,39 @@
-import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
+import 'app/app.dart';
+import 'package:firebase_core/firebase_core.dart';
+import 'package:firebase_crashlytics/firebase_crashlytics.dart';
 import 'package:flutter_background_service/flutter_background_service.dart';
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
+import 'package:flutter/foundation.dart';
+import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:get_storage/get_storage.dart';
+import 'package:hive_flutter/hive_flutter.dart';
 import 'package:zest_mobile/app/core/di/service_locator.dart';
 import 'package:zest_mobile/app/core/models/model/activity_data_point_model.dart';
-import 'app/app.dart';
 import 'package:zest_mobile/app/core/services/background_service.dart' as bg;
-import 'package:hive_flutter/hive_flutter.dart';
 
 void main() async {
+  WidgetsFlutterBinding.ensureInitialized();
+  
   setupServiceLocator();
   await GetStorage.init();
   await initializeService();
   configureNotificationListener();
+
+  await Firebase.initializeApp();
+
+  // ✨ KONFIGURASI CRASHLYTICS ✨
+  // Mengirim semua error yang ditangani oleh Flutter framework
+  FlutterError.onError = (errorDetails) {
+    FirebaseCrashlytics.instance.recordFlutterFatalError(errorDetails);
+  };
+  
+  // Mengirim semua error yang tidak ditangani oleh Flutter (misal: dari native code)
+  PlatformDispatcher.instance.onError = (error, stack) {
+    FirebaseCrashlytics.instance.recordError(error, stack, fatal: true);
+    return true;
+  };
+
   await Hive.initFlutter();
   Hive.registerAdapter(ActivityDataPointAdapter());
 
@@ -29,7 +49,7 @@ void configureNotificationListener() {
     if (data == null) return;
     
     final int elapsedTime = data['elapsedTime'] as int;
-    final distance = data['distance'];
+    final distance = double.parse(data['distance'].toString());
     
     final String content = "Durasi: ${bg.formatDuration(elapsedTime)}, Jarak: ${bg.formatDistance(distance)}";
     

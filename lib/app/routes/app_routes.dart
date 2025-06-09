@@ -52,4 +52,9 @@ abstract class AppRoutes {
   static const previewClub = '/preview-club';
   static const memberListInClub = '/detail-club/member-list';
   static const inviteToClub = '/detail-club/invite-to-club';
+
+  // activity
+  static const activityStart = '/activity/start';
+  static const activityRecord = '/activity/record';
+  static const activityEdit = '/activity/edit';
 }

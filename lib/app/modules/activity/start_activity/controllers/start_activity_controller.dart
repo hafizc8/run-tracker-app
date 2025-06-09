@@ -1,0 +1,45 @@
+import 'dart:async';
+import 'package:geolocator/geolocator.dart';
+import 'package:get/get.dart';
+import 'package:google_maps_flutter/google_maps_flutter.dart';
+import 'package:permission_handler/permission_handler.dart';
+import 'package:zest_mobile/app/core/di/service_locator.dart';
+import 'package:zest_mobile/app/core/services/location_service.dart';
+
+class StartActivityController extends GetxController {
+  Rxn<LatLng> currentPosition = Rxn<LatLng>();
+
+  final _locationService = sl<LocationService>();
+
+  @override
+  void onInit() {
+    super.onInit();
+    setCurrentLocation();
+  }
+
+  Future<void> setCurrentLocation() async {
+    if (!await _requestPermissions()) return;
+    currentPosition.value = await _locationService.getCurrentLocation();
+  }
+
+  Future<bool> _requestPermissions() async {
+    var activityStatus = await Permission.activityRecognition.request();
+    if (!activityStatus.isGranted) {
+      Get.snackbar("Izin Ditolak", "Izin sensor aktivitas diperlukan.");
+      return false;
+    }
+
+    var locationStatus = await Permission.locationWhenInUse.request();
+    if (!locationStatus.isGranted) {
+      Get.snackbar("Izin Ditolak", "Izin lokasi diperlukan.");
+      return false;
+    }
+
+    var isLocationServiceEnabled = await Geolocator.isLocationServiceEnabled();
+    if (!isLocationServiceEnabled) {
+      Get.snackbar("Layanan Lokasi Mati", "Mohon aktifkan layanan lokasi.");
+      return false;
+    }
+    return true;
+  }
+}

@@ -4,6 +4,7 @@ import 'package:get/get.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:zest_mobile/app/core/shared/theme/color_schemes.dart';
 import 'package:zest_mobile/app/modules/home/controllers/main_home_controller.dart';
+import 'package:zest_mobile/app/routes/app_routes.dart';
 
 // Definisikan gradient untuk tombol START di sini atau impor dari file tema Anda
 const LinearGradient kStartButtonGradient = LinearGradient(
@@ -71,7 +72,7 @@ class MainHomeView extends GetView<MainHomeController> {
       width: MainHomeView._startButtonDiameter,
       child: GestureDetector(
         onTap: () {
-          print("Tombol START ditekan!");
+          Get.toNamed(AppRoutes.activityStart);
         },
         child: Container(
           decoration: BoxDecoration(

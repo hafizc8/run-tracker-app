@@ -1,4 +1,10 @@
 import 'package:get/get.dart';
+import 'package:zest_mobile/app/modules/activity/edit_activity/bindings/edit_activity_binding.dart';
+import 'package:zest_mobile/app/modules/activity/edit_activity/views/edit_activity_view.dart';
+import 'package:zest_mobile/app/modules/activity/record_activity/bindings/record_activity_binding.dart';
+import 'package:zest_mobile/app/modules/activity/record_activity/views/record_activity_view.dart';
+import 'package:zest_mobile/app/modules/activity/start_activity/bindings/start_activity_binding.dart';
+import 'package:zest_mobile/app/modules/activity/start_activity/views/start_activity_view.dart';
 import 'package:zest_mobile/app/modules/auth/forgot_password/bindings/forgot_password_binding.dart';
 import 'package:zest_mobile/app/modules/auth/forgot_password/views/forgot_password_email_sent_view.dart';
 import 'package:zest_mobile/app/modules/auth/forgot_password/views/forgot_password_password_updated_view.dart';
@@ -233,6 +239,22 @@ class AppPages {
       name: AppRoutes.previewClub,
       page: () => const PreviewClubView(),
       binding: PreviewClubBinding(),
+    ),
+    // activity
+    GetPage(
+      name: AppRoutes.activityStart,
+      page: () => const StartActivityView(),
+      binding: StartActivityBinding(),
+    ),
+    GetPage(
+      name: AppRoutes.activityRecord,
+      page: () => const RecordActivityView(),
+      binding: RecordActivityBinding(),
+    ),
+    GetPage(
+      name: AppRoutes.activityEdit,
+      page: () => const EditActivityView(),
+      binding: EditActivityBinding(),
     ),
   ];
 }

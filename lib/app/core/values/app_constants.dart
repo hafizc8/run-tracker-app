@@ -75,4 +75,9 @@ class AppConstants {
   static String clubInviteFollowersToClub(String clubId) =>
       "/club/$clubId/invite";
   static String clubGetActivity(String clubId) => "/club/$clubId/activity";
+
+  // Record Activity
+  static const String recordActivityCreateSession = "/record-activity/create";
+  static String recordActivitySyncRecord(String recordActivityId) => "/record-activity/$recordActivityId/sync";
+  static String recordActivityEndSession(String recordActivityId) => "/record-activity/$recordActivityId/end";
 }

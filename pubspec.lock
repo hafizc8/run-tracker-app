@@ -793,7 +793,7 @@ packages:
     source: hosted
     version: "4.5.4"
   image_cropper:
-    dependency: "direct main"
+    dependency: "direct overridden"
     description:
       name: image_cropper
       sha256: "7c3a85e54ec591738ee68f3cc9b8849bab0ec8e908bf8970645be959a079e17f"

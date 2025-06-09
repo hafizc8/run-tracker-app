@@ -149,19 +149,14 @@ class EventInviteController extends GetxController {
   Future<void> inviteEvent({bool? isReserved}) async {
     isLoadingInviteFriend.value = true;
     try {
-      bool? res = await _eventService.inviteOrReserveEvent(
+      bool isSuccess = await _eventService.inviteOrReserveEvent(
         eventId,
         isReserved: isReserved,
         userIds: invites.map((e) => e.id).toList(),
       );
-      if (res) {
-        Get.back(result: res);
-        Get.snackbar(
-          'Success',
-          "Event invited successfully",
-          backgroundColor: Colors.green,
-          colorText: Colors.white,
-        );
+
+      if (isSuccess) {
+        Get.back(result: true);
       }
     } on AppException catch (e) {
       // show error snackbar, toast, etc
@@ -181,19 +176,13 @@ class EventInviteController extends GetxController {
   Future<void> reserveEvent({bool? isReserved}) async {
     isLoadingReserveFriend.value = true;
     try {
-      bool? res = await _eventService.inviteOrReserveEvent(
+      bool isSuccess = await _eventService.inviteOrReserveEvent(
         eventId,
         isReserved: isReserved,
         userIds: invites.map((e) => e.id).toList(),
       );
-      if (res) {
-        Get.back(result: res);
-        Get.snackbar(
-          'Success',
-          "Event reserved successfully",
-          backgroundColor: Colors.green,
-          colorText: Colors.white,
-        );
+      if (isSuccess) {
+        Get.back(result: true);
       }
     } on AppException catch (e) {
       // show error snackbar, toast, etc

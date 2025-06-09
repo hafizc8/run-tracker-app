@@ -85,18 +85,20 @@ class PostController extends GetxController {
       final response = await _postService.getAll(page: pagePost);
 
       // Deteksi akhir halaman dengan lebih akurat
-      if ((response.pagination.next == null || response.pagination.next!.isEmpty) || 
-          response.data.isEmpty || 
+      if ((response.pagination.next == null ||
+              response.pagination.next!.isEmpty) ||
+          response.data.isEmpty ||
           response.data.length < 20) {
         hasReacheMax.value = true;
       }
 
       // Tambahkan hasil ke list
-      posts.addAll(response.data.map((e) => e.copyWith(isOwner: e.user?.id == user?.id)).toList());
+      posts.addAll(response.data
+          .map((e) => e.copyWith(isOwner: e.user?.id == user?.id))
+          .toList());
 
       // Increment page terakhir
       pagePost++;
-
     } on AppException catch (e) {
       AppExceptionHandlerInfo.handle(e);
     } catch (e) {
@@ -106,9 +108,9 @@ class PostController extends GetxController {
     }
   }
 
-
   dynamic openCreatePostDialog() {
-    form.value = CreatePostFormModel().copyWith(latitude: latLng.value.latitude, longitude: latLng.value.longitude);
+    form.value = CreatePostFormModel().copyWith(
+        latitude: latLng.value.latitude, longitude: latLng.value.longitude);
     Get.dialog(CreatePostDialog());
   }
 
@@ -120,7 +122,8 @@ class PostController extends GetxController {
     );
 
     if (result != null) {
-      form.value = form.value.copyWith(galleries: result.xFiles.map((e) => File(e.path)).toList());
+      form.value = form.value
+          .copyWith(galleries: result.xFiles.map((e) => File(e.path)).toList());
     }
   }
 
@@ -156,40 +159,53 @@ class PostController extends GetxController {
     await getAllPost();
   }
 
-  Future<void> likePost({
-    required String postId,
-    int isDislike = 0,
-    bool isPostDetail = false
-  }) async {
+  Future<void> likePost(
+      {required String postId,
+      int isDislike = 0,
+      bool isPostDetail = false}) async {
     try {
-      bool resp = await _postService.likeDislike(postId: postId, isDislike: isDislike);
+      bool resp =
+          await _postService.likeDislike(postId: postId, isDislike: isDislike);
       if (resp) {
         // update manual is_liked
         final index = posts.indexWhere((element) => element?.id == postId);
         if (index != -1) {
           final updated = posts[index]!.copyWith(
-            isLiked: isDislike == 0, 
-            likesCount: isDislike == 0 ? posts[index]!.likesCount! + 1 : posts[index]!.likesCount! - 1,
+            isLiked: isDislike == 0,
+            likesCount: isDislike == 0
+                ? posts[index]!.likesCount! + 1
+                : posts[index]!.likesCount! - 1,
           );
           posts[index] = updated;
           if (isDislike == 0) {
-            posts[index]!.likes?.add(UserMiniModel(id: user?.id ?? '', name: user?.name ?? '', imageUrl: user?.imageUrl ?? ''));
+            posts[index]!.likes?.add(UserMiniModel(
+                id: user?.id ?? '',
+                name: user?.name ?? '',
+                imageUrl: user?.imageUrl ?? ''));
           } else {
-            posts[index]!.likes?.removeWhere((element) => element.id == user?.id);
+            posts[index]!
+                .likes
+                ?.removeWhere((element) => element.id == user?.id);
           }
         }
 
         if (isPostDetail) {
           // update is_liked
           postDetail.value = postDetail.value!.copyWith(
-            isLiked: isDislike == 0, 
-            likesCount: isDislike == 0 ? postDetail.value!.likesCount! + 1 : postDetail.value!.likesCount! - 1,
+            isLiked: isDislike == 0,
+            likesCount: isDislike == 0
+                ? postDetail.value!.likesCount! + 1
+                : postDetail.value!.likesCount! - 1,
           );
 
           if (isDislike == 0) {
-            postDetail.value?.likes?.add(UserMiniModel(id: user?.id ?? '', name: user?.name ?? '', imageUrl: user?.imageUrl ?? ''));
+            postDetail.value?.likes?.add(UserMiniModel(
+                id: user?.id ?? '',
+                name: user?.name ?? '',
+                imageUrl: user?.imageUrl ?? ''));
           } else {
-            postDetail.value?.likes?.removeWhere((element) => element.id == user?.id);
+            postDetail.value?.likes
+                ?.removeWhere((element) => element.id == user?.id);
           }
         }
       }
@@ -203,10 +219,8 @@ class PostController extends GetxController {
     }
   }
 
-  Future<void> goToDetail({
-    required String postId,
-    bool isFocusComment = false
-  }) async {
+  Future<void> goToDetail(
+      {required String postId, bool isFocusComment = false}) async {
     try {
       Get.toNamed(AppRoutes.socialYourPageActivityDetail);
 
@@ -243,17 +257,17 @@ class PostController extends GetxController {
       }
 
       PostModel resp = await _postService.commentReply(
-        postId: postDetail.value!.id!, 
-        content: commentTextController.text, 
-        parentCommentId: (focusedComment.value != null) ? focusedComment.value?.id ?? '' : '',
+        postId: postDetail.value!.id!,
+        content: commentTextController.text,
+        parentCommentId: (focusedComment.value != null)
+            ? focusedComment.value?.id ?? ''
+            : '',
       );
-      
+
       focusedComment.value = null;
       commentTextController.clear();
-      Get.snackbar('Success', 'Successfully comment post');
 
       postDetail.value = resp;
-
     } on AppException catch (e) {
       // show error snackbar, toast, etc
       AppExceptionHandlerInfo.handle(e);
@@ -276,10 +290,8 @@ class PostController extends GetxController {
     commentFocusNode.unfocus();
   }
 
-  Future<void> confirmAndDeletePost({
-    required String postId,
-    bool isPostDetail = false
-  }) async {
+  Future<void> confirmAndDeletePost(
+      {required String postId, bool isPostDetail = false}) async {
     Get.defaultDialog(
       title: 'Delete Post',
       middleText: 'Are you sure to delete this post?',
@@ -313,25 +325,23 @@ class PostController extends GetxController {
     }
   }
 
-  bool get isValidToUpdate => updatePostOriginalForm.value.isValidToUpdate(updatePostForm.value);
+  bool get isValidToUpdate =>
+      updatePostOriginalForm.value.isValidToUpdate(updatePostForm.value);
 
-  Future<void> goToEditPost({
-    required String postId,
-    bool isFromDetail = false
-  }) async {
+  Future<void> goToEditPost(
+      {required String postId, bool isFromDetail = false}) async {
     Get.toNamed(AppRoutes.socialEditPost);
 
     isLoadingLoadUpdatePost.value = true;
 
     PostModel response = await _postService.getDetail(postId: postId);
-    
+
     updatePostForm.value = UpdatePostFormModel(
-      id: response.id,
-      title: response.title,
-      content: response.content,
-      currentGalleries: response.galleries,
-      isFromDetail: isFromDetail
-    );
+        id: response.id,
+        title: response.title,
+        content: response.content,
+        currentGalleries: response.galleries,
+        isFromDetail: isFromDetail);
 
     updatePostOriginalForm.value = updatePostForm.value;
 
@@ -351,8 +361,9 @@ class PostController extends GetxController {
           .where((g) => g.id != gallery.id)
           .toList();
 
-      final newDeletedGalleries = List<String>.from(updatedForm.deletedGalleries ?? [])
-        ..add(gallery.id ?? '');
+      final newDeletedGalleries =
+          List<String>.from(updatedForm.deletedGalleries ?? [])
+            ..add(gallery.id ?? '');
 
       updatePostForm.value = updatedForm.copyWith(
         currentGalleries: newCurrentGalleries,
@@ -369,7 +380,6 @@ class PostController extends GetxController {
       );
     }
   }
-
 
   dynamic pickMultipleMediaToUpdate() async {
     FilePickerResult? result = await FilePicker.platform.pickFiles(
@@ -388,7 +398,8 @@ class PostController extends GetxController {
     try {
       isLoadingUpdatePost.value = true;
 
-      PostModel resp = await _postService.update(postId: updatePostForm.value.id!, form: updatePostForm.value);
+      PostModel resp = await _postService.update(
+          postId: updatePostForm.value.id!, form: updatePostForm.value);
       Get.back(); // close form update
 
       if (!(updatePostForm.value.isFromDetail ?? false)) {

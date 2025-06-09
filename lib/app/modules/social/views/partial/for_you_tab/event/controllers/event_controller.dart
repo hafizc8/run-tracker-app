@@ -133,7 +133,9 @@ class EventController extends GetxController {
     isLoadingAction.value = true;
     try {
       final EventModel? res = await _eventService.cancelEvent(id);
+
       int index = events.indexWhere((element) => element.id == id);
+
       if (index != -1) {
         if (this.event.value != null) {
           this.event.value = this.event.value!.copyWith(

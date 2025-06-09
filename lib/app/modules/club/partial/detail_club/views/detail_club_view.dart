@@ -23,7 +23,8 @@ class _SliverTabBarDelegate extends SliverPersistentHeaderDelegate {
   });
 
   final Widget tabBar;
-  final double tabBarHeight; // Tinggi aktual dari widget _buildCustomTabBar Anda
+  final double
+      tabBarHeight; // Tinggi aktual dari widget _buildCustomTabBar Anda
 
   @override
   double get minExtent => tabBarHeight;
@@ -42,7 +43,8 @@ class _SliverTabBarDelegate extends SliverPersistentHeaderDelegate {
 
   @override
   bool shouldRebuild(_SliverTabBarDelegate oldDelegate) {
-    return tabBar != oldDelegate.tabBar || tabBarHeight != oldDelegate.tabBarHeight;
+    return tabBar != oldDelegate.tabBar ||
+        tabBarHeight != oldDelegate.tabBarHeight;
   }
   // Ganti 'height' dengan 'tabBarHeight' di shouldRebuild jika itu maksudnya
   // @override
@@ -62,50 +64,46 @@ class DetailClubView extends GetView<DetailClubController> {
     const double customTabBarHeight = 38.0;
 
     return Scaffold(
-      body: Obx(
-        () {
-          if (controller.isLoading.value) {
-            return const ShimmerLoadingList(
-              itemCount: 5,
-              itemHeight: 100,
-            );
-          }
+      body: Obx(() {
+        if (controller.isLoading.value) {
+          return const ShimmerLoadingList(
+            itemCount: 5,
+            itemHeight: 100,
+          );
+        }
 
-          return NestedScrollView(
-            controller: (tabBarClubController.selectedIndex.value == 0) ? clubActivityTabController.clubActivityScrollController : null,
-            headerSliverBuilder: (BuildContext context, bool innerBoxIsScrolled) {
-              return <Widget>[
-                _buildSliverAppBar(context),
-                SliverToBoxAdapter(
-                  child: _buildClubInfo(context: context),
+        return NestedScrollView(
+          controller: (tabBarClubController.selectedIndex.value == 0)
+              ? clubActivityTabController.clubActivityScrollController
+              : null,
+          headerSliverBuilder: (BuildContext context, bool innerBoxIsScrolled) {
+            return <Widget>[
+              _buildSliverAppBar(context),
+              SliverToBoxAdapter(
+                child: _buildClubInfo(context: context),
+              ),
+              SliverPersistentHeader(
+                delegate: _SliverTabBarDelegate(
+                  tabBar: _buildCustomTabBar(context),
+                  tabBarHeight: customTabBarHeight,
                 ),
-                SliverPersistentHeader(
-                  delegate: _SliverTabBarDelegate(
-                    tabBar: _buildCustomTabBar(context),
-                    tabBarHeight: customTabBarHeight,
-                  ),
-                  pinned: true,
-                ),
-              ];
-            },
-            body: _buildTabBarView(context), // Kirim TabController juga
-          );
-        }
-      ),
-      floatingActionButton: Obx(
-        () {
-          return Visibility(
-            visible: !controller.isLoading.value,
-            child: _buildFloatingActionButton(context, controller.club.value),
-          );
-        }
-      ),
+                pinned: true,
+              ),
+            ];
+          },
+          body: _buildTabBarView(context), // Kirim TabController juga
+        );
+      }),
+      floatingActionButton: Obx(() {
+        return Visibility(
+          visible: !controller.isLoading.value,
+          child: _buildFloatingActionButton(context, controller.club.value),
+        );
+      }),
     );
   }
 
-  Widget _buildClubInfo({
-    required BuildContext context
-  }) {
+  Widget _buildClubInfo({required BuildContext context}) {
     ClubModel? club = controller.club.value;
     return Container(
       margin: const EdgeInsets.symmetric(horizontal: 16, vertical: 20),
@@ -127,16 +125,16 @@ class DetailClubView extends GetView<DetailClubController> {
                     width: 65,
                     height: 65,
                     fit: BoxFit.cover,
-                    placeholder: (context, url) => const ShimmerLoadingCircle(size: 65),
+                    placeholder: (context, url) =>
+                        const ShimmerLoadingCircle(size: 65),
                     errorWidget: (context, url, error) => const CircleAvatar(
                       radius: 65,
-                      backgroundImage: AssetImage('assets/images/empty_profile.png'),
+                      backgroundImage:
+                          AssetImage('assets/images/empty_profile.png'),
                     ),
                   ),
                 ),
-
                 const SizedBox(width: 16),
-
                 Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
@@ -144,21 +142,27 @@ class DetailClubView extends GetView<DetailClubController> {
                       mainAxisSize: MainAxisSize.min,
                       children: [
                         ConstrainedBox(
-                          constraints: BoxConstraints(maxWidth: MediaQuery.of(context).size.width * 0.5),
+                          constraints: BoxConstraints(
+                              maxWidth:
+                                  MediaQuery.of(context).size.width * 0.5),
                           child: Text(
                             club?.name ?? '',
                             maxLines: 2,
                             overflow: TextOverflow.ellipsis,
-                            style: Theme.of(context).textTheme.titleSmall?.copyWith(
-                              fontWeight: FontWeight.w700,
-                            ),
+                            style: Theme.of(context)
+                                .textTheme
+                                .titleSmall
+                                ?.copyWith(
+                                  fontWeight: FontWeight.w700,
+                                ),
                           ),
                         ),
                         const SizedBox(width: 8),
                         Visibility(
                           visible: (club?.isOwner ?? false),
                           child: GestureDetector(
-                            onTap: () => Get.toNamed(AppRoutes.updateClub, arguments: club?.id),
+                            onTap: () => Get.toNamed(AppRoutes.updateClub,
+                                arguments: club?.id),
                             child: Icon(
                               Icons.edit,
                               color: Theme.of(context).colorScheme.onBackground,
@@ -178,12 +182,17 @@ class DetailClubView extends GetView<DetailClubController> {
                         ),
                         const SizedBox(width: 8),
                         ConstrainedBox(
-                          constraints: BoxConstraints(maxWidth: MediaQuery.of(context).size.width * 0.56),
+                          constraints: BoxConstraints(
+                              maxWidth:
+                                  MediaQuery.of(context).size.width * 0.56),
                           child: Text(
                             '${club?.createdAt?.toDDMMMyyyyString()} - ${club?.province}, ${club?.country}',
-                            style: Theme.of(context).textTheme.bodyMedium?.copyWith(
-                              color: const Color(0xFF6C6C6C),
-                            ),
+                            style: Theme.of(context)
+                                .textTheme
+                                .bodyMedium
+                                ?.copyWith(
+                                  color: const Color(0xFF6C6C6C),
+                                ),
                           ),
                         ),
                       ],
@@ -192,27 +201,26 @@ class DetailClubView extends GetView<DetailClubController> {
                 ),
               ],
             ),
-            
             const SizedBox(height: 16),
             Text(
               club?.description ?? 'No description',
               style: Theme.of(context).textTheme.bodyMedium?.copyWith(
-                fontSize: 12,
-              ),
+                    fontSize: 12,
+                  ),
             ),
-
             const SizedBox(height: 16),
-
             Row(
               children: [
                 InkWell(
-                  onTap: () => Get.toNamed(AppRoutes.memberListInClub, arguments: club?.id),
+                  onTap: () => Get.toNamed(AppRoutes.memberListInClub,
+                      arguments: club?.id),
                   child: Container(
                     decoration: BoxDecoration(
                       color: const Color(0xFF404040),
                       borderRadius: BorderRadius.circular(10),
                     ),
-                    padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 2),
+                    padding:
+                        const EdgeInsets.symmetric(horizontal: 10, vertical: 2),
                     child: Row(
                       mainAxisAlignment: MainAxisAlignment.center,
                       children: [
@@ -223,18 +231,24 @@ class DetailClubView extends GetView<DetailClubController> {
                         const SizedBox(width: 10),
                         RichText(
                           text: TextSpan(
-                            style: Theme.of(context).textTheme.bodySmall?.copyWith(
-                              fontWeight: FontWeight.w700,
-                              fontSize: 12,
-                            ),
+                            style:
+                                Theme.of(context).textTheme.bodySmall?.copyWith(
+                                      fontWeight: FontWeight.w700,
+                                      fontSize: 12,
+                                    ),
                             children: <TextSpan>[
-                              TextSpan(text: '${NumberHelper().formatNumberToK(club?.clubUsersCount ?? 0)} '),
+                              TextSpan(
+                                  text:
+                                      '${NumberHelper().formatNumberToK(club?.clubUsersCount ?? 0)} '),
                               TextSpan(
                                 text: 'Members',
-                                style: Theme.of(context).textTheme.bodySmall?.copyWith(
-                                  fontWeight: FontWeight.w400,
-                                  fontSize: 12,
-                                ),
+                                style: Theme.of(context)
+                                    .textTheme
+                                    .bodySmall
+                                    ?.copyWith(
+                                      fontWeight: FontWeight.w400,
+                                      fontSize: 12,
+                                    ),
                               ),
                             ],
                           ),
@@ -249,7 +263,8 @@ class DetailClubView extends GetView<DetailClubController> {
                 ),
                 const SizedBox(width: 16),
                 InkWell(
-                  onTap: () => Get.snackbar('Coming soon', 'Feature is coming soon'),
+                  onTap: () =>
+                      Get.snackbar('Coming soon', 'Feature is coming soon'),
                   child: Icon(
                     Icons.chat_bubble_outline,
                     color: Theme.of(context).colorScheme.onBackground,
@@ -258,7 +273,8 @@ class DetailClubView extends GetView<DetailClubController> {
                 ),
                 const SizedBox(width: 12),
                 InkWell(
-                  onTap: () => Get.toNamed(AppRoutes.inviteToClub, arguments: club?.id),
+                  onTap: () =>
+                      Get.toNamed(AppRoutes.inviteToClub, arguments: club?.id),
                   child: Icon(
                     Icons.person_add_alt_outlined,
                     color: Theme.of(context).colorScheme.onBackground,
@@ -267,7 +283,8 @@ class DetailClubView extends GetView<DetailClubController> {
                 ),
                 const Spacer(),
                 InkWell(
-                  onTap: () => Get.snackbar('Coming soon', 'Feature is coming soon'),
+                  onTap: () =>
+                      Get.snackbar('Coming soon', 'Feature is coming soon'),
                   child: SvgPicture.asset(
                     'assets/icons/ic_share-2.svg',
                   ),
@@ -301,14 +318,20 @@ class DetailClubView extends GetView<DetailClubController> {
                 value: 'create_an_event',
                 child: Text(
                   'Create an Event',
-                  style: Theme.of(context).textTheme.bodyMedium?.copyWith(fontWeight: FontWeight.w600),
+                  style: Theme.of(context)
+                      .textTheme
+                      .bodyMedium
+                      ?.copyWith(fontWeight: FontWeight.w600),
                 ),
               ),
               PopupMenuItem<String>(
                 value: 'create_a_challange',
                 child: Text(
                   'Create a Challange',
-                  style: Theme.of(context).textTheme.bodyMedium?.copyWith(fontWeight: FontWeight.w600),
+                  style: Theme.of(context)
+                      .textTheme
+                      .bodyMedium
+                      ?.copyWith(fontWeight: FontWeight.w600),
                 ),
               ),
             ],
@@ -333,7 +356,6 @@ class DetailClubView extends GetView<DetailClubController> {
                       child: EventCardDialog(
                         eventModel: res,
                         onTap: null,
-                        isAction: true,
                       ),
                     );
                   },
@@ -353,9 +375,9 @@ class DetailClubView extends GetView<DetailClubController> {
       title: Text(
         'Club Details',
         style: Theme.of(context).textTheme.headlineMedium?.copyWith(
-          fontWeight: FontWeight.w300,
-          color: Theme.of(context).colorScheme.onBackground,
-        ),
+              fontWeight: FontWeight.w300,
+              color: Theme.of(context).colorScheme.onBackground,
+            ),
       ),
       pinned: true,
       floating: false,
@@ -392,28 +414,40 @@ class DetailClubView extends GetView<DetailClubController> {
                 value: 'invite_friend',
                 child: Text(
                   'Invite a Friend',
-                  style: Theme.of(context).textTheme.bodyMedium?.copyWith(fontWeight: FontWeight.w600),
+                  style: Theme.of(context)
+                      .textTheme
+                      .bodyMedium
+                      ?.copyWith(fontWeight: FontWeight.w600),
                 ),
               ),
               PopupMenuItem<String>(
                 value: 'share_club',
                 child: Text(
                   'Share Club',
-                  style: Theme.of(context).textTheme.bodyMedium?.copyWith(fontWeight: FontWeight.w600),
+                  style: Theme.of(context)
+                      .textTheme
+                      .bodyMedium
+                      ?.copyWith(fontWeight: FontWeight.w600),
                 ),
               ),
               PopupMenuItem<String>(
                 value: 'mute_club',
                 child: Text(
                   'Mute Club',
-                  style: Theme.of(context).textTheme.bodyMedium?.copyWith(fontWeight: FontWeight.w600),
+                  style: Theme.of(context)
+                      .textTheme
+                      .bodyMedium
+                      ?.copyWith(fontWeight: FontWeight.w600),
                 ),
               ),
               PopupMenuItem<String>(
                 value: 'leave_club',
                 child: Text(
                   'Leave Club',
-                  style: Theme.of(context).textTheme.bodyMedium?.copyWith(fontWeight: FontWeight.w600),
+                  style: Theme.of(context)
+                      .textTheme
+                      .bodyMedium
+                      ?.copyWith(fontWeight: FontWeight.w600),
                 ),
               ),
             ];
@@ -449,61 +483,59 @@ class DetailClubView extends GetView<DetailClubController> {
   }
 
   Widget _buildCustomTabBar(BuildContext context) {
-    return Obx(
-      () {
-        BorderRadiusGeometry indicatorBorderRadius;
+    return Obx(() {
+      BorderRadiusGeometry indicatorBorderRadius;
 
-        int currentTab = tabBarClubController.selectedIndex.value;
+      int currentTab = tabBarClubController.selectedIndex.value;
 
-        if (currentTab == 0) { 
-          indicatorBorderRadius = const BorderRadius.only(
-            topLeft: Radius.circular(11),
-            bottomLeft: Radius.circular(11),
-          );
-        } else {
-          indicatorBorderRadius = const BorderRadius.only(
-            topRight: Radius.circular(11),
-            bottomRight: Radius.circular(11),
-          );
-        }
-
-        return Container(
-          margin: const EdgeInsets.symmetric(horizontal: 16),
-          height: 38,
-          decoration: BoxDecoration(
-            border: Border.all(color: Theme.of(context).colorScheme.primary),
-            borderRadius: BorderRadius.circular(16),
-            color: Theme.of(context).colorScheme.onPrimary,
-          ),
-          child: ClipRRect(
-            borderRadius: BorderRadius.circular(15),
-            child: TabBar(
-              controller: tabBarClubController.tabBarController,
-              indicator: BoxDecoration(
-                color: Theme.of(context).colorScheme.primary,
-                borderRadius: indicatorBorderRadius,
-              ),
-              automaticIndicatorColorAdjustment: false,
-              indicatorWeight: 0,
-              indicatorSize: TabBarIndicatorSize.tab,
-              dividerHeight: 0,
-              labelColor: Theme.of(context).colorScheme.onPrimary,
-              unselectedLabelColor: Theme.of(context).colorScheme.primary,
-              labelStyle: Theme.of(context).textTheme.bodySmall?.copyWith(
-                fontWeight: FontWeight.w400,
-              ),
-              unselectedLabelStyle: Theme.of(context).textTheme.bodySmall?.copyWith(
-                fontWeight: FontWeight.w400,
-              ),
-              
-              tabs: const [
-                Tab(text: 'Club Activity'),
-                Tab(text: 'Leaderboards'),
-              ],
-            ),
-          ),
+      if (currentTab == 0) {
+        indicatorBorderRadius = const BorderRadius.only(
+          topLeft: Radius.circular(11),
+          bottomLeft: Radius.circular(11),
+        );
+      } else {
+        indicatorBorderRadius = const BorderRadius.only(
+          topRight: Radius.circular(11),
+          bottomRight: Radius.circular(11),
         );
       }
-    );
+
+      return Container(
+        margin: const EdgeInsets.symmetric(horizontal: 16),
+        height: 38,
+        decoration: BoxDecoration(
+          border: Border.all(color: Theme.of(context).colorScheme.primary),
+          borderRadius: BorderRadius.circular(16),
+          color: Theme.of(context).colorScheme.onPrimary,
+        ),
+        child: ClipRRect(
+          borderRadius: BorderRadius.circular(15),
+          child: TabBar(
+            controller: tabBarClubController.tabBarController,
+            indicator: BoxDecoration(
+              color: Theme.of(context).colorScheme.primary,
+              borderRadius: indicatorBorderRadius,
+            ),
+            automaticIndicatorColorAdjustment: false,
+            indicatorWeight: 0,
+            indicatorSize: TabBarIndicatorSize.tab,
+            dividerHeight: 0,
+            labelColor: Theme.of(context).colorScheme.onPrimary,
+            unselectedLabelColor: Theme.of(context).colorScheme.primary,
+            labelStyle: Theme.of(context).textTheme.bodySmall?.copyWith(
+                  fontWeight: FontWeight.w400,
+                ),
+            unselectedLabelStyle:
+                Theme.of(context).textTheme.bodySmall?.copyWith(
+                      fontWeight: FontWeight.w400,
+                    ),
+            tabs: const [
+              Tab(text: 'Club Activity'),
+              Tab(text: 'Leaderboards'),
+            ],
+          ),
+        ),
+      );
+    });
   }
 }

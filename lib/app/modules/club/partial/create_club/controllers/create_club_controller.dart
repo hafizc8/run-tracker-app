@@ -31,13 +31,15 @@ class CreateClubController extends GetxController {
   Future<void> setCurrentLocation() async {
     isLoadingGetCurrentLocation.value = true;
     LatLng latLng = await _locationService.getCurrentLocation();
-    form.value = form.value.copyWith(latitude: latLng.latitude, longitude: latLng.longitude);
+    form.value = form.value
+        .copyWith(latitude: latLng.latitude, longitude: latLng.longitude);
     await getOnlyCity(latLng: latLng);
     isLoadingGetCurrentLocation.value = false;
   }
 
   Future<void> getOnlyCity({required LatLng latLng}) async {
-    cityController.text = (await _locationService.getCityFromLatLng(latLng)).replaceAll('Kota', '');
+    cityController.text = (await _locationService.getCityFromLatLng(latLng))
+        .replaceAll('Kota', '');
     form.value = form.value.copyWith(city: cityController.text);
   }
 
@@ -62,7 +64,6 @@ class CreateClubController extends GetxController {
       ClubModel resp = await _clubService.create(form.value);
 
       Get.back(closeOverlays: true);
-      Get.snackbar("Success", "Successfully create club");
 
       // go to detail club
       await Get.toNamed(AppRoutes.detailClub, arguments: resp.id);
@@ -71,7 +72,7 @@ class CreateClubController extends GetxController {
         form.value = form.value.setErrors(e.errors!);
         return;
       }
-      
+
       // show error snackbar, toast, etc
       AppExceptionHandlerInfo.handle(e);
     } catch (e) {

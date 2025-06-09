@@ -18,6 +18,7 @@ class ProfileMainController extends GetxController {
   var activeIndex = 0.obs;
   var pageEvent = 0;
   var isLoadingEvent = false.obs;
+  var isLoadingActionEvent = false.obs;
   var isLoadingUpComingEvent = false.obs;
   var hasReacheMaxEvent = false.obs;
   ScrollController eventController = ScrollController();
@@ -66,6 +67,32 @@ class ProfileMainController extends GetxController {
         backgroundColor: Colors.red,
         colorText: Colors.white,
       );
+    }
+  }
+
+  Future<void> cancelEvent(String id) async {
+    isLoadingActionEvent.value = true;
+    try {
+      final EventModel? res = await _eventService.cancelEvent(id);
+      int index = events.indexWhere((element) => element.id == id);
+      if (index != -1) {
+        final event = events[index];
+        events[index] = event.copyWith(
+          cancelledAt: res != null ? DateTime.now() : null,
+        );
+      }
+    } on AppException catch (e) {
+      // show error snackbar, toast, etc
+      AppExceptionHandlerInfo.handle(e);
+    } catch (e) {
+      Get.snackbar(
+        'Error',
+        e.toString(),
+        backgroundColor: Colors.red,
+        colorText: Colors.white,
+      );
+    } finally {
+      isLoadingActionEvent.value = false;
     }
   }
 

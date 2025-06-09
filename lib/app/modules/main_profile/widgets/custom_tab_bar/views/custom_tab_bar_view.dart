@@ -214,6 +214,8 @@ class CustomTabBar extends GetView<TabBarController> {
                           backgroundColor:
                               Theme.of(context).colorScheme.surface,
                           onTap: null,
+                          onCancelEvent: () =>
+                              profileController.cancelEvent(event.id ?? ''),
                           eventModel: event,
                         );
                       },

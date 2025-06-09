@@ -173,20 +173,24 @@ class RecordActivityController extends GetxController {
 
   void onMapCreated(GoogleMapController controller) {
     mapController = controller;
+
+    _updateCameraForRoute();
   }
 
   void _updateCameraForRoute() {
-    // Pastikan map sudah dibuat dan ada lebih dari 1 titik untuk membuat rute
-    if (mapController == null || currentPath.length < 2) return;
+  if (mapController == null || currentPath.isEmpty) return; // Cukup 1 titik untuk fokus awal
 
-    // Ambil semua titik LatLng dari path
-    final List<LatLng> points = currentPath.map((p) => LatLng(p.latitude, p.longitude)).toList();
+  final List<LatLng> points = currentPath.map((p) => LatLng(p.latitude, p.longitude)).toList();
 
-    // Hitung LatLngBounds dari semua titik
-    double minLat = points.first.latitude;
-    double minLng = points.first.longitude;
-    double maxLat = points.first.latitude;
-    double maxLng = points.first.longitude;
+  if (points.length == 1) {
+    // ✨ PENYEMPURNAAN 1: Jika hanya ada satu titik, cukup pindahkan kamera ke sana
+    mapController!.animateCamera(CameraUpdate.newLatLngZoom(points.first, 17.0)); // Zoom 17
+  } else {
+    // Logika bounds Anda yang sudah ada
+    double minLat = points.first.latitude,
+      minLng = points.first.longitude,
+      maxLat = points.first.latitude,
+      maxLng = points.first.longitude;
 
     for (var point in points) {
       if (point.latitude < minLat) minLat = point.latitude;
@@ -195,16 +199,23 @@ class RecordActivityController extends GetxController {
       if (point.longitude > maxLng) maxLng = point.longitude;
     }
 
+    // ✨ PENYEMPURNAAN 2: Cek jika semua titik terlalu berdekatan (bounds tidak punya area)
+    if (minLat == maxLat && minLng == maxLng) {
+      // Jika semua titik sama, perlakukan seperti hanya ada satu titik
+      mapController!.animateCamera(CameraUpdate.newLatLngZoom(points.first, 17.0));
+      return;
+    }
+
     final bounds = LatLngBounds(
       southwest: LatLng(minLat, minLng),
       northeast: LatLng(maxLat, maxLng),
     );
 
-    // Animasikan kamera untuk menampilkan seluruh rute dengan padding 50px
     mapController!.animateCamera(
-      CameraUpdate.newLatLngBounds(bounds, 50.0),
+      CameraUpdate.newLatLngBounds(bounds, 60.0), // Tambah sedikit padding
     );
   }
+}
 
   // Helper untuk format jarak (bisa dipindah ke file util terpisah)
   String formatDistance(double distanceInMeters) {

@@ -98,36 +98,35 @@ void onStart(ServiceInstance service) async {
         newPoint.longitude,
       );
 
-      if (distanceInMeter < 5) return;
-
-      currentDistanceInMeters += distanceInMeter;
-      currentPath.add(newPoint);
-      
-      latestLocation = {
-        "latitude": newPoint.latitude,
-        "longitude": newPoint.longitude,
-        "timestamp": newPoint.timestamp.toIso8601String(),
-      };
-
-      double currentPace = 0;
-      if (elapsedTimeInSeconds > 0) {
-        currentPace = currentDistanceInMeters / elapsedTimeInSeconds;
+      if (distanceInMeter > 10) {
+        currentDistanceInMeters += distanceInMeter;
       }
+    }
+    currentPath.add(newPoint);
 
-      final dataPoint = ActivityDataPoint(
-        latitude: position.latitude,
-        longitude: position.longitude,
-        step: stepsInSession,
-        distance: currentDistanceInMeters,
-        pace: currentPace,
-        time: elapsedTimeInSeconds,
-        timestamp: position.timestamp,
-      );
+    latestLocation = {
+      "latitude": newPoint.latitude,
+      "longitude": newPoint.longitude,
+      "timestamp": newPoint.timestamp.toIso8601String(),
+    };
 
-      // Simpan ke database lokal Hive
-      localDb.addDataPoint(dataPoint);
+    double currentPace = 0;
+    if (elapsedTimeInSeconds > 0) {
+      currentPace = currentDistanceInMeters / elapsedTimeInSeconds;
     }
 
+    final dataPoint = ActivityDataPoint(
+      latitude: position.latitude,
+      longitude: position.longitude,
+      step: stepsInSession,
+      distance: currentDistanceInMeters,
+      pace: currentPace,
+      time: elapsedTimeInSeconds,
+      timestamp: position.timestamp,
+    );
+
+    // Simpan ke database lokal Hive
+    localDb.addDataPoint(dataPoint);
   });
 
   // Timer menjadi SATU-SATUNYA yang mengirim data ke UI

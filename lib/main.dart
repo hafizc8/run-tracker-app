@@ -29,7 +29,7 @@ void configureNotificationListener() {
     if (data == null) return;
     
     final int elapsedTime = data['elapsedTime'] as int;
-    final double distance = data['distance'] as double;
+    final distance = data['distance'];
     
     final String content = "Durasi: ${bg.formatDuration(elapsedTime)}, Jarak: ${bg.formatDistance(distance)}";
     

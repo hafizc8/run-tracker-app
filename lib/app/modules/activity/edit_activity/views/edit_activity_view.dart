@@ -7,6 +7,24 @@ class EditActivityView extends GetView<EditActivityController> {
 
   @override
   Widget build(BuildContext context) {
-    return const Placeholder();
+    return Scaffold(
+      appBar: AppBar(
+        backgroundColor: Theme.of(context).colorScheme.background,
+        title: const Text('Edit Activity'),
+        automaticallyImplyLeading: false,
+        elevation: 1,
+        leading: GestureDetector(
+          onTap: () => Get.back(),
+          child: Icon(
+            Icons.chevron_left,
+            size: 48,
+            color: Theme.of(context).colorScheme.primary,
+          ),
+        ),
+      ),
+      body: const Center(
+        child: Text('Edit Activity under construction'),
+      ),
+    );
   }
 }

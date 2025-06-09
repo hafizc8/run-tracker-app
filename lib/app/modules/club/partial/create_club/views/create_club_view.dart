@@ -20,9 +20,9 @@ class CreateClubView extends GetView<CreateClubController> {
         title: Text(
           'Create a Club',
           style: Theme.of(context).textTheme.headlineMedium?.copyWith(
-            fontWeight: FontWeight.w600,
-            color: Theme.of(context).colorScheme.onBackground,
-          ),
+                fontWeight: FontWeight.w600,
+                color: Theme.of(context).colorScheme.onBackground,
+              ),
         ),
         centerTitle: true,
         automaticallyImplyLeading: false,
@@ -41,8 +41,6 @@ class CreateClubView extends GetView<CreateClubController> {
           () {
             CreateClubFormModel form = controller.form.value;
 
-            print('form.errors: ${form.errors}');
-
             return Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
@@ -53,8 +51,8 @@ class CreateClubView extends GetView<CreateClubController> {
                     Text(
                       'Club Name',
                       style: Theme.of(context).textTheme.bodyMedium?.copyWith(
-                        fontSize: 15,
-                      ),
+                            fontSize: 15,
+                          ),
                     ),
                     const SizedBox(height: 12),
                     TextFormField(
@@ -65,7 +63,8 @@ class CreateClubView extends GetView<CreateClubController> {
                           field: 'name',
                         );
                       },
-                      style: Theme.of(context).textTheme.bodyMedium?.copyWith(color: Theme.of(context).colorScheme.onBackground),
+                      style: Theme.of(context).textTheme.bodyMedium?.copyWith(
+                          color: Theme.of(context).colorScheme.onBackground),
                       decoration: InputDecoration(
                         hintText: 'Enter club name',
                         errorText: form.errors?['name'],
@@ -87,8 +86,8 @@ class CreateClubView extends GetView<CreateClubController> {
                     Text(
                       'Description',
                       style: Theme.of(context).textTheme.bodyMedium?.copyWith(
-                        fontSize: 15,
-                      ),
+                            fontSize: 15,
+                          ),
                     ),
                     const SizedBox(height: 12),
                     TextFormField(
@@ -100,7 +99,8 @@ class CreateClubView extends GetView<CreateClubController> {
                           field: 'description',
                         );
                       },
-                      style: Theme.of(context).textTheme.bodyMedium?.copyWith(color: Theme.of(context).colorScheme.onBackground),
+                      style: Theme.of(context).textTheme.bodyMedium?.copyWith(
+                          color: Theme.of(context).colorScheme.onBackground),
                       decoration: InputDecoration(
                         hintText: 'Enter club description',
                         errorText: form.errors?['description'],
@@ -141,7 +141,8 @@ class CreateClubView extends GetView<CreateClubController> {
                         color: Colors.grey.shade600,
                       ),
                     ),
-                    padding: const EdgeInsets.symmetric(vertical: 10, horizontal: 10),
+                    padding: const EdgeInsets.symmetric(
+                        vertical: 10, horizontal: 10),
                     child: Row(
                       mainAxisAlignment: MainAxisAlignment.center,
                       children: [
@@ -152,9 +153,10 @@ class CreateClubView extends GetView<CreateClubController> {
                         const SizedBox(width: 8),
                         Text(
                           'Upload Logo',
-                          style: Theme.of(context).textTheme.bodyMedium?.copyWith(
-                            color: Colors.grey.shade600,
-                          ),
+                          style:
+                              Theme.of(context).textTheme.bodyMedium?.copyWith(
+                                    color: Colors.grey.shade600,
+                                  ),
                         )
                       ],
                     ),
@@ -167,53 +169,64 @@ class CreateClubView extends GetView<CreateClubController> {
                     Text(
                       'Location',
                       style: Theme.of(context).textTheme.bodyMedium?.copyWith(
-                        fontSize: 15,
-                      ),
+                            fontSize: 15,
+                          ),
                     ),
                     const SizedBox(height: 12),
                     (controller.isLoadingGetCurrentLocation.value)
-                    ? const Center(child: CircularProgressIndicator())
-                    : TextFormField(
-                      controller: controller.cityController,
-                      cursorColor: Colors.white,
-                      readOnly: true,
-                      onTap: () async {
-                        final res = await Get.toNamed(AppRoutes.chooseLocation,
-                            arguments: {
-                              'lat': form.latitude,
-                              'lng': form.longitude,
-                              'address': form.address,
-                            });
+                        ? const Center(child: CircularProgressIndicator())
+                        : TextFormField(
+                            controller: controller.cityController,
+                            cursorColor: Colors.white,
+                            readOnly: true,
+                            onTap: () async {
+                              final res = await Get.toNamed(
+                                  AppRoutes.chooseLocation,
+                                  arguments: {
+                                    'lat': form.latitude,
+                                    'lng': form.longitude,
+                                    'address': form.address,
+                                  });
 
-                        if (res != null) {
-                          if (res['address'] != null && res['address'] is String) {
-                            controller.form.value = form.copyWith(address: res['address']);
-                          }
+                              if (res != null) {
+                                if (res['address'] != null &&
+                                    res['address'] is String) {
+                                  controller.form.value =
+                                      form.copyWith(address: res['address']);
+                                }
 
-                          if (res['location'] != null && res['location'] is LatLng) {
-                            controller.form.value = form.copyWith(
-                              latitude: res['location'].latitude,
-                              longitude: res['location'].longitude,
-                            );
+                                if (res['location'] != null &&
+                                    res['location'] is LatLng) {
+                                  controller.form.value = form.copyWith(
+                                    latitude: res['location'].latitude,
+                                    longitude: res['location'].longitude,
+                                  );
 
-                            await controller.getOnlyCity(latLng: res['location']);
-                          }
-                        }
-                      },
-                      style: Theme.of(context).textTheme.bodyMedium?.copyWith(color: Theme.of(context).colorScheme.onBackground),
-                      decoration: InputDecoration(
-                        hintText: 'Choose your location',
-                        suffixIcon: const Icon(Icons.location_on),
-                        errorText: form.errors?['city'],
-                        border: InputBorder.none,
-                        enabledBorder: OutlineInputBorder(
-                          borderRadius: BorderRadius.circular(10),
-                          borderSide: const BorderSide(
-                            color: Colors.transparent,
+                                  await controller.getOnlyCity(
+                                      latLng: res['location']);
+                                }
+                              }
+                            },
+                            style: Theme.of(context)
+                                .textTheme
+                                .bodyMedium
+                                ?.copyWith(
+                                    color: Theme.of(context)
+                                        .colorScheme
+                                        .onBackground),
+                            decoration: InputDecoration(
+                              hintText: 'Choose your location',
+                              suffixIcon: const Icon(Icons.location_on),
+                              errorText: form.errors?['city'],
+                              border: InputBorder.none,
+                              enabledBorder: OutlineInputBorder(
+                                borderRadius: BorderRadius.circular(10),
+                                borderSide: const BorderSide(
+                                  color: Colors.transparent,
+                                ),
+                              ),
+                            ),
                           ),
-                        ),
-                      ),
-                    ),
                   ],
                 ),
                 const SizedBox(height: 16),
@@ -223,8 +236,8 @@ class CreateClubView extends GetView<CreateClubController> {
                     Text(
                       'Privacy',
                       style: Theme.of(context).textTheme.bodyMedium?.copyWith(
-                        fontSize: 15,
-                      ),
+                            fontSize: 15,
+                          ),
                     ),
                     RadioListTile<ClubPrivacyEnum>(
                       contentPadding: EdgeInsets.zero,
@@ -233,8 +246,7 @@ class CreateClubView extends GetView<CreateClubController> {
                       title: Text(
                         ClubPrivacyEnum.public.name,
                         style: Theme.of(context).textTheme.bodyMedium?.copyWith(
-                          color: Theme.of(context).colorScheme.onBackground
-                        ),
+                            color: Theme.of(context).colorScheme.onBackground),
                       ),
                       value: ClubPrivacyEnum.public,
                       groupValue: form.clubPrivacy,
@@ -252,8 +264,7 @@ class CreateClubView extends GetView<CreateClubController> {
                       title: Text(
                         ClubPrivacyEnum.private.name,
                         style: Theme.of(context).textTheme.bodyMedium?.copyWith(
-                          color: Theme.of(context).colorScheme.onBackground
-                        ),
+                            color: Theme.of(context).colorScheme.onBackground),
                       ),
                       value: ClubPrivacyEnum.private,
                       groupValue: form.clubPrivacy,
@@ -267,7 +278,10 @@ class CreateClubView extends GetView<CreateClubController> {
                     (form.errors?['privacy'] != null)
                         ? Text(
                             form.errors?['privacy'],
-                            style: Theme.of(context).textTheme.bodySmall?.copyWith(color: Colors.red),
+                            style: Theme.of(context)
+                                .textTheme
+                                .bodySmall
+                                ?.copyWith(color: Colors.red),
                           )
                         : const SizedBox.shrink(),
                   ],
@@ -279,8 +293,8 @@ class CreateClubView extends GetView<CreateClubController> {
                     Text(
                       'Post',
                       style: Theme.of(context).textTheme.bodyMedium?.copyWith(
-                        fontSize: 15,
-                      ),
+                            fontSize: 15,
+                          ),
                     ),
                     RadioListTile<ClubPostPermissionEnum>(
                       contentPadding: EdgeInsets.zero,
@@ -289,8 +303,7 @@ class CreateClubView extends GetView<CreateClubController> {
                       title: Text(
                         ClubPostPermissionEnum.onlyOwnerCanPost.name,
                         style: Theme.of(context).textTheme.bodyMedium?.copyWith(
-                          color: Theme.of(context).colorScheme.onBackground
-                        ),
+                            color: Theme.of(context).colorScheme.onBackground),
                       ),
                       value: ClubPostPermissionEnum.onlyOwnerCanPost,
                       groupValue: form.postPermission,
@@ -308,8 +321,7 @@ class CreateClubView extends GetView<CreateClubController> {
                       title: Text(
                         ClubPostPermissionEnum.participantsCanPost.name,
                         style: Theme.of(context).textTheme.bodyMedium?.copyWith(
-                          color: Theme.of(context).colorScheme.onBackground
-                        ),
+                            color: Theme.of(context).colorScheme.onBackground),
                       ),
                       value: ClubPostPermissionEnum.participantsCanPost,
                       groupValue: form.postPermission,
@@ -323,7 +335,10 @@ class CreateClubView extends GetView<CreateClubController> {
                     (form.errors?['post_permission'] != null)
                         ? Text(
                             form.errors?['post_permission'],
-                            style: Theme.of(context).textTheme.bodySmall?.copyWith(color: Colors.red),
+                            style: Theme.of(context)
+                                .textTheme
+                                .bodySmall
+                                ?.copyWith(color: Colors.red),
                           )
                         : const SizedBox.shrink(),
                   ],
@@ -339,10 +354,10 @@ class CreateClubView extends GetView<CreateClubController> {
           height: 55,
           child: GradientElevatedButton(
             onPressed: controller.isLoading.value
-                    ? null
-                    : () {
-                        controller.createClub(context);
-                      },
+                ? null
+                : () {
+                    controller.createClub(context);
+                  },
             child: Visibility(
               visible: controller.isLoading.value,
               replacement: Text(

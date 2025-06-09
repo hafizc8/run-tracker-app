@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_cache_manager/flutter_cache_manager.dart';
 import 'package:geolocator/geolocator.dart';
 import 'package:get/get.dart';
+import 'package:image_cropper/image_cropper.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:zest_mobile/app/core/di/service_locator.dart';
 import 'package:zest_mobile/app/core/exception/app_exception.dart';
@@ -89,12 +90,12 @@ class EditProfileController extends GetxController {
     Get.bottomSheet(
       Container(
         padding: const EdgeInsets.all(16),
-        decoration: const BoxDecoration(
-          borderRadius: BorderRadius.only(
+        decoration: BoxDecoration(
+          borderRadius: const BorderRadius.only(
             topLeft: Radius.circular(16),
             topRight: Radius.circular(16),
           ),
-          color: Colors.white,
+          color: Theme.of(context).colorScheme.background,
         ),
         child: Column(
           mainAxisSize: MainAxisSize.min,
@@ -118,8 +119,30 @@ class EditProfileController extends GetxController {
                 XFile? image = await _imagePicker.pickImage(
                   source: ImageSource.gallery,
                 );
+
                 if (image != null) {
-                  form.value = form.value.copyWith(image: File(image.path));
+                  final croppedFile = await ImageCropper().cropImage(
+                    sourcePath: image.path,
+                    compressQuality: 100,
+                    aspectRatio: const CropAspectRatio(
+                        ratioX: 1, ratioY: 1), // square crop
+                    uiSettings: [
+                      AndroidUiSettings(
+                        toolbarTitle: 'Crop Image',
+                        initAspectRatio: CropAspectRatioPreset.original,
+                        lockAspectRatio: true,
+                        hideBottomControls: false,
+                      ),
+                      IOSUiSettings(
+                        title: 'Crop Image',
+                        aspectRatioPresets: [
+                          CropAspectRatioPreset.original,
+                        ],
+                      ),
+                    ],
+                  );
+                  form.value =
+                      form.value.copyWith(image: File(croppedFile!.path));
                 }
               },
               child: const Row(
@@ -137,8 +160,30 @@ class EditProfileController extends GetxController {
                 XFile? image = await _imagePicker.pickImage(
                   source: ImageSource.camera,
                 );
+
                 if (image != null) {
-                  form.value = form.value.copyWith(image: File(image.path));
+                  final croppedFile = await ImageCropper().cropImage(
+                    sourcePath: image.path,
+                    compressQuality: 100,
+                    aspectRatio: const CropAspectRatio(
+                        ratioX: 1, ratioY: 1), // square crop
+                    uiSettings: [
+                      AndroidUiSettings(
+                        toolbarTitle: 'Crop Image',
+                        initAspectRatio: CropAspectRatioPreset.original,
+                        lockAspectRatio: true,
+                        hideBottomControls: false,
+                      ),
+                      IOSUiSettings(
+                        title: 'Crop Image',
+                        aspectRatioPresets: [
+                          CropAspectRatioPreset.original,
+                        ],
+                      ),
+                    ],
+                  );
+                  form.value =
+                      form.value.copyWith(image: File(croppedFile!.path));
                 }
               },
               child: const Row(

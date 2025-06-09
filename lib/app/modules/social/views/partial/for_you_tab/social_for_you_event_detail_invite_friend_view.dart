@@ -168,12 +168,12 @@ class SocialForYouEventDetaiInviteFriendView
                   onPressed: controller.invites.isEmpty ||
                           controller.isLoadingInviteFriend.value
                       ? null
-                      : () {
-                          controller.inviteEvent(isReserved: false);
+                      : () async {
+                          await controller.inviteEvent(isReserved: false);
                         },
                   child: Visibility(
                     visible: !controller.isLoadingInviteFriend.value,
-                    replacement: const CircularProgressIndicator(),
+                    replacement: CustomCircularProgressIndicator(),
                     child: Text(
                       'Invite',
                       style: Theme.of(context).textTheme.labelSmall,

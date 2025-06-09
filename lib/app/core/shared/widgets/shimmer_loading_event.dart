@@ -7,8 +7,8 @@ class EventShimmer extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Shimmer.fromColors(
-      baseColor: Colors.grey.shade300,
-      highlightColor: Colors.grey.shade100,
+      baseColor: Colors.grey.shade800,
+      highlightColor: Colors.grey.shade700,
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [

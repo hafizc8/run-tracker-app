@@ -17,7 +17,7 @@ import 'package:zest_mobile/app/routes/app_routes.dart';
 // ignore: must_be_immutable
 class ActivityCard extends StatelessWidget {
   ActivityCard({
-    super.key, 
+    super.key,
     this.onTap,
     required this.postData,
   });
@@ -42,14 +42,13 @@ class ActivityCard extends StatelessWidget {
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             _buildCardHeader(
-              context: context,
-              userId: postData.user?.id ?? '',
-              userName: postData.user?.name ?? '',
-              userImageUrl: postData.user?.imageUrl ?? '',
-              createdAt: postData.createdAt?.toHumanPostDate() ?? '',
-              district: postData.district ?? '',
-              isOwner: postData.isOwner ?? false
-            ),
+                context: context,
+                userId: postData.user?.id ?? '',
+                userName: postData.user?.name ?? '',
+                userImageUrl: postData.user?.imageUrl ?? '',
+                createdAt: postData.createdAt?.toHumanPostDate() ?? '',
+                district: postData.district ?? '',
+                isOwner: postData.isOwner ?? false),
             const SizedBox(height: 8),
             _buildCardContent(
               context: context,
@@ -57,7 +56,11 @@ class ActivityCard extends StatelessWidget {
               content: postData.content ?? '',
             ),
             const SizedBox(height: 15),
-            postData.galleries.isNotEmpty ? PostMediaScroll(mediaUrls: postData.galleries.map((e) => e.url ?? '').toList()) : const SizedBox(),
+            postData.galleries.isNotEmpty
+                ? PostMediaScroll(
+                    mediaUrls:
+                        postData.galleries.map((e) => e.url ?? '').toList())
+                : const SizedBox(),
             Visibility(
               visible: (postData.likesCount ?? 0) > 0,
               child: Container(
@@ -68,21 +71,27 @@ class ActivityCard extends StatelessWidget {
                       avatarSize: 20,
                       maxVisible: 3,
                       overlapOffset: 16,
-                      imageUrls: postData.likes?.map((e) => e.imageUrl ?? '').toList() ?? [],
+                      imageUrls: postData.likes
+                              ?.map((e) => e.imageUrl ?? '')
+                              .toList() ??
+                          [],
                     ),
                     RichText(
                       text: TextSpan(
                         style: Theme.of(context).textTheme.titleSmall?.copyWith(
-                          fontWeight: FontWeight.w700,
-                          fontSize: 13,
-                        ),
+                              fontWeight: FontWeight.w700,
+                              fontSize: 13,
+                            ),
                         children: <TextSpan>[
                           TextSpan(text: postData.likesCount.toString()),
                           TextSpan(
                             text: ' Likes',
-                            style: Theme.of(context).textTheme.titleSmall?.copyWith(
-                              fontSize: 13,
-                            ),
+                            style: Theme.of(context)
+                                .textTheme
+                                .titleSmall
+                                ?.copyWith(
+                                  fontSize: 13,
+                                ),
                           ),
                         ],
                       ),
@@ -99,15 +108,14 @@ class ActivityCard extends StatelessWidget {
     );
   }
 
-  Widget _buildCardHeader({
-    required BuildContext context, 
-    required String userId,
-    required String userName,
-    required String userImageUrl,
-    required String createdAt,
-    required String district,
-    required bool isOwner
-  }) {
+  Widget _buildCardHeader(
+      {required BuildContext context,
+      required String userId,
+      required String userName,
+      required String userImageUrl,
+      required String createdAt,
+      required String district,
+      required bool isOwner}) {
     return InkWell(
       onTap: () => Get.toNamed(AppRoutes.profileUser, arguments: userId),
       child: SizedBox(
@@ -125,10 +133,12 @@ class ActivityCard extends StatelessWidget {
                     width: 30,
                     height: 30,
                     fit: BoxFit.cover,
-                    placeholder: (context, url) => const ShimmerLoadingCircle(size: 30),
+                    placeholder: (context, url) =>
+                        const ShimmerLoadingCircle(size: 30),
                     errorWidget: (context, url, error) => const CircleAvatar(
                       radius: 30,
-                      backgroundImage: AssetImage('assets/images/empty_profile.png'),
+                      backgroundImage:
+                          AssetImage('assets/images/empty_profile.png'),
                     ),
                   ),
                 ),
@@ -143,16 +153,19 @@ class ActivityCard extends StatelessWidget {
                         userName,
                         maxLines: 1,
                         overflow: TextOverflow.ellipsis,
-                        style: Theme.of(context).textTheme.bodyMedium?.copyWith(fontWeight: FontWeight.w700),
+                        style: Theme.of(context)
+                            .textTheme
+                            .bodyMedium
+                            ?.copyWith(fontWeight: FontWeight.w700),
                       ),
                       Text(
                         district,
                         maxLines: 1,
                         overflow: TextOverflow.ellipsis,
                         style: Theme.of(context).textTheme.bodyMedium?.copyWith(
-                          color: const Color(0xFF6C6C6C),
-                          fontSize: 11,
-                        ),
+                              color: const Color(0xFF6C6C6C),
+                              fontSize: 11,
+                            ),
                       ),
                     ],
                   ),
@@ -175,29 +188,38 @@ class ActivityCard extends StatelessWidget {
                           0,
                           0,
                         ),
-                        surfaceTintColor: Theme.of(context).colorScheme.onPrimary,
+                        surfaceTintColor:
+                            Theme.of(context).colorScheme.onPrimary,
                         items: [
                           PopupMenuItem<String>(
                             value: 'edit',
                             child: Text(
                               'Edit Post',
-                              style: Theme.of(context).textTheme.bodyMedium?.copyWith(fontWeight: FontWeight.w600),
+                              style: Theme.of(context)
+                                  .textTheme
+                                  .bodyMedium
+                                  ?.copyWith(fontWeight: FontWeight.w600),
                             ),
                           ),
                           PopupMenuItem<String>(
                             value: 'delete',
                             child: Text(
                               'Delete Post',
-                              style: Theme.of(context).textTheme.bodyMedium?.copyWith(fontWeight: FontWeight.w600),
+                              style: Theme.of(context)
+                                  .textTheme
+                                  .bodyMedium
+                                  ?.copyWith(fontWeight: FontWeight.w600),
                             ),
                           ),
                         ],
                         elevation: 8.0,
                       ).then((value) async {
                         if (value == 'edit') {
-                          postController.goToEditPost(postId: postData.id ?? '', isFromDetail: false);
+                          postController.goToEditPost(
+                              postId: postData.id ?? '', isFromDetail: false);
                         } else if (value == 'delete') {
-                          postController.confirmAndDeletePost(postId: postData.id ?? '');
+                          postController.confirmAndDeletePost(
+                              postId: postData.id ?? '');
                         }
                       });
                     },
@@ -214,9 +236,9 @@ class ActivityCard extends StatelessWidget {
                   overflow: TextOverflow.ellipsis,
                   textAlign: TextAlign.end,
                   style: Theme.of(context).textTheme.bodyMedium?.copyWith(
-                    color: const Color(0xFF6C6C6C),
-                    fontSize: 11,
-                  ),
+                        color: const Color(0xFF6C6C6C),
+                        fontSize: 11,
+                      ),
                 ),
               ],
             ),
@@ -233,35 +255,33 @@ class ActivityCard extends StatelessWidget {
   }) {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
-      children: 
-      title.isEmpty ? 
-      [
-        Text(
-          content, 
-          style: Theme.of(context).textTheme.bodySmall?.copyWith(
-            fontSize: 12, 
-            fontWeight: FontWeight.w700,
-          ),
-        ),
-      ]
-      :
-      [
-        Text(
-          title, 
-          style: Theme.of(context).textTheme.bodySmall?.copyWith(
-            fontSize: 12, 
-            fontWeight: FontWeight.w700,
-          ),
-        ),
-        const SizedBox(height: 5),
-        Text(
-          content, 
-          style: Theme.of(context).textTheme.bodySmall?.copyWith(
-            fontSize: 12, 
-            fontWeight: FontWeight.w400,
-          ),
-        ),
-      ],
+      children: title.isEmpty
+          ? [
+              Text(
+                content,
+                style: Theme.of(context).textTheme.bodySmall?.copyWith(
+                      fontSize: 12,
+                      fontWeight: FontWeight.w700,
+                    ),
+              ),
+            ]
+          : [
+              Text(
+                title,
+                style: Theme.of(context).textTheme.bodySmall?.copyWith(
+                      fontSize: 12,
+                      fontWeight: FontWeight.w700,
+                    ),
+              ),
+              const SizedBox(height: 5),
+              Text(
+                content,
+                style: Theme.of(context).textTheme.bodySmall?.copyWith(
+                      fontSize: 12,
+                      fontWeight: FontWeight.w400,
+                    ),
+              ),
+            ],
     );
   }
 
@@ -271,7 +291,7 @@ class ActivityCard extends StatelessWidget {
       child: ClipRRect(
         borderRadius: BorderRadius.circular(12),
         child: Container(
-          color: Colors.grey.shade300,
+          color: Colors.grey.shade800,
           child: const Center(
             child: Column(
               mainAxisAlignment: MainAxisAlignment.center,
@@ -296,7 +316,7 @@ class ActivityCard extends StatelessWidget {
           'https://dev.zestplus.app/storage/posts/vfAmuTYfzlVqYwo9bvSramLd1mX8bNfYlaz2atTN.jpg',
           fit: BoxFit.cover,
           errorBuilder: (context, error, stackTrace) => Container(
-            color: Colors.grey.shade300,
+            color: Colors.grey.shade800,
             child: const Center(
               child: Icon(Icons.broken_image, size: 64, color: Colors.grey),
             ),
@@ -304,7 +324,7 @@ class ActivityCard extends StatelessWidget {
           loadingBuilder: (context, child, loadingProgress) {
             if (loadingProgress == null) return child;
             return Container(
-              color: Colors.grey.shade300,
+              color: Colors.grey.shade800,
               child: const Center(
                 child: CircularProgressIndicator(),
               ),
@@ -314,7 +334,6 @@ class ActivityCard extends StatelessWidget {
       ),
     );
   }
-
 
   Widget _buildStatisticsSection(BuildContext context) {
     return Container(
@@ -353,7 +372,9 @@ class ActivityCard extends StatelessWidget {
                 child: FaIcon(
                   FontAwesomeIcons.fire,
                   size: 15,
-                  color: postData.isLiked! ? darkColorScheme.primary : darkColorScheme.onBackground,
+                  color: postData.isLiked!
+                      ? darkColorScheme.primary
+                      : darkColorScheme.onBackground,
                   key: ValueKey(postData.isLiked),
                 ),
               ),
@@ -377,8 +398,9 @@ class ActivityCard extends StatelessWidget {
                 size: 15,
                 color: darkColorScheme.onBackground,
               ),
-              label: 'Comment', 
-              onTap: () => postController.goToDetail(postId: postData.id!, isFocusComment: true),
+              label: 'Comment',
+              onTap: () => postController.goToDetail(
+                  postId: postData.id!, isFocusComment: true),
             ),
           ),
         ),
@@ -393,8 +415,9 @@ class ActivityCard extends StatelessWidget {
                 size: 15,
                 color: darkColorScheme.onBackground,
               ),
-              label: 'Share', 
-              onTap: () => Get.snackbar('Coming soon', 'Feature is coming soon'),
+              label: 'Share',
+              onTap: () =>
+                  Get.snackbar('Coming soon', 'Feature is coming soon'),
             ),
           ),
         ),

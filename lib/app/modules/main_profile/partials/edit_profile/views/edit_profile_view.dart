@@ -53,11 +53,13 @@ class EditProfileView extends GetView<EditProfileController> {
                             horizontal: 8,
                           ),
                           child: CircleAvatar(
-                            backgroundColor: Colors.white,
+                            backgroundColor:
+                                Theme.of(context).colorScheme.background,
                             child: IconButton(
                               icon: Icon(
                                 Icons.edit_outlined,
-                                color: Theme.of(context).colorScheme.primary,
+                                color:
+                                    Theme.of(context).colorScheme.onBackground,
                               ),
                               onPressed: () => controller.imagePicker(context),
                             ),

@@ -1,6 +1,5 @@
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_image_stack/flutter_image_stack.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:get/get.dart';
 import 'package:intl/intl.dart';
@@ -10,19 +9,22 @@ import 'package:zest_mobile/app/core/models/model/event_model.dart';
 import 'package:zest_mobile/app/core/shared/widgets/custom_circular_progress_indicator.dart';
 import 'package:zest_mobile/app/core/shared/widgets/gradient_elevated_button.dart';
 import 'package:zest_mobile/app/core/shared/widgets/shimmer_loading_circle.dart';
+import 'package:zest_mobile/app/modules/club/partial/detail_club/partial/tab_bar_club/views/widgets/participants_avatars.dart';
 import 'package:zest_mobile/app/modules/social/views/partial/for_you_tab/event/controllers/event_action_controller.dart';
 import 'package:zest_mobile/app/modules/social/views/partial/for_you_tab/event/controllers/event_controller.dart';
 
 class EventCard extends StatelessWidget {
   EventCard(
       {super.key,
-      required this.onTap,
+      this.onTap,
+      this.onCancelEvent,
       this.eventModel,
       this.isAction = false,
       this.backgroundColor = Colors.white});
 
   final EventModel? eventModel;
   final void Function()? onTap;
+  final void Function()? onCancelEvent;
   final Color backgroundColor;
   final bool isAction;
 
@@ -54,7 +56,7 @@ class EventCard extends StatelessWidget {
                   eventModel?.imageUrl ?? '',
                   fit: BoxFit.cover,
                   errorBuilder: (context, error, stackTrace) => Container(
-                    color: Colors.grey.shade300,
+                    color: Colors.grey.shade800,
                     child: const Center(
                       child: Icon(Icons.broken_image,
                           size: 64, color: Colors.grey),
@@ -63,7 +65,7 @@ class EventCard extends StatelessWidget {
                   loadingBuilder: (context, child, loadingProgress) {
                     if (loadingProgress == null) return child;
                     return Container(
-                      color: Colors.grey.shade300,
+                      color: Colors.grey.shade800,
                       child: const Center(
                         child: CircularProgressIndicator(),
                       ),
@@ -77,46 +79,59 @@ class EventCard extends StatelessWidget {
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
                 Container(
-                  padding:
-                      const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
+                  padding: const EdgeInsets.all(2), // Lebar border
                   decoration: BoxDecoration(
+                    gradient: const LinearGradient(
+                      colors: [Color(0xFFA2FF00), Color(0xFF00FF7F)],
+                      begin: Alignment.centerLeft,
+                      end: Alignment.centerRight,
+                    ),
                     borderRadius: BorderRadius.circular(12),
-                    color: Theme.of(context).colorScheme.secondary,
                   ),
-                  child: Row(
-                    children: [
-                      // CachedNetworkImage(
-                      //   imageUrl: eventModel?.activity ?? '',
-                      //   width: 50,
-                      //   height: 50,
-                      //   fit: BoxFit.cover,
-                      //   placeholder: (context, url) =>
-                      //       const ShimmerLoadingCircle(size: 50),
-                      //   errorWidget: (context, url, error) =>
-                      //       const CircleAvatar(
-                      //     radius: 32,
-                      //     backgroundImage:
-                      //         AssetImage('assets/images/empty_profile.png'),
-                      //   ),
-                      // ),
-                      // const SizedBox(width: 8),
-                      Text(
-                        eventModel?.activity ?? '-',
-                        style: Theme.of(context).textTheme.bodyMedium?.copyWith(
-                              color: Theme.of(context).colorScheme.onBackground,
-                            ),
-                      ),
-                    ],
+                  child: Container(
+                    padding:
+                        const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
+                    decoration: BoxDecoration(
+                      color: Theme.of(context).colorScheme.background,
+                      borderRadius: BorderRadius.circular(10),
+                    ),
+                    child: Row(
+                      children: [
+                        CachedNetworkImage(
+                          imageUrl: eventModel?.activity ?? '',
+                          width: 13,
+                          height: 13,
+                          fit: BoxFit.cover,
+                          placeholder: (context, url) =>
+                              const ShimmerLoadingCircle(size: 13),
+                          errorWidget: (context, url, error) => const Icon(
+                            size: 13,
+                            Icons.error,
+                          ),
+                        ),
+                        const SizedBox(width: 8),
+                        Text(
+                          eventModel?.activity ?? '-',
+                          style: Theme.of(context)
+                              .textTheme
+                              .bodyMedium
+                              ?.copyWith(
+                                color: Theme.of(context).colorScheme.primary,
+                              ),
+                        ),
+                      ],
+                    ),
                   ),
                 ),
                 Visibility(
                   visible: !isAction,
                   child: Row(
                     children: [
-                      Icon(
-                        Icons.share_outlined,
-                        size: 20,
+                      SvgPicture.asset(
+                        'assets/icons/share.svg',
                         color: Theme.of(context).colorScheme.primary,
+                        height: 22,
+                        width: 27,
                       ),
                       const SizedBox(width: 16),
                       Visibility(
@@ -134,6 +149,10 @@ class EventCard extends StatelessWidget {
                                   from: 'list');
                             } else if (value == 'cancel_event') {
                               // Handle Cancel Event action
+                              if (onCancelEvent != null) {
+                                onCancelEvent!();
+                                return;
+                              }
                               await eventController
                                   .cancelEvent(eventModel?.id ?? '');
                             }
@@ -154,30 +173,19 @@ class EventCard extends StatelessWidget {
                               ),
                               PopupMenuItem<String>(
                                 value: 'cancel_event',
-                                child: Obx(
-                                  () => Visibility(
-                                    visible:
-                                        eventController.isLoadingAction.value,
-                                    replacement: Text(
-                                      'Cancel Event',
-                                      style: Theme.of(context)
-                                          .textTheme
-                                          .bodyMedium
-                                          ?.copyWith(
-                                              fontWeight: FontWeight.w600),
-                                    ),
-                                    child: CircularProgressIndicator(
-                                      color:
-                                          Theme.of(context).colorScheme.primary,
-                                    ),
-                                  ),
+                                child: Text(
+                                  'Cancel Event',
+                                  style: Theme.of(context)
+                                      .textTheme
+                                      .bodyMedium
+                                      ?.copyWith(fontWeight: FontWeight.w600),
                                 ),
                               ),
                             ];
                           },
                           child: Icon(
-                            Icons.more_horiz_outlined,
-                            size: 20,
+                            Icons.more_vert,
+                            size: 27,
                             color: Theme.of(context).colorScheme.primary,
                           ),
                         ),
@@ -191,40 +199,22 @@ class EventCard extends StatelessWidget {
             // title text
             Text(
               eventModel?.title ?? '-',
-              style: Theme.of(context)
-                  .textTheme
-                  .bodyMedium
-                  ?.copyWith(fontWeight: FontWeight.w600),
+              style: Theme.of(context).textTheme.bodyMedium?.copyWith(
+                    fontWeight: FontWeight.w600,
+                    fontSize: 17,
+                    color: Theme.of(context).colorScheme.primary,
+                  ),
             ),
             const SizedBox(height: 16),
-            FlutterImageStack.widgets(
-              showTotalCount: true,
-              totalCount: eventModel?.userOnEvents?.length ?? 0,
-              itemRadius: 60, // Radius of each images
-              itemCount: 4, // Maximum number of images to be shown in stack
-              itemBorderWidth: 3, // Border width around the images
-              itemBorderColor: Colors.white,
-              children: eventModel?.userOnEvents
-                      ?.map(
-                        (e) => ClipOval(
-                          child: CachedNetworkImage(
-                            imageUrl: e.user?.imageUrl ?? '',
-                            width: 50,
-                            height: 50,
-                            fit: BoxFit.cover,
-                            placeholder: (context, url) =>
-                                const ShimmerLoadingCircle(size: 50),
-                            errorWidget: (context, url, error) =>
-                                const CircleAvatar(
-                              radius: 32,
-                              backgroundImage:
-                                  AssetImage('assets/images/empty_profile.png'),
-                            ),
-                          ),
-                        ),
-                      )
+
+            ParticipantsAvatars(
+              imageUrls: eventModel?.userOnEvents
+                      ?.map((e) => e.user?.imageUrl ?? '')
                       .toList() ??
                   [],
+              avatarSize: 50,
+              overlapOffset: 55,
+              maxVisible: 3,
             ),
             const SizedBox(height: 8),
             Text(
@@ -240,30 +230,35 @@ class EventCard extends StatelessWidget {
               children: [
                 _buildInfoItem(
                   context,
-                  icon: Icons.track_changes_outlined,
-                  title: 'QUOTA',
-                  subtitle: eventModel?.quota.toString() ?? '-',
-                ),
-                const SizedBox(height: 16),
-                _buildInfoItem(
-                  context,
-                  icon: Icons.date_range_outlined,
-                  title: 'PERIOD',
+                  icon: SvgPicture.asset(
+                    'assets/icons/calendar.svg',
+                    height: 22,
+                    width: 27,
+                  ),
+                  title: 'Date & Time',
                   subtitle:
-                      '${DateFormat('d MMM yyyy').format(eventModel!.datetime!)}, ${eventActionController.formatTime(eventModel!.startTime!)}–${eventActionController.formatTime(eventModel!.endTime!)}',
+                      '${DateFormat('d MMM yyyy').format(eventModel!.datetime!)}, ${eventModel?.startTime != null ? eventActionController.formatTime(eventModel!.startTime!) : 'Start'}–${eventModel?.endTime != null ? eventActionController.formatTime(eventModel!.endTime!) : 'Finish'}',
                 ),
                 const SizedBox(height: 12),
                 _buildInfoItem(
                   context,
-                  icon: Icons.map_outlined,
-                  title: 'LOCATION',
+                  icon: SvgPicture.asset(
+                    'assets/icons/pin_location.svg',
+                    height: 22,
+                    width: 27,
+                  ),
+                  title: 'Location',
                   subtitle: eventModel?.address ?? '-',
                 ),
                 const SizedBox(height: 16),
                 _buildInfoItem(
                   context,
-                  icon: Icons.confirmation_num_outlined,
-                  title: 'HTM',
+                  icon: SvgPicture.asset(
+                    'assets/icons/dollar.svg',
+                    height: 22,
+                    width: 27,
+                  ),
+                  title: 'Fee',
                   subtitle:
                       "${(eventModel?.price == null || eventModel?.price == 0) ? 'Free' : eventModel?.price}",
                 ),
@@ -294,7 +289,8 @@ class EventCard extends StatelessWidget {
 
             if (eventModel?.cancelledAt == null &&
                 (eventModel?.datetime ?? DateTime.now()).isDateTimePassed(
-                    eventModel?.startTime ?? TimeOfDay.now())) ...[
+                    eventModel?.startTime ?? TimeOfDay.now()) &&
+                eventModel?.isPublic == 1) ...[
               GradientElevatedButton(
                 onPressed: eventModel?.isJoined == 0
                     ? () {
@@ -304,8 +300,13 @@ class EventCard extends StatelessWidget {
                 child: Obx(
                   () => Visibility(
                     visible: eventController.isLoadingAction.value,
-                    replacement:
-                        Text((eventModel?.isJoined ?? 0).toEventStatus),
+                    replacement: Text(
+                      (eventModel?.isJoined ?? 0).toEventStatus,
+                      style: Theme.of(context).textTheme.labelMedium?.copyWith(
+                            fontSize: 13,
+                            fontWeight: FontWeight.bold,
+                          ),
+                    ),
                     child: CustomCircularProgressIndicator(),
                   ),
                 ),
@@ -364,26 +365,34 @@ class EventCard extends StatelessWidget {
 
   Widget _buildInfoItem(
     BuildContext context, {
-    required IconData icon,
+    required SvgPicture icon,
     required String title,
     required String subtitle,
   }) {
     return Row(
       children: [
-        Icon(
-          icon,
-          size: 24,
-          color: Theme.of(context).primaryColor,
-        ),
+        icon,
         const SizedBox(width: 8),
         Expanded(
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               Text(
+                title,
+                style: Theme.of(context).textTheme.bodyMedium?.copyWith(
+                      fontWeight: FontWeight.w400,
+                      color: Theme.of(context).colorScheme.secondary,
+                      fontSize: 12,
+                    ),
+                maxLines: 1,
+                overflow: TextOverflow.ellipsis,
+              ),
+              Text(
                 subtitle,
                 style: Theme.of(context).textTheme.bodyMedium?.copyWith(
-                      fontWeight: FontWeight.w600,
+                      fontWeight: FontWeight.w400,
+                      color: Theme.of(context).colorScheme.onBackground,
+                      fontSize: 12,
                     ),
                 maxLines: 1,
                 overflow: TextOverflow.ellipsis,

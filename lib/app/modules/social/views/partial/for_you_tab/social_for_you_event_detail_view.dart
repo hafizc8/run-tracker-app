@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_svg/flutter_svg.dart';
 import 'package:get/get.dart';
 import 'package:shimmer/shimmer.dart';
 import 'package:zest_mobile/app/core/extension/date_extension.dart';
@@ -36,7 +37,12 @@ class SocialForYouEventDetailView extends GetView<EventDetailController> {
           ),
         ),
       ),
-      bottomNavigationBar: _buildBottomBar(context),
+      bottomNavigationBar:
+          (eventController.event.value?.datetime ?? DateTime.now())
+                  .isDateTimePassed(
+                      eventController.event.value?.startTime ?? TimeOfDay.now())
+              ? _buildBottomBar(context)
+              : const SizedBox(),
     );
   }
 
@@ -61,60 +67,6 @@ class SocialForYouEventDetailView extends GetView<EventDetailController> {
       elevation: 4,
       shadowColor: Colors.black.withOpacity(0.3),
       surfaceTintColor: Colors.transparent,
-      actions: [
-        Obx(() {
-          return eventController.event.value?.isOwner == 1 &&
-                  eventController.event.value?.cancelledAt == null &&
-                  (eventController.event.value?.datetime ?? DateTime.now())
-                      .isDateTimePassed(
-                    (eventController.event.value?.startTime ?? TimeOfDay.now()),
-                  )
-              ? PopupMenuButton<String>(
-                  onSelected: (value) {
-                    // Handle the selection
-                    if (value == 'edit') {
-                      // Handle Edit Event action
-                      eventActionController.gotToEdit(
-                          eventController.event.value!,
-                          from: 'detail');
-                    } else if (value == 'delete') {
-                      // Handle Delete Event action
-                    }
-                  },
-                  icon: Icon(
-                    Icons.more_horiz,
-                    size: 30,
-                    color: Theme.of(context).colorScheme.onBackground,
-                  ),
-                  surfaceTintColor: Theme.of(context).colorScheme.onPrimary,
-                  itemBuilder: (BuildContext context) {
-                    return [
-                      PopupMenuItem<String>(
-                        value: 'edit',
-                        child: Text(
-                          'Edit Event',
-                          style: Theme.of(context)
-                              .textTheme
-                              .bodyMedium
-                              ?.copyWith(fontWeight: FontWeight.w600),
-                        ),
-                      ),
-                      PopupMenuItem<String>(
-                        value: 'delete',
-                        child: Text(
-                          'Delete Event',
-                          style: Theme.of(context)
-                              .textTheme
-                              .bodyMedium
-                              ?.copyWith(fontWeight: FontWeight.w600),
-                        ),
-                      ),
-                    ];
-                  },
-                )
-              : const SizedBox();
-        })
-      ],
     );
   }
 
@@ -127,8 +79,8 @@ class SocialForYouEventDetailView extends GetView<EventDetailController> {
       child: Obx(() {
         if (eventController.isLoadingDetail.value) {
           return Shimmer.fromColors(
-            baseColor: Colors.grey.shade300,
-            highlightColor: Colors.grey.shade100,
+            baseColor: Colors.grey.shade800,
+            highlightColor: Colors.grey.shade700,
             child: const SizedBox(
               height: 40,
               width: 200,
@@ -136,11 +88,14 @@ class SocialForYouEventDetailView extends GetView<EventDetailController> {
           );
         }
         if (eventController.event.value?.cancelledAt != null) {
-          return GradientOutlinedButton(
-            onPressed: null,
-            child: Text(
-              'Cancelled',
-              style: Theme.of(context).textTheme.labelSmall,
+          return SizedBox(
+            height: 55,
+            child: GradientOutlinedButton(
+              onPressed: null,
+              child: Text(
+                'Cancelled',
+                style: Theme.of(context).textTheme.labelSmall,
+              ),
             ),
           );
         }
@@ -181,20 +136,26 @@ class SocialForYouEventDetailView extends GetView<EventDetailController> {
                       ),
                     ),
                   ),
-                  child: GradientOutlinedButton(
-                    onPressed: () {
-                      eventController.accLeaveJoinEvent(
-                          eventController.event.value?.id ?? '',
-                          leave: '1');
-                    },
-                    child: Visibility(
-                      visible: !eventController.isLoadingAction.value,
-                      replacement: CustomCircularProgressIndicator(),
-                      child: Text(
-                        'Leave Event',
-                        style: Theme.of(context).textTheme.labelSmall?.copyWith(
-                              color: Theme.of(context).colorScheme.primary,
-                            ),
+                  child: SizedBox(
+                    height: 55,
+                    child: GradientOutlinedButton(
+                      onPressed: () {
+                        eventController.accLeaveJoinEvent(
+                            eventController.event.value?.id ?? '',
+                            leave: '1');
+                      },
+                      child: Visibility(
+                        visible: !eventController.isLoadingAction.value,
+                        replacement: CustomCircularProgressIndicator(),
+                        child: Text(
+                          'Leave Event',
+                          style: Theme.of(context)
+                              .textTheme
+                              .labelSmall
+                              ?.copyWith(
+                                color: Theme.of(context).colorScheme.primary,
+                              ),
+                        ),
                       ),
                     ),
                   ),
@@ -215,9 +176,19 @@ class SocialForYouEventDetailView extends GetView<EventDetailController> {
                         controller.init();
                       }
                     },
-                    child: Text(
-                      'Invite a Friend',
-                      style: Theme.of(context).textTheme.labelSmall,
+                    child: Row(
+                      children: [
+                        SvgPicture.asset(
+                          'assets/icons/add_friends.svg',
+                          height: 22,
+                          width: 27,
+                        ),
+                        const SizedBox(width: 10),
+                        Text(
+                          'Invite a Friend',
+                          style: Theme.of(context).textTheme.labelSmall,
+                        ),
+                      ],
                     ),
                   ),
                 ),
@@ -225,17 +196,25 @@ class SocialForYouEventDetailView extends GetView<EventDetailController> {
             ],
           );
         } else {
-          return GradientElevatedButton(
-            onPressed: () {
-              eventController
-                  .accLeaveJoinEvent(eventController.event.value?.id ?? '');
-            },
-            child: Visibility(
-              visible: !eventController.isLoadingAction.value,
-              replacement: CustomCircularProgressIndicator(),
-              child: Text(
-                eventController.event.value?.isJoined == 0 ? 'Join' : 'Joined',
-                style: Theme.of(context).textTheme.labelSmall,
+          return SizedBox(
+            height: 55,
+            child: GradientElevatedButton(
+              onPressed: () {
+                eventController
+                    .accLeaveJoinEvent(eventController.event.value?.id ?? '');
+              },
+              child: Visibility(
+                visible: !eventController.isLoadingAction.value,
+                replacement: CustomCircularProgressIndicator(),
+                child: Text(
+                  eventController.event.value?.isJoined == 0
+                      ? 'Join!'
+                      : 'Joined',
+                  style: Theme.of(context).textTheme.labelMedium?.copyWith(
+                        fontSize: 13,
+                        fontWeight: FontWeight.bold,
+                      ),
+                ),
               ),
             ),
           );

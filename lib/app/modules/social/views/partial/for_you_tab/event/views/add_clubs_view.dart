@@ -73,8 +73,8 @@ class AddClubs extends GetView<EventActionController> {
                         children: List.generate(
                           5,
                           (index) => Shimmer.fromColors(
-                            highlightColor: Colors.grey.shade100,
-                            baseColor: Colors.grey.shade300,
+                            highlightColor: Colors.grey.shade800,
+                            baseColor: Colors.grey.shade700,
                             child: Container(
                               width: double.infinity,
                               height: 24,

@@ -131,8 +131,8 @@ class EventModel extends Equatable {
 
   factory EventModel.fromJson(Map<String, dynamic> json) {
     final startTime =
-        json['start_time'].split(':'); // "23:59:59" → ["23", "59", "59"]
-    final endTime = json['end_time'].split(':');
+        json['start_time']?.split(':'); // "23:59:59" → ["23", "59", "59"]
+    final endTime = json['end_time']?.split(':');
     return EventModel(
       id: json["id"],
       activity: json["activity"],
@@ -154,10 +154,12 @@ class EventModel extends Equatable {
         hour: int.parse(startTime[0]),
         minute: int.parse(startTime[1]),
       ),
-      endTime: TimeOfDay(
-        hour: int.parse(endTime[0]),
-        minute: int.parse(endTime[1]),
-      ),
+      endTime: endTime == null
+          ? null
+          : TimeOfDay(
+              hour: int.parse(endTime[0]),
+              minute: int.parse(endTime[1]),
+            ),
       price: json["price"],
       quota: json["quota"],
       isPublic: json["is_public"],

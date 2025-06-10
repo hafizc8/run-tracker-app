@@ -106,6 +106,11 @@ Future<void> initializeService() async {
       initialNotificationTitle: 'Zest Menunggu',
       initialNotificationContent: 'Aktivitas siap dimulai.',
       foregroundServiceNotificationId: 888,
+      foregroundServiceTypes: [
+        AndroidForegroundType.location,
+        AndroidForegroundType.health,
+        AndroidForegroundType.dataSync,
+      ],
     ),
   );
 }

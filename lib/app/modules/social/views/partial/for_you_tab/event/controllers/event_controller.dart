@@ -162,30 +162,10 @@ class EventController extends GetxController {
     }
   }
 
-  Future<void> detailEvent(String id) async {
-    isLoadingDetail.value = true;
-    try {
-      final EventModel? res = await _eventService.detailEvent(id);
-      event.value = res;
-    } on AppException catch (e) {
-      // show error snackbar, toast, etc
-      AppExceptionHandlerInfo.handle(e);
-    } catch (e) {
-      Get.snackbar(
-        'Error',
-        e.toString(),
-        backgroundColor: Colors.red,
-        colorText: Colors.white,
-      );
-    } finally {
-      isLoadingDetail.value = false;
-    }
-  }
-
   Future<void> accLeaveJoinEvent(String id, {String? leave}) async {
     isLoadingAction.value = true;
     try {
-      final bool res = await _eventService.accLeaveJoinEvent(id);
+      final bool res = await _eventService.accLeaveJoinEvent(id, leave: leave);
       int index = events.indexWhere((element) => element.id == id);
       if (index != -1) {
         final event = events[index];

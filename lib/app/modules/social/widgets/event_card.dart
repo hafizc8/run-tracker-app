@@ -48,32 +48,34 @@ class EventCard extends StatelessWidget {
           mainAxisSize: MainAxisSize.min,
           children: [
             // Image with button share in right top corner
-            AspectRatio(
-              aspectRatio: 1,
-              child: ClipRRect(
-                borderRadius: BorderRadius.circular(12),
-                child: Image.network(
-                  eventModel?.imageUrl ?? '',
-                  fit: BoxFit.cover,
-                  errorBuilder: (context, error, stackTrace) => Container(
-                    color: Colors.grey.shade800,
-                    child: const Center(
-                      child: Icon(Icons.broken_image,
-                          size: 64, color: Colors.grey),
-                    ),
-                  ),
-                  loadingBuilder: (context, child, loadingProgress) {
-                    if (loadingProgress == null) return child;
-                    return Container(
+            if (eventModel?.imageUrl != null) ...[
+              AspectRatio(
+                aspectRatio: 1,
+                child: ClipRRect(
+                  borderRadius: BorderRadius.circular(12),
+                  child: Image.network(
+                    eventModel?.imageUrl ?? '',
+                    fit: BoxFit.cover,
+                    errorBuilder: (context, error, stackTrace) => Container(
                       color: Colors.grey.shade800,
                       child: const Center(
-                        child: CircularProgressIndicator(),
+                        child: Icon(Icons.broken_image,
+                            size: 64, color: Colors.grey),
                       ),
-                    );
-                  },
+                    ),
+                    loadingBuilder: (context, child, loadingProgress) {
+                      if (loadingProgress == null) return child;
+                      return Container(
+                        color: Colors.grey.shade800,
+                        child: const Center(
+                          child: CircularProgressIndicator(),
+                        ),
+                      );
+                    },
+                  ),
                 ),
               ),
-            ),
+            ],
             const SizedBox(height: 15),
             Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -212,8 +214,8 @@ class EventCard extends StatelessWidget {
                       ?.map((e) => e.user?.imageUrl ?? '')
                       .toList() ??
                   [],
-              avatarSize: 50,
-              overlapOffset: 55,
+              avatarSize: 29,
+              overlapOffset: 32,
               maxVisible: 3,
             ),
             const SizedBox(height: 8),
@@ -265,6 +267,7 @@ class EventCard extends StatelessWidget {
               ],
             ),
             const SizedBox(height: 15),
+
             if (isAction) ...[
               GradientElevatedButton(
                 onPressed: () {},
@@ -290,7 +293,8 @@ class EventCard extends StatelessWidget {
             if (eventModel?.cancelledAt == null &&
                 (eventModel?.datetime ?? DateTime.now()).isDateTimePassed(
                     eventModel?.startTime ?? TimeOfDay.now()) &&
-                eventModel?.isPublic == 1) ...[
+                eventModel?.isPublic == 1 &&
+                eventModel?.isOwner == 0) ...[
               GradientElevatedButton(
                 onPressed: eventModel?.isJoined == 0
                     ? () {
@@ -312,51 +316,6 @@ class EventCard extends StatelessWidget {
                 ),
               ),
             ]
-            // Visibility(
-            //   visible: !isAction,
-            //   replacement: GradientElevatedButton(
-            //     onPressed: () {},
-            //     child: SvgPicture.asset(
-            //       'assets/icons/share.svg',
-            //       color: Theme.of(context).colorScheme.primary,
-            //       height: 24,
-            //       width: 24,
-            //     ),
-            //   ),
-            //   child: Visibility(
-            //     visible: eventModel?.cancelledAt != null,
-            //     replacement: Visibility(
-            //       visible: (eventModel?.datetime ?? DateTime.now())
-            //           .isDateTimePassed(
-            //               eventModel?.startTime ?? TimeOfDay.now()),
-            //       child: GradientElevatedButton(
-            //         onPressed: eventModel?.isJoined == 0
-            //             ? () {
-            //                 eventController
-            //                     .accLeaveJoinEvent(eventModel?.id ?? '');
-            //               }
-            //             : null,
-            //         child: Obx(
-            //           () => Visibility(
-            //             visible: eventController.isLoadingAction.value,
-            //             replacement:
-            //                 Text((eventModel?.isJoined ?? 0).toEventStatus),
-            //             child: CircularProgressIndicator(
-            //               color: Theme.of(context).colorScheme.onPrimary,
-            //             ),
-            //           ),
-            //         ),
-            //       ),
-            //     ),
-            //     child: GradientElevatedButton(
-            //       onPressed: null,
-            //       child: Text(
-            //         'Cancelled',
-            //         style: Theme.of(context).textTheme.labelSmall,
-            //       ),
-            //     ),
-            //   ),
-            // ),
           ],
         ),
       ),

@@ -271,8 +271,6 @@ class SocialForYouView extends GetView<SocialController> {
                           arguments: {
                             'eventId': eventController.events[index].id
                           });
-                      eventController
-                          .detailEvent(eventController.events[index].id ?? '');
                     },
                   );
                 },

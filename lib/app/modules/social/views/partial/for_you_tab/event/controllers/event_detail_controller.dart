@@ -1,12 +1,17 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:zest_mobile/app/core/di/service_locator.dart';
+import 'package:zest_mobile/app/core/exception/app_exception.dart';
+import 'package:zest_mobile/app/core/exception/handler/app_exception_handler_info.dart';
 import 'package:zest_mobile/app/core/models/interface/pagination_response_model.dart';
 import 'package:zest_mobile/app/core/models/model/event_model.dart';
 import 'package:zest_mobile/app/core/services/event_service.dart';
+import 'package:zest_mobile/app/modules/social/views/partial/for_you_tab/event/controllers/event_controller.dart';
 
 class EventDetailController extends GetxController {
   var isLoading = false.obs;
+  var isLoadingAction = false.obs;
+  var isLoadingGoing = false.obs;
   var isLoadingWaitList = false.obs;
   var hasReacheMax = false.obs;
   var hasReacheMaxWaiting = false.obs;
@@ -15,6 +20,9 @@ class EventDetailController extends GetxController {
 
   var usersInvites = <EventUserModel>[].obs;
   var usersWaitings = <EventUserModel>[].obs;
+  Rx<EventModel?> event = Rx(null);
+
+  final eventController = Get.find<EventController>();
 
   var page = 1;
   var eventId = '';
@@ -28,7 +36,69 @@ class EventDetailController extends GetxController {
     init();
   }
 
+  Future<void> detailEvent() async {
+    isLoading.value = true;
+    try {
+      final EventModel? res = await _eventService.detailEvent(eventId);
+      event.value = res;
+    } on AppException catch (e) {
+      // show error snackbar, toast, etc
+      AppExceptionHandlerInfo.handle(e);
+    } catch (e) {
+      Get.snackbar(
+        'Error',
+        e.toString(),
+        backgroundColor: Colors.red,
+        colorText: Colors.white,
+      );
+    } finally {
+      isLoading.value = false;
+    }
+  }
+
+  Future<void> accLeaveJoinEvent(String id, {String? leave}) async {
+    isLoadingAction.value = true;
+    try {
+      final bool res = await _eventService.accLeaveJoinEvent(id, leave: leave);
+
+      if (res) {
+        int index =
+            eventController.events.indexWhere((element) => element.id == id);
+        if (index != -1) {
+          eventController.events[index] =
+              eventController.events[index].copyWith(
+            isJoined: leave != null ? 0 : 1,
+          );
+        }
+        refreshUsersOnEvent();
+        event.value = event.value!.copyWith(
+          isJoined: leave != null ? 0 : 1,
+        );
+      }
+    } on AppException catch (e) {
+      // show error snackbar, toast, etc
+      AppExceptionHandlerInfo.handle(e);
+    } catch (e) {
+      Get.snackbar(
+        'Error',
+        e.toString(),
+        backgroundColor: Colors.red,
+        colorText: Colors.white,
+      );
+    } finally {
+      isLoadingAction.value = false;
+    }
+  }
+
   Future<void> init() async {
+    Future.wait([
+      detailEvent(),
+      loadGoing(refresh: true),
+      loadWaiting(refresh: true),
+    ]);
+  }
+
+  Future<void> refreshUsersOnEvent() async {
     Future.wait([
       loadGoing(refresh: true),
       loadWaiting(refresh: true),
@@ -41,8 +111,8 @@ class EventDetailController extends GetxController {
       page = 1;
       hasReacheMax.value = false;
     }
-    if (isLoading.value || hasReacheMax.value) return;
-    isLoading.value = true;
+    if (isLoadingGoing.value || hasReacheMax.value) return;
+    isLoadingGoing.value = true;
     try {
       PaginatedDataResponse<EventUserModel> response =
           await _eventService.getEventUsers(
@@ -68,7 +138,7 @@ class EventDetailController extends GetxController {
         colorText: Colors.white,
       ); // show error snackbar, toast, etc (e.g.message)
     } finally {
-      isLoading.value = false;
+      isLoadingGoing.value = false;
     }
   }
 

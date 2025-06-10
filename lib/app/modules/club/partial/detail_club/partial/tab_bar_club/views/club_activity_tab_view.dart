@@ -82,7 +82,6 @@ class ClubActivityTabView extends GetView<ClubActivityTabController> {
                     AppRoutes.socialYourPageEventDetail,
                     arguments: {'eventId': activity?.event?.id},
                   );
-                  eventController.detailEvent(activity?.event?.id ?? '');
                 },
               );
             } else {

@@ -21,14 +21,14 @@ class SocialForYouEventDetailView extends GetView<EventDetailController> {
   final eventActionController = Get.find<EventActionController>();
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: _buildAppBar(context),
-      body: SingleChildScrollView(
-        child: Obx(
-          () => Visibility(
-            visible: eventController.isLoadingDetail.value,
+    return Obx(
+      () => Scaffold(
+        appBar: _buildAppBar(context),
+        body: SingleChildScrollView(
+          child: Visibility(
+            visible: controller.isLoading.value,
             replacement: EventDetailCard(
-              event: eventController.event.value,
+              event: controller.event.value,
             ),
             child: const Padding(
               padding: EdgeInsets.all(16.0),
@@ -36,13 +36,13 @@ class SocialForYouEventDetailView extends GetView<EventDetailController> {
             ),
           ),
         ),
+        bottomNavigationBar:
+            (controller.event.value?.datetime ?? DateTime.now())
+                    .isDateTimePassed(
+                        controller.event.value?.startTime ?? TimeOfDay.now())
+                ? _buildBottomBar(context)
+                : const SizedBox(),
       ),
-      bottomNavigationBar:
-          (eventController.event.value?.datetime ?? DateTime.now())
-                  .isDateTimePassed(
-                      eventController.event.value?.startTime ?? TimeOfDay.now())
-              ? _buildBottomBar(context)
-              : const SizedBox(),
     );
   }
 
@@ -77,7 +77,7 @@ class SocialForYouEventDetailView extends GetView<EventDetailController> {
         color: Theme.of(context).colorScheme.background,
       ),
       child: Obx(() {
-        if (eventController.isLoadingDetail.value) {
+        if (controller.isLoading.value) {
           return Shimmer.fromColors(
             baseColor: Colors.grey.shade800,
             highlightColor: Colors.grey.shade700,
@@ -87,7 +87,7 @@ class SocialForYouEventDetailView extends GetView<EventDetailController> {
             ),
           );
         }
-        if (eventController.event.value?.cancelledAt != null) {
+        if (controller.event.value?.cancelledAt != null) {
           return SizedBox(
             height: 55,
             child: GradientOutlinedButton(
@@ -100,269 +100,131 @@ class SocialForYouEventDetailView extends GetView<EventDetailController> {
           );
         }
 
-        if (eventController.event.value?.isJoined == 1) {
-          return Row(
-            children: [
-              Expanded(
-                child: Visibility(
-                  visible: eventController.event.value?.isOwner == 0,
-                  replacement: SizedBox(
-                    height: 55,
-                    child: GradientOutlinedButton(
-                      style: ButtonStyle(
-                        shape: MaterialStateProperty.all(
-                          RoundedRectangleBorder(
-                            borderRadius: BorderRadius.circular(11),
+        if (controller.event.value?.isJoined == 1) {
+          return Obx(
+            () => Row(
+              children: [
+                Expanded(
+                  child: Visibility(
+                    visible: controller.event.value?.isOwner == 0,
+                    replacement: SizedBox(
+                      height: 55,
+                      child: GradientOutlinedButton(
+                        style: ButtonStyle(
+                          shape: MaterialStateProperty.all(
+                            RoundedRectangleBorder(
+                              borderRadius: BorderRadius.circular(11),
+                            ),
+                          ),
+                        ),
+                        onPressed: () {
+                          eventController.cancelEvent(
+                            controller.event.value?.id ?? '',
+                          );
+                        },
+                        child: Visibility(
+                          visible: !eventController.isLoadingAction.value,
+                          replacement: CustomCircularProgressIndicator(),
+                          child: Text(
+                            'Cancel Event',
+                            style: Theme.of(context)
+                                .textTheme
+                                .labelSmall
+                                ?.copyWith(
+                                  color: Theme.of(context).colorScheme.primary,
+                                ),
                           ),
                         ),
                       ),
-                      onPressed: () {
-                        eventController.cancelEvent(
-                          eventController.event.value?.id ?? '',
-                        );
-                      },
-                      child: Visibility(
-                        visible: !eventController.isLoadingAction.value,
-                        replacement: CustomCircularProgressIndicator(),
-                        child: Text(
-                          'Cancel Event',
-                          style: Theme.of(context)
-                              .textTheme
-                              .labelSmall
-                              ?.copyWith(
-                                color: Theme.of(context).colorScheme.primary,
-                              ),
+                    ),
+                    child: SizedBox(
+                      height: 55,
+                      child: GradientOutlinedButton(
+                        onPressed: () {
+                          controller.accLeaveJoinEvent(
+                            controller.event.value?.id ?? '',
+                            leave: '1',
+                          );
+                        },
+                        child: Visibility(
+                          visible: !controller.isLoadingAction.value,
+                          replacement: CustomCircularProgressIndicator(),
+                          child: Text(
+                            'Leave Event',
+                            style: Theme.of(context)
+                                .textTheme
+                                .labelSmall
+                                ?.copyWith(
+                                  color: Theme.of(context).colorScheme.primary,
+                                ),
+                          ),
                         ),
                       ),
                     ),
                   ),
+                ),
+                const SizedBox(width: 10),
+                Expanded(
                   child: SizedBox(
                     height: 55,
-                    child: GradientOutlinedButton(
-                      onPressed: () {
-                        eventController.accLeaveJoinEvent(
-                            eventController.event.value?.id ?? '',
-                            leave: '1');
+                    child: GradientElevatedButton(
+                      onPressed: () async {
+                        var res = await Get.toNamed(
+                            AppRoutes.socialYourPageEventDetailInviteFriend,
+                            arguments: {'eventId': controller.event.value?.id});
+                        if (res != null && res) {
+                          controller.init();
+                        }
                       },
-                      child: Visibility(
-                        visible: !eventController.isLoadingAction.value,
-                        replacement: CustomCircularProgressIndicator(),
-                        child: Text(
-                          'Leave Event',
-                          style: Theme.of(context)
-                              .textTheme
-                              .labelSmall
-                              ?.copyWith(
-                                color: Theme.of(context).colorScheme.primary,
-                              ),
-                        ),
+                      child: Row(
+                        children: [
+                          SvgPicture.asset(
+                            'assets/icons/add_friends.svg',
+                            height: 22,
+                            width: 27,
+                          ),
+                          const SizedBox(width: 10),
+                          Text(
+                            'Invite a Friend',
+                            style: Theme.of(context).textTheme.labelSmall,
+                          ),
+                        ],
                       ),
                     ),
                   ),
                 ),
-              ),
-              const SizedBox(width: 10),
-              Expanded(
-                child: SizedBox(
-                  height: 55,
-                  child: GradientElevatedButton(
-                    onPressed: () async {
-                      var res = await Get.toNamed(
-                          AppRoutes.socialYourPageEventDetailInviteFriend,
-                          arguments: {
-                            'eventId': eventController.event.value?.id
-                          });
-                      if (res != null && res) {
-                        controller.init();
-                      }
-                    },
-                    child: Row(
-                      children: [
-                        SvgPicture.asset(
-                          'assets/icons/add_friends.svg',
-                          height: 22,
-                          width: 27,
-                        ),
-                        const SizedBox(width: 10),
-                        Text(
-                          'Invite a Friend',
-                          style: Theme.of(context).textTheme.labelSmall,
-                        ),
-                      ],
-                    ),
-                  ),
-                ),
-              ),
-            ],
+              ],
+            ),
           );
-        } else {
-          return SizedBox(
-            height: 55,
-            child: GradientElevatedButton(
-              onPressed: () {
-                eventController
-                    .accLeaveJoinEvent(eventController.event.value?.id ?? '');
-              },
-              child: Visibility(
-                visible: !eventController.isLoadingAction.value,
-                replacement: CustomCircularProgressIndicator(),
-                child: Text(
-                  eventController.event.value?.isJoined == 0
-                      ? 'Join!'
-                      : 'Joined',
-                  style: Theme.of(context).textTheme.labelMedium?.copyWith(
-                        fontSize: 13,
-                        fontWeight: FontWeight.bold,
-                      ),
+        }
+
+        if (controller.event.value?.isJoined == 0 &&
+            controller.event.value?.isPublic == 1) {
+          return Obx(
+            () => SizedBox(
+              height: 55,
+              child: GradientElevatedButton(
+                onPressed: () {
+                  controller
+                      .accLeaveJoinEvent(controller.event.value?.id ?? '');
+                },
+                child: Visibility(
+                  visible: !controller.isLoadingAction.value,
+                  replacement: CustomCircularProgressIndicator(),
+                  child: Text(
+                    'Join!',
+                    style: Theme.of(context).textTheme.labelMedium?.copyWith(
+                          fontSize: 13,
+                          fontWeight: FontWeight.bold,
+                        ),
+                  ),
                 ),
               ),
             ),
           );
         }
 
-        //   Visibility(
-        //   visible: !eventController.isLoadingDetail.value,
-        //   replacement: Shimmer.fromColors(
-        //     baseColor: Colors.grey.shade300,
-        //     highlightColor: Colors.grey.shade100,
-        //     child: const SizedBox(
-        //       height: 40,
-        //       width: 200,
-        //     ),
-        //   ),
-        //   child: Visibility(
-        //     visible: eventController.event.value?.cancelledAt == null,
-        //     replacement: GradientOutlinedButton(
-        //       onPressed: null,
-        //       child: Text(
-        //         'Cancelled',
-        //         style: Theme.of(context).textTheme.labelSmall,
-        //       ),
-        //     ),
-        //     child: Visibility(
-        //       visible: eventController.event.value?.isJoined == 1,
-        //       replacement: ElevatedButtonTheme(
-        //         data: ElevatedButtonThemeData(
-        //           style: ElevatedButton.styleFrom(
-        //             backgroundColor: Theme.of(context).colorScheme.primary,
-        //             foregroundColor: Theme.of(context).colorScheme.onPrimary,
-        //             minimumSize: const Size.fromHeight(40),
-        //           ),
-        //         ),
-        //         child: GradientElevatedButton(
-        //           onPressed: () {
-        //             eventController.accLeaveJoinEvent(
-        //                 eventController.event.value?.id ?? '');
-        //           },
-        //           child: Visibility(
-        //             visible: !eventController.isLoadingAction.value,
-        //             replacement: CircularProgressIndicator(
-        //               color: Theme.of(context).colorScheme.onPrimary,
-        //             ),
-        //             child: Text(
-        //               eventController.event.value?.isJoined == 0
-        //                   ? 'Join'
-        //                   : 'Joined',
-        //               style: Theme.of(context).textTheme.labelSmall,
-        //             ),
-        //           ),
-        //         ),
-        //       ),
-        //       child: Row(
-        //         children: [
-        //           Expanded(
-        //             child: OutlinedButtonTheme(
-        //               data: OutlinedButtonThemeData(
-        //                 style: OutlinedButton.styleFrom(
-        //                   backgroundColor:
-        //                       Theme.of(context).colorScheme.onPrimary,
-        //                   minimumSize: const Size.fromHeight(40),
-        //                   side: BorderSide(
-        //                       color: Theme.of(context).colorScheme.primary),
-        //                 ),
-        //               ),
-        //               child: Visibility(
-        //                 visible: eventController.event.value?.isOwner == 0,
-        //                 replacement: OutlinedButton(
-        //                   onPressed: () {
-        //                     eventController.cancelEvent(
-        //                       eventController.event.value?.id ?? '',
-        //                     );
-        //                   },
-        //                   child: Visibility(
-        //                     visible: !eventController.isLoadingAction.value,
-        //                     replacement: const CircularProgressIndicator(),
-        //                     child: Text(
-        //                       'Cancel Event',
-        //                       style: Theme.of(context)
-        //                           .textTheme
-        //                           .labelSmall
-        //                           ?.copyWith(
-        //                             color:
-        //                                 Theme.of(context).colorScheme.primary,
-        //                           ),
-        //                     ),
-        //                   ),
-        //                 ),
-        //                 child: OutlinedButton(
-        //                   onPressed: () {
-        //                     eventController.accLeaveJoinEvent(
-        //                         eventController.event.value?.id ?? '',
-        //                         leave: '1');
-        //                   },
-        //                   child: Visibility(
-        //                     visible: !eventController.isLoadingAction.value,
-        //                     replacement: const CircularProgressIndicator(),
-        //                     child: Text(
-        //                       'Leave Event',
-        //                       style: Theme.of(context)
-        //                           .textTheme
-        //                           .labelSmall
-        //                           ?.copyWith(
-        //                             color:
-        //                                 Theme.of(context).colorScheme.primary,
-        //                           ),
-        //                     ),
-        //                   ),
-        //                 ),
-        //               ),
-        //             ),
-        //           ),
-        //           const SizedBox(width: 10),
-        //           Expanded(
-        //             child: ElevatedButtonTheme(
-        //               data: ElevatedButtonThemeData(
-        //                 style: ElevatedButton.styleFrom(
-        //                   backgroundColor:
-        //                       Theme.of(context).colorScheme.primary,
-        //                   foregroundColor:
-        //                       Theme.of(context).colorScheme.onPrimary,
-        //                   minimumSize: const Size.fromHeight(40),
-        //                 ),
-        //               ),
-        //               child: ElevatedButton(
-        //                 onPressed: () async {
-        //                   var res = await Get.toNamed(
-        //                       AppRoutes.socialYourPageEventDetailInviteFriend,
-        //                       arguments: {
-        //                         'eventId': eventController.event.value?.id
-        //                       });
-        //                   if (res != null && res) {
-        //                     controller.init();
-        //                   }
-        //                 },
-        //                 child: Text(
-        //                   'Invite a Friend',
-        //                   style: Theme.of(context).textTheme.labelSmall,
-        //                 ),
-        //               ),
-        //             ),
-        //           ),
-        //         ],
-        //       ),
-        //     ),
-        //   ),
-        // ),
+        return const SizedBox();
       }),
     );
   }

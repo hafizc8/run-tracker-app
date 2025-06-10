@@ -23,7 +23,7 @@ class TAppTheme {
       outlinedButtonTheme: TOutlinedButtonTheme.lightOutlinedButtonTheme,
       inputDecorationTheme: TInputDecorationTheme.lightInputDecorationTheme,
       checkboxTheme: TCheckboxTheme.lightCheckboxTheme,
-      fontFamily: GoogleFonts.quicksand().fontFamily,
+      fontFamily: GoogleFonts.poppins().fontFamily,
     );
   }
 
@@ -34,9 +34,11 @@ class TAppTheme {
       brightness: Brightness.dark,
       colorScheme: darkColorScheme,
       scaffoldBackgroundColor: darkColorScheme.background,
-      primaryColor: darkColorScheme.primary, // primaryColor usang, gunakan colorScheme.primary
+      primaryColor: darkColorScheme
+          .primary, // primaryColor usang, gunakan colorScheme.primary
       appBarTheme: TAppBarTheme.darkAppBarTheme,
-      textTheme: TTextTheme.darkTextTheme.apply(fontFamily: GoogleFonts.poppins().fontFamily),
+      textTheme: TTextTheme.darkTextTheme
+          .apply(fontFamily: GoogleFonts.poppins().fontFamily),
       elevatedButtonTheme: TElevatedButtonTheme.darkElevatedButtonTheme,
       // outlinedButtonTheme: TOutlinedButtonTheme.darkOutlinedButtonTheme,
       inputDecorationTheme: TInputDecorationTheme.darkInputDecorationTheme,

@@ -1,3 +1,5 @@
+import 'dart:math';
+
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
@@ -27,35 +29,37 @@ class EventDetailCard extends GetView<EventDetailController> {
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           // Image
-          AspectRatio(
-            aspectRatio: 1,
-            child: ClipRRect(
-              borderRadius: BorderRadius.circular(12),
-              child: Container(
-                color: Colors.grey.shade300,
-                child: CachedNetworkImage(
-                  imageUrl: event?.imageUrl ?? '',
-                  fit: BoxFit.cover,
-                  placeholder: (context, url) => Shimmer.fromColors(
-                    baseColor: Colors.grey.shade800,
-                    highlightColor: Colors.grey.shade700,
-                    child: const SizedBox.shrink(),
-                  ),
-                  errorWidget: (context, url, error) => const Center(
-                    child: Column(
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      children: [
-                        Icon(Icons.image, size: 64, color: Colors.grey),
-                        SizedBox(height: 8),
-                        Text('Image Placeholder',
-                            style: TextStyle(color: Colors.grey)),
-                      ],
+          if (event?.imageUrl != null) ...[
+            AspectRatio(
+              aspectRatio: 1,
+              child: ClipRRect(
+                borderRadius: BorderRadius.circular(12),
+                child: Container(
+                  color: Colors.grey.shade300,
+                  child: CachedNetworkImage(
+                    imageUrl: event?.imageUrl ?? '',
+                    fit: BoxFit.cover,
+                    placeholder: (context, url) => Shimmer.fromColors(
+                      baseColor: Colors.grey.shade800,
+                      highlightColor: Colors.grey.shade700,
+                      child: const SizedBox.shrink(),
+                    ),
+                    errorWidget: (context, url, error) => const Center(
+                      child: Column(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: [
+                          Icon(Icons.image, size: 64, color: Colors.grey),
+                          SizedBox(height: 8),
+                          Text('Image Placeholder',
+                              style: TextStyle(color: Colors.grey)),
+                        ],
+                      ),
                     ),
                   ),
                 ),
               ),
             ),
-          ),
+          ],
           const SizedBox(height: 15),
           Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -199,8 +203,8 @@ class EventDetailCard extends GetView<EventDetailController> {
                   ClipOval(
                     child: CachedNetworkImage(
                       imageUrl: event?.user?.imageUrl ?? '',
-                      width: 50,
-                      height: 50,
+                      width: 29,
+                      height: 29,
                       fit: BoxFit.cover,
                       placeholder: (context, url) => Shimmer.fromColors(
                         baseColor: Colors.grey.shade800,
@@ -259,7 +263,7 @@ class EventDetailCard extends GetView<EventDetailController> {
                 ),
                 title: 'Date & Time',
                 subtitle:
-                    '${DateFormat('d MMM yyyy').format(event!.datetime!)}, ${eventActionController.formatTime(event!.startTime!)}–${eventActionController.formatTime(event!.endTime!)}',
+                    '${DateFormat('d MMM yyyy').format(event!.datetime!)}, ${event?.startTime != null ? eventActionController.formatTime(event!.startTime!) : 'Start'}–${event?.endTime != null ? eventActionController.formatTime(event!.endTime!) : 'Finish'}',
               ),
               const SizedBox(height: 12),
               _buildInfoItem(
@@ -289,7 +293,7 @@ class EventDetailCard extends GetView<EventDetailController> {
           const SizedBox(height: 15),
           // Going list
           Obx(() {
-            if (controller.isLoading.value) {
+            if (controller.isLoadingGoing.value) {
               return Shimmer.fromColors(
                 baseColor: Colors.grey.shade800,
                 highlightColor: Colors.grey.shade700,
@@ -446,14 +450,15 @@ class EventDetailCard extends GetView<EventDetailController> {
 
   Widget _buildPersonList(BuildContext context, [EventUserModel? user]) {
     return Container(
-      padding: const EdgeInsets.all(8),
+      padding: const EdgeInsets.only(top: 8),
       decoration: BoxDecoration(
-        borderRadius: BorderRadius.circular(8),
+        borderRadius: BorderRadius.circular(16),
         color: Color(0xFF4C4C4C),
       ),
       child: Column(
         mainAxisAlignment: MainAxisAlignment.center,
         children: [
+          const Spacer(),
           ClipOval(
             child: CachedNetworkImage(
               imageUrl: user?.user?.imageUrl ?? '',
@@ -477,7 +482,32 @@ class EventDetailCard extends GetView<EventDetailController> {
                 .textTheme
                 .bodyMedium
                 ?.copyWith(fontWeight: FontWeight.w600),
-          )
+          ),
+          const Spacer(),
+          if (user?.status == 3) ...[
+            Container(
+              width: double.infinity,
+              height: 25,
+              alignment: Alignment.center,
+              decoration: const BoxDecoration(
+                borderRadius:
+                    BorderRadius.vertical(bottom: Radius.circular(16)),
+                gradient: LinearGradient(
+                  colors: [Color(0xFFA2FF00), Color(0xFF00FF7F)],
+                  begin: Alignment.centerLeft,
+                  end: Alignment.centerRight,
+                ),
+              ),
+              child: Text(
+                'Reserved',
+                style: Theme.of(context).textTheme.bodySmall?.copyWith(
+                      fontWeight: FontWeight.w400,
+                      fontSize: 10,
+                      color: Theme.of(context).colorScheme.secondary,
+                    ),
+              ),
+            )
+          ]
         ],
       ),
     );

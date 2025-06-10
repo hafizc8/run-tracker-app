@@ -9,7 +9,7 @@ class TAppBarTheme {
   static AppBarTheme lightAppBarTheme = AppBarTheme(
     surfaceTintColor: lightColorScheme.background,
     titleTextStyle: TTextTheme.lightTextTheme.headlineMedium?.copyWith(
-      fontFamily: GoogleFonts.quicksand().fontFamily,
+      fontFamily: GoogleFonts.poppins().fontFamily,
     ),
     iconTheme: IconThemeData(
       color: lightColorScheme.primary,
@@ -26,18 +26,22 @@ class TAppBarTheme {
     elevation: 0,
     centerTitle: false,
     scrolledUnderElevation: 0,
-    backgroundColor: darkColorScheme.background, // Latar belakang AppBar untuk mode gelap
+    backgroundColor:
+        darkColorScheme.background, // Latar belakang AppBar untuk mode gelap
     surfaceTintColor: Colors.transparent, // Atau darkColorScheme.background
     titleTextStyle: TTextTheme.darkTextTheme.headlineMedium?.copyWith(
       fontFamily: GoogleFonts.quicksand().fontFamily,
-      color: darkColorScheme.primary, // Judul AppBar menggunakan warna primer gelap
+      color: darkColorScheme
+          .primary, // Judul AppBar menggunakan warna primer gelap
     ),
     iconTheme: IconThemeData(
-      color: darkColorScheme.primary, // Ikon utama menggunakan warna primer gelap
+      color:
+          darkColorScheme.primary, // Ikon utama menggunakan warna primer gelap
       size: 24,
     ),
     actionsIconTheme: IconThemeData(
-      color: darkColorScheme.primary, // Ikon di actions menggunakan warna primer gelap
+      color: darkColorScheme
+          .primary, // Ikon di actions menggunakan warna primer gelap
       size: 24,
     ),
   );

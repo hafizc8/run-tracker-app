@@ -339,7 +339,6 @@ class EventActionController extends GetxController {
       final EventModel? res =
           await _eventService.updateEvent(form.value, event.value?.id ?? '');
       if (res != null) {
-        eventController.detailEvent(res.id!);
         if (from.value == 'list') {
           Get.offNamed(AppRoutes.socialYourPageEventDetail,
               arguments: {'eventId': res.id});

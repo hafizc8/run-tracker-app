@@ -1,5 +1,6 @@
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/widgets.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:get/get.dart';
 import 'package:intl/intl.dart';
@@ -19,14 +20,12 @@ class EventCard extends StatelessWidget {
       this.onTap,
       this.onCancelEvent,
       this.eventModel,
-      this.isAction = false,
       this.backgroundColor = Colors.white});
 
   final EventModel? eventModel;
   final void Function()? onTap;
   final void Function()? onCancelEvent;
   final Color backgroundColor;
-  final bool isAction;
 
   final eventController = Get.find<EventController>();
   final eventActionController = Get.find<EventActionController>();
@@ -125,75 +124,74 @@ class EventCard extends StatelessWidget {
                     ),
                   ),
                 ),
-                Visibility(
-                  visible: !isAction,
-                  child: Row(
-                    children: [
-                      SvgPicture.asset(
+                Row(
+                  children: [
+                    GestureDetector(
+                      child: SvgPicture.asset(
                         'assets/icons/share.svg',
                         color: Theme.of(context).colorScheme.primary,
                         height: 22,
                         width: 27,
                       ),
-                      const SizedBox(width: 16),
-                      Visibility(
-                        visible: eventModel?.isOwner == 1 &&
-                            (eventModel?.datetime ?? DateTime.now())
-                                .isDateTimePassed(
-                                    eventModel?.startTime ?? TimeOfDay.now()) &&
-                            eventModel?.cancelledAt == null,
-                        child: PopupMenuButton<String>(
-                          onSelected: (value) async {
-                            // Handle the selection
-                            if (value == 'edit_event') {
-                              // Handle Edit Event action
-                              eventActionController.gotToEdit(eventModel!,
-                                  from: 'list');
-                            } else if (value == 'cancel_event') {
-                              // Handle Cancel Event action
-                              if (onCancelEvent != null) {
-                                onCancelEvent!();
-                                return;
-                              }
-                              await eventController
-                                  .cancelEvent(eventModel?.id ?? '');
+                    ),
+                    const SizedBox(width: 16),
+                    Visibility(
+                      visible: eventModel?.isOwner == 1 &&
+                          (eventModel?.datetime ?? DateTime.now())
+                              .isDateTimePassed(
+                                  eventModel?.startTime ?? TimeOfDay.now()) &&
+                          eventModel?.cancelledAt == null,
+                      child: PopupMenuButton<String>(
+                        onSelected: (value) async {
+                          // Handle the selection
+                          if (value == 'edit_event') {
+                            // Handle Edit Event action
+                            eventActionController.gotToEdit(eventModel!,
+                                from: 'list');
+                          } else if (value == 'cancel_event') {
+                            // Handle Cancel Event action
+                            if (onCancelEvent != null) {
+                              onCancelEvent!();
+                              return;
                             }
-                          },
-                          surfaceTintColor:
-                              Theme.of(context).colorScheme.onPrimary,
-                          itemBuilder: (BuildContext context) {
-                            return [
-                              PopupMenuItem<String>(
-                                value: 'edit_event',
-                                child: Text(
-                                  'Edit Event',
-                                  style: Theme.of(context)
-                                      .textTheme
-                                      .bodyMedium
-                                      ?.copyWith(fontWeight: FontWeight.w600),
-                                ),
+                            await eventController
+                                .cancelEvent(eventModel?.id ?? '');
+                          }
+                        },
+                        surfaceTintColor:
+                            Theme.of(context).colorScheme.onPrimary,
+                        itemBuilder: (BuildContext context) {
+                          return [
+                            PopupMenuItem<String>(
+                              value: 'edit_event',
+                              child: Text(
+                                'Edit Event',
+                                style: Theme.of(context)
+                                    .textTheme
+                                    .bodyMedium
+                                    ?.copyWith(fontWeight: FontWeight.w600),
                               ),
-                              PopupMenuItem<String>(
-                                value: 'cancel_event',
-                                child: Text(
-                                  'Cancel Event',
-                                  style: Theme.of(context)
-                                      .textTheme
-                                      .bodyMedium
-                                      ?.copyWith(fontWeight: FontWeight.w600),
-                                ),
+                            ),
+                            PopupMenuItem<String>(
+                              value: 'cancel_event',
+                              child: Text(
+                                'Cancel Event',
+                                style: Theme.of(context)
+                                    .textTheme
+                                    .bodyMedium
+                                    ?.copyWith(fontWeight: FontWeight.w600),
                               ),
-                            ];
-                          },
-                          child: Icon(
-                            Icons.more_vert,
-                            size: 27,
-                            color: Theme.of(context).colorScheme.primary,
-                          ),
+                            ),
+                          ];
+                        },
+                        child: Icon(
+                          Icons.more_vert,
+                          size: 27,
+                          color: Theme.of(context).colorScheme.primary,
                         ),
-                      )
-                    ],
-                  ),
+                      ),
+                    )
+                  ],
                 ),
               ],
             ),
@@ -267,18 +265,6 @@ class EventCard extends StatelessWidget {
               ],
             ),
             const SizedBox(height: 15),
-
-            if (isAction) ...[
-              GradientElevatedButton(
-                onPressed: () {},
-                child: SvgPicture.asset(
-                  'assets/icons/share.svg',
-                  color: Theme.of(context).colorScheme.primary,
-                  height: 24,
-                  width: 24,
-                ),
-              ),
-            ],
 
             if (eventModel?.cancelledAt != null) ...[
               GradientElevatedButton(

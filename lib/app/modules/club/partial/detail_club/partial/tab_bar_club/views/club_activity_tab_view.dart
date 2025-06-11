@@ -26,10 +26,10 @@ class ClubActivityTabView extends GetView<ClubActivityTabController> {
         }
 
         if (controller.activities.isEmpty) {
-          return Padding(
-            padding: const EdgeInsets.all(16.0),
+          return Center(
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.center,
+              mainAxisSize: MainAxisSize.min,
               children: [
                 const SizedBox(height: 30),
                 SvgPicture.asset('assets/icons/ic_no_club_yet.svg', width: 140),

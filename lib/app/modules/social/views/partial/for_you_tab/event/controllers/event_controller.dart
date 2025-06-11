@@ -88,6 +88,7 @@ class EventController extends GetxController {
       PaginatedDataResponse<EventModel> response =
           await _eventService.getEvents(
         page: page,
+        order: 'upcoming',
         activity: activity.value == 'All' ? null : activity.value,
         startDate: selectedRange?.start.toYyyyMmDdString(),
         endDate: selectedRange?.end.toYyyyMmDdString(),

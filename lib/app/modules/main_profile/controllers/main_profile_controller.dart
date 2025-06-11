@@ -97,7 +97,6 @@ class ProfileMainController extends GetxController {
   }
 
   Future<void> getEvents({bool refresh = false}) async {
-    getUpComingEvents();
     if (refresh) {
       events.clear();
       pageEvent = 1;
@@ -110,7 +109,8 @@ class ProfileMainController extends GetxController {
           await _eventService.getEvents(
         page: pageEvent,
         user: _authService.user!.id,
-        limit: 10,
+        order: 'upcoming',
+        status: 'joined',
       );
 
       if ((response.pagination.next == null ||

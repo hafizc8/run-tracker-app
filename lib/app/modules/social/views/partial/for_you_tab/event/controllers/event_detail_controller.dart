@@ -21,6 +21,7 @@ class EventDetailController extends GetxController {
   var usersInvites = <EventUserModel>[].obs;
   var usersWaitings = <EventUserModel>[].obs;
   Rx<EventModel?> event = Rx(null);
+  Rx<EventModel?> eventLastUpdated = Rx(null);
 
   final eventController = Get.find<EventController>();
 
@@ -40,7 +41,11 @@ class EventDetailController extends GetxController {
     isLoading.value = true;
     try {
       final EventModel? res = await _eventService.detailEvent(eventId);
-      event.value = res;
+      if (res == null) return;
+      event.value = res.copyWith(
+        userOnEvents: usersInvites,
+      );
+      eventLastUpdated.value = event.value;
     } on AppException catch (e) {
       // show error snackbar, toast, etc
       AppExceptionHandlerInfo.handle(e);
@@ -62,17 +67,15 @@ class EventDetailController extends GetxController {
       final bool res = await _eventService.accLeaveJoinEvent(id, leave: leave);
 
       if (res) {
-        int index =
-            eventController.events.indexWhere((element) => element.id == id);
-        if (index != -1) {
-          eventController.events[index] =
-              eventController.events[index].copyWith(
-            isJoined: leave != null ? 0 : 1,
-          );
-        }
-        refreshUsersOnEvent();
+        await refreshUsersOnEvent();
+
         event.value = event.value!.copyWith(
           isJoined: leave != null ? 0 : 1,
+        );
+        eventLastUpdated.value = event.value?.copyWith(
+          userOnEvents: usersInvites,
+          isJoined: leave != null ? 0 : 1,
+          userOnEventsCount: usersInvites.length,
         );
       }
     } on AppException catch (e) {
@@ -125,9 +128,8 @@ class EventDetailController extends GetxController {
               response.pagination.next == '') ||
           response.pagination.total < 20) hasReacheMax.value = true;
 
-      usersInvites.value += response.data.length > 10
-          ? response.data.sublist(0, 10)
-          : response.data;
+      usersInvites.value += response.data;
+      usersInvites.refresh();
 
       page++;
     } catch (e) {
@@ -162,9 +164,7 @@ class EventDetailController extends GetxController {
               response.pagination.next == '') ||
           response.pagination.total < 20) hasReacheMaxWaiting.value = true;
 
-      usersWaitings.value += response.data.length > 10
-          ? response.data.sublist(0, 10)
-          : response.data;
+      usersWaitings.value += response.data;
 
       page++;
     } catch (e) {

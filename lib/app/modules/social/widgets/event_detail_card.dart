@@ -309,7 +309,9 @@ class EventDetailCard extends GetView<EventDetailController> {
               context: context,
               title: 'Going',
               seeAll: true,
-              itemCount: controller.usersInvites.length,
+              itemCount: controller.usersInvites.length > 10
+                  ? 10
+                  : controller.usersInvites.length,
               itemBuilder: (context, index) => _buildPersonList(
                 context,
                 controller.usersInvites[index],
@@ -334,7 +336,9 @@ class EventDetailCard extends GetView<EventDetailController> {
             return _personGridList(
               context: context,
               title: 'Waitlist',
-              itemCount: controller.usersWaitings.length,
+              itemCount: controller.usersWaitings.length > 10
+                  ? 10
+                  : controller.usersWaitings.length,
               itemBuilder: (context, index) => _buildPersonList(
                 context,
                 controller.usersWaitings[index],

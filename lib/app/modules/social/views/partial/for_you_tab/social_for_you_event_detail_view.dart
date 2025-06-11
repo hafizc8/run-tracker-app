@@ -55,7 +55,7 @@ class SocialForYouEventDetailView extends GetView<EventDetailController> {
           color: Theme.of(context).colorScheme.onBackground,
           size: 35,
         ),
-        onPressed: () => Get.back(),
+        onPressed: () => Get.back(result: controller.eventLastUpdated.value),
       ),
       title: Text(
         'Event Details',

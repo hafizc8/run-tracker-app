@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:zest_mobile/app/core/models/model/event_activity_model.dart';
 import 'package:zest_mobile/app/core/models/model/event_location_model.dart';
+import 'package:zest_mobile/app/core/models/model/event_model.dart';
 import 'package:zest_mobile/app/core/shared/widgets/shimmer_loading_event.dart';
 import 'package:zest_mobile/app/modules/social/controllers/social_controller.dart';
 import 'package:zest_mobile/app/modules/social/views/partial/for_you_tab/event/controllers/event_action_controller.dart';
@@ -266,11 +267,19 @@ class SocialForYouView extends GetView<SocialController> {
                   return EventCard(
                     backgroundColor: Theme.of(context).colorScheme.surface,
                     eventModel: eventController.events[index],
-                    onTap: () {
-                      Get.toNamed(AppRoutes.socialYourPageEventDetail,
+                    onTap: () async {
+                      var result = await Get.toNamed(
+                          AppRoutes.socialYourPageEventDetail,
                           arguments: {
                             'eventId': eventController.events[index].id
                           });
+                      if (result != null && result is EventModel) {
+                        int index = eventController.events
+                            .indexWhere((element) => element.id == result.id);
+                        eventController.events[index] = result.copyWith(
+                          userOnEventsCount: result.userOnEvents?.length,
+                        );
+                      }
                     },
                   );
                 },

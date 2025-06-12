@@ -109,9 +109,11 @@ void onStart(ServiceInstance service) async {
       "timestamp": newPoint.timestamp.toIso8601String(),
     };
 
-    double currentPace = 0;
-    if (elapsedTimeInSeconds > 0) {
-      currentPace = currentDistanceInMeters / elapsedTimeInSeconds;
+    double paceInSecondsPerKm = 0;
+    if (elapsedTimeInSeconds > 0 && currentDistanceInMeters > 0) {
+      // pace in seconds / km
+      double paceInSecondsPerMeter = elapsedTimeInSeconds / currentDistanceInMeters;
+      paceInSecondsPerKm = paceInSecondsPerMeter * 1000;
     }
 
     final dataPoint = ActivityDataPoint(
@@ -119,7 +121,7 @@ void onStart(ServiceInstance service) async {
       longitude: position.longitude,
       step: stepsInSession,
       distance: currentDistanceInMeters,
-      pace: currentPace,
+      pace: paceInSecondsPerKm,
       time: elapsedTimeInSeconds,
       timestamp: position.timestamp,
     );
@@ -164,6 +166,21 @@ void onStart(ServiceInstance service) async {
   // ✨ BARU: Listener untuk event 'resume'
   service.on('resume').listen((event) {
     isPaused = false;
+  });
+
+  service.on('restoreState').listen((data) {
+    if (data == null) return;
+    
+    // Set state internal service dari data yang dikirim controller
+    elapsedTimeInSeconds = data['elapsedTime'] ?? 0;
+    currentDistanceInMeters = data['distance'] ?? 0.0;
+    stepsInSession = data['steps'] ?? 0;
+    isPaused = true;
+
+    // Reset initialStepCount agar dikalibrasi ulang pada event pedometer pertama
+    initialStepCount = null; 
+    
+    print("Background service state restored.");
   });
 }
 

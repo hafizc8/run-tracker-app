@@ -144,7 +144,7 @@ class RecordActivityLogModel extends Model {
   final double? longitude;
   final double? pace;
   final double? distance;
-  final String? time;
+  final int? time;
 
   RecordActivityLogModel copyWith({
     String? id,
@@ -154,7 +154,7 @@ class RecordActivityLogModel extends Model {
     double? longitude,
     double? pace,
     double? distance,
-    String? time,
+    int? time,
   }) {
     return RecordActivityLogModel(
       id: id ?? this.id,
@@ -175,7 +175,7 @@ class RecordActivityLogModel extends Model {
       timestamp: DateTime.tryParse(json["timestamp"] ?? ""),
       latitude: double.tryParse(json["latitude"] ?? "0.0"),
       longitude: double.tryParse(json["longitude"] ?? "0.0"),
-      pace: double.tryParse(json["pace"] ?? "0.0"),
+      pace: double.tryParse(json["pace"].toString()) ?? 0.0,
       distance: double.tryParse(json["distance"] ?? "0.0"),
       time: json["time"],
     );

@@ -25,7 +25,29 @@ class RecordActivityView extends GetView<RecordActivityController> {
         automaticallyImplyLeading: false,
         elevation: 1,
         leading: GestureDetector(
-          onTap: () => Get.back(),
+          onTap: () {
+            // confirm dialog
+            Get.dialog(
+              AlertDialog(
+                surfaceTintColor: darkColorScheme.background,
+                title: const Text('Delete Activity'),
+                content: const Text('Are you sure you want to delete this activity?'),
+                actions: [
+                  TextButton(
+                    onPressed: () => Get.back(),
+                    child: const Text('Cancel'),
+                  ),
+                  TextButton(
+                    onPressed: () {
+                      controller.deleteActivity();
+                      Get.back(closeOverlays: true);
+                    },
+                    child: const Text('Delete'),
+                  ),
+                ],
+              ),
+            );
+          },
           child: Icon(
             Icons.chevron_left,
             color: Theme.of(context).colorScheme.onBackground,
@@ -219,81 +241,89 @@ class RecordActivityView extends GetView<RecordActivityController> {
           
               const SizedBox(height: 48),
           
-              Container(
-                decoration: BoxDecoration(
-                  color: const Color(0xFF373737),
-                  borderRadius: BorderRadius.circular(8),
-                ),
-                padding: const EdgeInsets.symmetric(horizontal: 15, vertical: 10),
-                margin: const EdgeInsets.symmetric(horizontal: 15, vertical: 10),
-                child: Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                  children: [
-                    InkWell(
-                      onTap: () {
-                        controller.isMapViewMode.value = !controller.isMapViewMode.value;
-                      },
-                      child: Container(
-                        decoration: BoxDecoration(
-                          shape: BoxShape.circle,
-                          border: Border.all(
-                            color: const Color(0xFF5A5A5A),
-                            width: 2,
-                          )
-                        ),
-                        padding: const EdgeInsets.all(18),
-                        child: const FaIcon(
-                          FontAwesomeIcons.locationArrow,
-                          size: 28,
-                          color: Color(0xFF5A5A5A),
-                        ),
-                      ),
+              Obx(
+                () {
+                  if (controller.isLoadingSaveRecordActivity.value) {
+                    return const Center(child: CircularProgressIndicator());
+                  }
+
+                  return Container(
+                    decoration: BoxDecoration(
+                      color: const Color(0xFF373737),
+                      borderRadius: BorderRadius.circular(8),
                     ),
-          
-                    InkWell(
-                      onTap: () {
-                        controller.togglePauseResume();
-                      },
-                      child: Container(
-                        decoration: BoxDecoration(
-                          shape: BoxShape.circle,
-                          color: darkColorScheme.primary,
+                    padding: const EdgeInsets.symmetric(horizontal: 15, vertical: 10),
+                    margin: const EdgeInsets.symmetric(horizontal: 15, vertical: 10),
+                    child: Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                      children: [
+                        InkWell(
+                          onTap: () {
+                            controller.isMapViewMode.value = !controller.isMapViewMode.value;
+                          },
+                          child: Container(
+                            decoration: BoxDecoration(
+                              shape: BoxShape.circle,
+                              border: Border.all(
+                                color: const Color(0xFF5A5A5A),
+                                width: 2,
+                              )
+                            ),
+                            padding: const EdgeInsets.all(18),
+                            child: const FaIcon(
+                              FontAwesomeIcons.locationArrow,
+                              size: 28,
+                              color: Color(0xFF5A5A5A),
+                            ),
+                          ),
                         ),
-                        padding: const EdgeInsets.all(32),
-                        child: Obx(
-                          () {
-                            return FaIcon(
-                              controller.isPaused.value ? FontAwesomeIcons.play : FontAwesomeIcons.pause,
-                              size: 48,
-                              color: darkColorScheme.onPrimary,
-                            );
-                          }
+                            
+                        InkWell(
+                          onTap: () {
+                            controller.togglePauseResume();
+                          },
+                          child: Container(
+                            decoration: BoxDecoration(
+                              shape: BoxShape.circle,
+                              color: darkColorScheme.primary,
+                            ),
+                            padding: const EdgeInsets.all(32),
+                            child: Obx(
+                              () {
+                                return FaIcon(
+                                  controller.isPaused.value ? FontAwesomeIcons.play : FontAwesomeIcons.pause,
+                                  size: 48,
+                                  color: darkColorScheme.onPrimary,
+                                );
+                              }
+                            ),
+                          ),
                         ),
-                      ),
+                            
+                        InkWell(
+                          onTap: () {
+                            controller.stopActivity();
+                          },
+                          child: Container(
+                            decoration: BoxDecoration(
+                              shape: BoxShape.circle,
+                              border: Border.all(
+                                color: const Color(0xFF5A5A5A),
+                                width: 2,
+                              )
+                            ),
+                            padding: const EdgeInsets.all(18),
+                            child: const FaIcon(
+                              FontAwesomeIcons.stop,
+                              size: 28,
+                              color: Color(0xFF5A5A5A),
+                            ),
+                          ),
+                        ),
+                      ],
                     ),
-          
-                    InkWell(
-                      onTap: () {
-                        controller.stopActivity();
-                      },
-                      child: Container(
-                        decoration: BoxDecoration(
-                          shape: BoxShape.circle,
-                          border: Border.all(
-                            color: const Color(0xFF5A5A5A),
-                            width: 2,
-                          )
-                        ),
-                        padding: const EdgeInsets.all(18),
-                        child: const FaIcon(
-                          FontAwesomeIcons.stop,
-                          size: 28,
-                          color: Color(0xFF5A5A5A),
-                        ),
-                      ),
-                    ),
-                  ],
-                ),
+                  );
+                }
               ),
             ],
           ),

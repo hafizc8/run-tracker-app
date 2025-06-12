@@ -19,9 +19,9 @@ class StartActivityView extends GetView<StartActivityController> {
         title: Text(
           'Running',
           style: Theme.of(context).textTheme.headlineMedium?.copyWith(
-            fontWeight: FontWeight.w600,
-            color: Theme.of(context).colorScheme.onBackground,
-          ),
+                fontWeight: FontWeight.w600,
+                color: Theme.of(context).colorScheme.onBackground,
+              ),
         ),
         centerTitle: true,
         automaticallyImplyLeading: false,
@@ -40,8 +40,8 @@ class StartActivityView extends GetView<StartActivityController> {
       //     crossAxisAlignment: CrossAxisAlignment.start,
       //     children: [
       //       Obx(() => Text(
-      //             controller.isTracking.value 
-      //                 ? "Sedang Melacak..." 
+      //             controller.isTracking.value
+      //                 ? "Sedang Melacak..."
       //                 : "Tekan Mulai untuk Melacak",
       //             style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold, color: controller.isTracking.value ? Colors.green : Colors.red ),
       //           )),
@@ -131,7 +131,8 @@ class StartActivityView extends GetView<StartActivityController> {
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
                 Container(
-                  padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 12),
+                  padding:
+                      const EdgeInsets.symmetric(horizontal: 24, vertical: 12),
                   decoration: BoxDecoration(
                     color: const Color(0xFF373737),
                     borderRadius: BorderRadius.circular(8),
@@ -151,7 +152,8 @@ class StartActivityView extends GetView<StartActivityController> {
                 ),
                 const SizedBox(width: 16),
                 Container(
-                  padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 12),
+                  padding:
+                      const EdgeInsets.symmetric(horizontal: 24, vertical: 12),
                   decoration: BoxDecoration(
                     color: const Color(0xFF373737),
                     borderRadius: BorderRadius.circular(8),
@@ -172,22 +174,24 @@ class StartActivityView extends GetView<StartActivityController> {
               ],
             ),
             const SizedBox(height: 24),
-            Obx(
-              () {
-                return SizedBox(
+            Obx(() {
+              return SizedBox(
                   height: MediaQuery.of(context).size.height * 0.5,
                   child: Visibility(
                     visible: controller.currentPosition.value != null,
-                    replacement: const Center(child: CircularProgressIndicator()),
+                    replacement:
+                        const Center(child: CircularProgressIndicator()),
                     child: GoogleMap(
                       initialCameraPosition: CameraPosition(
-                        target: controller.currentPosition.value ?? const LatLng(-6.2615, 106.8106),
+                        target: controller.currentPosition.value ??
+                            const LatLng(-6.2615, 106.8106),
                         zoom: 16,
                       ),
                       markers: {
                         Marker(
                           markerId: const MarkerId('currentLocation'),
-                          position: controller.currentPosition.value ?? const LatLng(-6.2615, 106.8106),
+                          position: controller.currentPosition.value ??
+                              const LatLng(-6.2615, 106.8106),
                           icon: BitmapDescriptor.defaultMarker,
                         ),
                       },
@@ -196,54 +200,176 @@ class StartActivityView extends GetView<StartActivityController> {
                       zoomControlsEnabled: false,
                       minMaxZoomPreference: const MinMaxZoomPreference(5, 20),
                     ),
-                  )
-                );
-              }
-            ),
+                  ));
+            }),
             const SizedBox(height: 48),
-            Obx(
-              () {
-                return Visibility(
-                  visible: controller.currentPosition.value != null,
-                  child: Center(
-                    child: SlidingWidget(
-                      width: MediaQuery.of(context).size.width * 0.85,
-                      height: 70,
-                      backgroundColor: const Color(0xFF2E2E2E),
-                      backgroundColorEnd: const Color(0xFF2E2E2E),
-                      foregroundColor: darkColorScheme.primary,
-                      iconColor: darkColorScheme.onPrimary,
-                      label: 'Start Your Zest+!',
-                      labelStyle: Theme.of(context).textTheme.labelMedium?.copyWith(
-                        color: darkColorScheme.onBackground,
-                      ),
-                      shadow: const BoxShadow(
-                        color: Colors.transparent,
-                        blurRadius: 0,
-                        offset: Offset(0, 0),
-                      ),
-                      action: () {
-                        print('Start Your Zest+!');
-                        Get.offAndToNamed(AppRoutes.activityRecord);
-                      },
-                      onTapDown: () {
-                        print('[onTapDown] Start Your Zest+!');
-                      },
-                      onTapUp: () {
-                        print('[onTapUp] Start Your Zest+!');
-                      },
-                      stickToEnd: true,
-                      child: Icon(
-                        Icons.arrow_forward_ios,
-                        color: darkColorScheme.onPrimary,
-                      ),
+            Obx(() {
+              return Visibility(
+                visible: controller.currentPosition.value != null,
+                child: Center(
+                  child: SlidingWidget(
+                    width: MediaQuery.of(context).size.width * 0.85,
+                    height: 70,
+                    backgroundColor: const Color(0xFF2E2E2E),
+                    backgroundColorEnd: const Color(0xFF2E2E2E),
+                    foregroundColor: darkColorScheme.primary,
+                    iconColor: darkColorScheme.onPrimary,
+                    label: 'Start Your Zest+!',
+                    labelStyle:
+                        Theme.of(context).textTheme.labelMedium?.copyWith(
+                              color: darkColorScheme.onBackground,
+                            ),
+                    shadow: const BoxShadow(
+                      color: Colors.transparent,
+                      blurRadius: 0,
+                      offset: Offset(0, 0),
+                    ),
+                    action: () {
+                      print('Start Your Zest+!');
+                      Get.offAndToNamed(AppRoutes.activityRecord);
+                    },
+                    onTapDown: () {
+                      print('[onTapDown] Start Your Zest+!');
+                    },
+                    onTapUp: () {
+                      print('[onTapUp] Start Your Zest+!');
+                    },
+                    stickToEnd: true,
+                    child: Icon(
+                      Icons.arrow_forward_ios,
+                      color: darkColorScheme.onPrimary,
                     ),
                   ),
-                );
-              }
-            )
+                ),
+                // child: ZestSlider(
+                //   onSlideStart: () {
+                //     // Get.offAndToNamed(AppRoutes.activityRecord);
+                //   },
+                // ),
+              );
+            })
           ],
         ),
+      ),
+    );
+  }
+}
+
+class ZestSlider extends StatefulWidget {
+  final VoidCallback? onSlideStart;
+
+  const ZestSlider({super.key, this.onSlideStart});
+
+  @override
+  State<ZestSlider> createState() => _ZestSliderState();
+}
+
+class _ZestSliderState extends State<ZestSlider> {
+  double _value = 0.0;
+  bool _hasStarted = false;
+
+  @override
+  Widget build(BuildContext context) {
+    return SizedBox(
+      width: 300,
+      child: Stack(
+        alignment: Alignment.centerLeft,
+        children: [
+          Container(
+            height: 56,
+            decoration: BoxDecoration(
+              color: const Color(0xFF2B2B2B),
+              borderRadius: BorderRadius.circular(16),
+            ),
+            alignment: Alignment.center,
+            child: const Text(
+              'Start Your Zest+!',
+              style: TextStyle(
+                color: Colors.white54,
+                fontSize: 16,
+                fontWeight: FontWeight.w500,
+              ),
+            ),
+          ),
+          SliderTheme(
+            data: SliderTheme.of(context).copyWith(
+              trackHeight: 0,
+              overlayShape: SliderComponentShape.noOverlay,
+              thumbShape: _ZestThumbShape(),
+            ),
+            child: Slider(
+              value: _value,
+              min: 0,
+              max: 100,
+              onChangeStart: (v) {
+                if (!_hasStarted) {
+                  _hasStarted = true;
+                  widget.onSlideStart?.call();
+                }
+              },
+              onChanged: (value) {
+                setState(() => _value = value);
+              },
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+}
+
+class _ZestThumbShape extends SliderComponentShape {
+  @override
+  Size getPreferredSize(bool isEnabled, bool isDiscrete) => const Size(56, 56);
+
+  @override
+  void paint(
+    PaintingContext context,
+    Offset center, {
+    required Animation<double> activationAnimation,
+    required Animation<double> enableAnimation,
+    required bool isDiscrete,
+    required TextPainter labelPainter,
+    required RenderBox parentBox,
+    required SliderThemeData sliderTheme,
+    required TextDirection textDirection,
+    required double value,
+    required double textScaleFactor,
+    required Size sizeWithOverflow,
+  }) {
+    final Canvas canvas = context.canvas;
+
+    final rect = Rect.fromCenter(center: center, width: 48, height: 48);
+    final rrect = RRect.fromRectAndRadius(rect, Radius.circular(16));
+
+    final paint = Paint()
+      ..shader = const LinearGradient(
+        colors: [Color(0xFF00FF75), Color(0xFF00E0FF)],
+        begin: Alignment.topLeft,
+        end: Alignment.bottomRight,
+      ).createShader(rect);
+
+    canvas.drawRRect(rrect, paint);
+
+    const icon = Icons.double_arrow;
+    final iconPainter = TextPainter(
+      text: TextSpan(
+        text: String.fromCharCode(icon.codePoint),
+        style: TextStyle(
+          fontSize: 28,
+          fontFamily: icon.fontFamily,
+          package: icon.fontPackage,
+          color: Colors.black,
+        ),
+      ),
+      textDirection: textDirection,
+    )..layout();
+
+    iconPainter.paint(
+      canvas,
+      Offset(
+        center.dx - (iconPainter.width / 2),
+        center.dy - (iconPainter.height / 2),
       ),
     );
   }

@@ -74,6 +74,8 @@ class EventStoreFormModel extends FormModel<EventStoreFormModel>
       errors = newErrors;
     }
 
+    print('startTime: $startTime');
+
     return EventStoreFormModel(
       activity: activity ?? this.activity,
       title: title ?? this.title,
@@ -84,8 +86,8 @@ class EventStoreFormModel extends FormModel<EventStoreFormModel>
       quota: quota ?? this.quota,
       image: image ?? this.image,
       datetime: datetime ?? this.datetime,
-      startTime: startTime ?? this.startTime,
-      endTime: endTime ?? this.endTime,
+      startTime: startTime,
+      endTime: endTime,
       isPublic: isPublic ?? this.isPublic,
       isAutoPostToClub: isAutoPostToClub ?? this.isAutoPostToClub,
       shareToClubs: shareToClubs ?? this.shareToClubs,

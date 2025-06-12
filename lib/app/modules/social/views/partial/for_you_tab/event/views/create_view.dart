@@ -25,7 +25,7 @@ class EventCreateView extends GetView<EventActionController> {
           title: Text(
             '${controller.isEdit.value ? 'Edit' : 'Create'} an Events',
             style: Theme.of(context).textTheme.headlineSmall?.copyWith(
-                  color: Color(0xFFA5A5A5),
+                  color: const Color(0xFFA5A5A5),
                 ),
           ),
           automaticallyImplyLeading: false,
@@ -33,7 +33,7 @@ class EventCreateView extends GetView<EventActionController> {
           elevation: 4,
           leading: GestureDetector(
             onTap: () => Get.back(),
-            child: Icon(
+            child: const Icon(
               Icons.chevron_left,
               size: 48,
               color: Color(0xFFA5A5A5),

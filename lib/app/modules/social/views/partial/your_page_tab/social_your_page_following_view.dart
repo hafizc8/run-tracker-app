@@ -1,7 +1,9 @@
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_svg/flutter_svg.dart';
 import 'package:get/get.dart';
 import 'package:zest_mobile/app/core/models/model/user_mini_model.dart';
+import 'package:zest_mobile/app/core/shared/widgets/custom_circular_progress_indicator.dart';
 import 'package:zest_mobile/app/core/shared/widgets/shimmer_loading_circle.dart';
 import 'package:zest_mobile/app/modules/social/controllers/social_following_controller.dart';
 import 'package:zest_mobile/app/routes/app_routes.dart';
@@ -150,20 +152,14 @@ class SocialYourPageFollowingView extends GetView<SocialFollowingController> {
                 visible: user.id == controller.userId.value,
                 replacement: Visibility(
                   visible: user.isFollowing == 0,
-                  replacement: Icon(
-                    Icons.chat_bubble_outline,
-                    color: Theme.of(context).colorScheme.primary,
-                    size: 22,
+                  replacement: SvgPicture.asset(
+                    'assets/icons/msg.svg',
                   ),
-                  child: Icon(
-                    Icons.person_add_alt_1_outlined,
-                    color: Theme.of(context).colorScheme.primary,
-                    size: 22,
-                  )
+                  child: SvgPicture.asset(
+                    'assets/icons/follback.svg',
+                  ),
                 ),
-                child: const Center(
-                  child: CircularProgressIndicator(),
-                ),
+                child: CustomCircularProgressIndicator(),
               ),
             ),
           ),
@@ -197,9 +193,7 @@ class SocialYourPageFollowingView extends GetView<SocialFollowingController> {
                                   .bodyMedium
                                   ?.copyWith(fontWeight: FontWeight.w600),
                             ),
-                            child: CircularProgressIndicator(
-                              color: Theme.of(context).colorScheme.primary,
-                            ),
+                            child: CustomCircularProgressIndicator(),
                           ),
                         ),
                       ),

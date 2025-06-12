@@ -21,27 +21,37 @@ class SocialForYouEventDetailView extends GetView<EventDetailController> {
   final eventActionController = Get.find<EventActionController>();
   @override
   Widget build(BuildContext context) {
-    return Obx(
-      () => Scaffold(
-        appBar: _buildAppBar(context),
-        body: SingleChildScrollView(
-          child: Visibility(
-            visible: controller.isLoading.value,
-            replacement: EventDetailCard(
-              event: controller.event.value,
-            ),
-            child: const Padding(
-              padding: EdgeInsets.all(16.0),
-              child: EventShimmer(),
+    return PopScope(
+      canPop: false,
+      onPopInvoked: (didPop) {
+        if (!didPop) {
+          Future.delayed(Duration.zero, () {
+            Get.back(result: controller.eventLastUpdated.value);
+          });
+        }
+      },
+      child: Obx(
+        () => Scaffold(
+          appBar: _buildAppBar(context),
+          body: SingleChildScrollView(
+            child: Visibility(
+              visible: controller.isLoading.value,
+              replacement: EventDetailCard(
+                event: controller.event.value,
+              ),
+              child: const Padding(
+                padding: EdgeInsets.all(16.0),
+                child: EventShimmer(),
+              ),
             ),
           ),
+          bottomNavigationBar:
+              (controller.event.value?.datetime ?? DateTime.now())
+                      .isDateTimePassed(
+                          controller.event.value?.startTime ?? TimeOfDay.now())
+                  ? _buildBottomBar(context)
+                  : const SizedBox(),
         ),
-        bottomNavigationBar:
-            (controller.event.value?.datetime ?? DateTime.now())
-                    .isDateTimePassed(
-                        controller.event.value?.startTime ?? TimeOfDay.now())
-                ? _buildBottomBar(context)
-                : const SizedBox(),
       ),
     );
   }

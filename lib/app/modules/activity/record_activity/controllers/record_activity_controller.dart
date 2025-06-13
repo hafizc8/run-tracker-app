@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_background_service/flutter_background_service.dart';
 import 'package:get/get.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
+import 'package:path_provider/path_provider.dart';
 import 'package:permission_handler/permission_handler.dart';
 import 'package:zest_mobile/app/core/di/service_locator.dart';
 import 'package:zest_mobile/app/core/models/model/activity_data_point_model.dart';
@@ -61,6 +62,22 @@ class RecordActivityController extends GetxController {
           timestamp: DateTime.parse(loc['timestamp']),
         );
         currentPath.add(newPoint);
+
+        double paceInSecondsPerKm = 0;
+        if (elapsedTimeInSeconds.value > 0 && currentDistanceInMeters.value > 0) {
+          double paceInSecondsPerMeter = elapsedTimeInSeconds.value / currentDistanceInMeters.value;
+          paceInSecondsPerKm = paceInSecondsPerMeter * 1000;
+        }
+
+        final dataPoint = ActivityDataPoint(
+          latitude: loc['latitude'], longitude: loc['longitude'],
+          step: stepsInSession.value, distance: currentDistanceInMeters.value,
+          pace: paceInSecondsPerKm, time: elapsedTimeInSeconds.value,
+          timestamp: DateTime.parse(loc['timestamp']),
+        );
+
+        _localDb.addDataPoint(dataPoint); 
+
         _updateCameraForRoute();
       }
     });
@@ -234,6 +251,10 @@ class RecordActivityController extends GetxController {
     var isRunning = await service.isRunning();
     if (!isRunning) {
       service.startService();
+      final directory = await getApplicationDocumentsDirectory();
+
+      await Future.delayed(const Duration(milliseconds: 500));
+      service.invoke('setAppDirectory', {'path': directory.path});
     }
     
     isTracking.value = true;
@@ -241,7 +262,7 @@ class RecordActivityController extends GetxController {
   }
 
   void stopActivity() async {
-    isLoadingSaveRecordActivity.value = true;
+    // isLoadingSaveRecordActivity.value = true;
 
     final service = FlutterBackgroundService();
     service.invoke("stopService");
@@ -250,6 +271,10 @@ class RecordActivityController extends GetxController {
     Get.snackbar("Syncing", "Synchronizing activity data...");
 
     try {
+      print('get unsession data');
+      final unsyncedSession = await _localDb.getUnsyncedSession();
+      print(unsyncedSession);
+
       final dataPoints = await _localDb.getAllDataPoints();
       if (dataPoints.isEmpty) {
         // Jika tidak ada data point tapi ada sesi, coba akhiri saja
@@ -268,6 +293,7 @@ class RecordActivityController extends GetxController {
       }
 
       final jsonData = dataPoints.map((p) => p.toJson()).toList();
+      print("JSON DATA: $jsonData");
       bool syncSuccess = await _recordActivityService.syncRecordActivity(
         recordActivityId: _recordActivityId!,
         data: jsonData,
@@ -288,7 +314,7 @@ class RecordActivityController extends GetxController {
     } catch (e) {
       Get.snackbar("Error", "Failed to sync activity data: $e");
     } finally {
-      isLoadingSaveRecordActivity.value = false;
+      // isLoadingSaveRecordActivity.value = false;
     }
   }
 
@@ -357,7 +383,7 @@ class RecordActivityController extends GetxController {
         CameraUpdate.newLatLngBounds(bounds, 60.0), // Tambah sedikit padding
       );
     }
-}
+  }
 
   // Helper untuk format jarak (bisa dipindah ke file util terpisah)
   String formatDistance(double distanceInMeters) {

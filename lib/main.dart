@@ -17,6 +17,9 @@ void main() async {
   
   setupServiceLocator();
   await GetStorage.init();
+  await Hive.initFlutter();
+  Hive.registerAdapter(ActivityDataPointAdapter());
+
   await initializeService();
   configureNotificationListener();
 
@@ -33,9 +36,6 @@ void main() async {
     FirebaseCrashlytics.instance.recordError(error, stack, fatal: true);
     return true;
   };
-
-  await Hive.initFlutter();
-  Hive.registerAdapter(ActivityDataPointAdapter());
 
   SystemChrome.setPreferredOrientations([
     DeviceOrientation.portraitUp,

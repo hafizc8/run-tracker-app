@@ -1,5 +1,6 @@
 import 'package:zest_mobile/app/core/models/enums/http_method_enum.dart';
 import 'package:zest_mobile/app/core/models/forms/create_post_form.dart';
+import 'package:zest_mobile/app/core/models/forms/edit_activity_form.dart';
 import 'package:zest_mobile/app/core/models/forms/update_post_form.dart';
 import 'package:zest_mobile/app/core/models/interface/pagination_response_model.dart';
 import 'package:zest_mobile/app/core/models/model/post_model.dart';
@@ -138,6 +139,21 @@ class PostService {
       );
 
       return PostModel.fromJson(response.data['data']);
+    } catch (e) {
+      rethrow;
+    }
+  }
+
+  Future<bool> shareRecordActivity(EditActivityForm form) async {
+    try {
+      final response = await _apiService.request<FormData>(
+        path: AppConstants.postCreate,
+        method: HttpMethod.post,
+        headers: {'Content-Type': 'multipart/form-data'},
+        data: await form.toFormData(),
+      );
+
+      return response.data['success'];
     } catch (e) {
       rethrow;
     }

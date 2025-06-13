@@ -302,7 +302,26 @@ class RecordActivityView extends GetView<RecordActivityController> {
                             
                         InkWell(
                           onTap: () {
-                            controller.stopActivity();
+                            Get.dialog(
+                              AlertDialog(
+                                surfaceTintColor: darkColorScheme.background,
+                                title: const Text('Stop Activity'),
+                                content: const Text('Are you sure you want to stop the activity?'),
+                                actions: [
+                                  TextButton(
+                                    onPressed: () => Get.back(),
+                                    child: const Text('Cancel'),
+                                  ),
+                                  TextButton(
+                                    onPressed: () {
+                                      Get.back();
+                                      controller.stopActivity();
+                                    },
+                                    child: const Text('Stop'),
+                                  ),
+                                ],
+                              ),
+                            );
                           },
                           child: Container(
                             decoration: BoxDecoration(

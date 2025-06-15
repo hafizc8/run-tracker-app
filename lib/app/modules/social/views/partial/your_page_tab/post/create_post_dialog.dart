@@ -107,7 +107,7 @@ class CreatePostDialog extends GetView<SocialController> {
                             size: 18,
                           ), 
                           label: Text(
-                            'Add Photo or Video',
+                            'Add Photo',
                             style: Theme.of(context).textTheme.headlineSmall?.copyWith(
                               fontSize: 12,
                             ),

@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:zest_mobile/app/core/models/forms/update_post_form.dart';
 import 'package:zest_mobile/app/core/models/model/post_model.dart';
+import 'package:zest_mobile/app/core/shared/widgets/gradient_elevated_button.dart';
 import 'package:zest_mobile/app/core/shared/widgets/shimmer_loading_list.dart';
 import 'package:zest_mobile/app/modules/social/controllers/post_controller.dart';
 import 'package:zest_mobile/app/modules/social/widgets/media_preview_edit.dart';
@@ -132,27 +133,31 @@ class EditPostView extends GetView<PostController> {
       ),
       bottomNavigationBar: Padding(
         padding: const EdgeInsets.all(16.0),
-        child: Obx(
-          () {
-            if (controller.isLoadingLoadUpdatePost.value) {
-              const SizedBox();
-            }
-
-            return ElevatedButton(
-              onPressed: !controller.isValidToUpdate
-                  ? null
-                  : controller.isLoadingUpdatePost.value
-                      ? null
-                      : () {
-                          controller.updatePost();
-                        },
-              child: Visibility(
-                visible: controller.isLoadingUpdatePost.value,
-                replacement: const Text('Continue'),
-                child: const CircularProgressIndicator(),
-              ),
-            );
-          },
+        child: Container(
+          margin: const EdgeInsets.symmetric(horizontal: 16, vertical: 16),
+          height: 55,
+          child: Obx(
+            () {
+              if (controller.isLoadingLoadUpdatePost.value) {
+                const SizedBox();
+              }
+          
+              return GradientElevatedButton(
+                onPressed: !controller.isValidToUpdate
+                    ? null
+                    : controller.isLoadingUpdatePost.value
+                        ? null
+                        : () {
+                            controller.updatePost();
+                          },
+                child: Visibility(
+                  visible: controller.isLoadingUpdatePost.value,
+                  replacement: const Text('Continue'),
+                  child: const CircularProgressIndicator(),
+                ),
+              );
+            },
+          ),
         ),
       ),
     );

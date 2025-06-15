@@ -6,27 +6,6 @@ import 'package:geolocator/geolocator.dart';
 import 'package:pedometer/pedometer.dart';
 import 'package:zest_mobile/app/core/models/model/location_point_model.dart';
 
-String formatDuration(int totalSeconds) {
-  final int hours = totalSeconds ~/ 3600;
-  final int minutes = (totalSeconds % 3600) ~/ 60;
-  final int seconds = totalSeconds % 60;
-
-  if (hours > 0) {
-    return "${hours.toString()}:${minutes.toString().padLeft(2, '0')}:${seconds.toString().padLeft(2, '0')}";
-  } else {
-    return "${minutes.toString().padLeft(2, '0')}:${seconds.toString().padLeft(2, '0')}";
-  }
-}
-
-String formatDistance(double distanceInMeters) {
-  if (distanceInMeters < 1000) {
-    return "${distanceInMeters.toStringAsFixed(0)} m";
-  } else {
-    double distanceInKm = distanceInMeters / 1000;
-    return "${distanceInKm.toStringAsFixed(2)} km";
-  }
-}
-
 // --- Entry Point untuk Service ---
 @pragma('vm:entry-point')
 void onStart(ServiceInstance service) async {

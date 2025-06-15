@@ -4,6 +4,8 @@ import 'package:flutter/widgets.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:get/get.dart';
 import 'package:zest_mobile/app/core/models/model/post_model.dart';
+import 'package:zest_mobile/app/core/models/model/record_activity_model.dart';
+import 'package:zest_mobile/app/core/shared/helpers/number_helper.dart';
 import 'package:zest_mobile/app/core/shared/theme/color_schemes.dart';
 import 'package:zest_mobile/app/core/shared/widgets/shimmer_loading_circle.dart';
 import 'package:zest_mobile/app/modules/club/partial/detail_club/partial/tab_bar_club/views/widgets/participants_avatars.dart';
@@ -13,6 +15,7 @@ import 'package:zest_mobile/app/modules/social/widgets/social_action_button.dart
 import 'package:zest_mobile/app/modules/social/widgets/statistic_column.dart';
 import 'package:zest_mobile/app/core/extension/date_extension.dart';
 import 'package:zest_mobile/app/routes/app_routes.dart';
+import 'package:zest_mobile/app/modules/social/widgets/static_routes_map.dart';
 
 // ignore: must_be_immutable
 class ActivityCard extends StatelessWidget {
@@ -56,11 +59,93 @@ class ActivityCard extends StatelessWidget {
               content: postData.content ?? '',
             ),
             const SizedBox(height: 15),
-            postData.galleries.isNotEmpty
-                ? PostMediaScroll(
-                    mediaUrls:
-                        postData.galleries.map((e) => e.url ?? '').toList())
-                : const SizedBox(),
+
+            // Media Horizontal (Maps, Image, Video)
+            Builder(
+              builder: (context) {
+                // 1. Siapkan list kosong untuk menampung semua media
+                final List<Widget> allMediaItems = [];
+
+                // 2. Tambahkan widget peta sebagai item pertama jika ada data
+                if (postData.recordActivity != null) {
+                  allMediaItems.add(
+                    Visibility(
+                      visible: postData.galleries.isEmpty,
+                      // when galleries is not empty
+                      replacement: _buildMapPlaceholder(postData.recordActivity),
+                      // when galleries is empty
+                      child: Stack(
+                        children: [
+                          _buildMapPlaceholder(postData.recordActivity),
+                          Positioned(
+                            bottom: 0,
+                            right: 0,
+                            left: 0,
+                            child: ClipRRect(
+                              borderRadius: BorderRadius.circular(10),
+                              child: _buildStatisticsSection(
+                                context: context,
+                                recordActivity: postData.recordActivity,
+                              ),
+                            ),
+                          ),
+                        ],
+                      ),
+                    ),
+                  );
+                }
+
+                // 3. Tambahkan gambar dan video dari galeri
+                for (var galleryItem in postData.galleries) {
+                  final url = galleryItem.url ?? '';
+                  if (url.isNotEmpty) {
+                    // Logika untuk membedakan video atau gambar dipindahkan ke sini
+                    bool isVideo = url.endsWith('.mp4') || url.endsWith('.mov') || url.endsWith('.webm');
+                    
+                    if (isVideo) {
+                      continue;
+                    } else {
+                      allMediaItems.add(
+                        Image.network(
+                          url,
+                          fit: BoxFit.cover,
+                          errorBuilder: (context, error, _) => Container(
+                            color: Colors.grey.shade300,
+                            child: const Center(child: Icon(Icons.broken_image)),
+                          ),
+                          loadingBuilder: (context, child, progress) {
+                            if (progress == null) return child;
+                            return Container(
+                              color: Colors.grey.shade300,
+                              child: const Center(child: CircularProgressIndicator()),
+                            );
+                          },
+                        ),
+                      );
+                    }
+                  }
+                }
+
+                // 4. Panggil PostMediaScroll yang sudah dimodifikasi dengan list widget
+                return PostMediaScroll(mediaItems: allMediaItems);
+              }
+            ),
+
+            // Statistic with media > 1
+            Visibility(
+              visible: postData.recordActivity != null && postData.galleries.isNotEmpty,
+              child: Container(
+                margin: const EdgeInsets.only(top: 10, bottom: 10),
+                child: ClipRRect(
+                  borderRadius: BorderRadius.circular(10),
+                  child: _buildStatisticsSection(
+                    context: context,
+                    recordActivity: postData.recordActivity,
+                  ),
+                ),
+              ),
+            ),
+
             Visibility(
               visible: (postData.likesCount ?? 0) > 0,
               child: Container(
@@ -285,67 +370,26 @@ class ActivityCard extends StatelessWidget {
     );
   }
 
-  Widget _buildMapPlaceholder() {
-    return AspectRatio(
-      aspectRatio: 1,
-      child: ClipRRect(
-        borderRadius: BorderRadius.circular(12),
-        child: Container(
-          color: Colors.grey.shade800,
-          child: const Center(
-            child: Column(
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: [
-                Icon(Icons.map, size: 64, color: Colors.grey),
-                SizedBox(height: 8),
-                Text('Map Placeholder', style: TextStyle(color: Colors.grey)),
-              ],
-            ),
-          ),
-        ),
-      ),
+  Widget _buildMapPlaceholder(RecordActivityModel? recordActivity) {
+    return StaticRouteMap(
+      activityLogs: recordActivity?.recordActivityLogs ?? [],
+      height: 310,
     );
   }
 
-  Widget _buildImageFromUrl() {
-    return AspectRatio(
-      aspectRatio: 1,
-      child: ClipRRect(
-        borderRadius: BorderRadius.circular(12),
-        child: Image.network(
-          'https://dev.zestplus.app/storage/posts/vfAmuTYfzlVqYwo9bvSramLd1mX8bNfYlaz2atTN.jpg',
-          fit: BoxFit.cover,
-          errorBuilder: (context, error, stackTrace) => Container(
-            color: Colors.grey.shade800,
-            child: const Center(
-              child: Icon(Icons.broken_image, size: 64, color: Colors.grey),
-            ),
-          ),
-          loadingBuilder: (context, child, loadingProgress) {
-            if (loadingProgress == null) return child;
-            return Container(
-              color: Colors.grey.shade800,
-              child: const Center(
-                child: CircularProgressIndicator(),
-              ),
-            );
-          },
-        ),
-      ),
-    );
-  }
-
-  Widget _buildStatisticsSection(BuildContext context) {
+  Widget _buildStatisticsSection({
+    required BuildContext context,
+    required RecordActivityModel? recordActivity,
+  }) {
     return Container(
       padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 10),
       color: Theme.of(context).colorScheme.primary,
-      child: const Row(
+      child: Row(
         mainAxisAlignment: MainAxisAlignment.spaceAround,
         children: [
-          StatisticsColumn(title: 'DISTANCE', value: '2.57 km'),
-          StatisticsColumn(title: 'STEPS', value: '4,052'),
-          StatisticsColumn(title: 'AVG. PACE', value: '8:10'),
-          StatisticsColumn(title: 'MOVING TIME', value: '37:17'),
+          StatisticsColumn(title: 'Distance', value: NumberHelper().formatDistanceMeterToKm(recordActivity?.recordActivityLogsSumDistance ?? 0)),
+          StatisticsColumn(title: 'AVG Pace', value: NumberHelper().formatDuration(int.parse((recordActivity?.recordActivityLogsAvgPace ?? 0.0).toStringAsFixed(0)))),
+          StatisticsColumn(title: 'Moving Time', value: NumberHelper().formatDuration(recordActivity?.recordActivityLogsSumTime ?? 0)),
         ],
       ),
     );

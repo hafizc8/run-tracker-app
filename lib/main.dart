@@ -1,3 +1,5 @@
+import 'package:zest_mobile/app/core/shared/helpers/number_helper.dart';
+
 import 'app/app.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:firebase_crashlytics/firebase_crashlytics.dart';
@@ -51,7 +53,7 @@ void configureNotificationListener() {
     final int elapsedTime = data['elapsedTime'] as int;
     final distance = double.parse(data['distance'].toString());
     
-    final String content = "Durasi: ${bg.formatDuration(elapsedTime)}, Jarak: ${bg.formatDistance(distance)}";
+    final String content = "Durasi: ${NumberHelper().formatDuration(elapsedTime)}, Jarak: ${NumberHelper().formatDistanceMeterToKm(distance)}";
     
     FlutterLocalNotificationsPlugin().show(
       888,

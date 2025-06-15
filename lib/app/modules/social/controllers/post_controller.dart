@@ -117,7 +117,7 @@ class PostController extends GetxController {
   // Pick multiple images and videos.
   dynamic pickMultipleMedia() async {
     FilePickerResult? result = await FilePicker.platform.pickFiles(
-      type: FileType.media,
+      type: FileType.image,
       allowMultiple: true,
     );
 
@@ -383,7 +383,7 @@ class PostController extends GetxController {
 
   dynamic pickMultipleMediaToUpdate() async {
     FilePickerResult? result = await FilePicker.platform.pickFiles(
-      type: FileType.media,
+      type: FileType.image,
       allowMultiple: true,
     );
 

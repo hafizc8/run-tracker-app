@@ -1,4 +1,5 @@
 import 'package:zest_mobile/app/core/models/interface/model_interface.dart';
+import 'package:zest_mobile/app/core/models/model/record_activity_model.dart';
 import 'package:zest_mobile/app/core/models/model/user_mini_model.dart';
 
 // ignore: must_be_immutable
@@ -18,6 +19,7 @@ class PostModel extends Model<PostModel> {
         this.isOwner = false,
         this.comments,
         this.likes,
+        this.recordActivity
     });
 
     final String? id;
@@ -34,6 +36,7 @@ class PostModel extends Model<PostModel> {
     bool? isOwner;
     bool? isLiked;
     List<UserMiniModel>? likes;
+    RecordActivityModel? recordActivity;
 
     @override
   PostModel copyWith({
@@ -50,7 +53,8 @@ class PostModel extends Model<PostModel> {
         bool? isLiked,
         bool? isOwner,
         List<Comment>? comments,
-        List<UserMiniModel>? likes
+        List<UserMiniModel>? likes,
+        RecordActivityModel? recordActivity
     }) {
         return PostModel(
             id: id ?? this.id,
@@ -66,7 +70,8 @@ class PostModel extends Model<PostModel> {
             isLiked: isLiked ?? this.isLiked,
             comments: comments ?? this.comments,
             isOwner: isOwner ?? this.isOwner,
-            likes: likes ?? this.likes
+            likes: likes ?? this.likes,
+            recordActivity: recordActivity ?? this.recordActivity
         );
     }
 
@@ -86,6 +91,7 @@ class PostModel extends Model<PostModel> {
             isLiked: json['is_liked'] == 1,
             isOwner: false,
             likes: json["likes"] == null ? [] : List<UserMiniModel>.from(json["likes"]!.map((x) => UserMiniModel.fromJson(x['user']))),
+            recordActivity: json["record_activity"] == null ? null : RecordActivityModel.fromJson(json["record_activity"]),
         );
     }
 
@@ -105,7 +111,7 @@ class PostModel extends Model<PostModel> {
 
     @override
     List<Object?> get props => [
-    id, title, content, district, likesCount, commentsCount, createdAt, updatedAt, user, galleries, comments, isLiked, isOwner, likes];
+    id, title, content, district, likesCount, commentsCount, createdAt, updatedAt, user, galleries, comments, isLiked, isOwner, likes, recordActivity];
 }
 
 class Gallery extends Model<Gallery> {

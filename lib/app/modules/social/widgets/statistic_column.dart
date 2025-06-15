@@ -14,12 +14,12 @@ class StatisticsColumn extends StatelessWidget {
         children: [
           Text(
             title,
-            style: Theme.of(context).textTheme.labelSmall?.copyWith(fontSize: 10),
+            style: Theme.of(context).textTheme.labelMedium?.copyWith(fontSize: 12, fontWeight: FontWeight.w400),
             textAlign: TextAlign.center,
           ),
           Text(
             value,
-            style: Theme.of(context).textTheme.labelLarge,
+            style: Theme.of(context).textTheme.labelMedium?.copyWith(fontSize: 16, fontWeight: FontWeight.w700),
             textAlign: TextAlign.center,
           ),
         ],

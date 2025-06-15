@@ -97,7 +97,7 @@ class EditActivityController extends GetxController {
 
   dynamic pickMultipleMedia() async {
     FilePickerResult? result = await FilePicker.platform.pickFiles(
-      type: FileType.media,
+      type: FileType.image,
       allowMultiple: true,
     );
 

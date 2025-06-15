@@ -1,51 +1,53 @@
+// post_media.dart
+
 import 'package:flutter/material.dart';
 import 'package:video_player/video_player.dart';
 
+// --- Widget PostMediaScroll yang Sudah Dimodifikasi ---
 class PostMediaScroll extends StatelessWidget {
-  final List<String> mediaUrls;
+  // ✅ Diubah: Sekarang menerima List<Widget>
+  final List<Widget> mediaItems;
 
-  const PostMediaScroll({super.key, required this.mediaUrls});
-
-  bool _isVideo(String url) {
-    return url.endsWith('.mp4') || url.endsWith('.mov') || url.endsWith('.webm');
-  }
+  const PostMediaScroll({super.key, required this.mediaItems});
 
   @override
   Widget build(BuildContext context) {
+    // Jika tidak ada item, jangan tampilkan apa-apa
+    if (mediaItems.isEmpty) {
+      return const SizedBox.shrink();
+    }
+
     final screenWidth = MediaQuery.of(context).size.width;
-    final isSingleMedia = mediaUrls.length == 1;
+    final isSingleMedia = mediaItems.length == 1;
+    // Atur lebar item berdasarkan jumlah media
     final mediaWidth = isSingleMedia ? screenWidth * 0.80 : screenWidth * 0.7;
 
+    if (isSingleMedia) {
+      return ClipRRect(
+        borderRadius: BorderRadius.circular(12),
+        child: SizedBox(
+          height: 300,
+          width: mediaWidth,
+          child: mediaItems.first,
+        ),
+      );
+    }
+
     return SizedBox(
-      height: 300,
+      height: 300, // Anda bisa sesuaikan tinggi ini jika perlu
       child: ListView.separated(
         scrollDirection: Axis.horizontal,
-        padding: const EdgeInsets.only(right: 12),
-        itemCount: mediaUrls.length,
+        padding: const EdgeInsets.only(right: 16), // Padding di awal dan akhir
+        itemCount: mediaItems.length,
         separatorBuilder: (_, __) => const SizedBox(width: 12),
         itemBuilder: (context, index) {
-          final url = mediaUrls[index];
+          // ✅ Logika itemBuilder menjadi sangat sederhana
           return ClipRRect(
             borderRadius: BorderRadius.circular(12),
             child: SizedBox(
               width: mediaWidth,
-              child: _isVideo(url)
-                  ? PostVideoPlayer(videoUrl: url)
-                  : Image.network(
-                      url,
-                      fit: BoxFit.cover,
-                      errorBuilder: (context, error, _) => Container(
-                        color: Colors.grey.shade300,
-                        child: const Center(child: Icon(Icons.broken_image)),
-                      ),
-                      loadingBuilder: (context, child, progress) {
-                        if (progress == null) return child;
-                        return Container(
-                          color: Colors.grey.shade300,
-                          child: const Center(child: CircularProgressIndicator()),
-                        );
-                      },
-                    ),
+              // Langsung tampilkan widget dari list
+              child: mediaItems[index],
             ),
           );
         },
@@ -54,6 +56,9 @@ class PostMediaScroll extends StatelessWidget {
   }
 }
 
+
+// --- Widget PostVideoPlayer tidak perlu diubah ---
+// Widget ini akan kita panggil dari luar PostMediaScroll sekarang
 class PostVideoPlayer extends StatefulWidget {
   final String videoUrl;
   const PostVideoPlayer({super.key, required this.videoUrl});
@@ -63,13 +68,20 @@ class PostVideoPlayer extends StatefulWidget {
 }
 
 class _PostVideoPlayerState extends State<PostVideoPlayer> {
+  // ... (implementasi _PostVideoPlayerState tetap sama)
   late VideoPlayerController _controller;
   bool _initialized = false;
 
   @override
   void initState() {
     super.initState();
-    _controller = VideoPlayerController.networkUrl(Uri.parse(widget.videoUrl))
+    _controller = VideoPlayerController.networkUrl(
+      Uri.parse(widget.videoUrl),
+      videoPlayerOptions: VideoPlayerOptions(
+        mixWithOthers: false,
+        allowBackgroundPlayback: false,
+      ),
+    )
       ..initialize().then((_) {
         setState(() => _initialized = true);
         _controller.setLooping(true);
@@ -86,24 +98,45 @@ class _PostVideoPlayerState extends State<PostVideoPlayer> {
 
   @override
   Widget build(BuildContext context) {
-    return _initialized
-        ? Stack(
-            alignment: Alignment.bottomCenter,
-            children: [
-              VideoPlayer(_controller),
-              VideoProgressIndicator(
-                _controller, 
-                allowScrubbing: true,
-                colors: VideoProgressColors(
-                  backgroundColor: Colors.transparent,
-                  playedColor: Colors.grey.shade600,
-                ),
-              ),
-            ],
-          )
-        : Container(
-            color: Colors.grey.shade300,
-            child: const Center(child: CircularProgressIndicator()),
-          );
+    if (!_initialized) {
+      return Container(
+        color: Colors.grey.shade300,
+        child: const Center(child: CircularProgressIndicator()),
+      );
+    }
+
+    // Gunakan Stack untuk menumpuk video dan progress indicator
+    return Stack(
+      fit: StackFit.expand, // Pastikan Stack mengisi seluruh area yang diberikan
+      children: [
+        // Widget untuk menampilkan video dengan behavior 'cover'
+        FittedBox(
+          fit: BoxFit.cover, // ✅ Ini adalah kuncinya
+          clipBehavior: Clip.hardEdge, // Memotong bagian video yang keluar dari bounds
+          child: SizedBox(
+            // Beri tahu FittedBox ukuran asli video
+            width: _controller.value.size.width,
+            height: _controller.value.size.height,
+            child: VideoPlayer(_controller),
+          ),
+        ),
+        
+        // Letakkan progress indicator di atas video
+        Positioned(
+          bottom: 0,
+          left: 0,
+          right: 0,
+          child: VideoProgressIndicator(
+            _controller,
+            allowScrubbing: true,
+            colors: VideoProgressColors(
+              backgroundColor: Colors.black.withOpacity(0.3), // Beri sedikit background agar terlihat
+              playedColor: Colors.white, // Ganti warna played agar kontras
+              bufferedColor: Colors.white38,
+            ),
+          ),
+        ),
+      ],
+    );
   }
 }

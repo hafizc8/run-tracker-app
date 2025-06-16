@@ -6,6 +6,7 @@ import 'package:zest_mobile/app/core/di/service_locator.dart';
 import 'package:zest_mobile/app/core/exception/app_exception.dart';
 import 'package:zest_mobile/app/core/exception/handler/app_exception_handler_info.dart';
 import 'package:zest_mobile/app/core/services/auth_service.dart';
+import 'package:zest_mobile/app/modules/home/views/home_view.dart';
 import 'package:zest_mobile/app/modules/social/views/social_view.dart';
 import 'package:zest_mobile/app/modules/home/controllers/home_controller.dart';
 import 'package:zest_mobile/app/modules/main_profile/controllers/main_profile_controller.dart';
@@ -21,7 +22,7 @@ class MainHomeController extends GetxController {
 
   var currentIndex = 0.obs;
   List<Widget> get pages => const [
-        SafeArea(child: Center(child: Text('Home'))),
+        HomeView(),
         SocialView(),
         SafeArea(child: Center(child: Text('Shop'))),
         MainProfileView(),

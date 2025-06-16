@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'dart:math' as math;
 
+import 'package:flutter_svg/flutter_svg.dart';
+
 class StepsTrackerWidget extends StatelessWidget {
   final double progressValue; // Nilai progress antara 0.0 dan 1.0
   final int currentSteps;
@@ -23,26 +25,27 @@ class StepsTrackerWidget extends StatelessWidget {
           // Custom painter untuk circular progress dan label angka
           CustomPaint(
             painter: _StepsProgressPainter(
+              context: context,
               progress: progressValue,
               maxSteps: maxSteps,
             ),
             size: Size.infinite, // Mengisi ruang yang tersedia
           ),
           // Ikon di tengah
-          Icon(
-            Icons.directions_run, // Ganti dengan ikon sepatu yang sesuai
-            size: 80.0, // Sesuaikan ukuran ikon agar pas
-            color: Colors.grey[600],
+          SvgPicture.asset(
+            'assets/icons/ic_shoes_3.svg',
+            width: 130,
+            height: 130,
           ),
           // Teks nilai di bawah
           Positioned(
             bottom: 40.0, // Sesuaikan posisi
             child: Text(
               currentSteps.toString(), // Anda mungkin ingin memformat angka ini (misal: 17.000)
-              style: TextStyle(
-                fontSize: 36.0,
-                fontWeight: FontWeight.bold,
-                color: Colors.lightGreenAccent,
+              style: Theme.of(context).textTheme.headlineMedium?.copyWith(
+                fontSize: 35,
+                fontWeight: FontWeight.w700,
+                fontStyle: FontStyle.italic,
               ),
             ),
           ),
@@ -55,15 +58,16 @@ class StepsTrackerWidget extends StatelessWidget {
 class _StepsProgressPainter extends CustomPainter {
   final double progress;
   final int maxSteps;
+  final BuildContext context;
 
-  _StepsProgressPainter({required this.progress, required this.maxSteps});
+  _StepsProgressPainter({required this.context, required this.progress, required this.maxSteps});
 
   @override
   void paint(Canvas canvas, Size size) {
     final center = Offset(size.width / 2, size.height / 2);
     // Radius dikurangi sedikit lebih banyak untuk memberi ruang bagi teks di dalam
     final radius = math.min(size.width / 2, size.height / 2) - 10; // Jarak dari tepi luar widget
-    const strokeWidth = 20.0; // Ketebalan progress bar
+    const strokeWidth = 13.0; // Ketebalan progress bar
     const arcAngle = math.pi * 1.5; // Total sudut busur (270 derajat)
     const startAngle = math.pi * 0.75; // Mulai dari sudut kiri atas (sesuaikan)
 
@@ -109,9 +113,10 @@ class _StepsProgressPainter extends CustomPainter {
       textDirection: TextDirection.ltr,
     );
     // Gaya teks diubah menjadi italic
-    final textStyle = TextStyle(
-        color: Colors.grey[500], // Warna sedikit lebih terang agar terlihat di atas abu-abu
-        fontSize: 12, // Ukuran font disesuaikan agar muat
+    final textStyle = Theme.of(context).textTheme.headlineMedium?.copyWith(
+        color: const Color(0xFF6C6C6C),
+        fontSize: 15,
+        fontWeight: FontWeight.w400,
         fontStyle: FontStyle.italic,
     );
 
@@ -121,17 +126,17 @@ class _StepsProgressPainter extends CustomPainter {
       // 'Angka': PersentasePosisi (0.0 - 1.0 dari panjang busur)
       '5000': 0.10,  // Sedikit setelah awal
       '10000': 0.25,
-      '15000': 0.45,
-      // '20000': 0.66, // Tengah atas busur (3/4 * 2/3)
-      '20000': (1.5 * math.pi - startAngle) / arcAngle, // Tepat di puncak busur (jika startAngle 0.75pi dan arcAngle 1.5pi)
+      '15000': 0.40,
+      '20000': 0.61, // Tengah atas busur (3/4 * 2/3)
+      // '20000': (1.5 * math.pi - startAngle) / arcAngle, // Tepat di puncak busur (jika startAngle 0.75pi dan arcAngle 1.5pi)
                                                            // Seharusnya (1.5*pi - 0.75*pi) / (1.5*pi) = 0.5
-      '25000': 0.80,
-      '30000': 0.95, // Sedikit sebelum akhir
+      '25000': 0.75,
+      '30000': 0.90, // Sedikit sebelum akhir
     };
 
     // Penyesuaian radius untuk menempatkan teks di dalam jalur progress bar
     // Radius untuk teks lebih kecil dari radius busur luar, dan lebih besar dari radius busur dalam
-    final textRadius = radius - strokeWidth / 2 - 15; // Offset agar teks berada di dalam dan tidak terlalu dekat tepi
+    final textRadius = radius - strokeWidth / 2 - 35; // Offset agar teks berada di dalam dan tidak terlalu dekat tepi
 
     labelsData.forEach((text, positionFraction) {
       textPainter.text = TextSpan(text: text, style: textStyle);

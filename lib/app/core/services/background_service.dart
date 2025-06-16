@@ -3,41 +3,23 @@ import 'dart:ui';
 import 'package:flutter/material.dart';
 import 'package:flutter_background_service/flutter_background_service.dart';
 import 'package:geolocator/geolocator.dart';
-import 'package:hive_flutter/hive_flutter.dart';
 import 'package:pedometer/pedometer.dart';
-import 'package:zest_mobile/app/core/models/model/activity_data_point_model.dart';
 import 'package:zest_mobile/app/core/models/model/location_point_model.dart';
-import 'package:zest_mobile/app/core/services/local_activity_service.dart';
 
-String formatDuration(int totalSeconds) {
-  final int hours = totalSeconds ~/ 3600;
-  final int minutes = (totalSeconds % 3600) ~/ 60;
-  final int seconds = totalSeconds % 60;
-
-  if (hours > 0) {
-    return "${hours.toString()}:${minutes.toString().padLeft(2, '0')}:${seconds.toString().padLeft(2, '0')}";
-  } else {
-    return "${minutes.toString().padLeft(2, '0')}:${seconds.toString().padLeft(2, '0')}";
-  }
-}
-
-String formatDistance(double distanceInMeters) {
-  if (distanceInMeters < 1000) {
-    return "${distanceInMeters.toStringAsFixed(0)} m";
-  } else {
-    double distanceInKm = distanceInMeters / 1000;
-    return "${distanceInKm.toStringAsFixed(2)} km";
-  }
-}
-
-// FUNGSI INI AKAN DIJALANKAN DI ISOLATE TERPISAH
+// --- Entry Point untuk Service ---
 @pragma('vm:entry-point')
 void onStart(ServiceInstance service) async {
   DartPluginRegistrant.ensureInitialized();
-  await Hive.initFlutter();
-  Hive.registerAdapter(ActivityDataPointAdapter());
 
-  final localDb = LocalActivityService();
+  // Listener untuk menghentikan service, ini adalah fallback jika event 'setAppDirectory' belum diterima
+  service.on('stopService').listen((event) {
+    service.stopSelf();
+  });
+}
+
+// --- ✨ SEMUA LOGIKA UTAMA PINDAH KE FUNGSI INI ✨ ---
+void setupActivityTracking(ServiceInstance service) {
+  print("✅ Background Service: Setting up listeners for tracking...");
 
   // --- Variabel State ---
   int elapsedTimeInSeconds = 0;
@@ -46,35 +28,44 @@ void onStart(ServiceInstance service) async {
   double currentDistanceInMeters = 0.0;
   final List<LocationPoint> currentPath = [];
   Map<String, dynamic>? latestLocation;
-
   bool isPaused = false;
   int? lastStepCountBeforePause;
 
+  // --- Stream Subscriptions ---
   Timer? timer;
   StreamSubscription<StepCount>? stepCountSubscription;
   StreamSubscription<Position>? positionSubscription;
 
-  // Mulai Pedometer Stream
+  // Fungsi untuk membatalkan semua stream saat service berhenti
+  void stopAllStreams() {
+    timer?.cancel();
+    stepCountSubscription?.cancel();
+    positionSubscription?.cancel();
+    print("⛔ Background Service: All streams have been canceled.");
+  }
+
+  // Definisikan ulang listener 'stopService' di sini agar bisa memanggil stopAllStreams
+  service.on('stopService').listen((event) {
+    stopAllStreams();
+    service.stopSelf();
+  });
+
+  // --- Mulai semua listener untuk tracking ---
+
   stepCountSubscription = Pedometer.stepCountStream.listen((StepCount event) {
     if (isPaused) {
       lastStepCountBeforePause = event.steps;
       return;
     }
-
-    // ✨ DIUBAH: Logika kalibrasi step saat resume
     if (lastStepCountBeforePause != null) {
-      // Saat di-resume, kita "buang" langkah yang terjadi selama pause
-      // dengan menyesuaikan initialStepCount.
       int stepsDuringPause = event.steps - lastStepCountBeforePause!;
       initialStepCount = (initialStepCount ?? 0) + stepsDuringPause;
-      lastStepCountBeforePause = null; // Reset setelah kalibrasi
+      lastStepCountBeforePause = null;
     }
-
     initialStepCount ??= event.steps;
     stepsInSession = event.steps - initialStepCount!;
   });
 
-  // Mulai Geolocator Stream
   positionSubscription = Geolocator.getPositionStream(
     locationSettings: const LocationSettings(
       accuracy: LocationAccuracy.bestForNavigation,
@@ -92,14 +83,12 @@ void onStart(ServiceInstance service) async {
     if (currentPath.isNotEmpty) {
       final lastPoint = currentPath.last;
       double distanceInMeter = Geolocator.distanceBetween(
-        lastPoint.latitude,
-        lastPoint.longitude,
-        newPoint.latitude,
-        newPoint.longitude,
+        lastPoint.latitude, lastPoint.longitude,
+        newPoint.latitude, newPoint.longitude,
       );
-
-      if (distanceInMeter < 0) return;
-      currentDistanceInMeters += distanceInMeter;
+      if (distanceInMeter >= 0) {
+        currentDistanceInMeters += distanceInMeter;
+      }
     }
     currentPath.add(newPoint);
 
@@ -108,62 +97,32 @@ void onStart(ServiceInstance service) async {
       "longitude": newPoint.longitude,
       "timestamp": newPoint.timestamp.toIso8601String(),
     };
-
-    double currentPace = 0;
-    if (elapsedTimeInSeconds > 0) {
-      currentPace = currentDistanceInMeters / elapsedTimeInSeconds;
-    }
-
-    final dataPoint = ActivityDataPoint(
-      latitude: position.latitude,
-      longitude: position.longitude,
-      step: stepsInSession,
-      distance: currentDistanceInMeters,
-      pace: currentPace,
-      time: elapsedTimeInSeconds,
-      timestamp: position.timestamp,
-    );
-
-    // Simpan ke database lokal Hive
-    localDb.addDataPoint(dataPoint);
   });
 
-  // Timer menjadi SATU-SATUNYA yang mengirim data ke UI
   timer = Timer.periodic(const Duration(seconds: 1), (timer) {
     if (!isPaused) {
       elapsedTimeInSeconds++;
     }
-    
-    // Kirim snapshot data lengkap setiap detik
-    service.invoke(
-      'update',
-      {
-        "elapsedTime": elapsedTimeInSeconds,
-        "steps": stepsInSession,
-        "distance": currentDistanceInMeters,
-        "location": latestLocation, // Kirim lokasi terakhir yang diketahui
-      },
-    );
-    // Reset `latestLocation` setelah dikirim agar tidak dikirim berulang kali jika tidak ada pergerakan
-    latestLocation = null; 
+    service.invoke('update', {
+      "elapsedTime": elapsedTimeInSeconds,
+      "steps": stepsInSession,
+      "distance": currentDistanceInMeters,
+      "location": latestLocation,
+    });
+    latestLocation = null;
   });
 
-  // Listener untuk event dari UI (misalnya saat tombol stop ditekan)
-  service.on('stopService').listen((event) {
-    timer?.cancel();
-    stepCountSubscription?.cancel();
-    positionSubscription?.cancel();
-    service.stopSelf();
-  });
-
-  // ✨ BARU: Listener untuk event 'pause'
-  service.on('pause').listen((event) {
+  // Listener untuk event dari UI
+  service.on('pause').listen((event) => isPaused = true);
+  service.on('resume').listen((event) => isPaused = false);
+  service.on('restoreState').listen((data) {
+    if (data == null) return;
+    elapsedTimeInSeconds = data['elapsedTime'] ?? 0;
+    currentDistanceInMeters = data['distance'] ?? 0.0;
+    stepsInSession = data['steps'] ?? 0;
     isPaused = true;
-  });
-
-  // ✨ BARU: Listener untuk event 'resume'
-  service.on('resume').listen((event) {
-    isPaused = false;
+    initialStepCount = null;
+    print("Background service state restored.");
   });
 }
 

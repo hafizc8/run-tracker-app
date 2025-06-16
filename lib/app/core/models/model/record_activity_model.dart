@@ -17,6 +17,10 @@ class RecordActivityModel extends Model {
     required this.postcode,
     required this.createdAt,
     required this.recordActivityLogs,
+    this.recordActivityLogsAvgPace,
+    this.recordActivityLogsSumDistance,
+    this.recordActivityLogsSumTime,
+    this.recordActivityLogsSumStep,
   });
 
   final String? id;
@@ -33,6 +37,10 @@ class RecordActivityModel extends Model {
   final String? postcode;
   final DateTime? createdAt;
   final List<RecordActivityLogModel> recordActivityLogs;
+  double? recordActivityLogsAvgPace;
+  double? recordActivityLogsSumDistance;
+  int? recordActivityLogsSumTime;
+  int? recordActivityLogsSumStep;
 
   RecordActivityModel copyWith({
     String? id,
@@ -49,6 +57,10 @@ class RecordActivityModel extends Model {
     String? postcode,
     DateTime? createdAt,
     List<RecordActivityLogModel>? recordActivityLogs,
+    double? recordActivityLogsAvgPace,
+    double? recordActivityLogsSumDistance,
+    int? recordActivityLogsSumTime,
+    int? recordActivityLogsSumStep,
   }) {
     return RecordActivityModel(
       id: id ?? this.id,
@@ -65,6 +77,10 @@ class RecordActivityModel extends Model {
       postcode: postcode ?? this.postcode,
       createdAt: createdAt ?? this.createdAt,
       recordActivityLogs: recordActivityLogs ?? this.recordActivityLogs,
+      recordActivityLogsAvgPace: recordActivityLogsAvgPace ?? this.recordActivityLogsAvgPace,
+      recordActivityLogsSumDistance: recordActivityLogsSumDistance ?? this.recordActivityLogsSumDistance,
+      recordActivityLogsSumTime: recordActivityLogsSumTime ?? this.recordActivityLogsSumTime,
+      recordActivityLogsSumStep: recordActivityLogsSumStep ?? this.recordActivityLogsSumStep,
     );
   }
 
@@ -86,6 +102,10 @@ class RecordActivityModel extends Model {
       recordActivityLogs: json["record_activity_logs"] == null
           ? []
           : List<RecordActivityLogModel>.from(json["record_activity_logs"]!.map((x) => RecordActivityLogModel.fromJson(x))),
+      recordActivityLogsAvgPace: json["record_activity_logs_avg_pace"] == null ? null : double.parse(json["record_activity_logs_avg_pace"]),
+      recordActivityLogsSumDistance: json["record_activity_logs_sum_distance"] == null ? null : double.parse(json["record_activity_logs_sum_distance"]),
+      recordActivityLogsSumTime: json["record_activity_logs_sum_time"] == null ? null : int.parse(json["record_activity_logs_sum_time"]),
+      recordActivityLogsSumStep: json["record_activity_logs_sum_step"] == null ? null : int.parse(json["record_activity_logs_sum_step"]),
     );
   }
 
@@ -122,6 +142,10 @@ class RecordActivityModel extends Model {
         postcode,
         createdAt,
         recordActivityLogs,
+        recordActivityLogsAvgPace,
+        recordActivityLogsSumDistance,
+        recordActivityLogsSumTime,
+        recordActivityLogsSumStep,
       ];
 }
 
@@ -144,7 +168,7 @@ class RecordActivityLogModel extends Model {
   final double? longitude;
   final double? pace;
   final double? distance;
-  final String? time;
+  final int? time;
 
   RecordActivityLogModel copyWith({
     String? id,
@@ -154,7 +178,7 @@ class RecordActivityLogModel extends Model {
     double? longitude,
     double? pace,
     double? distance,
-    String? time,
+    int? time,
   }) {
     return RecordActivityLogModel(
       id: id ?? this.id,
@@ -175,7 +199,7 @@ class RecordActivityLogModel extends Model {
       timestamp: DateTime.tryParse(json["timestamp"] ?? ""),
       latitude: double.tryParse(json["latitude"] ?? "0.0"),
       longitude: double.tryParse(json["longitude"] ?? "0.0"),
-      pace: double.tryParse(json["pace"] ?? "0.0"),
+      pace: double.tryParse(json["pace"].toString()) ?? 0.0,
       distance: double.tryParse(json["distance"] ?? "0.0"),
       time: json["time"],
     );

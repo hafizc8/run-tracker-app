@@ -14,18 +14,55 @@ class RecordActivityView extends GetView<RecordActivityController> {
     return Scaffold(
       appBar: AppBar(
         backgroundColor: Theme.of(context).colorScheme.background,
-        title: Text(
-          'Running',
-          style: Theme.of(context).textTheme.headlineMedium?.copyWith(
-            fontWeight: FontWeight.w600,
-            color: Theme.of(context).colorScheme.onBackground,
-          ),
+        title: Row(
+          mainAxisSize: MainAxisSize.min,
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            Container(
+              width: 10.0,
+              height: 10.0,
+              decoration: BoxDecoration(
+                color: darkColorScheme.primary,
+                shape: BoxShape.circle,
+              ),
+            ),
+            const SizedBox(width: 8.0),
+            Text(
+              'Running',
+              style: Theme.of(context).textTheme.headlineMedium?.copyWith(
+                fontWeight: FontWeight.w600,
+                color: Theme.of(context).colorScheme.onBackground,
+              ),
+            )
+          ],
         ),
         centerTitle: true,
         automaticallyImplyLeading: false,
         elevation: 1,
         leading: GestureDetector(
-          onTap: () => Get.back(),
+          onTap: () {
+            // confirm dialog
+            Get.dialog(
+              AlertDialog(
+                surfaceTintColor: darkColorScheme.background,
+                title: const Text('Delete Activity'),
+                content: const Text('Are you sure you want to delete this activity?'),
+                actions: [
+                  TextButton(
+                    onPressed: () => Get.back(),
+                    child: const Text('Cancel'),
+                  ),
+                  TextButton(
+                    onPressed: () {
+                      controller.deleteActivity();
+                      Get.back(closeOverlays: true);
+                    },
+                    child: const Text('Delete'),
+                  ),
+                ],
+              ),
+            );
+          },
           child: Icon(
             Icons.chevron_left,
             color: Theme.of(context).colorScheme.onBackground,
@@ -84,8 +121,17 @@ class RecordActivityView extends GetView<RecordActivityController> {
                         ),
                         const SizedBox(width: 8),
                         Text(
-                          '10/10',
+                          '2/10',
                           style: Theme.of(context).textTheme.titleSmall,
+                        ),
+                        const SizedBox(width: 8),
+                        Text(
+                          '6:00',
+                          style: Theme.of(context).textTheme.titleSmall?.copyWith(
+                            color: const Color(0xFF7B7B7B),
+                            fontSize: 13,
+                            fontWeight: FontWeight.w400,
+                          ),
                         ),
                       ],
                     ),
@@ -219,81 +265,108 @@ class RecordActivityView extends GetView<RecordActivityController> {
           
               const SizedBox(height: 48),
           
-              Container(
-                decoration: BoxDecoration(
-                  color: const Color(0xFF373737),
-                  borderRadius: BorderRadius.circular(8),
-                ),
-                padding: const EdgeInsets.symmetric(horizontal: 15, vertical: 10),
-                margin: const EdgeInsets.symmetric(horizontal: 15, vertical: 10),
-                child: Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                  children: [
-                    InkWell(
-                      onTap: () {
-                        controller.isMapViewMode.value = !controller.isMapViewMode.value;
-                      },
-                      child: Container(
-                        decoration: BoxDecoration(
-                          shape: BoxShape.circle,
-                          border: Border.all(
-                            color: const Color(0xFF5A5A5A),
-                            width: 2,
-                          )
-                        ),
-                        padding: const EdgeInsets.all(18),
-                        child: const FaIcon(
-                          FontAwesomeIcons.locationArrow,
-                          size: 28,
-                          color: Color(0xFF5A5A5A),
-                        ),
-                      ),
+              Obx(
+                () {
+                  if (controller.isLoadingSaveRecordActivity.value) {
+                    return const Center(child: CircularProgressIndicator());
+                  }
+
+                  return Container(
+                    decoration: BoxDecoration(
+                      color: const Color(0xFF373737),
+                      borderRadius: BorderRadius.circular(8),
                     ),
-          
-                    InkWell(
-                      onTap: () {
-                        controller.togglePauseResume();
-                      },
-                      child: Container(
-                        decoration: BoxDecoration(
-                          shape: BoxShape.circle,
-                          color: darkColorScheme.primary,
+                    padding: const EdgeInsets.symmetric(horizontal: 15, vertical: 10),
+                    margin: const EdgeInsets.symmetric(horizontal: 15, vertical: 10),
+                    child: Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                      children: [
+                        InkWell(
+                          onTap: () {
+                            controller.isMapViewMode.value = !controller.isMapViewMode.value;
+                          },
+                          child: Container(
+                            decoration: BoxDecoration(
+                              shape: BoxShape.circle,
+                              border: Border.all(
+                                color: const Color(0xFF5A5A5A),
+                                width: 2,
+                              )
+                            ),
+                            padding: const EdgeInsets.all(18),
+                            child: const FaIcon(
+                              FontAwesomeIcons.locationArrow,
+                              size: 28,
+                              color: Color(0xFF5A5A5A),
+                            ),
+                          ),
                         ),
-                        padding: const EdgeInsets.all(32),
-                        child: Obx(
-                          () {
-                            return FaIcon(
-                              controller.isPaused.value ? FontAwesomeIcons.play : FontAwesomeIcons.pause,
-                              size: 48,
-                              color: darkColorScheme.onPrimary,
+                            
+                        InkWell(
+                          onTap: () {
+                            controller.togglePauseResume();
+                          },
+                          child: Container(
+                            decoration: BoxDecoration(
+                              shape: BoxShape.circle,
+                              color: darkColorScheme.primary,
+                            ),
+                            padding: const EdgeInsets.all(32),
+                            child: Obx(
+                              () {
+                                return FaIcon(
+                                  controller.isPaused.value ? FontAwesomeIcons.play : FontAwesomeIcons.pause,
+                                  size: 48,
+                                  color: darkColorScheme.onPrimary,
+                                );
+                              }
+                            ),
+                          ),
+                        ),
+                            
+                        InkWell(
+                          onTap: () {
+                            Get.dialog(
+                              AlertDialog(
+                                surfaceTintColor: darkColorScheme.background,
+                                title: const Text('Stop Activity'),
+                                content: const Text('Are you sure you want to stop the activity?'),
+                                actions: [
+                                  TextButton(
+                                    onPressed: () => Get.back(),
+                                    child: const Text('Cancel'),
+                                  ),
+                                  TextButton(
+                                    onPressed: () {
+                                      Get.back();
+                                      controller.stopActivity();
+                                    },
+                                    child: const Text('Stop'),
+                                  ),
+                                ],
+                              ),
                             );
-                          }
+                          },
+                          child: Container(
+                            decoration: BoxDecoration(
+                              shape: BoxShape.circle,
+                              border: Border.all(
+                                color: const Color(0xFF5A5A5A),
+                                width: 2,
+                              )
+                            ),
+                            padding: const EdgeInsets.all(18),
+                            child: const FaIcon(
+                              FontAwesomeIcons.stop,
+                              size: 28,
+                              color: Color(0xFF5A5A5A),
+                            ),
+                          ),
                         ),
-                      ),
+                      ],
                     ),
-          
-                    InkWell(
-                      onTap: () {
-                        controller.stopActivity();
-                      },
-                      child: Container(
-                        decoration: BoxDecoration(
-                          shape: BoxShape.circle,
-                          border: Border.all(
-                            color: const Color(0xFF5A5A5A),
-                            width: 2,
-                          )
-                        ),
-                        padding: const EdgeInsets.all(18),
-                        child: const FaIcon(
-                          FontAwesomeIcons.stop,
-                          size: 28,
-                          color: Color(0xFF5A5A5A),
-                        ),
-                      ),
-                    ),
-                  ],
-                ),
+                  );
+                }
               ),
             ],
           ),

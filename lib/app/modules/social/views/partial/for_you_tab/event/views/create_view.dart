@@ -25,7 +25,7 @@ class EventCreateView extends GetView<EventActionController> {
           title: Text(
             '${controller.isEdit.value ? 'Edit' : 'Create'} an Events',
             style: Theme.of(context).textTheme.headlineSmall?.copyWith(
-                  color: Color(0xFFA5A5A5),
+                  color: const Color(0xFFA5A5A5),
                 ),
           ),
           automaticallyImplyLeading: false,
@@ -33,7 +33,7 @@ class EventCreateView extends GetView<EventActionController> {
           elevation: 4,
           leading: GestureDetector(
             onTap: () => Get.back(),
-            child: Icon(
+            child: const Icon(
               Icons.chevron_left,
               size: 48,
               color: Color(0xFFA5A5A5),
@@ -187,19 +187,29 @@ class EventCreateView extends GetView<EventActionController> {
                     ),
                     const SizedBox(height: 12),
                     TextFormField(
-                      controller: controller.addressController,
+                      controller: controller.placeNameController,
                       cursorColor: Colors.white,
                       readOnly: true,
                       onTap: () async {
                         final res = await Get.toNamed(
-                          AppRoutes.chooseLocation,
+                          AppRoutes.chooseLocationEvent,
+                          arguments: {
+                            'lat': form.latitude,
+                            'lng': form.longitude,
+                            'address': controller.addressController.text,
+                            'placeName': controller.placeNameController.text,
+                          },
                         );
                         if (res != null) {
+                          if (res['placeName'] != null &&
+                              res['placeName'] is String) {
+                            controller.placeNameController.text =
+                                res['placeName'];
+                          }
                           if (res['address'] != null &&
                               res['address'] is String) {
                             controller.addressController.text = res['address'];
                           }
-
                           if (res['location'] != null &&
                               res['location'] is LatLng) {
                             controller.form.value = form.copyWith(

@@ -1,12 +1,18 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:zest_mobile/app/core/di/service_locator.dart';
+import 'package:zest_mobile/app/core/exception/app_exception.dart';
+import 'package:zest_mobile/app/core/exception/handler/app_exception_handler_info.dart';
 import 'package:zest_mobile/app/core/models/interface/pagination_response_model.dart';
 import 'package:zest_mobile/app/core/models/model/event_model.dart';
 import 'package:zest_mobile/app/core/services/event_service.dart';
+import 'package:zest_mobile/app/modules/social/views/partial/for_you_tab/event/controllers/event_controller.dart';
+import 'package:zest_mobile/app/modules/social/views/partial/for_you_tab/widget/confirmation.dart';
 
 class EventDetailController extends GetxController {
   var isLoading = false.obs;
+  var isLoadingAction = false.obs;
+  var isLoadingGoing = false.obs;
   var isLoadingWaitList = false.obs;
   var hasReacheMax = false.obs;
   var hasReacheMaxWaiting = false.obs;
@@ -15,6 +21,10 @@ class EventDetailController extends GetxController {
 
   var usersInvites = <EventUserModel>[].obs;
   var usersWaitings = <EventUserModel>[].obs;
+  Rx<EventModel?> event = Rx(null);
+  Rx<EventModel?> eventLastUpdated = Rx(null);
+
+  final eventController = Get.find<EventController>();
 
   var page = 1;
   var eventId = '';
@@ -28,7 +38,146 @@ class EventDetailController extends GetxController {
     init();
   }
 
+  Future<void> detailEvent() async {
+    isLoading.value = true;
+    try {
+      final EventModel? res = await _eventService.detailEvent(eventId);
+      if (res == null) return;
+      event.value = res.copyWith(
+        userOnEvents: usersInvites,
+      );
+      eventLastUpdated.value = event.value;
+    } on AppException catch (e) {
+      // show error snackbar, toast, etc
+      AppExceptionHandlerInfo.handle(e);
+    } catch (e) {
+      Get.snackbar(
+        'Error',
+        e.toString(),
+        backgroundColor: Colors.red,
+        colorText: Colors.white,
+      );
+    } finally {
+      isLoading.value = false;
+    }
+  }
+
+  Future<void> cancelEvent(String id) async {
+    isLoadingAction.value = true;
+    try {
+      final EventModel? res = await _eventService.cancelEvent(id);
+      if (res != null) {
+        event.value = event.value!.copyWith(
+          cancelledAt: DateTime.now(),
+        );
+        eventLastUpdated.value = event.value?.copyWith(
+          cancelledAt: DateTime.now(),
+        );
+
+        Get.back();
+      }
+    } on AppException catch (e) {
+      // show error snackbar, toast, etc
+      AppExceptionHandlerInfo.handle(e);
+    } catch (e) {
+      Get.snackbar(
+        'Error',
+        e.toString(),
+        backgroundColor: Colors.red,
+        colorText: Colors.white,
+      );
+    } finally {
+      isLoadingAction.value = false;
+    }
+  }
+
+  Future<void> confirmAccLeaveJoinEvent(String id) async {
+    await Get.dialog(
+      Obx(
+        () => ConfirmationDialog(
+          onConfirm: () => accLeaveJoinEvent(id),
+          title: 'Confirm Joining?',
+          subtitle:
+              'Events take effort to set up, so if you join, make sure you can be there!',
+          labelConfirm: 'Join Event',
+          isLoading: isLoadingAction.value,
+        ),
+      ),
+    );
+  }
+
+  Future<void> confirmLeaveEvent(String id) async {
+    await Get.dialog(
+      Obx(
+        () => ConfirmationDialog(
+          onConfirm: () => accLeaveJoinEvent(id, leave: '1'),
+          title: 'Cancelling?',
+          subtitle:
+              'If you need to leave an event after joining, please message the host to explain. It keeps things respectful and helps with planning.',
+          labelConfirm: 'Leave Event',
+          isLoading: isLoadingAction.value,
+        ),
+      ),
+    );
+  }
+
+  Future<void> confirmCancelEvent(String id) async {
+    await Get.dialog(
+      Obx(
+        () => ConfirmationDialog(
+          onConfirm: () => cancelEvent(id),
+          title: 'Cancelling?',
+          subtitle:
+              'If you need to leave an event after joining, please message the host to explain. It keeps things respectful and helps with planning.',
+          labelConfirm: 'Leave Event',
+          isLoading: isLoadingAction.value,
+        ),
+      ),
+    );
+  }
+
+  Future<void> accLeaveJoinEvent(String id, {String? leave}) async {
+    isLoadingAction.value = true;
+    try {
+      final bool res = await _eventService.accLeaveJoinEvent(id, leave: leave);
+
+      if (res) {
+        Get.back();
+        await refreshUsersOnEvent();
+
+        event.value = event.value!.copyWith(
+          isJoined: leave != null ? 0 : 1,
+        );
+        eventLastUpdated.value = event.value?.copyWith(
+          userOnEvents: usersInvites,
+          isJoined: leave != null ? 0 : 1,
+          userOnEventsCount: usersInvites.length,
+        );
+      }
+    } on AppException catch (e) {
+      // show error snackbar, toast, etc
+      AppExceptionHandlerInfo.handle(e);
+    } catch (e) {
+      Get.snackbar(
+        'Error',
+        e.toString(),
+        backgroundColor: Colors.red,
+        colorText: Colors.white,
+      );
+    } finally {
+      isLoadingAction.value = false;
+    }
+  }
+
   Future<void> init() async {
+    Future.wait([
+      detailEvent(),
+      loadGoing(refresh: true),
+      loadWaiting(refresh: true),
+    ]);
+  }
+
+  Future<void> refreshUsersOnEvent() async {
     Future.wait([
       loadGoing(refresh: true),
       loadWaiting(refresh: true),
@@ -41,8 +190,8 @@ class EventDetailController extends GetxController {
       page = 1;
       hasReacheMax.value = false;
     }
-    if (isLoading.value || hasReacheMax.value) return;
-    isLoading.value = true;
+    if (isLoadingGoing.value || hasReacheMax.value) return;
+    isLoadingGoing.value = true;
     try {
       PaginatedDataResponse<EventUserModel> response =
           await _eventService.getEventUsers(
@@ -55,9 +204,8 @@ class EventDetailController extends GetxController {
               response.pagination.next == '') ||
           response.pagination.total < 20) hasReacheMax.value = true;
 
-      usersInvites.value += response.data.length > 10
-          ? response.data.sublist(0, 10)
-          : response.data;
+      usersInvites.value += response.data;
+      usersInvites.refresh();
 
       page++;
     } catch (e) {
@@ -68,7 +216,7 @@ class EventDetailController extends GetxController {
         colorText: Colors.white,
       ); // show error snackbar, toast, etc (e.g.message)
     } finally {
-      isLoading.value = false;
+      isLoadingGoing.value = false;
     }
   }
 
@@ -92,9 +240,7 @@ class EventDetailController extends GetxController {
               response.pagination.next == '') ||
           response.pagination.total < 20) hasReacheMaxWaiting.value = true;
 
-      usersWaitings.value += response.data.length > 10
-          ? response.data.sublist(0, 10)
-          : response.data;
+      usersWaitings.value += response.data;
 
       page++;
     } catch (e) {

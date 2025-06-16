@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import 'package:get/get_rx/get_rx.dart';
 import 'package:zest_mobile/app/core/di/service_locator.dart';
 import 'package:zest_mobile/app/core/models/interface/pagination_response_model.dart';
 import 'package:zest_mobile/app/core/models/model/club_model.dart';

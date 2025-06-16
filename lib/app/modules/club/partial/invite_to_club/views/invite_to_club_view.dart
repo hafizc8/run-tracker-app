@@ -3,7 +3,6 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:zest_mobile/app/core/models/model/user_mini_model.dart';
 import 'package:zest_mobile/app/core/shared/theme/color_schemes.dart';
-import 'package:zest_mobile/app/core/shared/widgets/custom_blue_checkbox.dart';
 import 'package:zest_mobile/app/core/shared/widgets/gradient_elevated_button.dart';
 import 'package:zest_mobile/app/core/shared/widgets/shimmer_loading_circle.dart';
 import 'package:zest_mobile/app/modules/club/partial/invite_to_club/controllers/invite_to_club_controller.dart';

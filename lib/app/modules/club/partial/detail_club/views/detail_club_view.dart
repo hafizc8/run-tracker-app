@@ -14,7 +14,6 @@ import 'package:zest_mobile/app/modules/club/partial/detail_club/partial/tab_bar
 import 'package:zest_mobile/app/modules/club/partial/detail_club/partial/tab_bar_club/controllers/tab_bar_club_controller.dart';
 import 'package:zest_mobile/app/modules/club/partial/detail_club/partial/tab_bar_club/views/club_activity_tab_view.dart';
 import 'package:zest_mobile/app/modules/social/views/partial/for_you_tab/event/controllers/event_action_controller.dart';
-import 'package:zest_mobile/app/modules/social/widgets/event_card_dialog.dart';
 import 'package:zest_mobile/app/routes/app_routes.dart';
 
 class _SliverTabBarDelegate extends SliverPersistentHeaderDelegate {

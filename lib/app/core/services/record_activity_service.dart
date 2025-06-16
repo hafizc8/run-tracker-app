@@ -1,5 +1,3 @@
-import 'dart:convert';
-
 import 'package:zest_mobile/app/core/models/enums/http_method_enum.dart';
 import 'package:zest_mobile/app/core/models/model/record_activity_model.dart';
 import 'package:zest_mobile/app/core/services/api_service.dart';

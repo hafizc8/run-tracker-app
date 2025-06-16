@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:get/get.dart';
-import 'package:syncfusion_flutter_datepicker/datepicker.dart';
 import 'package:zest_mobile/app/core/models/model/event_model.dart';
 import 'package:zest_mobile/app/core/shared/widgets/shimmer_loading_event.dart';
 import 'package:zest_mobile/app/modules/social/controllers/social_controller.dart';

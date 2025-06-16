@@ -1,13 +1,11 @@
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/widgets.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:get/get.dart';
 import 'package:intl/intl.dart';
 import 'package:zest_mobile/app/core/extension/date_extension.dart';
 import 'package:zest_mobile/app/core/extension/event_extension.dart';
 import 'package:zest_mobile/app/core/models/model/event_model.dart';
-import 'package:zest_mobile/app/core/shared/widgets/custom_circular_progress_indicator.dart';
 import 'package:zest_mobile/app/core/shared/widgets/gradient_elevated_button.dart';
 import 'package:zest_mobile/app/core/shared/widgets/shimmer_loading_circle.dart';
 import 'package:zest_mobile/app/modules/club/partial/detail_club/partial/tab_bar_club/views/widgets/participants_avatars.dart';

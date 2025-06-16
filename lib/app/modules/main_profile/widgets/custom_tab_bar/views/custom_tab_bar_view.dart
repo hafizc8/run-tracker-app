@@ -1,11 +1,8 @@
-import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import 'package:zest_mobile/app/core/extension/date_extension.dart';
 import 'package:zest_mobile/app/core/models/model/event_model.dart';
 import 'package:zest_mobile/app/core/shared/widgets/card_activity.dart';
 import 'package:zest_mobile/app/core/shared/widgets/card_challenge.dart';
-import 'package:zest_mobile/app/core/shared/widgets/shimmer_loading_circle.dart';
 import 'package:zest_mobile/app/modules/main_profile/controllers/main_profile_controller.dart';
 import 'package:zest_mobile/app/modules/main_profile/widgets/custom_tab_bar/controllers/custom_tab_bar_controller.dart';
 import 'package:zest_mobile/app/modules/social/widgets/event_card.dart';

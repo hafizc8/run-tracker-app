@@ -13,6 +13,7 @@ import 'package:zest_mobile/app/core/services/challenge_service.dart';
 import 'package:zest_mobile/app/core/services/event_service.dart';
 import 'package:zest_mobile/app/core/services/user_service.dart';
 import 'package:zest_mobile/app/modules/main_profile/widgets/custom_tab_bar/controllers/custom_tab_bar_controller.dart';
+import 'package:zest_mobile/app/modules/social/views/partial/for_you_tab/widget/confirmation.dart';
 
 class ProfileMainController extends GetxController {
   var activeIndex = 0.obs;
@@ -96,8 +97,22 @@ class ProfileMainController extends GetxController {
     }
   }
 
+  Future<void> confirmCancelEvent(String id) async {
+    await Get.dialog(
+      Obx(
+        () => ConfirmationDialog(
+          onConfirm: () => cancelEvent(id),
+          title: 'Cancelling?',
+          subtitle:
+              'If you need to leave an event after joining, please message the host to explain. It keeps things respectful and helps with planning.',
+          labelConfirm: 'Leave Event',
+          isLoading: isLoadingActionEvent.value,
+        ),
+      ),
+    );
+  }
+
   Future<void> getEvents({bool refresh = false}) async {
-    getUpComingEvents();
     if (refresh) {
       events.clear();
       pageEvent = 1;
@@ -110,7 +125,8 @@ class ProfileMainController extends GetxController {
           await _eventService.getEvents(
         page: pageEvent,
         user: _authService.user!.id,
-        limit: 10,
+        order: 'upcoming',
+        status: 'joined',
       );
 
       if ((response.pagination.next == null ||

@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_svg/flutter_svg.dart';
 import 'package:get/get.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:zest_mobile/app/core/shared/theme/color_schemes.dart';
@@ -60,20 +61,8 @@ class SocialView extends GetView<SocialController> {
               final res = await Get.toNamed(AppRoutes.eventCreate);
 
               if (res != null) {
-                showDialog(
-                    context: context,
-                    builder: (context) {
-                      return Dialog(
-                        surfaceTintColor: Colors.transparent,
-                        backgroundColor: Colors.transparent,
-                        child: EventCardDialog(
-                          backgroundColor:
-                              Theme.of(context).colorScheme.surface,
-                          eventModel: res,
-                          onTap: null,
-                        ),
-                      );
-                    });
+                Get.toNamed(AppRoutes.socialYourPageEventDetail,
+                    arguments: {'eventId': res.id});
               }
               // Handle Create Event action
             } else if (value == 'create_club') {
@@ -108,14 +97,16 @@ class SocialView extends GetView<SocialController> {
           child: Container(
             width: 36,
             height: 36,
+            padding: const EdgeInsets.all(8),
             decoration: BoxDecoration(
               color: Theme.of(context).colorScheme.outline,
               shape: BoxShape.circle,
             ),
-            child: Icon(
-              Icons.add,
-              size: 18,
-              color: Theme.of(context).colorScheme.onBackground,
+            child: SvgPicture.asset(
+              'assets/icons/add.svg',
+              width: 18,
+              height: 18,
+              fit: BoxFit.cover,
             ),
           ),
         ),
@@ -130,10 +121,10 @@ class SocialView extends GetView<SocialController> {
                 color: Theme.of(context).colorScheme.outline,
                 shape: BoxShape.circle,
               ),
-              child: Icon(
+              child: const Icon(
                 Icons.search,
                 size: 18,
-                color: Theme.of(context).colorScheme.onBackground,
+                color: Colors.white,
               ),
             ),
           ),

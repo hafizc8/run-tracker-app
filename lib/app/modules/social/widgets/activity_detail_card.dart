@@ -133,7 +133,6 @@ class ActivityDetailCard extends StatelessWidget {
               ),
             ),
           ),
-          
           Visibility(
             visible: (postData?.likesCount ?? 0) > 0,
             child: Container(
@@ -144,21 +143,25 @@ class ActivityDetailCard extends StatelessWidget {
                     avatarSize: 20,
                     maxVisible: 3,
                     overlapOffset: 16,
-                    imageUrls: postData?.likes?.map((e) => e.imageUrl ?? '').toList() ?? [],
+                    imageUrls: postData?.likes
+                            ?.map((e) => e.imageUrl ?? '')
+                            .toList() ??
+                        [],
                   ),
                   RichText(
                     text: TextSpan(
                       style: Theme.of(context).textTheme.titleSmall?.copyWith(
-                        fontWeight: FontWeight.w700,
-                        fontSize: 13,
-                      ),
+                            fontWeight: FontWeight.w700,
+                            fontSize: 13,
+                          ),
                       children: <TextSpan>[
                         TextSpan(text: postData?.likesCount.toString()),
                         TextSpan(
                           text: ' Likes',
-                          style: Theme.of(context).textTheme.titleSmall?.copyWith(
-                            fontSize: 13,
-                          ),
+                          style:
+                              Theme.of(context).textTheme.titleSmall?.copyWith(
+                                    fontSize: 13,
+                                  ),
                         ),
                       ],
                     ),
@@ -181,7 +184,7 @@ class ActivityDetailCard extends StatelessWidget {
   }
 
   Widget _buildCardHeader({
-    required BuildContext context, 
+    required BuildContext context,
     required String userId,
     required String userName,
     required String userImageUrl,
@@ -198,7 +201,8 @@ class ActivityDetailCard extends StatelessWidget {
               width: 30,
               height: 30,
               fit: BoxFit.cover,
-              placeholder: (context, url) => const ShimmerLoadingCircle(size: 30),
+              placeholder: (context, url) =>
+                  const ShimmerLoadingCircle(size: 30),
               errorWidget: (context, url, error) => const CircleAvatar(
                 radius: 30,
                 backgroundImage: AssetImage('assets/images/empty_profile.png'),
@@ -213,16 +217,19 @@ class ActivityDetailCard extends StatelessWidget {
                 userName,
                 maxLines: 1,
                 overflow: TextOverflow.ellipsis,
-                style: Theme.of(context).textTheme.bodyMedium?.copyWith(fontWeight: FontWeight.w700),
+                style: Theme.of(context)
+                    .textTheme
+                    .bodyMedium
+                    ?.copyWith(fontWeight: FontWeight.w700),
               ),
               Text(
                 '$district, $createdAt',
                 maxLines: 1,
                 overflow: TextOverflow.ellipsis,
                 style: Theme.of(context).textTheme.bodyMedium?.copyWith(
-                  color: const Color(0xFF6C6C6C),
-                  fontSize: 11,
-                ),
+                      color: const Color(0xFF6C6C6C),
+                      fontSize: 11,
+                    ),
               ),
             ],
           ),
@@ -238,35 +245,33 @@ class ActivityDetailCard extends StatelessWidget {
   }) {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
-      children: 
-      title.isEmpty ? 
-      [
-        Text(
-          content, 
-          style: Theme.of(context).textTheme.bodySmall?.copyWith(
-            fontSize: 12, 
-            fontWeight: FontWeight.w700,
-          ),
-        ),
-      ]
-      :
-      [
-        Text(
-          title, 
-          style: Theme.of(context).textTheme.bodySmall?.copyWith(
-            fontSize: 12, 
-            fontWeight: FontWeight.w700,
-          ),
-        ),
-        const SizedBox(height: 5),
-        Text(
-          content, 
-          style: Theme.of(context).textTheme.bodySmall?.copyWith(
-            fontSize: 12, 
-            fontWeight: FontWeight.w400,
-          ),
-        ),
-      ],
+      children: title.isEmpty
+          ? [
+              Text(
+                content,
+                style: Theme.of(context).textTheme.bodySmall?.copyWith(
+                      fontSize: 12,
+                      fontWeight: FontWeight.w700,
+                    ),
+              ),
+            ]
+          : [
+              Text(
+                title,
+                style: Theme.of(context).textTheme.bodySmall?.copyWith(
+                      fontSize: 12,
+                      fontWeight: FontWeight.w700,
+                    ),
+              ),
+              const SizedBox(height: 5),
+              Text(
+                content,
+                style: Theme.of(context).textTheme.bodySmall?.copyWith(
+                      fontSize: 12,
+                      fontWeight: FontWeight.w400,
+                    ),
+              ),
+            ],
     );
   }
 
@@ -317,9 +322,7 @@ class ActivityDetailCard extends StatelessWidget {
     );
   }
 
-  Widget _buildSocialActions({
-    required PostModel? postData
-  }) {
+  Widget _buildSocialActions({required PostModel? postData}) {
     return Row(
       mainAxisSize: MainAxisSize.max,
       children: [
@@ -340,16 +343,17 @@ class ActivityDetailCard extends StatelessWidget {
                 child: FaIcon(
                   FontAwesomeIcons.fire,
                   size: 15,
-                  color: (postData?.isLiked ?? false) ? darkColorScheme.primary : darkColorScheme.onBackground,
+                  color: (postData?.isLiked ?? false)
+                      ? darkColorScheme.primary
+                      : darkColorScheme.onBackground,
                   key: ValueKey(postData?.isLiked),
                 ),
               ),
               label: 'Like',
               onTap: () => controller.likePost(
-              postId: postData?.id ?? '',
-              isDislike: (postData?.isLiked ?? false) ? 1 : 0,
-              isPostDetail: true
-            ),
+                  postId: postData?.id ?? '',
+                  isDislike: (postData?.isLiked ?? false) ? 1 : 0,
+                  isPostDetail: true),
               selected: postData?.isLiked ?? false,
             ),
           ),
@@ -365,7 +369,7 @@ class ActivityDetailCard extends StatelessWidget {
                 size: 15,
                 color: darkColorScheme.onBackground,
               ),
-              label: 'Comment', 
+              label: 'Comment',
               onTap: () => controller.focusToComment(),
             ),
           ),
@@ -381,8 +385,9 @@ class ActivityDetailCard extends StatelessWidget {
                 size: 15,
                 color: darkColorScheme.onBackground,
               ),
-              label: 'Share', 
-              onTap: () => Get.snackbar('Coming soon', 'Feature is coming soon'),
+              label: 'Share',
+              onTap: () =>
+                  Get.snackbar('Coming soon', 'Feature is coming soon'),
             ),
           ),
         ),
@@ -390,78 +395,82 @@ class ActivityDetailCard extends StatelessWidget {
     );
   }
 
-  Widget _buildCommentSection({
-    required BuildContext context, 
-    required String postId,
-    List<Comment>? comments = const []
-  }) {
+  Widget _buildCommentSection(
+      {required BuildContext context,
+      required String postId,
+      List<Comment>? comments = const []}) {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        Divider(color: Theme.of(context).colorScheme.onTertiary, thickness: 0.3),
+        Divider(
+            color: Theme.of(context).colorScheme.onTertiary, thickness: 0.3),
         const SizedBox(height: 15),
         Text(
           'Comments',
-          style: Theme.of(context).textTheme.labelMedium?.copyWith(
-            color: Theme.of(context).colorScheme.primary
-          ),
+          style: Theme.of(context)
+              .textTheme
+              .labelMedium
+              ?.copyWith(color: Theme.of(context).colorScheme.primary),
         ),
         const SizedBox(height: 15),
         (comments ?? []).isNotEmpty
-        ?
-        Container(
-          decoration: BoxDecoration(
-            color: Theme.of(context).colorScheme.surface,
-            borderRadius: BorderRadius.circular(10),
-          ),
-          padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 16),
-          child: ListView.builder(
-            itemCount: comments?.length,
-            shrinkWrap: true,
-            physics: const NeverScrollableScrollPhysics(),
-            itemBuilder: (context, index) {
-              return _buildCommentItem(
-                context: context,
-                postId: postId,
-                comment: comments?[index],
-                replies: comments?[index].replies.map((e) {
-                  return _buildCommentItem(
-                    context: context,
-                    postId: postId,
-                    comment: Comment(
-                      id: e.id, 
-                      content: e.content, 
-                      createdAt: e.createdAt, 
-                      user: e.user, 
-                      replies: const []
+            ? Container(
+                decoration: BoxDecoration(
+                  color: Theme.of(context).colorScheme.surface,
+                  borderRadius: BorderRadius.circular(10),
+                ),
+                padding:
+                    const EdgeInsets.symmetric(horizontal: 16, vertical: 16),
+                child: ListView.builder(
+                  itemCount: comments?.length,
+                  shrinkWrap: true,
+                  physics: const NeverScrollableScrollPhysics(),
+                  itemBuilder: (context, index) {
+                    return _buildCommentItem(
+                      context: context,
+                      postId: postId,
+                      comment: comments?[index],
+                      replies: comments?[index].replies.map((e) {
+                        return _buildCommentItem(
+                            context: context,
+                            postId: postId,
+                            comment: Comment(
+                                id: e.id,
+                                content: e.content,
+                                createdAt: e.createdAt,
+                                user: e.user,
+                                replies: const []),
+                            isCommentReply: true);
+                      }).toList(),
+                    );
+                  },
+                ),
+              )
+            : SizedBox(
+                width: double.infinity,
+                child: Column(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    SvgPicture.asset('assets/icons/ic_no_comment.svg',
+                        width: 74),
+                    const SizedBox(height: 18),
+                    Text(
+                      'No Comment',
+                      style: Theme.of(context)
+                          .textTheme
+                          .headlineMedium
+                          ?.copyWith(
+                              color: Theme.of(context).colorScheme.onTertiary),
                     ),
-                    isCommentReply: true
-                  );
-                }).toList(),
-              );
-            },
-          ),
-        )
-        : 
-        SizedBox(
-          width: double.infinity,
-          child: Column(
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: [
-              SvgPicture.asset('assets/icons/ic_no_comment.svg', width: 74),
-              const SizedBox(height: 18),
-              Text(
-                'No Comment',
-                style: Theme.of(context).textTheme.headlineMedium?.copyWith(color: Theme.of(context).colorScheme.onTertiary),
+                    const SizedBox(height: 5),
+                    Text(
+                      'Be the first to say something!',
+                      style: Theme.of(context).textTheme.labelMedium?.copyWith(
+                          color: Theme.of(context).colorScheme.onTertiary),
+                    ),
+                  ],
+                ),
               ),
-              const SizedBox(height: 5),
-              Text(
-                'Be the first to say something!',
-                style: Theme.of(context).textTheme.labelMedium?.copyWith(color: Theme.of(context).colorScheme.onTertiary),
-              ),
-            ],
-          ),
-        ),
         SizedBox(
           height: MediaQuery.of(context).size.height - 500,
         ),
@@ -491,10 +500,12 @@ class ActivityDetailCard extends StatelessWidget {
                   width: 20,
                   height: 20,
                   fit: BoxFit.cover,
-                  placeholder: (context, url) => const ShimmerLoadingCircle(size: 20),
+                  placeholder: (context, url) =>
+                      const ShimmerLoadingCircle(size: 20),
                   errorWidget: (context, url, error) => const CircleAvatar(
                     radius: 20,
-                    backgroundImage: AssetImage('assets/images/empty_profile.png'),
+                    backgroundImage:
+                        AssetImage('assets/images/empty_profile.png'),
                   ),
                 ),
               ),
@@ -503,19 +514,19 @@ class ActivityDetailCard extends StatelessWidget {
               Text(
                 comment?.user?.name ?? '',
                 style: Theme.of(context).textTheme.labelSmall?.copyWith(
-                  fontWeight: FontWeight.w700,
-                  fontSize: 11,
-                  color: const Color(0xFFA5A5A5),
-                ),
+                      fontWeight: FontWeight.w700,
+                      fontSize: 11,
+                      color: const Color(0xFFA5A5A5),
+                    ),
               ),
               const SizedBox(width: 10),
               Text(
                 comment?.createdAt?.toHumanPostDate() ?? '',
                 style: Theme.of(context).textTheme.labelMedium?.copyWith(
-                  fontWeight: FontWeight.w400,
-                  fontSize: 11,
-                  color: const Color(0xFFA5A5A5),
-                ),
+                      fontWeight: FontWeight.w400,
+                      fontSize: 11,
+                      color: const Color(0xFFA5A5A5),
+                    ),
               ),
             ],
           ),
@@ -529,28 +540,30 @@ class ActivityDetailCard extends StatelessWidget {
                 Text(
                   comment?.content ?? '',
                   style: Theme.of(context).textTheme.labelMedium?.copyWith(
-                    fontWeight: FontWeight.w400,
-                    fontSize: 11,
-                    color: const Color(0xFFA5A5A5),
-                    height: 1.8,
-                  ),
+                        fontWeight: FontWeight.w400,
+                        fontSize: 11,
+                        color: const Color(0xFFA5A5A5),
+                        height: 1.8,
+                      ),
                 ),
                 const SizedBox(height: 6),
-                isCommentReply 
-                ? const SizedBox()
-                : TextButton(
-                  onPressed: () => controller.replyToAndFocusComment(replyTo: comment),
-                  style: TextButton.styleFrom(
-                    padding: EdgeInsets.zero,
-                    minimumSize: const Size(0, 0),
-                    tapTargetSize: MaterialTapTargetSize.shrinkWrap,
-                    alignment: Alignment.centerLeft,
-                  ),
-                  child: Text(
-                    'Reply',
-                    style: Theme.of(context).textTheme.headlineSmall?.copyWith(fontSize: 12)
-                  ),
-                ),
+                isCommentReply
+                    ? const SizedBox()
+                    : TextButton(
+                        onPressed: () =>
+                            controller.replyToAndFocusComment(replyTo: comment),
+                        style: TextButton.styleFrom(
+                          padding: EdgeInsets.zero,
+                          minimumSize: const Size(0, 0),
+                          tapTargetSize: MaterialTapTargetSize.shrinkWrap,
+                          alignment: Alignment.centerLeft,
+                        ),
+                        child: Text('Reply',
+                            style: Theme.of(context)
+                                .textTheme
+                                .headlineSmall
+                                ?.copyWith(fontSize: 12)),
+                      ),
                 const SizedBox(height: 10),
                 // Kalau ada balasan (nested replies)
                 if (replies != null) ...replies,
@@ -561,5 +574,4 @@ class ActivityDetailCard extends StatelessWidget {
       ),
     );
   }
-
 }

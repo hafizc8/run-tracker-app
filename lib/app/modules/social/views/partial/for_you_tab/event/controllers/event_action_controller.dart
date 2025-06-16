@@ -10,6 +10,7 @@ import 'package:zest_mobile/app/core/di/service_locator.dart';
 import 'package:zest_mobile/app/core/exception/app_exception.dart';
 import 'package:zest_mobile/app/core/exception/handler/app_exception_handler_info.dart';
 import 'package:zest_mobile/app/core/extension/bool_extension.dart';
+import 'package:zest_mobile/app/core/extension/time_extension.dart';
 import 'package:zest_mobile/app/core/models/enums/app_exception_enum.dart';
 import 'package:zest_mobile/app/core/models/forms/store_event_form.dart';
 import 'package:zest_mobile/app/core/models/model/club_mini_model.dart';
@@ -23,6 +24,7 @@ import 'package:zest_mobile/app/routes/app_routes.dart';
 class EventActionController extends GetxController {
   var dateController = TextEditingController();
   var addressController = TextEditingController();
+  var placeNameController = TextEditingController();
   var imageController = TextEditingController();
 
   final _eventService = sl<EventService>();
@@ -65,6 +67,7 @@ class EventActionController extends GetxController {
     original.value = EventStoreFormModel();
     dateController.text = '';
     addressController.text = '';
+    placeNameController.text = '';
     imageController.text = '';
     isEdit.value = false;
     event.value = null;
@@ -86,23 +89,44 @@ class EventActionController extends GetxController {
         context: context,
         barrierDismissible: false,
         builder: (context) {
+          startTime = form.value.startTime?.toTimeOfDay();
+          endTime = form.value.endTime?.toTimeOfDay();
           return StatefulBuilder(
             builder: (context, setState) {
               return AlertDialog(
                 surfaceTintColor: Colors.white,
-                title: Text('Choose Time'),
+                title: const Text('Choose Time'),
                 content: Column(
                   mainAxisSize: MainAxisSize.min,
                   children: [
                     // Waktu Mulai
                     ListTile(
-                      title: Text('Start Time'),
-                      subtitle: Text(
-                        startTime != null
-                            ? '${startTime!.hour.toString().padLeft(2, '0')}.${startTime!.minute.toString().padLeft(2, '0')}'
-                            : 'No time selected',
+                      title: const Text('Start Time'),
+                      subtitle: Row(
+                        children: [
+                          if (startTime != null) ...[
+                            IconButton(
+                              onPressed: () {
+                                setState(() {
+                                  startTime = null;
+                                  endTime = null;
+                                });
+                              },
+                              icon: const Icon(
+                                Icons.delete,
+                                color: Colors.red,
+                              ),
+                            ),
+                            const SizedBox(width: 8),
+                          ],
+                          Text(
+                            startTime != null
+                                ? '${startTime!.hour.toString().padLeft(2, '0')}.${startTime!.minute.toString().padLeft(2, '0')}'
+                                : 'No time selected',
+                          ),
+                        ],
                       ),
-                      trailing: Icon(Icons.access_time),
+                      trailing: const Icon(Icons.access_time),
                       onTap: () async {
                         final picked = await showTimePicker(
                           context: context,
@@ -116,10 +140,26 @@ class EventActionController extends GetxController {
                     // Waktu Berakhir
                     ListTile(
                       title: const Text('End Time'),
-                      subtitle: Text(
-                        endTime != null
-                            ? '${endTime!.hour.toString().padLeft(2, '0')}.${endTime!.minute.toString().padLeft(2, '0')}'
-                            : 'No time selected',
+                      subtitle: Row(
+                        children: [
+                          if (endTime != null) ...[
+                            IconButton(
+                              onPressed: () {
+                                setState(() => endTime = null);
+                              },
+                              icon: const Icon(
+                                Icons.delete,
+                                color: Colors.red,
+                              ),
+                            ),
+                            const SizedBox(width: 8),
+                          ],
+                          Text(
+                            endTime != null
+                                ? '${endTime!.hour.toString().padLeft(2, '0')}.${endTime!.minute.toString().padLeft(2, '0')}'
+                                : 'No time selected',
+                          ),
+                        ],
                       ),
                       trailing: const Icon(Icons.access_time),
                       onTap: () async {
@@ -173,7 +213,16 @@ class EventActionController extends GetxController {
         form.value = form.value.copyWith(
           datetime: pickedDate,
           startTime: formatTimeOfDayToHms(startTime!),
-          endTime: endTime == null ? null : formatTimeOfDayToHms(endTime!),
+          endTime: endTime == null ? 'null' : formatTimeOfDayToHms(endTime!),
+          errors: form.value.errors,
+          field: 'date',
+        );
+      } else {
+        dateController.text = '';
+        form.value = form.value.copyWith(
+          datetime: null,
+          startTime: 'null',
+          endTime: 'null',
           errors: form.value.errors,
           field: 'date',
         );
@@ -339,7 +388,6 @@ class EventActionController extends GetxController {
       final EventModel? res =
           await _eventService.updateEvent(form.value, event.value?.id ?? '');
       if (res != null) {
-        eventController.detailEvent(res.id!);
         if (from.value == 'list') {
           Get.offNamed(AppRoutes.socialYourPageEventDetail,
               arguments: {'eventId': res.id});
@@ -400,10 +448,10 @@ class EventActionController extends GetxController {
     tempSelectedIds.clear();
     tempSelectedIds.value = List.from(form.value.shareToClubs?.toList() ?? []);
     Get.bottomSheet(
-      backgroundColor: Color(0xFF4C4C4C),
-      FractionallySizedBox(
+      backgroundColor: const Color(0xFF4C4C4C),
+      const FractionallySizedBox(
         heightFactor: 0.5,
-        child: const AddClubs(),
+        child: AddClubs(),
       ),
       isScrollControlled: true,
     );

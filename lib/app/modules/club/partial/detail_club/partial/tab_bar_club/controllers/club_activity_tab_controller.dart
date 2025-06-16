@@ -8,10 +8,6 @@ import 'package:zest_mobile/app/core/services/club_service.dart';
 import 'package:zest_mobile/app/core/shared/helpers/debouncer.dart';
 
 class ClubActivityTabController extends GetxController {
-  final String clubId;
-
-  ClubActivityTabController({required this.clubId});
-
   ScrollController clubActivityScrollController = ScrollController();
   final _debouncer = Debouncer(milliseconds: 500);
   RxBool isLoading = false.obs;
@@ -20,16 +16,16 @@ class ClubActivityTabController extends GetxController {
   var page = 1;
   RxList<ClubActivitiesModel?> activities = <ClubActivitiesModel?>[].obs;
 
+  var clubId = ''.obs;
   @override
   void onInit() {
     super.onInit();
+    clubId.value = Get.arguments as String;
     getClubActivity();
     clubActivityScrollController.addListener(() {
       final position = clubActivityScrollController.position;
 
       bool isNearBottom = position.pixels >= position.maxScrollExtent - 200;
-
-      print('clubActivityScrollController ${isNearBottom}, ${position.pixels}, ${position.maxScrollExtent}');
 
       _debouncer.run(() {
         if (isNearBottom && !isLoading.value && !hasReacheMax.value) {
@@ -45,14 +41,14 @@ class ClubActivityTabController extends GetxController {
     try {
       isLoading.value = true;
 
-      final response = await _clubService.getClubActivity(clubId: clubId, page: page);
+      final response =
+          await _clubService.getClubActivity(clubId: clubId.value, page: page);
 
       // Deteksi akhir halaman dengan lebih akurat
-      if (
-          (response.pagination.next == null || response.pagination.next!.isEmpty) || 
-          response.data.isEmpty 
-          || response.data.length < 20
-      ) {
+      if ((response.pagination.next == null ||
+              response.pagination.next!.isEmpty) ||
+          response.data.isEmpty ||
+          response.data.length < 20) {
         hasReacheMax.value = true;
       }
 
@@ -61,7 +57,6 @@ class ClubActivityTabController extends GetxController {
 
       // Increment page terakhir
       page++;
-
     } on AppException catch (e) {
       AppExceptionHandlerInfo.handle(e);
     } catch (e) {
@@ -70,6 +65,4 @@ class ClubActivityTabController extends GetxController {
       isLoading.value = false;
     }
   }
-
-
 }

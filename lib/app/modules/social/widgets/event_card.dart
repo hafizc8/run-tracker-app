@@ -1,5 +1,6 @@
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/widgets.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:get/get.dart';
 import 'package:intl/intl.dart';
@@ -19,14 +20,12 @@ class EventCard extends StatelessWidget {
       this.onTap,
       this.onCancelEvent,
       this.eventModel,
-      this.isAction = false,
       this.backgroundColor = Colors.white});
 
   final EventModel? eventModel;
   final void Function()? onTap;
   final void Function()? onCancelEvent;
   final Color backgroundColor;
-  final bool isAction;
 
   final eventController = Get.find<EventController>();
   final eventActionController = Get.find<EventActionController>();
@@ -48,32 +47,34 @@ class EventCard extends StatelessWidget {
           mainAxisSize: MainAxisSize.min,
           children: [
             // Image with button share in right top corner
-            AspectRatio(
-              aspectRatio: 1,
-              child: ClipRRect(
-                borderRadius: BorderRadius.circular(12),
-                child: Image.network(
-                  eventModel?.imageUrl ?? '',
-                  fit: BoxFit.cover,
-                  errorBuilder: (context, error, stackTrace) => Container(
-                    color: Colors.grey.shade800,
-                    child: const Center(
-                      child: Icon(Icons.broken_image,
-                          size: 64, color: Colors.grey),
-                    ),
-                  ),
-                  loadingBuilder: (context, child, loadingProgress) {
-                    if (loadingProgress == null) return child;
-                    return Container(
+            if (eventModel?.imageUrl != null) ...[
+              AspectRatio(
+                aspectRatio: 1,
+                child: ClipRRect(
+                  borderRadius: BorderRadius.circular(12),
+                  child: Image.network(
+                    eventModel?.imageUrl ?? '',
+                    fit: BoxFit.cover,
+                    errorBuilder: (context, error, stackTrace) => Container(
                       color: Colors.grey.shade800,
                       child: const Center(
-                        child: CircularProgressIndicator(),
+                        child: Icon(Icons.broken_image,
+                            size: 64, color: Colors.grey),
                       ),
-                    );
-                  },
+                    ),
+                    loadingBuilder: (context, child, loadingProgress) {
+                      if (loadingProgress == null) return child;
+                      return Container(
+                        color: Colors.grey.shade800,
+                        child: const Center(
+                          child: CircularProgressIndicator(),
+                        ),
+                      );
+                    },
+                  ),
                 ),
               ),
-            ),
+            ],
             const SizedBox(height: 15),
             Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -123,75 +124,75 @@ class EventCard extends StatelessWidget {
                     ),
                   ),
                 ),
-                Visibility(
-                  visible: !isAction,
-                  child: Row(
-                    children: [
-                      SvgPicture.asset(
+                Row(
+                  children: [
+                    GestureDetector(
+                      child: SvgPicture.asset(
                         'assets/icons/share.svg',
                         color: Theme.of(context).colorScheme.primary,
                         height: 22,
                         width: 27,
                       ),
-                      const SizedBox(width: 16),
-                      Visibility(
-                        visible: eventModel?.isOwner == 1 &&
-                            (eventModel?.datetime ?? DateTime.now())
-                                .isDateTimePassed(
-                                    eventModel?.startTime ?? TimeOfDay.now()) &&
-                            eventModel?.cancelledAt == null,
-                        child: PopupMenuButton<String>(
-                          onSelected: (value) async {
-                            // Handle the selection
-                            if (value == 'edit_event') {
-                              // Handle Edit Event action
-                              eventActionController.gotToEdit(eventModel!,
-                                  from: 'list');
-                            } else if (value == 'cancel_event') {
-                              // Handle Cancel Event action
-                              if (onCancelEvent != null) {
-                                onCancelEvent!();
-                                return;
-                              }
-                              await eventController
-                                  .cancelEvent(eventModel?.id ?? '');
+                    ),
+                    const SizedBox(width: 16),
+                    Visibility(
+                      visible: eventModel?.isOwner == 1 &&
+                          (eventModel?.datetime ?? DateTime.now())
+                              .isDateTimePassed(
+                                  eventModel?.startTime ?? TimeOfDay.now()) &&
+                          eventModel?.cancelledAt == null,
+                      child: PopupMenuButton<String>(
+                        onSelected: (value) async {
+                          // Handle the selection
+                          if (value == 'edit_event') {
+                            // Handle Edit Event action
+                            eventActionController.gotToEdit(eventModel!,
+                                from: 'list');
+                          } else if (value == 'cancel_event') {
+                            // Handle Cancel Event action
+                            if (onCancelEvent != null) {
+                              onCancelEvent!();
+                              return;
                             }
-                          },
-                          surfaceTintColor:
-                              Theme.of(context).colorScheme.onPrimary,
-                          itemBuilder: (BuildContext context) {
-                            return [
-                              PopupMenuItem<String>(
-                                value: 'edit_event',
-                                child: Text(
-                                  'Edit Event',
-                                  style: Theme.of(context)
-                                      .textTheme
-                                      .bodyMedium
-                                      ?.copyWith(fontWeight: FontWeight.w600),
-                                ),
+
+                            await eventController
+                                .confirmCancelEvent(eventModel!.id!);
+                          }
+                        },
+                        surfaceTintColor:
+                            Theme.of(context).colorScheme.onPrimary,
+                        itemBuilder: (BuildContext context) {
+                          return [
+                            PopupMenuItem<String>(
+                              value: 'edit_event',
+                              child: Text(
+                                'Edit Event',
+                                style: Theme.of(context)
+                                    .textTheme
+                                    .bodyMedium
+                                    ?.copyWith(fontWeight: FontWeight.w600),
                               ),
-                              PopupMenuItem<String>(
-                                value: 'cancel_event',
-                                child: Text(
-                                  'Cancel Event',
-                                  style: Theme.of(context)
-                                      .textTheme
-                                      .bodyMedium
-                                      ?.copyWith(fontWeight: FontWeight.w600),
-                                ),
+                            ),
+                            PopupMenuItem<String>(
+                              value: 'cancel_event',
+                              child: Text(
+                                'Cancel Event',
+                                style: Theme.of(context)
+                                    .textTheme
+                                    .bodyMedium
+                                    ?.copyWith(fontWeight: FontWeight.w600),
                               ),
-                            ];
-                          },
-                          child: Icon(
-                            Icons.more_vert,
-                            size: 27,
-                            color: Theme.of(context).colorScheme.primary,
-                          ),
+                            ),
+                          ];
+                        },
+                        child: Icon(
+                          Icons.more_vert,
+                          size: 27,
+                          color: Theme.of(context).colorScheme.primary,
                         ),
-                      )
-                    ],
-                  ),
+                      ),
+                    )
+                  ],
                 ),
               ],
             ),
@@ -212,8 +213,8 @@ class EventCard extends StatelessWidget {
                       ?.map((e) => e.user?.imageUrl ?? '')
                       .toList() ??
                   [],
-              avatarSize: 50,
-              overlapOffset: 55,
+              avatarSize: 29,
+              overlapOffset: 32,
               maxVisible: 3,
             ),
             const SizedBox(height: 8),
@@ -265,17 +266,6 @@ class EventCard extends StatelessWidget {
               ],
             ),
             const SizedBox(height: 15),
-            if (isAction) ...[
-              GradientElevatedButton(
-                onPressed: () {},
-                child: SvgPicture.asset(
-                  'assets/icons/share.svg',
-                  color: Theme.of(context).colorScheme.primary,
-                  height: 24,
-                  width: 24,
-                ),
-              ),
-            ],
 
             if (eventModel?.cancelledAt != null) ...[
               GradientElevatedButton(
@@ -290,73 +280,24 @@ class EventCard extends StatelessWidget {
             if (eventModel?.cancelledAt == null &&
                 (eventModel?.datetime ?? DateTime.now()).isDateTimePassed(
                     eventModel?.startTime ?? TimeOfDay.now()) &&
-                eventModel?.isPublic == 1) ...[
+                eventModel?.isPublic == 1 &&
+                eventModel?.isOwner == 0) ...[
               GradientElevatedButton(
                 onPressed: eventModel?.isJoined == 0
                     ? () {
-                        eventController.accLeaveJoinEvent(eventModel?.id ?? '');
+                        eventController
+                            .confirmAccLeaveJoinEvent(eventModel?.id ?? '');
                       }
                     : null,
-                child: Obx(
-                  () => Visibility(
-                    visible: eventController.isLoadingAction.value,
-                    replacement: Text(
-                      (eventModel?.isJoined ?? 0).toEventStatus,
-                      style: Theme.of(context).textTheme.labelMedium?.copyWith(
-                            fontSize: 13,
-                            fontWeight: FontWeight.bold,
-                          ),
-                    ),
-                    child: CustomCircularProgressIndicator(),
-                  ),
+                child: Text(
+                  (eventModel?.isJoined ?? 0).toEventStatus,
+                  style: Theme.of(context).textTheme.labelMedium?.copyWith(
+                        fontSize: 13,
+                        fontWeight: FontWeight.bold,
+                      ),
                 ),
               ),
             ]
-            // Visibility(
-            //   visible: !isAction,
-            //   replacement: GradientElevatedButton(
-            //     onPressed: () {},
-            //     child: SvgPicture.asset(
-            //       'assets/icons/share.svg',
-            //       color: Theme.of(context).colorScheme.primary,
-            //       height: 24,
-            //       width: 24,
-            //     ),
-            //   ),
-            //   child: Visibility(
-            //     visible: eventModel?.cancelledAt != null,
-            //     replacement: Visibility(
-            //       visible: (eventModel?.datetime ?? DateTime.now())
-            //           .isDateTimePassed(
-            //               eventModel?.startTime ?? TimeOfDay.now()),
-            //       child: GradientElevatedButton(
-            //         onPressed: eventModel?.isJoined == 0
-            //             ? () {
-            //                 eventController
-            //                     .accLeaveJoinEvent(eventModel?.id ?? '');
-            //               }
-            //             : null,
-            //         child: Obx(
-            //           () => Visibility(
-            //             visible: eventController.isLoadingAction.value,
-            //             replacement:
-            //                 Text((eventModel?.isJoined ?? 0).toEventStatus),
-            //             child: CircularProgressIndicator(
-            //               color: Theme.of(context).colorScheme.onPrimary,
-            //             ),
-            //           ),
-            //         ),
-            //       ),
-            //     ),
-            //     child: GradientElevatedButton(
-            //       onPressed: null,
-            //       child: Text(
-            //         'Cancelled',
-            //         style: Theme.of(context).textTheme.labelSmall,
-            //       ),
-            //     ),
-            //   ),
-            // ),
           ],
         ),
       ),

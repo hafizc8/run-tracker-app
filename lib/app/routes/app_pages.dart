@@ -29,6 +29,8 @@ import 'package:zest_mobile/app/modules/club/partial/preview_club/bindings/previ
 import 'package:zest_mobile/app/modules/club/partial/preview_club/views/preview_club_view.dart';
 import 'package:zest_mobile/app/modules/club/partial/update_club/bindings/update_club_binding.dart';
 import 'package:zest_mobile/app/modules/club/partial/update_club/views/update_club_view.dart';
+import 'package:zest_mobile/app/modules/social/views/partial/for_you_tab/choose_location_event/bindings/choose_location_event_binding.dart';
+import 'package:zest_mobile/app/modules/social/views/partial/for_you_tab/choose_location_event/views/choose_location_event_view.dart';
 import 'package:zest_mobile/app/modules/social/views/partial/for_you_tab/event/bindings/event_invite_binding.dart';
 import 'package:zest_mobile/app/modules/social/views/partial/for_you_tab/event/bindings/event_detail_binding.dart';
 import 'package:zest_mobile/app/modules/social/views/partial/for_you_tab/event/bindings/event_see_all_participant_binding.dart';
@@ -155,6 +157,11 @@ class AppPages {
       name: AppRoutes.socialYourPageEventDetail,
       page: () => SocialForYouEventDetailView(),
       binding: EventDetailBinding(),
+    ),
+    GetPage(
+      name: AppRoutes.chooseLocationEvent,
+      page: () => const ChooseLocationEventView(),
+      binding: ChooseLocationEventBinding(),
     ),
     GetPage(
       name: AppRoutes.socialYourPageEventDetailInviteFriend,

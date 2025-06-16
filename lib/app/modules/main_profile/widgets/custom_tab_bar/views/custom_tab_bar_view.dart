@@ -2,6 +2,7 @@ import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:zest_mobile/app/core/extension/date_extension.dart';
+import 'package:zest_mobile/app/core/models/model/event_model.dart';
 import 'package:zest_mobile/app/core/shared/widgets/card_activity.dart';
 import 'package:zest_mobile/app/core/shared/widgets/card_challenge.dart';
 import 'package:zest_mobile/app/core/shared/widgets/shimmer_loading_circle.dart';
@@ -121,82 +122,13 @@ class CustomTabBar extends GetView<TabBarController> {
               return Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  Obx(
-                    () => Visibility(
-                      visible: profileController.isLoadingUpComingEvent.value,
-                      replacement: Row(
-                        mainAxisAlignment: MainAxisAlignment.center,
-                        children: profileController.upComingEvents
-                            .map(
-                              (element) => Expanded(
-                                child: Container(
-                                  margin:
-                                      const EdgeInsets.symmetric(horizontal: 5),
-                                  decoration: const BoxDecoration(
-                                    color: Colors.transparent,
-                                  ),
-                                  child: Column(
-                                    mainAxisAlignment: MainAxisAlignment.center,
-                                    children: [
-                                      ClipOval(
-                                        child: CachedNetworkImage(
-                                          imageUrl: element.imageUrl ?? '',
-                                          width: 50,
-                                          height: 50,
-                                          fit: BoxFit.cover,
-                                          placeholder: (context, url) =>
-                                              const ShimmerLoadingCircle(
-                                                  size: 50),
-                                          errorWidget: (context, url, error) =>
-                                              const CircleAvatar(
-                                            radius: 32,
-                                            backgroundImage: AssetImage(
-                                                'assets/images/empty_profile.png'),
-                                          ),
-                                        ),
-                                      ),
-                                      const SizedBox(height: 5),
-                                      Column(
-                                        children: [
-                                          Text(
-                                            element.title ?? '-',
-                                            maxLines: 1,
-                                            overflow: TextOverflow.ellipsis,
-                                            textAlign: TextAlign.center,
-                                          ),
-                                          const SizedBox(height: 5),
-                                          Row(
-                                            children: [
-                                              const Icon(Icons.calendar_month),
-                                              const SizedBox(width: 5),
-                                              Text(
-                                                element.datetime
-                                                        ?.toDDMMMyyyyString() ??
-                                                    '-',
-                                                maxLines: 1,
-                                                overflow: TextOverflow.ellipsis,
-                                                textAlign: TextAlign.center,
-                                              ),
-                                            ],
-                                          ),
-                                        ],
-                                      ),
-                                    ],
-                                  ),
-                                ),
-                              ),
-                            )
-                            .toList(),
-                      ),
-                      child: const Center(
-                        child: CircularProgressIndicator(),
-                      ),
-                    ),
-                  ),
-                  const SizedBox(height: 8),
                   Text(
-                    'Created Events',
-                    style: Theme.of(context).textTheme.headlineSmall,
+                    'Events List',
+                    style: Theme.of(context).textTheme.headlineSmall?.copyWith(
+                          color: Color(0xFFA5A5A5),
+                          fontSize: 17,
+                          fontWeight: FontWeight.w400,
+                        ),
                   ),
                   const SizedBox(height: 8),
                   Obx(() {
@@ -213,7 +145,24 @@ class CustomTabBar extends GetView<TabBarController> {
                         return EventCard(
                           backgroundColor:
                               Theme.of(context).colorScheme.surface,
-                          onTap: null,
+                          onTap: () async {
+                            if (profileController.events[index].cancelledAt !=
+                                null) {
+                              return;
+                            }
+                            var result = await Get.toNamed(
+                                AppRoutes.socialYourPageEventDetail,
+                                arguments: {
+                                  'eventId': profileController.events[index].id
+                                });
+                            if (result != null && result is EventModel) {
+                              int index = profileController.events.indexWhere(
+                                  (element) => element.id == result.id);
+                              profileController.events[index] = result.copyWith(
+                                userOnEventsCount: result.userOnEvents?.length,
+                              );
+                            }
+                          },
                           onCancelEvent: () =>
                               profileController.cancelEvent(event.id ?? ''),
                           eventModel: event,

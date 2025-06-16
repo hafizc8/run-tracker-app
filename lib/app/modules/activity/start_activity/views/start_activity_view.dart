@@ -58,7 +58,8 @@ class StartActivityView extends GetView<StartActivityController> {
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
                 Container(
-                  padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 12),
+                  padding:
+                      const EdgeInsets.symmetric(horizontal: 24, vertical: 12),
                   decoration: BoxDecoration(
                     color: const Color(0xFF373737),
                     borderRadius: BorderRadius.circular(8),
@@ -78,7 +79,8 @@ class StartActivityView extends GetView<StartActivityController> {
                 ),
                 const SizedBox(width: 16),
                 Container(
-                  padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 12),
+                  padding:
+                      const EdgeInsets.symmetric(horizontal: 24, vertical: 12),
                   decoration: BoxDecoration(
                     color: const Color(0xFF373737),
                     borderRadius: BorderRadius.circular(8),
@@ -108,22 +110,24 @@ class StartActivityView extends GetView<StartActivityController> {
               ],
             ),
             const SizedBox(height: 24),
-            Obx(
-              () {
-                return SizedBox(
+            Obx(() {
+              return SizedBox(
                   height: MediaQuery.of(context).size.height * 0.5,
                   child: Visibility(
                     visible: controller.currentPosition.value != null,
-                    replacement: const Center(child: CircularProgressIndicator()),
+                    replacement:
+                        const Center(child: CircularProgressIndicator()),
                     child: GoogleMap(
                       initialCameraPosition: CameraPosition(
-                        target: controller.currentPosition.value ?? const LatLng(-6.2615, 106.8106),
+                        target: controller.currentPosition.value ??
+                            const LatLng(-6.2615, 106.8106),
                         zoom: 16,
                       ),
                       markers: {
                         Marker(
                           markerId: const MarkerId('currentLocation'),
-                          position: controller.currentPosition.value ?? const LatLng(-6.2615, 106.8106),
+                          position: controller.currentPosition.value ??
+                              const LatLng(-6.2615, 106.8106),
                           icon: BitmapDescriptor.defaultMarker,
                         ),
                       },
@@ -132,10 +136,8 @@ class StartActivityView extends GetView<StartActivityController> {
                       zoomControlsEnabled: false,
                       minMaxZoomPreference: const MinMaxZoomPreference(5, 20),
                     ),
-                  )
-                );
-              }
-            ),
+                  ));
+            }),
             const SizedBox(height: 48),
             Obx(
               () {

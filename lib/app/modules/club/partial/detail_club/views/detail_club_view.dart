@@ -4,6 +4,7 @@ import 'package:flutter_svg/flutter_svg.dart';
 import 'package:get/get.dart';
 import 'package:zest_mobile/app/core/models/model/club_mini_model.dart';
 import 'package:zest_mobile/app/core/models/model/club_model.dart';
+import 'package:zest_mobile/app/core/models/model/event_model.dart';
 import 'package:zest_mobile/app/core/shared/helpers/number_helper.dart';
 import 'package:zest_mobile/app/core/shared/widgets/shimmer_loading_circle.dart';
 import 'package:zest_mobile/app/core/shared/widgets/shimmer_loading_list.dart';
@@ -347,19 +348,13 @@ class DetailClubView extends GetView<DetailClubController> {
               final res = await Get.toNamed(AppRoutes.eventCreate);
 
               if (res != null) {
-                showDialog(
-                  context: context,
-                  builder: (context) {
-                    return Dialog(
-                      surfaceTintColor: Colors.transparent,
-                      backgroundColor: Colors.transparent,
-                      child: EventCardDialog(
-                        eventModel: res,
-                        onTap: null,
-                      ),
-                    );
-                  },
-                );
+                var result = await Get.toNamed(
+                    AppRoutes.socialYourPageEventDetail,
+                    arguments: {'eventId': res.id});
+
+                if (result != null && result is EventModel) {
+                  clubActivityTabController.getClubActivity();
+                }
               }
             } else if (value == 'create_a_challange') {
               Get.snackbar('Coming soon', 'Feature is coming soon');

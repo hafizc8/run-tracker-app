@@ -1,5 +1,6 @@
 import 'dart:async';
 
+import 'package:flutter/material.dart';
 import 'package:geolocator/geolocator.dart';
 import 'package:get/get.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
@@ -10,13 +11,13 @@ import 'package:zest_mobile/app/core/models/model/location_model.dart';
 import 'package:zest_mobile/app/core/models/model/select_place_model.dart';
 import 'package:zest_mobile/app/core/services/location_service.dart';
 
-class ChooseLocationController extends GetxController {
+class ChooseLocationEventController extends GetxController {
   final _locationService = sl<LocationService>();
   var isLoading = false.obs;
   Rxn<LatLng> currentPosition = Rxn<LatLng>(); // Default Jakarta
   Rxn<LatLng> lastLatLng = Rxn<LatLng>();
   GoogleMapController? mapController;
-
+  TextEditingController placeNameController = TextEditingController(text: '');
   final RxString address = ''.obs;
 
   Timer? _debounce;
@@ -33,10 +34,15 @@ class ChooseLocationController extends GetxController {
     if (args != null) {
       if (args['lat'] != null && args['lng'] != null) {
         currentPosition.value = LatLng(args['lat'], args['lng']);
+      } else {
+        currentPosition.value = const LatLng(-6.2615, 106.8106);
       }
 
-      if (args['address'] != null) {
+      if (args['address'] != null && args['address'] != '') {
         address.value = args['address'];
+      }
+      if (args['placeName'] != null && args['placeName'] != '') {
+        placeNameController.text = args['placeName'];
       }
     } else {
       currentPosition.value = const LatLng(-6.2615, 106.8106);
@@ -119,6 +125,7 @@ class ChooseLocationController extends GetxController {
       SelectPlaceModel res = await _locationService.selectPlace(placeId);
 
       await setMarkerAndMoveCamera(LatLng(res.latitude, res.longitude));
+      placeNameController.text = res.placeName;
     } on AppException catch (e) {
       AppExceptionHandlerInfo.handle(e);
     } catch (e) {

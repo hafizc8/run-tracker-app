@@ -21,6 +21,32 @@ class PostMediaScroll extends StatelessWidget {
     final isSingleMedia = mediaItems.length == 1;
     // Atur lebar item berdasarkan jumlah media
     final mediaWidth = isSingleMedia ? screenWidth * 0.80 : screenWidth * 0.7;
+    buildSingleMedia(String url) {
+      return SizedBox(
+        height: 300,
+        width: double.infinity,
+        child: ClipRRect(
+          borderRadius: BorderRadius.circular(12),
+          child: _isVideo(url)
+              ? PostVideoPlayer(videoUrl: url)
+              : Image.network(
+                  url,
+                  fit: BoxFit.cover,
+                  errorBuilder: (context, error, _) => Container(
+                    color: Colors.grey.shade300,
+                    child: const Center(child: Icon(Icons.broken_image)),
+                  ),
+                  loadingBuilder: (context, child, progress) {
+                    if (progress == null) return child;
+                    return Container(
+                      color: Colors.grey.shade300,
+                      child: const Center(child: CircularProgressIndicator()),
+                    );
+                  },
+                ),
+        ),
+      );
+    }
 
     if (isSingleMedia) {
       return ClipRRect(

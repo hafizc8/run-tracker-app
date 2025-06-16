@@ -20,9 +20,9 @@ class ProfileView extends GetView<ProfileController> {
         title: Text(
           'Profile',
           style: Theme.of(context).textTheme.headlineMedium?.copyWith(
-            fontWeight: FontWeight.w600,
-            color: Theme.of(context).colorScheme.onBackground,
-          ),
+                fontWeight: FontWeight.w600,
+                color: Theme.of(context).colorScheme.onBackground,
+              ),
         ),
         centerTitle: true,
         automaticallyImplyLeading: false,
@@ -51,7 +51,6 @@ class ProfileView extends GetView<ProfileController> {
                   color: Theme.of(context).colorScheme.background,
                 ),
                 child: Stack(
-                  clipBehavior: Clip.none,
                   children: [
                     Container(
                       padding: const EdgeInsets.only(
@@ -102,37 +101,45 @@ class ProfileView extends GetView<ProfileController> {
                                               CrossAxisAlignment.start,
                                           children: [
                                             ConstrainedBox(
-                                              constraints: BoxConstraints(maxWidth: MediaQuery.of(context).size.width * 0.58),
+                                              constraints: BoxConstraints(
+                                                  maxWidth:
+                                                      MediaQuery.of(context)
+                                                              .size
+                                                              .width *
+                                                          0.58),
                                               child: Text(
-                                                controller.user.value?.name ?? '-',
+                                                controller.user.value?.name ??
+                                                    '-',
                                                 maxLines: 2,
-                                                overflow:
-                                                    TextOverflow.ellipsis,
+                                                overflow: TextOverflow.ellipsis,
                                                 style: Theme.of(context)
                                                     .textTheme
                                                     .headlineMedium
                                                     ?.copyWith(
-                                                      color: Theme.of(
-                                                              context)
+                                                      color: Theme.of(context)
                                                           .colorScheme
                                                           .onBackground,
                                                     ),
                                               ),
                                             ),
                                             ConstrainedBox(
-                                              constraints: BoxConstraints(maxWidth: MediaQuery.of(context).size.width * 0.58),
+                                              constraints: BoxConstraints(
+                                                  maxWidth:
+                                                      MediaQuery.of(context)
+                                                              .size
+                                                              .width *
+                                                          0.58),
                                               child: Text(
                                                 '${controller.user.value?.province ?? '-'}, ${controller.user.value?.country ?? '-'}',
                                                 maxLines: 2,
-                                                overflow:
-                                                    TextOverflow.ellipsis,
+                                                overflow: TextOverflow.ellipsis,
                                                 style: Theme.of(context)
                                                     .textTheme
                                                     .titleSmall
                                                     ?.copyWith(
-                                                      fontSize: 13,
-                                                      color: const Color(0xFF6C6C6C)
-                                                    ),
+                                                        fontSize: 13,
+                                                        color: const Color(
+                                                            0xFF6C6C6C)),
                                               ),
                                             ),
                                           ],
@@ -143,7 +150,9 @@ class ProfileView extends GetView<ProfileController> {
                                   const SizedBox(height: 8),
                                   ConstrainedBox(
                                     constraints: BoxConstraints(
-                                      maxWidth: MediaQuery.of(context).size.width * 0.58,
+                                      maxWidth:
+                                          MediaQuery.of(context).size.width *
+                                              0.58,
                                     ),
                                     child: Text(
                                       controller.user.value?.bio ?? 'No bio',
@@ -157,146 +166,76 @@ class ProfileView extends GetView<ProfileController> {
                                           ),
                                     ),
                                   ),
-                                  const Spacer(),
-                                  ConstrainedBox(
-                                    constraints: const BoxConstraints(
-                                      maxWidth: 200,
-                                    ),
-                                    child: Row(
-                                      mainAxisAlignment:
-                                          MainAxisAlignment.spaceBetween,
-                                      children: [
-                                        Column(
-                                          children: [
-                                            Text('Following'),
-                                            Text(
-                                              '${controller.user.value?.followingCount ?? 0}',
-                                              maxLines: 1,
-                                              overflow: TextOverflow.ellipsis,
-                                              style: Theme.of(context)
-                                                  .textTheme
-                                                  .bodyLarge
-                                                  ?.copyWith(
-                                                    fontWeight:
-                                                        FontWeight.bold,
-                                                    color: Theme.of(context)
-                                                        .primaryColor,
-                                                  ),
-                                            ),
-                                          ],
-                                        ),
-                                        Column(
-                                          children: [
-                                            Text('Followers'),
-                                            Text(
-                                              '${controller.user.value?.followersCount ?? 0}',
-                                              maxLines: 1,
-                                              overflow: TextOverflow.ellipsis,
-                                              style: Theme.of(context)
-                                                  .textTheme
-                                                  .bodyLarge
-                                                  ?.copyWith(
-                                                    fontWeight:
-                                                        FontWeight.bold,
-                                                    color: Theme.of(context)
-                                                        .primaryColor,
-                                                  ),
-                                            ),
-                                          ],
-                                        ),
-                                        Column(
-                                          children: [
-                                            Text('Clubs'),
-                                            Text(
-                                              '${controller.user.value?.clubsCount ?? 0}',
-                                              maxLines: 1,
-                                              overflow: TextOverflow.ellipsis,
-                                              style: Theme.of(context)
-                                                  .textTheme
-                                                  .bodyLarge
-                                                  ?.copyWith(
-                                                    fontWeight:
-                                                        FontWeight.bold,
-                                                    color: Theme.of(context)
-                                                        .primaryColor,
-                                                  ),
-                                            ),
-                                          ],
-                                        ),
-                                      ],
-                                    ),
-                                  ),
-                                  const Spacer(),
+                                  const SizedBox(height: 16),
                                   ConstrainedBox(
                                     constraints: BoxConstraints(
-                                      maxWidth: MediaQuery.of(context).size.width * 0.58,
+                                      maxWidth:
+                                          MediaQuery.of(context).size.width *
+                                              0.58,
                                     ),
-                                    child: Row(
-                                      children: [
-                                        Visibility(
-                                          visible: controller.user.value?.isFollowing == 0,
-                                          replacement: InkWell(
-                                            onTap: () {
-                                              controller.unfollow();
-                                            },
-                                            child: Container(
-                                              decoration: BoxDecoration(
-                                                color: darkColorScheme.primary,
-                                                borderRadius: BorderRadius.circular(12),
-                                              ),
-                                              padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 7),
-                                              child: Row(
-                                                children: [
-                                                  FaIcon(
-                                                    FontAwesomeIcons.userCheck,
-                                                    size: 13,
-                                                    color: darkColorScheme.background,
-                                                  ),
-                                                  const SizedBox(width: 5),
-                                                  Text(
-                                                    'Following',
-                                                    style: Theme.of(context).textTheme.headlineSmall?.copyWith(
-                                                      fontSize: 12,
-                                                      fontWeight: FontWeight.w700,
-                                                      color: darkColorScheme.background
-                                                    ),
-                                                  ),
-                                                ]
-                                              ),
+                                    child: Row(children: [
+                                      Visibility(
+                                        visible: controller
+                                                .user.value?.isFollowing ==
+                                            0,
+                                        replacement: GradientOutlinedButton(
+                                          onPressed: () {
+                                            controller.unfollow();
+                                          },
+                                          child: Row(children: [
+                                            FaIcon(
+                                              FontAwesomeIcons.userCheck,
+                                              size: 13,
+                                              color: darkColorScheme.background,
                                             ),
-                                          ),
-                                          child: GradientOutlinedButton(
-                                            onPressed: () {
-                                              controller.follow();
-                                            },
-                                            child: Row(
-                                              children: [
-                                                const Icon(
-                                                  Icons.person_add_alt_1,
-                                                  size: 14,
-                                                ),
-                                                const SizedBox(width: 5),
-                                                Text(
-                                                  'Follow',
-                                                  style: Theme.of(context).textTheme.headlineSmall?.copyWith(
+                                            const SizedBox(width: 5),
+                                            Text(
+                                              'Following',
+                                              style: Theme.of(context)
+                                                  .textTheme
+                                                  .headlineSmall
+                                                  ?.copyWith(
+                                                      fontSize: 12,
+                                                      fontWeight:
+                                                          FontWeight.w700,
+                                                      color: darkColorScheme
+                                                          .background),
+                                            ),
+                                          ]),
+                                        ),
+                                        child: GradientOutlinedButton(
+                                          onPressed: () {
+                                            controller.follow();
+                                          },
+                                          child: Row(children: [
+                                            const Icon(
+                                              Icons.person_add_alt_1,
+                                              size: 14,
+                                            ),
+                                            const SizedBox(width: 5),
+                                            Text(
+                                              'Follow',
+                                              style: Theme.of(context)
+                                                  .textTheme
+                                                  .headlineSmall
+                                                  ?.copyWith(
                                                     fontSize: 12,
                                                     fontWeight: FontWeight.w700,
                                                   ),
-                                                ),
-                                              ]
                                             ),
-                                          ),
+                                          ]),
                                         ),
-                                        const SizedBox(width: 10),
-                                        InkWell(
-                                          onTap: () => Get.snackbar('Coming Soon', 'Feature coming soon'),
-                                          child: const Icon(
-                                            Icons.chat_bubble_outline,
-                                            size: 25,
-                                          ),
+                                      ),
+                                      const SizedBox(width: 10),
+                                      InkWell(
+                                        onTap: () => Get.snackbar('Coming Soon',
+                                            'Feature coming soon'),
+                                        child: const Icon(
+                                          Icons.chat_bubble_outline,
+                                          size: 25,
                                         ),
-                                      ]
-                                    ),
+                                      ),
+                                    ]),
                                   ),
                                   const Spacer(),
                                 ],
@@ -310,7 +249,8 @@ class ProfileView extends GetView<ProfileController> {
                       top: 20,
                       right: 20,
                       child: InkWell(
-                        onTap: () => Get.snackbar('Coming Soon', 'Feature coming soon'),
+                        onTap: () =>
+                            Get.snackbar('Coming Soon', 'Feature coming soon'),
                         child: SvgPicture.asset(
                           'assets/icons/ic_share-2.svg',
                           width: 26,
@@ -319,50 +259,78 @@ class ProfileView extends GetView<ProfileController> {
                     ),
                     Positioned(
                       bottom: 0,
-                      right: -5,
-                      child: Stack(
-                        clipBehavior: Clip.none,
-                        children: [
-                          Image.asset(
-                            'assets/images/image.png',
-                            fit: BoxFit.cover,
-                            width: 189,
-                          ),
-                          Positioned(
-                            bottom: 10,
-                            right: 25,
-                            child: Row(
+                      left: 0,
+                      right: 0,
+                      child: Container(
+                        height: 57,
+                        decoration: BoxDecoration(
+                          color: Color(0xFF404040),
+                          borderRadius: BorderRadius.circular(8),
+                        ),
+                        child: Column(
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          children: [
+                            Row(
+                              mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                               children: [
-                                Text(
-                                  'Level 4',
-                                  style: Theme.of(context)
-                                      .textTheme
-                                      .bodyMedium
-                                      ?.copyWith(
-                                        color: Theme.of(context)
-                                            .colorScheme
-                                            .onPrimary,
-                                      ),
+                                Column(
+                                  children: [
+                                    Text('Following'),
+                                    Text(
+                                      '${controller.user.value?.followingCount ?? 0}',
+                                      maxLines: 1,
+                                      overflow: TextOverflow.ellipsis,
+                                      style: Theme.of(context)
+                                          .textTheme
+                                          .bodyLarge
+                                          ?.copyWith(
+                                            fontWeight: FontWeight.bold,
+                                            color:
+                                                Theme.of(context).primaryColor,
+                                          ),
+                                    ),
+                                  ],
                                 ),
-                                const SizedBox(
-                                  width: 5,
+                                Column(
+                                  children: [
+                                    Text('Followers'),
+                                    Text(
+                                      '${controller.user.value?.followersCount ?? 0}',
+                                      maxLines: 1,
+                                      overflow: TextOverflow.ellipsis,
+                                      style: Theme.of(context)
+                                          .textTheme
+                                          .bodyLarge
+                                          ?.copyWith(
+                                            fontWeight: FontWeight.bold,
+                                            color:
+                                                Theme.of(context).primaryColor,
+                                          ),
+                                    ),
+                                  ],
                                 ),
-                                Text(
-                                  'The Snail',
-                                  style: Theme.of(context)
-                                      .textTheme
-                                      .bodyMedium
-                                      ?.copyWith(
-                                        fontWeight: FontWeight.bold,
-                                        color: Theme.of(context)
-                                            .colorScheme
-                                            .onPrimary,
-                                      ),
+                                Column(
+                                  children: [
+                                    Text('Clubs'),
+                                    Text(
+                                      '${controller.user.value?.clubsCount ?? 0}',
+                                      maxLines: 1,
+                                      overflow: TextOverflow.ellipsis,
+                                      style: Theme.of(context)
+                                          .textTheme
+                                          .bodyLarge
+                                          ?.copyWith(
+                                            fontWeight: FontWeight.bold,
+                                            color:
+                                                Theme.of(context).primaryColor,
+                                          ),
+                                    ),
+                                  ],
                                 ),
                               ],
                             ),
-                          ),
-                        ],
+                          ],
+                        ),
                       ),
                     ),
                   ],
@@ -416,8 +384,7 @@ class ProfileView extends GetView<ProfileController> {
                           padding: const EdgeInsets.only(
                               left: 12, right: 12, bottom: 12),
                           decoration: const BoxDecoration(
-                            borderRadius:
-                                BorderRadius.all(Radius.circular(10)),
+                            borderRadius: BorderRadius.all(Radius.circular(10)),
                             color: Color(0xFF2E2E2E),
                           ),
                           child: Column(
@@ -460,8 +427,8 @@ class ProfileView extends GetView<ProfileController> {
               margin: const EdgeInsets.symmetric(horizontal: 16),
               padding: const EdgeInsets.symmetric(horizontal: 8),
               decoration: BoxDecoration(
-                border: Border.all(
-                    color: Theme.of(context).colorScheme.primary),
+                border:
+                    Border.all(color: Theme.of(context).colorScheme.primary),
                 borderRadius: BorderRadius.circular(12),
               ),
               child: Row(
@@ -472,10 +439,7 @@ class ProfileView extends GetView<ProfileController> {
                     const SizedBox(width: 8),
                     Text(
                       'Overall Mileage',
-                      style: Theme.of(context)
-                          .textTheme
-                          .bodyMedium
-                          ?.copyWith(
+                      style: Theme.of(context).textTheme.bodyMedium?.copyWith(
                             color: Theme.of(context).colorScheme.primary,
                             fontWeight: FontWeight.bold,
                           ),

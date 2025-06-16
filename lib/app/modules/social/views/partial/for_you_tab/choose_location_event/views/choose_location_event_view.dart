@@ -4,10 +4,10 @@ import 'package:get/get.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:zest_mobile/app/core/models/model/location_model.dart';
 import 'package:zest_mobile/app/core/shared/widgets/gradient_elevated_button.dart';
-import 'package:zest_mobile/app/modules/choose_location/controllers/choose_location_controller.dart';
+import 'package:zest_mobile/app/modules/social/views/partial/for_you_tab/choose_location_event/controllers/choose_location_event_controller.dart';
 
-class ChooseLocationView extends GetView<ChooseLocationController> {
-  const ChooseLocationView({super.key});
+class ChooseLocationEventView extends GetView<ChooseLocationEventController> {
+  const ChooseLocationEventView({super.key});
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -47,16 +47,56 @@ class ChooseLocationView extends GetView<ChooseLocationController> {
                     ),
                   );
                 },
-                suggestionsCallback: (pattern) =>
-                    controller.searchPlace(pattern),
+                suggestionsCallback: (pattern) async {
+                  final results = await controller.searchPlace(pattern);
+
+                  // Tambahkan "Gunakan lokasi saat ini" di atas
+                  final currentLocation = LocationModel(
+                    placeId: '__current_location__',
+                    desc: 'Use Current Location',
+                  );
+
+                  return [currentLocation, ...results ?? []];
+                },
                 itemBuilder: (context, suggestion) {
+                  final isCurrentLocation =
+                      suggestion.placeId == '__current_location__';
+
                   return ListTile(
+                    leading: Icon(
+                      isCurrentLocation ? Icons.my_location : Icons.location_on,
+                      color: isCurrentLocation
+                          ? Theme.of(context).primaryColor
+                          : null,
+                    ),
                     title: Text(suggestion.desc),
                   );
                 },
                 onSelected: (suggestion) {
                   FocusScope.of(context).unfocus();
-                  controller.selectPlace(suggestion.placeId);
+
+                  if (suggestion.placeId == '__current_location__') {
+                    // Handle ambil lokasi saat ini
+                    controller.setCurrentLocation();
+                  } else {
+                    controller.selectPlace(suggestion.placeId);
+                  }
+                },
+                emptyBuilder: (context) {
+                  // Tetap tampilkan "Gunakan lokasi saat ini" meski tidak ada hasil
+                  final currentLocation = LocationModel(
+                    placeId: '__current_location__',
+                    desc: 'Use Current Location',
+                  );
+
+                  return ListTile(
+                    leading: const Icon(Icons.my_location, color: Colors.blue),
+                    title: Text(currentLocation.desc),
+                    onTap: () {
+                      controller.setCurrentLocation();
+                      Get.back(); // tutup box
+                    },
+                  );
                 },
               ),
             ),
@@ -103,14 +143,35 @@ class ChooseLocationView extends GetView<ChooseLocationController> {
             ),
             const SizedBox(height: 12),
             Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 16),
-              child: OutlinedButton.icon(
-                style: OutlinedButton.styleFrom(
-                  minimumSize: const Size.fromHeight(40),
-                ),
-                onPressed: () => controller.setCurrentLocation(),
-                icon: const Icon(Icons.my_location_outlined),
-                label: const Text('Use Current Location'),
+              padding: const EdgeInsets.symmetric(
+                horizontal: 16,
+              ),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text(
+                    'Place Name',
+                    style: Theme.of(context).textTheme.labelMedium?.copyWith(
+                          color: Theme.of(context).colorScheme.onBackground,
+                        ),
+                  ),
+                  const SizedBox(height: 12),
+                  TextFormField(
+                    cursorColor: Colors.white,
+                    keyboardType: TextInputType.text,
+                    controller: controller.placeNameController,
+                    decoration: const InputDecoration(
+                      hintText: 'Enter Place Name',
+                    ),
+                    validator: (value) {
+                      if (value == null || value.isEmpty) {
+                        return 'The place name is required';
+                      }
+                      return null;
+                    },
+                    textInputAction: TextInputAction.done,
+                  ),
+                ],
               ),
             ),
             const SizedBox(height: 12),
@@ -143,6 +204,7 @@ class ChooseLocationView extends GetView<ChooseLocationController> {
                 ? null
                 : () => Get.back(result: {
                       'address': controller.address.value,
+                      'placeName': controller.placeNameController.text,
                       'location': controller.currentPosition.value,
                     }),
             child: const Text('Update'),

@@ -2,6 +2,7 @@ import 'package:geolocator/geolocator.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:zest_mobile/app/core/models/enums/http_method_enum.dart';
 import 'package:zest_mobile/app/core/models/model/location_model.dart';
+import 'package:zest_mobile/app/core/models/model/select_place_model.dart';
 import 'package:zest_mobile/app/core/services/api_service.dart';
 import 'package:zest_mobile/app/core/values/app_constants.dart';
 
@@ -92,7 +93,7 @@ class LocationService {
     }
   }
 
-  Future<LatLng> selectPlace(String placeId) async {
+  Future<SelectPlaceModel> selectPlace(String placeId) async {
     try {
       final response = await _apiService.request(
         path: AppConstants.selectPlace(placeId),
@@ -103,8 +104,7 @@ class LocationService {
         throw Exception('Failed to load place details');
       }
 
-      final location = response.data['result']['geometry']['location'];
-      return LatLng(location['lat'], location['lng']);
+      return SelectPlaceModel.fromJson(response.data['result']);
     } catch (_) {
       rethrow;
     }

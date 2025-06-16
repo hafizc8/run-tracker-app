@@ -45,6 +45,7 @@ abstract class AppRoutes {
   // Event
   static const eventCreate = '/event/create';
   static const eventSeeAllParticipant = '/event/seel-all-participant';
+  static const chooseLocationEvent = '/choose-location-event';
   // club
   static const createClub = '/create-club';
   static const detailClub = '/detail-club';

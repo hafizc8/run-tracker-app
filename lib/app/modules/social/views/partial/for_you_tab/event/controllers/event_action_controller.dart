@@ -24,6 +24,7 @@ import 'package:zest_mobile/app/routes/app_routes.dart';
 class EventActionController extends GetxController {
   var dateController = TextEditingController();
   var addressController = TextEditingController();
+  var placeNameController = TextEditingController();
   var imageController = TextEditingController();
 
   final _eventService = sl<EventService>();
@@ -66,6 +67,7 @@ class EventActionController extends GetxController {
     original.value = EventStoreFormModel();
     dateController.text = '';
     addressController.text = '';
+    placeNameController.text = '';
     imageController.text = '';
     isEdit.value = false;
     event.value = null;
@@ -211,7 +213,16 @@ class EventActionController extends GetxController {
         form.value = form.value.copyWith(
           datetime: pickedDate,
           startTime: formatTimeOfDayToHms(startTime!),
-          endTime: endTime == null ? null : formatTimeOfDayToHms(endTime!),
+          endTime: endTime == null ? 'null' : formatTimeOfDayToHms(endTime!),
+          errors: form.value.errors,
+          field: 'date',
+        );
+      } else {
+        dateController.text = '';
+        form.value = form.value.copyWith(
+          datetime: null,
+          startTime: 'null',
+          endTime: 'null',
           errors: form.value.errors,
           field: 'date',
         );
@@ -437,10 +448,10 @@ class EventActionController extends GetxController {
     tempSelectedIds.clear();
     tempSelectedIds.value = List.from(form.value.shareToClubs?.toList() ?? []);
     Get.bottomSheet(
-      backgroundColor: Color(0xFF4C4C4C),
-      FractionallySizedBox(
+      backgroundColor: const Color(0xFF4C4C4C),
+      const FractionallySizedBox(
         heightFactor: 0.5,
-        child: const AddClubs(),
+        child: AddClubs(),
       ),
       isScrollControlled: true,
     );

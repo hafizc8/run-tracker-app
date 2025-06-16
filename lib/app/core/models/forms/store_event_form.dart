@@ -12,6 +12,7 @@ class EventStoreFormModel extends FormModel<EventStoreFormModel>
   final EventActivityModel? activity;
   final String? title;
   final String? description;
+  final String? placeName;
   final int? price;
   final double? latitude;
   final double? longitude;
@@ -33,6 +34,7 @@ class EventStoreFormModel extends FormModel<EventStoreFormModel>
     this.isAutoPostToClub,
     this.latitude,
     this.longitude,
+    this.placeName,
     this.image,
     this.datetime,
     this.startTime,
@@ -54,6 +56,7 @@ class EventStoreFormModel extends FormModel<EventStoreFormModel>
     EventActivityModel? activity,
     String? title,
     String? description,
+    String? placeName,
     int? price,
     double? latitude,
     double? longitude,
@@ -74,8 +77,6 @@ class EventStoreFormModel extends FormModel<EventStoreFormModel>
       errors = newErrors;
     }
 
-    print('startTime: $startTime');
-
     return EventStoreFormModel(
       activity: activity ?? this.activity,
       title: title ?? this.title,
@@ -83,11 +84,12 @@ class EventStoreFormModel extends FormModel<EventStoreFormModel>
       price: price ?? this.price,
       latitude: latitude ?? this.latitude,
       longitude: longitude ?? this.longitude,
+      placeName: placeName ?? this.placeName,
       quota: quota ?? this.quota,
       image: image ?? this.image,
       datetime: datetime ?? this.datetime,
-      startTime: startTime,
-      endTime: endTime,
+      startTime: startTime == 'null' ? null : startTime ?? this.startTime,
+      endTime: endTime == 'null' ? null : endTime ?? this.endTime,
       isPublic: isPublic ?? this.isPublic,
       isAutoPostToClub: isAutoPostToClub ?? this.isAutoPostToClub,
       shareToClubs: shareToClubs ?? this.shareToClubs,
@@ -103,6 +105,7 @@ class EventStoreFormModel extends FormModel<EventStoreFormModel>
         price,
         latitude,
         longitude,
+        placeName,
         quota,
         image,
         datetime,
@@ -134,6 +137,7 @@ class EventStoreFormModel extends FormModel<EventStoreFormModel>
       'price': price,
       'latitude': latitude,
       'longitude': longitude,
+      'place_name': placeName,
       'quota': quota,
       'image': image,
       'date':

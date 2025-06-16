@@ -7,6 +7,7 @@ import 'package:zest_mobile/app/core/models/interface/pagination_response_model.
 import 'package:zest_mobile/app/core/models/model/event_model.dart';
 import 'package:zest_mobile/app/core/services/event_service.dart';
 import 'package:zest_mobile/app/modules/social/views/partial/for_you_tab/event/controllers/event_controller.dart';
+import 'package:zest_mobile/app/modules/social/views/partial/for_you_tab/widget/confirmation.dart';
 
 class EventDetailController extends GetxController {
   var isLoading = false.obs;
@@ -61,12 +62,87 @@ class EventDetailController extends GetxController {
     }
   }
 
+  Future<void> cancelEvent(String id) async {
+    isLoadingAction.value = true;
+    try {
+      final EventModel? res = await _eventService.cancelEvent(id);
+      if (res != null) {
+        event.value = event.value!.copyWith(
+          cancelledAt: DateTime.now(),
+        );
+        eventLastUpdated.value = event.value?.copyWith(
+          cancelledAt: DateTime.now(),
+        );
+
+        Get.back();
+      }
+    } on AppException catch (e) {
+      // show error snackbar, toast, etc
+      AppExceptionHandlerInfo.handle(e);
+    } catch (e) {
+      Get.snackbar(
+        'Error',
+        e.toString(),
+        backgroundColor: Colors.red,
+        colorText: Colors.white,
+      );
+    } finally {
+      isLoadingAction.value = false;
+    }
+  }
+
+  Future<void> confirmAccLeaveJoinEvent(String id) async {
+    await Get.dialog(
+      Obx(
+        () => ConfirmationDialog(
+          onConfirm: () => accLeaveJoinEvent(id),
+          title: 'Confirm Joining?',
+          subtitle:
+              'Events take effort to set up, so if you join, make sure you can be there!',
+          labelConfirm: 'Join Event',
+          isLoading: isLoadingAction.value,
+        ),
+      ),
+    );
+  }
+
+  Future<void> confirmLeaveEvent(String id) async {
+    await Get.dialog(
+      Obx(
+        () => ConfirmationDialog(
+          onConfirm: () => accLeaveJoinEvent(id, leave: '1'),
+          title: 'Cancelling?',
+          subtitle:
+              'If you need to leave an event after joining, please message the host to explain. It keeps things respectful and helps with planning.',
+          labelConfirm: 'Leave Event',
+          isLoading: isLoadingAction.value,
+        ),
+      ),
+    );
+  }
+
+  Future<void> confirmCancelEvent(String id) async {
+    await Get.dialog(
+      Obx(
+        () => ConfirmationDialog(
+          onConfirm: () => cancelEvent(id),
+          title: 'Cancelling?',
+          subtitle:
+              'If you need to leave an event after joining, please message the host to explain. It keeps things respectful and helps with planning.',
+          labelConfirm: 'Leave Event',
+          isLoading: isLoadingAction.value,
+        ),
+      ),
+    );
+  }
+
   Future<void> accLeaveJoinEvent(String id, {String? leave}) async {
     isLoadingAction.value = true;
     try {
       final bool res = await _eventService.accLeaveJoinEvent(id, leave: leave);
 
       if (res) {
+        Get.back();
         await refreshUsersOnEvent();
 
         event.value = event.value!.copyWith(

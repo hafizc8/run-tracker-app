@@ -141,6 +141,13 @@ class SocialForYouEventDetaiInviteFriendView
               child: SizedBox(
                 height: 55,
                 child: GradientOutlinedButton(
+                  style: ButtonStyle(
+                    shape: MaterialStateProperty.all(
+                      RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(11),
+                      ),
+                    ),
+                  ),
                   onPressed: controller.invites.isEmpty ||
                           controller.isLoadingReserveFriend.value
                       ? null

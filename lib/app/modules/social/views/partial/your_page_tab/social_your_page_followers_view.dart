@@ -116,6 +116,7 @@ class SocialYourPageFollowersView extends GetView<SocialFollowersController> {
 
   Widget _buildFollowersListItem(BuildContext context, UserMiniModel user) {
     return ListTile(
+      contentPadding: EdgeInsets.zero,
       onTap: () => Get.toNamed(AppRoutes.profileUser, arguments: user.id),
       leading: ClipOval(
         child: CachedNetworkImage(

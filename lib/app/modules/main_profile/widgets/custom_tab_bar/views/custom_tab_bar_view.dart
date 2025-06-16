@@ -146,6 +146,10 @@ class CustomTabBar extends GetView<TabBarController> {
                           backgroundColor:
                               Theme.of(context).colorScheme.surface,
                           onTap: () async {
+                            if (profileController.events[index].cancelledAt !=
+                                null) {
+                              return;
+                            }
                             var result = await Get.toNamed(
                                 AppRoutes.socialYourPageEventDetail,
                                 arguments: {

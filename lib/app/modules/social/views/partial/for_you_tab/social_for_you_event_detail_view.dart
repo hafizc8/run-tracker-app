@@ -128,7 +128,7 @@ class SocialForYouEventDetailView extends GetView<EventDetailController> {
                           ),
                         ),
                         onPressed: () {
-                          eventController.cancelEvent(
+                          controller.confirmCancelEvent(
                             controller.event.value?.id ?? '',
                           );
                         },
@@ -150,24 +150,26 @@ class SocialForYouEventDetailView extends GetView<EventDetailController> {
                     child: SizedBox(
                       height: 55,
                       child: GradientOutlinedButton(
+                        style: ButtonStyle(
+                          shape: MaterialStateProperty.all(
+                            RoundedRectangleBorder(
+                              borderRadius: BorderRadius.circular(11),
+                            ),
+                          ),
+                        ),
                         onPressed: () {
-                          controller.accLeaveJoinEvent(
+                          controller.confirmLeaveEvent(
                             controller.event.value?.id ?? '',
-                            leave: '1',
                           );
                         },
-                        child: Visibility(
-                          visible: !controller.isLoadingAction.value,
-                          replacement: CustomCircularProgressIndicator(),
-                          child: Text(
-                            'Leave Event',
-                            style: Theme.of(context)
-                                .textTheme
-                                .labelSmall
-                                ?.copyWith(
-                                  color: Theme.of(context).colorScheme.primary,
-                                ),
-                          ),
+                        child: Text(
+                          'Leave Event',
+                          style: Theme.of(context)
+                              .textTheme
+                              .labelSmall
+                              ?.copyWith(
+                                color: Theme.of(context).colorScheme.primary,
+                              ),
                         ),
                       ),
                     ),
@@ -175,6 +177,7 @@ class SocialForYouEventDetailView extends GetView<EventDetailController> {
                 ),
                 const SizedBox(width: 10),
                 Expanded(
+                  flex: 2,
                   child: SizedBox(
                     height: 55,
                     child: GradientElevatedButton(
@@ -187,6 +190,7 @@ class SocialForYouEventDetailView extends GetView<EventDetailController> {
                         }
                       },
                       child: Row(
+                        mainAxisAlignment: MainAxisAlignment.center,
                         children: [
                           SvgPicture.asset(
                             'assets/icons/add_friends.svg',
@@ -195,7 +199,8 @@ class SocialForYouEventDetailView extends GetView<EventDetailController> {
                           ),
                           const SizedBox(width: 10),
                           Text(
-                            'Invite a Friend',
+                            'Invite Your Friends',
+                            textAlign: TextAlign.center,
                             style: Theme.of(context).textTheme.labelSmall,
                           ),
                         ],
@@ -215,19 +220,15 @@ class SocialForYouEventDetailView extends GetView<EventDetailController> {
               height: 55,
               child: GradientElevatedButton(
                 onPressed: () {
-                  controller
-                      .accLeaveJoinEvent(controller.event.value?.id ?? '');
+                  controller.confirmAccLeaveJoinEvent(
+                      controller.event.value?.id ?? '');
                 },
-                child: Visibility(
-                  visible: !controller.isLoadingAction.value,
-                  replacement: CustomCircularProgressIndicator(),
-                  child: Text(
-                    'Join!',
-                    style: Theme.of(context).textTheme.labelMedium?.copyWith(
-                          fontSize: 13,
-                          fontWeight: FontWeight.bold,
-                        ),
-                  ),
+                child: Text(
+                  'Join!',
+                  style: Theme.of(context).textTheme.labelMedium?.copyWith(
+                        fontSize: 13,
+                        fontWeight: FontWeight.bold,
+                      ),
                 ),
               ),
             ),

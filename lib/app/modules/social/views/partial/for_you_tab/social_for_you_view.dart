@@ -1,8 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:get/get.dart';
-import 'package:zest_mobile/app/core/models/model/event_activity_model.dart';
-import 'package:zest_mobile/app/core/models/model/event_location_model.dart';
+import 'package:syncfusion_flutter_datepicker/datepicker.dart';
 import 'package:zest_mobile/app/core/models/model/event_model.dart';
 import 'package:zest_mobile/app/core/shared/widgets/shimmer_loading_event.dart';
 import 'package:zest_mobile/app/modules/social/controllers/social_controller.dart';
@@ -40,211 +39,23 @@ class SocialForYouView extends GetView<SocialController> {
                       ?.copyWith(fontWeight: FontWeight.bold),
                   textAlign: TextAlign.start,
                 ),
-                SvgPicture.asset(
-                  'assets/icons/ic_filter.svg',
+                InkWell(
+                  onTap: () => eventController.filter(),
+                  child: Obx(
+                    () => Badge(
+                      isLabelVisible: eventController.isApplyFilter.value &&
+                          (eventController.activity.value != null ||
+                              eventController.location.value != null ||
+                              eventController.selectedRange != null),
+                      child: SvgPicture.asset(
+                        'assets/icons/ic_filter.svg',
+                      ),
+                    ),
+                  ),
                 ),
               ],
             ),
-            Container(
-              margin: const EdgeInsets.symmetric(vertical: 10, horizontal: 3),
-              child: Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                children: [
-                  Expanded(
-                    child: DropdownButtonFormField<EventActivityModel>(
-                      isExpanded: true,
-                      items: [
-                        ...eventActionController.eventActivities.map(
-                          (e) => DropdownMenuItem(
-                            value: e,
-                            child: Obx(
-                              () => Text(
-                                e.value ?? '',
-                                maxLines: 1,
-                                overflow: TextOverflow.ellipsis,
-                                style: Theme.of(context)
-                                    .textTheme
-                                    .bodyMedium
-                                    ?.copyWith(
-                                      color: eventController.activity.value ==
-                                              e.value
-                                          ? Theme.of(context)
-                                              .colorScheme
-                                              .primary
-                                          : Theme.of(context)
-                                              .colorScheme
-                                              .onBackground,
-                                    ),
-                              ),
-                            ),
-                          ),
-                        ),
-                        DropdownMenuItem(
-                          value: null,
-                          child: Text(
-                            'All',
-                            style: Theme.of(context)
-                                .textTheme
-                                .bodyMedium
-                                ?.copyWith(
-                                  color: eventController.activity.value == 'All'
-                                      ? Theme.of(context).colorScheme.primary
-                                      : Theme.of(context)
-                                          .colorScheme
-                                          .onBackground,
-                                ),
-                          ),
-                        ),
-                      ],
-                      onChanged: (value) {
-                        if (value == null) {
-                          eventController.activity.value = 'All';
-                          eventController.load(refresh: true);
-                          return;
-                        }
-
-                        eventController.activity.value = value.value ?? '';
-                        eventController.load(refresh: true);
-                      },
-                      decoration: InputDecoration(
-                        isDense: true,
-                        contentPadding: const EdgeInsets.all(8),
-                        enabledBorder: UnderlineInputBorder(
-                          borderSide: BorderSide(
-                              color: Theme.of(context).colorScheme.tertiary),
-                        ),
-                        focusedBorder: const UnderlineInputBorder(
-                          borderSide: BorderSide(color: Colors.blue),
-                        ),
-                        border: const UnderlineInputBorder(),
-                        hintText: 'Activity',
-                        hintStyle:
-                            Theme.of(context).textTheme.bodyMedium?.copyWith(
-                                  color: Theme.of(context).colorScheme.tertiary,
-                                  fontWeight: FontWeight.w400,
-                                ),
-                      ),
-                      icon: const Icon(Icons.keyboard_arrow_down_outlined),
-                      iconSize: 24,
-                      iconEnabledColor: Theme.of(context).colorScheme.primary,
-                    ),
-                  ),
-                  const SizedBox(width: 10),
-                  Expanded(
-                    child: TextFormField(
-                      readOnly: true,
-                      controller: eventController.dateController,
-                      onTap: () {
-                        eventController.pickDateRange(context);
-                      },
-                      decoration: InputDecoration(
-                        isDense: true,
-                        contentPadding: const EdgeInsets.all(8),
-                        suffixIcon: Icon(
-                          Icons.date_range_outlined,
-                          size: 18,
-                          color: Theme.of(context).colorScheme.primary,
-                        ),
-                        enabledBorder: UnderlineInputBorder(
-                          borderSide: BorderSide(
-                              color: Theme.of(context).colorScheme.tertiary),
-                        ),
-                        focusedBorder: const UnderlineInputBorder(
-                          borderSide: BorderSide(color: Colors.blue),
-                        ),
-                        border: const UnderlineInputBorder(),
-                        hintText: 'Date',
-                        hintStyle:
-                            Theme.of(context).textTheme.bodyMedium?.copyWith(
-                                  color: Theme.of(context).colorScheme.tertiary,
-                                  fontWeight: FontWeight.w400,
-                                ),
-                      ),
-                    ),
-                  ),
-                  const SizedBox(width: 10),
-                  Expanded(
-                    child: DropdownButtonFormField<EventLocationModel>(
-                      isExpanded: true,
-                      items: [
-                        ...eventController.eventLocations.map(
-                          (e) => DropdownMenuItem(
-                            value: e,
-                            child: Obx(
-                              () => Text(
-                                e.value ?? '',
-                                maxLines: 1,
-                                overflow: TextOverflow.ellipsis,
-                                style: Theme.of(context)
-                                    .textTheme
-                                    .bodyMedium
-                                    ?.copyWith(
-                                      color: eventController.location.value ==
-                                              e.value
-                                          ? Theme.of(context)
-                                              .colorScheme
-                                              .primary
-                                          : Theme.of(context)
-                                              .colorScheme
-                                              .onBackground,
-                                    ),
-                              ),
-                            ),
-                          ),
-                        ),
-                        DropdownMenuItem(
-                          value: null,
-                          child: Text(
-                            'All',
-                            style: Theme.of(context)
-                                .textTheme
-                                .bodyMedium
-                                ?.copyWith(
-                                  color: eventController.location.value == 'All'
-                                      ? Theme.of(context).colorScheme.primary
-                                      : Theme.of(context)
-                                          .colorScheme
-                                          .onBackground,
-                                ),
-                          ),
-                        ),
-                      ],
-                      onChanged: (value) {
-                        if (value == null) {
-                          eventController.location.value = 'All';
-                          eventController.load(refresh: true);
-                          return;
-                        }
-
-                        eventController.location.value = value.value ?? '';
-                        eventController.load(refresh: true);
-                      },
-                      decoration: InputDecoration(
-                        isDense: true,
-                        contentPadding: const EdgeInsets.all(8),
-                        enabledBorder: UnderlineInputBorder(
-                          borderSide: BorderSide(
-                              color: Theme.of(context).colorScheme.tertiary),
-                        ),
-                        focusedBorder: const UnderlineInputBorder(
-                          borderSide: BorderSide(color: Colors.blue),
-                        ),
-                        border: const UnderlineInputBorder(),
-                        hintText: 'Location',
-                        hintStyle:
-                            Theme.of(context).textTheme.bodyMedium?.copyWith(
-                                  color: Theme.of(context).colorScheme.tertiary,
-                                  fontWeight: FontWeight.w400,
-                                ),
-                      ),
-                      icon: const Icon(Icons.keyboard_arrow_down_outlined),
-                      iconSize: 24,
-                      iconEnabledColor: Theme.of(context).colorScheme.primary,
-                    ),
-                  ),
-                ],
-              ),
-            ),
+            const SizedBox(height: 24),
             Obx(() {
               if (eventController.isLoading.value &&
                   eventController.page == 1) {
@@ -277,6 +88,9 @@ class SocialForYouView extends GetView<SocialController> {
                     backgroundColor: Theme.of(context).colorScheme.surface,
                     eventModel: eventController.events[index],
                     onTap: () async {
+                      if (eventController.events[index].cancelledAt != null) {
+                        return;
+                      }
                       var result = await Get.toNamed(
                           AppRoutes.socialYourPageEventDetail,
                           arguments: {

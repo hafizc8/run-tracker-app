@@ -18,6 +18,7 @@ class EventModel extends Equatable {
     required this.district,
     required this.subdistrict,
     required this.village,
+    required this.placeName,
     required this.postcode,
     required this.datetime,
     required this.startTime,
@@ -49,6 +50,7 @@ class EventModel extends Equatable {
   final String? district;
   final String? subdistrict;
   final String? village;
+  final String? placeName;
   final dynamic postcode;
   final DateTime? datetime;
   final TimeOfDay? startTime;
@@ -80,6 +82,7 @@ class EventModel extends Equatable {
     String? district,
     String? subdistrict,
     String? village,
+    String? placeName,
     dynamic? postcode,
     DateTime? datetime,
     TimeOfDay? startTime,
@@ -111,6 +114,7 @@ class EventModel extends Equatable {
       district: district ?? this.district,
       subdistrict: subdistrict ?? this.subdistrict,
       village: village ?? this.village,
+      placeName: placeName ?? this.placeName,
       postcode: postcode ?? this.postcode,
       datetime: datetime ?? this.datetime,
       startTime: startTime ?? this.startTime,
@@ -148,6 +152,7 @@ class EventModel extends Equatable {
       district: json["district"],
       subdistrict: json["subdistrict"],
       village: json["village"],
+      placeName: json["place_name"],
       postcode: json["postcode"],
       datetime: DateTime.tryParse(json["date"] ?? ""),
       startTime: TimeOfDay(
@@ -196,6 +201,7 @@ class EventModel extends Equatable {
         "district": district,
         "subdistrict": subdistrict,
         "village": village,
+        "place_name": placeName,
         "postcode": postcode,
         "datetime": datetime?.toIso8601String(),
         "start_time": startTime,
@@ -234,6 +240,7 @@ class EventModel extends Equatable {
         district,
         subdistrict,
         village,
+        placeName,
         postcode,
         datetime,
         startTime,

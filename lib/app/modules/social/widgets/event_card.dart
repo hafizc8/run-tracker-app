@@ -154,8 +154,9 @@ class EventCard extends StatelessWidget {
                               onCancelEvent!();
                               return;
                             }
+
                             await eventController
-                                .cancelEvent(eventModel?.id ?? '');
+                                .confirmCancelEvent(eventModel!.id!);
                           }
                         },
                         surfaceTintColor:
@@ -284,21 +285,16 @@ class EventCard extends StatelessWidget {
               GradientElevatedButton(
                 onPressed: eventModel?.isJoined == 0
                     ? () {
-                        eventController.accLeaveJoinEvent(eventModel?.id ?? '');
+                        eventController
+                            .confirmAccLeaveJoinEvent(eventModel?.id ?? '');
                       }
                     : null,
-                child: Obx(
-                  () => Visibility(
-                    visible: eventController.isLoadingAction.value,
-                    replacement: Text(
-                      (eventModel?.isJoined ?? 0).toEventStatus,
-                      style: Theme.of(context).textTheme.labelMedium?.copyWith(
-                            fontSize: 13,
-                            fontWeight: FontWeight.bold,
-                          ),
-                    ),
-                    child: CustomCircularProgressIndicator(),
-                  ),
+                child: Text(
+                  (eventModel?.isJoined ?? 0).toEventStatus,
+                  style: Theme.of(context).textTheme.labelMedium?.copyWith(
+                        fontSize: 13,
+                        fontWeight: FontWeight.bold,
+                      ),
                 ),
               ),
             ]

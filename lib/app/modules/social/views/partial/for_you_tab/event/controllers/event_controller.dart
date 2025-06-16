@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:syncfusion_flutter_datepicker/datepicker.dart';
 import 'package:zest_mobile/app/core/di/service_locator.dart';
 import 'package:zest_mobile/app/core/exception/app_exception.dart';
 import 'package:zest_mobile/app/core/exception/handler/app_exception_handler_info.dart';
@@ -10,6 +11,8 @@ import 'package:zest_mobile/app/core/models/model/event_model.dart';
 import 'package:zest_mobile/app/core/models/model/user_mini_model.dart';
 import 'package:zest_mobile/app/core/services/event_service.dart';
 import 'package:zest_mobile/app/core/shared/helpers/debouncer.dart';
+import 'package:zest_mobile/app/modules/social/views/partial/for_you_tab/widget/confirmation.dart';
+import 'package:zest_mobile/app/modules/social/views/partial/for_you_tab/widget/filter.dart';
 
 class EventController extends GetxController {
   var isLoading = false.obs;
@@ -32,8 +35,10 @@ class EventController extends GetxController {
 
   Rx<String?> activity = Rx(null);
   Rx<String?> location = Rx(null);
-  DateTimeRange? selectedRange;
+
+  PickerDateRange? selectedRange;
   TextEditingController dateController = TextEditingController();
+  var isApplyFilter = false.obs;
 
   @override
   void onInit() {
@@ -90,8 +95,8 @@ class EventController extends GetxController {
         page: page,
         order: 'upcoming',
         activity: activity.value == 'All' ? null : activity.value,
-        startDate: selectedRange?.start.toYyyyMmDdString(),
-        endDate: selectedRange?.end.toYyyyMmDdString(),
+        startDate: selectedRange?.startDate?.toYyyyMmDdString(),
+        endDate: selectedRange?.endDate?.toYyyyMmDdString(),
         location: location.value == 'All' ? null : location.value,
       );
 
@@ -115,18 +120,64 @@ class EventController extends GetxController {
   }
 
   Future<void> pickDateRange(BuildContext context) async {
-    final DateTimeRange? result = await showDateRangePicker(
-      context: context,
-      firstDate: DateTime(2020),
-      lastDate: DateTime(2100),
-      initialDateRange: selectedRange,
+    PickerDateRange? selectedRange;
+
+    PickerDateRange? res = await Get.dialog(
+      StatefulBuilder(builder: (context, setState) {
+        return AlertDialog(
+          title: Text(
+            'Choose Date Range',
+            style: Theme.of(context).textTheme.headlineMedium,
+          ),
+          content: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              SizedBox(
+                width: 500,
+                height: 400,
+                child: SfDateRangePicker(
+                  selectionMode: DateRangePickerSelectionMode.range,
+                  view: DateRangePickerView.month,
+                  initialSelectedRange: this.selectedRange,
+                  onSelectionChanged:
+                      (DateRangePickerSelectionChangedArgs args) {
+                    if (args.value is PickerDateRange) {
+                      selectedRange = args.value;
+                      setState(() {});
+                    }
+                  },
+                ),
+              ),
+              Row(mainAxisAlignment: MainAxisAlignment.end, children: [
+                TextButton(
+                  child: const Text('Cancel'),
+                  onPressed: () {
+                    Get.back();
+                  },
+                ),
+                TextButton(
+                  onPressed: selectedRange?.startDate == null
+                      ? null
+                      : () {
+                          Get.back(result: selectedRange);
+                        },
+                  child: const Text('Save'),
+                ),
+              ])
+            ],
+          ),
+        );
+      }),
     );
 
-    if (result != null) {
-      selectedRange = result;
-      dateController.text =
-          '${result.start.toYyyyMmDdString()} - ${result.end.toYyyyMmDdString()}';
-      load(refresh: true);
+    if (res != null) {
+      this.selectedRange = res;
+      if (res.endDate != null) {
+        dateController.text =
+            '${res.startDate?.toYyyyMmDdString()} - ${res.endDate?.toYyyyMmDdString()}';
+      } else {
+        dateController.text = res.startDate?.toYyyyMmDdString() ?? '';
+      }
     }
   }
 
@@ -148,6 +199,9 @@ class EventController extends GetxController {
           cancelledAt: res != null ? DateTime.now() : null,
         );
       }
+      if (res != null) {
+        Get.back();
+      }
     } on AppException catch (e) {
       // show error snackbar, toast, etc
       AppExceptionHandlerInfo.handle(e);
@@ -163,10 +217,43 @@ class EventController extends GetxController {
     }
   }
 
+  Future<void> confirmAccLeaveJoinEvent(String id) async {
+    await Get.dialog(
+      Obx(
+        () => ConfirmationDialog(
+          onConfirm: () => accLeaveJoinEvent(id),
+          title: 'Confirm Joining?',
+          subtitle:
+              'Events take effort to set up, so if you join, make sure you can be there!',
+          labelConfirm: 'Join Event',
+          isLoading: isLoadingAction.value,
+        ),
+      ),
+    );
+  }
+
+  Future<void> confirmCancelEvent(String id) async {
+    await Get.dialog(
+      Obx(
+        () => ConfirmationDialog(
+          onConfirm: () => cancelEvent(id),
+          title: 'Cancelling?',
+          subtitle:
+              'If you need to leave an event after joining, please message the host to explain. It keeps things respectful and helps with planning.',
+          labelConfirm: 'Leave Event',
+          isLoading: isLoadingAction.value,
+        ),
+      ),
+    );
+  }
+
   Future<void> accLeaveJoinEvent(String id, {String? leave}) async {
     isLoadingAction.value = true;
     try {
       final bool res = await _eventService.accLeaveJoinEvent(id, leave: leave);
+      if (res) {
+        Get.back();
+      }
       int index = events.indexWhere((element) => element.id == id);
       if (index != -1) {
         final event = events[index];
@@ -203,5 +290,32 @@ class EventController extends GetxController {
     } finally {
       isLoadingAction.value = false;
     }
+  }
+
+  void filter() {
+    Get.dialog(FilterDialog());
+  }
+
+  void applyFilter() {
+    isApplyFilter.value = true;
+    Get.back();
+    load(refresh: true);
+  }
+
+  void resetFilter() {
+    isApplyFilter.value = false;
+    Get.back();
+    activity.value = null;
+    location.value = null;
+    selectedRange = null;
+    dateController.text = '';
+    load(refresh: true);
+  }
+
+  void resetFormFilter() {
+    activity.value = null;
+    location.value = null;
+    selectedRange = null;
+    dateController.text = '';
   }
 }

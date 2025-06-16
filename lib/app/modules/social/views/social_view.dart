@@ -61,20 +61,8 @@ class SocialView extends GetView<SocialController> {
               final res = await Get.toNamed(AppRoutes.eventCreate);
 
               if (res != null) {
-                showDialog(
-                    context: context,
-                    builder: (context) {
-                      return Dialog(
-                        surfaceTintColor: Colors.transparent,
-                        backgroundColor: Colors.transparent,
-                        child: EventCardDialog(
-                          backgroundColor:
-                              Theme.of(context).colorScheme.surface,
-                          eventModel: res,
-                          onTap: null,
-                        ),
-                      );
-                    });
+                Get.toNamed(AppRoutes.socialYourPageEventDetail,
+                    arguments: {'eventId': res.id});
               }
               // Handle Create Event action
             } else if (value == 'create_club') {

@@ -1,10 +1,10 @@
 import 'package:flutter/material.dart';
-import 'package:flutter/widgets.dart';
 import 'package:flutter_svg/flutter_svg.dart';
+import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:get/get.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
-import 'package:sliding_widget/sliding_widget.dart';
 import 'package:zest_mobile/app/core/shared/theme/color_schemes.dart';
+import 'package:zest_mobile/app/core/shared/widgets/slide_to_act.dart';
 import 'package:zest_mobile/app/modules/activity/start_activity/controllers/start_activity_controller.dart';
 import 'package:zest_mobile/app/routes/app_routes.dart';
 
@@ -16,12 +16,27 @@ class StartActivityView extends GetView<StartActivityController> {
     return Scaffold(
       appBar: AppBar(
         backgroundColor: Theme.of(context).colorScheme.background,
-        title: Text(
-          'Running',
-          style: Theme.of(context).textTheme.headlineMedium?.copyWith(
-            fontWeight: FontWeight.w600,
-            color: Theme.of(context).colorScheme.onBackground,
-          ),
+        title: Row(
+          mainAxisSize: MainAxisSize.min,
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            Container(
+              width: 10.0,
+              height: 10.0,
+              decoration: BoxDecoration(
+                color: darkColorScheme.primary,
+                shape: BoxShape.circle,
+              ),
+            ),
+            const SizedBox(width: 8.0),
+            Text(
+              'Running',
+              style: Theme.of(context).textTheme.headlineMedium?.copyWith(
+                fontWeight: FontWeight.w600,
+                color: Theme.of(context).colorScheme.onBackground,
+              ),
+            )
+          ],
         ),
         centerTitle: true,
         automaticallyImplyLeading: false,
@@ -34,96 +49,8 @@ class StartActivityView extends GetView<StartActivityController> {
           ),
         ),
       ),
-      // body: Padding(
-      //   padding: const EdgeInsets.all(16.0),
-      //   child: Column(
-      //     crossAxisAlignment: CrossAxisAlignment.start,
-      //     children: [
-      //       Obx(() => Text(
-      //             controller.isTracking.value 
-      //                 ? "Sedang Melacak..." 
-      //                 : "Tekan Mulai untuk Melacak",
-      //             style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold, color: controller.isTracking.value ? Colors.green : Colors.red ),
-      //           )),
-      //       const SizedBox(height: 20),
-      //       Obx(() => Row(
-      //         mainAxisAlignment: MainAxisAlignment.spaceAround,
-      //         children: [
-      //           Column(
-      //             children: [
-      //               const Text("Langkah Sesi Ini:", style: TextStyle(fontSize: 16)),
-      //               Text(
-      //                 "${controller.stepsInSession.value}",
-      //                 style: const TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
-      //               ),
-      //             ],
-      //           ),
-      //           Column(
-      //             children: [
-      //               const Text("Jarak Tempuh:", style: TextStyle(fontSize: 16)),
-      //               Text(
-      //                 controller.formatDistance(controller.currentDistanceInMeters.value),
-      //                 style: const TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
-      //               ),
-      //             ],
-      //           ),
-      //         ],
-      //       )),
-      //       const SizedBox(height: 20),
-      //       const Text(
-      //         "Data Titik Lokasi:",
-      //         style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
-      //       ),
-      //       const SizedBox(height: 8),
-      //       Expanded(
-      //         child: Obx(
-      //           () {
-      //             if (controller.currentPath.isEmpty) {
-      //               return const Center(child: Text("Belum ada data lokasi."));
-      //             }
-      //             return ListView.builder(
-      //               itemCount: controller.currentPath.length,
-      //               itemBuilder: (context, index) {
-      //                 final point = controller.currentPath[index];
-      //                 // Tampilkan beberapa titik terakhir saja jika daftarnya panjang untuk UI
-      //                 // int displayIndex = controller.currentPath.length - 1 - index;
-      //                 // final point = controller.currentPath[displayIndex];
-      //                 return Card(
-      //                   margin: const EdgeInsets.symmetric(vertical: 4),
-      //                   child: Padding(
-      //                     padding: const EdgeInsets.all(8.0),
-      //                     child: Text(
-      //                       // Menggunakan toString() dari LocationPoint yang sudah di-override
-      //                       '${index + 1}. ${point.toString()}',
-      //                       style: const TextStyle(fontSize: 12),
-      //                     ),
-      //                   ),
-      //                 );
-      //               },
-      //             );
-      //           },
-      //         ),
-      //       ),
-      //     ],
-      //   ),
-      // ),
-      // floatingActionButton: Obx(
-      //   () => FloatingActionButton.extended(
-      //     onPressed: () {
-      //       if (controller.isTracking.value) {
-      //         controller.stopActivity();
-      //       } else {
-      //         controller.startActivity();
-      //       }
-      //     },
-      //     label: Text(controller.isTracking.value ? "Selesai" : "Mulai"),
-      //     icon: Icon(controller.isTracking.value ? Icons.stop : Icons.play_arrow),
-      //     backgroundColor: controller.isTracking.value ? Colors.red : Colors.green,
-      //   ),
-      // ),
-      // floatingActionButtonLocation: FloatingActionButtonLocation.centerFloat,
       body: Container(
-        padding: const EdgeInsets.all(16.0),
+        padding: const EdgeInsets.symmetric(horizontal: 26.0, vertical: 16.0),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.center,
           children: [
@@ -163,8 +90,17 @@ class StartActivityView extends GetView<StartActivityController> {
                       ),
                       const SizedBox(width: 8),
                       Text(
-                        '10/10',
+                        '2/10',
                         style: Theme.of(context).textTheme.titleSmall,
+                      ),
+                      const SizedBox(width: 8),
+                      Text(
+                        '6:00',
+                        style: Theme.of(context).textTheme.titleSmall?.copyWith(
+                          color: const Color(0xFF7B7B7B),
+                          fontSize: 13,
+                          fontWeight: FontWeight.w400,
+                        ),
                       ),
                     ],
                   ),
@@ -206,42 +142,23 @@ class StartActivityView extends GetView<StartActivityController> {
                 return Visibility(
                   visible: controller.currentPosition.value != null,
                   child: Center(
-                    child: SlidingWidget(
-                      width: MediaQuery.of(context).size.width * 0.85,
-                      height: 70,
-                      backgroundColor: const Color(0xFF2E2E2E),
-                      backgroundColorEnd: const Color(0xFF2E2E2E),
-                      foregroundColor: darkColorScheme.primary,
-                      iconColor: darkColorScheme.onPrimary,
-                      label: 'Start Your Zest+!',
-                      labelStyle: Theme.of(context).textTheme.labelMedium?.copyWith(
-                        color: darkColorScheme.onBackground,
-                      ),
-                      shadow: const BoxShadow(
-                        color: Colors.transparent,
-                        blurRadius: 0,
-                        offset: Offset(0, 0),
-                      ),
-                      action: () {
-                        print('Start Your Zest+!');
+                    child: SlideToAction(
+                      onSubmit: () {
                         Get.offAndToNamed(AppRoutes.activityRecord);
                       },
-                      onTapDown: () {
-                        print('[onTapDown] Start Your Zest+!');
-                      },
-                      onTapUp: () {
-                        print('[onTapUp] Start Your Zest+!');
-                      },
-                      stickToEnd: true,
-                      child: Icon(
-                        Icons.arrow_forward_ios,
+                      sliderIcon: FaIcon(
+                        FontAwesomeIcons.anglesRight,
                         color: darkColorScheme.onPrimary,
+                        size: 32,
                       ),
+                      textStyle: Theme.of(context).textTheme.headlineSmall?.copyWith(
+                        color: const Color(0xFF6C6C6C),
+                      )
                     ),
                   ),
                 );
               }
-            )
+            ),
           ],
         ),
       ),

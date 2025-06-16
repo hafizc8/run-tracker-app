@@ -14,12 +14,27 @@ class RecordActivityView extends GetView<RecordActivityController> {
     return Scaffold(
       appBar: AppBar(
         backgroundColor: Theme.of(context).colorScheme.background,
-        title: Text(
-          'Running',
-          style: Theme.of(context).textTheme.headlineMedium?.copyWith(
-            fontWeight: FontWeight.w600,
-            color: Theme.of(context).colorScheme.onBackground,
-          ),
+        title: Row(
+          mainAxisSize: MainAxisSize.min,
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            Container(
+              width: 10.0,
+              height: 10.0,
+              decoration: BoxDecoration(
+                color: darkColorScheme.primary,
+                shape: BoxShape.circle,
+              ),
+            ),
+            const SizedBox(width: 8.0),
+            Text(
+              'Running',
+              style: Theme.of(context).textTheme.headlineMedium?.copyWith(
+                fontWeight: FontWeight.w600,
+                color: Theme.of(context).colorScheme.onBackground,
+              ),
+            )
+          ],
         ),
         centerTitle: true,
         automaticallyImplyLeading: false,
@@ -106,8 +121,17 @@ class RecordActivityView extends GetView<RecordActivityController> {
                         ),
                         const SizedBox(width: 8),
                         Text(
-                          '10/10',
+                          '2/10',
                           style: Theme.of(context).textTheme.titleSmall,
+                        ),
+                        const SizedBox(width: 8),
+                        Text(
+                          '6:00',
+                          style: Theme.of(context).textTheme.titleSmall?.copyWith(
+                            color: const Color(0xFF7B7B7B),
+                            fontSize: 13,
+                            fontWeight: FontWeight.w400,
+                          ),
                         ),
                       ],
                     ),

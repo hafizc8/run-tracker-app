@@ -1325,14 +1325,6 @@ packages:
     description: flutter
     source: sdk
     version: "0.0.99"
-  sliding_widget:
-    dependency: "direct main"
-    description:
-      name: sliding_widget
-      sha256: "71491c576a54b58aa37262d6e36bddf6a55b3cbd25ef1b060300abf953b209e3"
-      url: "https://pub.dev"
-    source: hosted
-    version: "0.0.5"
   smooth_page_indicator:
     dependency: "direct main"
     description:

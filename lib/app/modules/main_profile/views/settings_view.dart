@@ -31,26 +31,24 @@ class SettingsView extends GetView<SettingsController> {
       body: Column(
         children: [
           ListTile(
-            title: Expanded(
-              child: Row(
-                children: [
-                  FaIcon(
-                    FontAwesomeIcons.gauge,
-                    color: Theme.of(context).colorScheme.primary,
+            title: Row(
+              children: [
+                FaIcon(
+                  FontAwesomeIcons.gauge,
+                  color: Theme.of(context).colorScheme.primary,
+                ),
+                const SizedBox(width: 5),
+                Expanded(
+                  child: Text(
+                    'Units of Measurements',
+                    maxLines: 1,
+                    overflow: TextOverflow.ellipsis,
+                    style: Theme.of(context).textTheme.labelLarge?.copyWith(
+                          color: Theme.of(context).colorScheme.onBackground,
+                        ),
                   ),
-                  const SizedBox(width: 5),
-                  Expanded(
-                    child: Text(
-                      'Units of Measurements',
-                      maxLines: 1,
-                      overflow: TextOverflow.ellipsis,
-                      style: Theme.of(context).textTheme.labelLarge?.copyWith(
-                            color: Theme.of(context).colorScheme.onBackground,
-                          ),
-                    ),
-                  ),
-                ],
-              ),
+                ),
+              ],
             ),
             trailing: Text(
               'Kilometers',

@@ -1,6 +1,7 @@
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:shimmer/shimmer.dart';
 import 'package:zest_mobile/app/core/shared/widgets/shimmer_loading_circle.dart';
 import 'package:zest_mobile/app/core/shared/widgets/shimmer_loading_list.dart';
 import 'package:zest_mobile/app/modules/main_profile/controllers/badges_controller.dart';
@@ -31,8 +32,29 @@ class BadgesView extends GetView<BadgesController> {
       ),
       body: Obx(() {
         if (controller.isLoading.value) {
-          return const ShimmerLoadingList(
-            itemCount: 10,
+          return Shimmer.fromColors(
+            baseColor: Colors.grey.shade800,
+            highlightColor: Colors.grey.shade700,
+            child: GridView.builder(
+              shrinkWrap: true,
+              physics: const NeverScrollableScrollPhysics(),
+              padding: const EdgeInsets.all(8.0),
+              itemCount: 6, // 3 kolom × 2 baris = 6 item
+              gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
+                crossAxisCount: 3,
+                mainAxisSpacing: 12,
+                crossAxisSpacing: 12,
+                childAspectRatio: 1, // persegi
+              ),
+              itemBuilder: (context, index) {
+                return Container(
+                  decoration: BoxDecoration(
+                    color: Colors.grey.shade900,
+                    borderRadius: BorderRadius.circular(8),
+                  ),
+                );
+              },
+            ),
           );
         }
         return GridView.builder(

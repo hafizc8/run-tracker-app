@@ -2,6 +2,9 @@ import 'package:flutter/material.dart';
 import 'dart:math' as math;
 
 import 'package:flutter_svg/flutter_svg.dart';
+import 'package:google_fonts/google_fonts.dart';
+import 'package:zest_mobile/app/core/shared/helpers/number_helper.dart';
+import 'package:zest_mobile/app/core/shared/theme/color_schemes.dart';
 
 class StepsTrackerWidget extends StatelessWidget {
   final double progressValue; // Nilai progress antara 0.0 dan 1.0
@@ -34,18 +37,19 @@ class StepsTrackerWidget extends StatelessWidget {
           // Ikon di tengah
           SvgPicture.asset(
             'assets/icons/ic_shoes_3.svg',
-            width: 130,
-            height: 130,
+            width: 110,
+            height: 110,
           ),
           // Teks nilai di bawah
           Positioned(
-            bottom: 40.0, // Sesuaikan posisi
+            bottom: 10.0, // Sesuaikan posisi
             child: Text(
-              currentSteps.toString(), // Anda mungkin ingin memformat angka ini (misal: 17.000)
-              style: Theme.of(context).textTheme.headlineMedium?.copyWith(
-                fontSize: 35,
+              NumberHelper().formatNumberToKWithComma(currentSteps),
+              style: GoogleFonts.poppins(
                 fontWeight: FontWeight.w700,
                 fontStyle: FontStyle.italic,
+                fontSize: 35,
+                color: darkColorScheme.primary,
               ),
             ),
           ),

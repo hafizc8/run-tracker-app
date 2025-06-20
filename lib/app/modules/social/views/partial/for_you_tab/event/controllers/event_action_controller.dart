@@ -1,4 +1,5 @@
 import 'dart:io';
+import 'dart:math';
 
 import 'package:flutter/material.dart';
 import 'package:flutter_cache_manager/flutter_cache_manager.dart';
@@ -6,6 +7,7 @@ import 'package:geolocator/geolocator.dart';
 import 'package:get/get.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:intl/intl.dart';
+import 'package:url_launcher/url_launcher.dart';
 import 'package:zest_mobile/app/core/di/service_locator.dart';
 import 'package:zest_mobile/app/core/exception/app_exception.dart';
 import 'package:zest_mobile/app/core/exception/handler/app_exception_handler_info.dart';
@@ -359,7 +361,8 @@ class EventActionController extends GetxController {
   Future<void> storeEvent() async {
     isLoading.value = true;
     try {
-      final EventModel? res = await _eventService.storeEvent(form.value);
+      final EventModel? res = await _eventService
+          .storeEvent(form.value.copyWith(placeName: placeNameController.text));
       if (res != null) {
         Get.back(result: res);
       }
@@ -385,22 +388,11 @@ class EventActionController extends GetxController {
   Future<void> updateEvent() async {
     isLoading.value = true;
     try {
-      final EventModel? res =
-          await _eventService.updateEvent(form.value, event.value?.id ?? '');
+      final EventModel? res = await _eventService.updateEvent(
+          form.value.copyWith(placeName: placeNameController.text),
+          event.value?.id ?? '');
       if (res != null) {
-        if (from.value == 'list') {
-          Get.offNamed(AppRoutes.socialYourPageEventDetail,
-              arguments: {'eventId': res.id});
-        } else if (from.value == 'detail') {
-          Get.back(result: res);
-        }
-
-        int index = eventController.events
-            .indexWhere((element) => element.id == res.id);
-
-        if (index != -1) {
-          eventController.events[index] = res;
-        }
+        Get.back(result: res);
       }
     } on AppException catch (e) {
       if (e.type == AppExceptionType.validation) {
@@ -469,26 +461,35 @@ class EventActionController extends GetxController {
     return fileInfo?.file;
   }
 
-  void gotToEdit(EventModel event, {String from = 'list'}) {
+  void gotToEdit(EventModel event, {String from = 'list'}) async {
     this.from
       ..value = from
       ..refresh();
     this.event.value = event;
+
     isEdit.value = true;
     String formattedDate = DateFormat('d MMM yyyy').format(event.datetime!);
+    String result;
+    if (event.startTime != null && event.endTime != null) {
+      result =
+          '$formattedDate, ${formatTime(event.startTime!)}–${formatTime(event.endTime!)}';
+    } else {
+      result =
+          '$formattedDate, ${formatTime(event.startTime ?? TimeOfDay.now())}-Finish';
+    }
 
-    String result =
-        '$formattedDate, ${formatTime(event.startTime!)}–${formatTime(event.endTime!)}';
     form.value = EventStoreFormModel(
       title: event.title,
       description: event.description,
       price: event.price,
       latitude: double.parse(event.latitude!),
       longitude: double.parse(event.longitude!),
+      placeName: event.placeName,
       quota: event.quota,
       datetime: event.datetime,
       startTime: formatTimeOfDayToHms(event.startTime ?? TimeOfDay.now()),
-      endTime: formatTimeOfDayToHms(event.endTime ?? TimeOfDay.now()),
+      endTime:
+          event.endTime != null ? formatTimeOfDayToHms(event.endTime!) : null,
       isPublic: bool.parse(event.isPublic.toBool),
       activity: EventActivityModel(
         value: event.activity,
@@ -500,6 +501,7 @@ class EventActionController extends GetxController {
     imageController.text =
         event.imageUrl == null ? '' : event.imageUrl.split('/').last;
     addressController.text = event.address;
+    placeNameController.text = event.placeName ?? '';
     dateController.text = result;
 
     getCachedImageFile(event.imageUrl ?? '').then((value) {
@@ -509,7 +511,16 @@ class EventActionController extends GetxController {
       form.value = form.value.copyWith(image: null);
       original.value = form.value;
     });
+  }
 
-    Get.toNamed(AppRoutes.eventCreate);
+  Future<void> openGoogleMaps(String placeName) async {
+    final Uri url = Uri.parse(
+        "https://www.google.com/maps/search/?api=1&query=${Uri.encodeComponent(placeName)}");
+
+    if (await canLaunchUrl(url)) {
+      await launchUrl(url, mode: LaunchMode.externalApplication);
+    } else {
+      throw 'Tidak dapat membuka Google Maps';
+    }
   }
 }

@@ -4,11 +4,12 @@ import 'package:get/get.dart';
 import 'package:zest_mobile/app/core/models/model/club_member_model.dart';
 import 'package:zest_mobile/app/core/shared/widgets/shimmer_loading_circle.dart';
 import 'package:zest_mobile/app/core/shared/widgets/shimmer_loading_list.dart';
+import 'package:zest_mobile/app/modules/club/partial/detail_club/controllers/detail_club_controller.dart';
 import 'package:zest_mobile/app/modules/club/partial/member_list_club/controllers/member_list_club_controller.dart';
 
 class MemberListClubView extends GetView<MemberListClubController> {
-  const MemberListClubView({super.key});
-
+  MemberListClubView({super.key});
+  final DetailClubController detailClubController = Get.find();
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -107,6 +108,9 @@ class MemberListClubView extends GetView<MemberListClubController> {
   Widget _buildMemberListItem(BuildContext context, ClubMemberModel? members) {
     return InkWell(
       onTapDown: (details) async {
+        if (detailClubController.club.value?.isMember == true) {
+          return;
+        }
         if (members?.role != 2) {
           return;
         }

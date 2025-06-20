@@ -202,11 +202,27 @@ class DetailClubView extends GetView<DetailClubController> {
               ],
             ),
             const SizedBox(height: 16),
-            Text(
-              club?.description ?? 'No description',
-              style: Theme.of(context).textTheme.bodyMedium?.copyWith(
-                    fontSize: 12,
+            Obx(
+              () => GestureDetector(
+                onTap: () {
+                  controller.isExpanded.toggle();
+                },
+                child: ConstrainedBox(
+                  constraints: BoxConstraints(
+                    maxWidth: MediaQuery.of(context).size.width * 0.4,
                   ),
+                  child: Text(
+                    club?.description ?? 'No description',
+                    maxLines: controller.isExpanded.value ? null : 1,
+                    overflow: controller.isExpanded.value
+                        ? TextOverflow.visible
+                        : TextOverflow.ellipsis,
+                    style: Theme.of(context).textTheme.bodyMedium?.copyWith(
+                          fontSize: 12,
+                        ),
+                  ),
+                ),
+              ),
             ),
             const SizedBox(height: 16),
             Row(
@@ -265,20 +281,18 @@ class DetailClubView extends GetView<DetailClubController> {
                 InkWell(
                   onTap: () =>
                       Get.snackbar('Coming soon', 'Feature is coming soon'),
-                  child: Icon(
-                    Icons.chat_bubble_outline,
+                  child: SvgPicture.asset(
+                    'assets/icons/msg.svg',
                     color: Theme.of(context).colorScheme.onBackground,
-                    size: 25,
                   ),
                 ),
                 const SizedBox(width: 12),
                 InkWell(
                   onTap: () =>
                       Get.toNamed(AppRoutes.inviteToClub, arguments: club?.id),
-                  child: Icon(
-                    Icons.person_add_alt_outlined,
+                  child: SvgPicture.asset(
+                    'assets/icons/add_friends.svg',
                     color: Theme.of(context).colorScheme.onBackground,
-                    size: 25,
                   ),
                 ),
                 const Spacer(),
@@ -380,7 +394,7 @@ class DetailClubView extends GetView<DetailClubController> {
       leading: IconButton(
         icon: Icon(
           Icons.chevron_left,
-          size: 27,
+          size: 35,
           color: Theme.of(context).colorScheme.onBackground,
         ),
         onPressed: () => Get.back(),

@@ -163,6 +163,7 @@ class EventStoreFormModel extends FormModel<EventStoreFormModel>
         isPublic != formHasEdited.isPublic ||
         startTime != formHasEdited.startTime ||
         endTime != formHasEdited.endTime ||
-        price != formHasEdited.price;
+        price != formHasEdited.price ||
+        placeName != formHasEdited.placeName;
   }
 }

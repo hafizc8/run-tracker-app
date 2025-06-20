@@ -57,7 +57,7 @@ class SocialSearchView extends GetView<SocialSearchController> {
       leading: IconButton(
         icon: Icon(
           Icons.chevron_left,
-          size: 27,
+          size: 35,
           color: Theme.of(context).colorScheme.onBackground,
         ),
         onPressed: () => Get.back(),

@@ -1,5 +1,6 @@
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/widgets.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:get/get.dart';
 import 'package:intl/intl.dart';
@@ -11,6 +12,7 @@ import 'package:zest_mobile/app/core/shared/widgets/shimmer_loading_circle.dart'
 import 'package:zest_mobile/app/modules/club/partial/detail_club/partial/tab_bar_club/views/widgets/participants_avatars.dart';
 import 'package:zest_mobile/app/modules/social/views/partial/for_you_tab/event/controllers/event_action_controller.dart';
 import 'package:zest_mobile/app/modules/social/views/partial/for_you_tab/event/controllers/event_controller.dart';
+import 'package:zest_mobile/app/routes/app_routes.dart';
 
 class EventCard extends StatelessWidget {
   EventCard(
@@ -97,7 +99,7 @@ class EventCard extends StatelessWidget {
                     child: Row(
                       children: [
                         CachedNetworkImage(
-                          imageUrl: eventModel?.activity ?? '',
+                          imageUrl: eventModel?.activityImageUrl ?? '',
                           width: 13,
                           height: 13,
                           fit: BoxFit.cover,
@@ -146,6 +148,18 @@ class EventCard extends StatelessWidget {
                             // Handle Edit Event action
                             eventActionController.gotToEdit(eventModel!,
                                 from: 'list');
+                            var res = await Get.toNamed(AppRoutes.eventCreate);
+                            if (res != null) {
+                              var result = await Get.toNamed(
+                                  AppRoutes.socialYourPageEventDetail,
+                                  arguments: {'eventId': res.id});
+
+                              if (result != null && result is EventModel) {
+                                int index = eventController.events.indexWhere(
+                                    (element) => element.id == result.id);
+                                eventController.events[index] = result;
+                              }
+                            }
                           } else if (value == 'cancel_event') {
                             // Handle Cancel Event action
                             if (onCancelEvent != null) {
@@ -217,7 +231,7 @@ class EventCard extends StatelessWidget {
             ),
             const SizedBox(height: 8),
             Text(
-              "${eventModel?.userOnEventsCount ?? 0} are Going",
+              "${eventModel?.userOnEventsCount ?? 0} / ${eventModel?.quota} are Going",
               style: Theme.of(context)
                   .textTheme
                   .bodyMedium
@@ -239,15 +253,20 @@ class EventCard extends StatelessWidget {
                       '${DateFormat('d MMM yyyy').format(eventModel!.datetime!)}, ${eventModel?.startTime != null ? eventActionController.formatTime(eventModel!.startTime!) : 'Start'}–${eventModel?.endTime != null ? eventActionController.formatTime(eventModel!.endTime!) : 'Finish'}',
                 ),
                 const SizedBox(height: 12),
-                _buildInfoItem(
-                  context,
-                  icon: SvgPicture.asset(
-                    'assets/icons/pin_location.svg',
-                    height: 22,
-                    width: 27,
+                GestureDetector(
+                  onTap: () => eventActionController.openGoogleMaps(
+                      eventModel?.placeName ?? eventModel?.address ?? '-'),
+                  child: _buildInfoItem(
+                    context,
+                    icon: SvgPicture.asset(
+                      'assets/icons/pin_location.svg',
+                      height: 22,
+                      width: 27,
+                    ),
+                    title: 'Location',
+                    subtitle:
+                        eventModel?.placeName ?? eventModel?.address ?? '-',
                   ),
-                  title: 'Location',
-                  subtitle: eventModel?.address ?? '-',
                 ),
                 const SizedBox(height: 16),
                 _buildInfoItem(

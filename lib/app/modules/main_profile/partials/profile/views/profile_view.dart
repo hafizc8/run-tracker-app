@@ -178,72 +178,76 @@ class ProfileView extends GetView<ProfileController> {
                                             MediaQuery.of(context).size.width *
                                                 0.58,
                                       ),
-                                      child: Row(children: [
-                                        Visibility(
-                                          visible: controller
-                                                  .user.value?.isFollowing ==
-                                              0,
-                                          replacement: GradientOutlinedButton(
-                                            onPressed: () {
-                                              controller.unfollow();
-                                            },
-                                            child: Row(children: [
-                                              FaIcon(
-                                                FontAwesomeIcons.userCheck,
-                                                size: 13,
-                                                color:
-                                                    darkColorScheme.background,
-                                              ),
-                                              const SizedBox(width: 5),
-                                              Text(
-                                                'Following',
-                                                style: Theme.of(context)
-                                                    .textTheme
-                                                    .headlineSmall
-                                                    ?.copyWith(
+                                      child: Row(
+                                        children: [
+                                          Visibility(
+                                            visible: controller
+                                                    .user.value?.isFollowing ==
+                                                0,
+                                            replacement: GradientOutlinedButton(
+                                              onPressed: () {
+                                                controller.unfollow();
+                                              },
+                                              child: Row(children: [
+                                                FaIcon(
+                                                  FontAwesomeIcons.userCheck,
+                                                  size: 13,
+                                                  color: darkColorScheme
+                                                      .background,
+                                                ),
+                                                const SizedBox(width: 5),
+                                                Text(
+                                                  'Following',
+                                                  style: Theme.of(context)
+                                                      .textTheme
+                                                      .headlineSmall
+                                                      ?.copyWith(
+                                                          fontSize: 12,
+                                                          fontWeight:
+                                                              FontWeight.w700,
+                                                          color: darkColorScheme
+                                                              .background),
+                                                ),
+                                              ]),
+                                            ),
+                                            child: GradientOutlinedButton(
+                                              onPressed: () {
+                                                controller.follow();
+                                              },
+                                              child: Row(children: [
+                                                const Icon(
+                                                  Icons.person_add_alt_1,
+                                                  size: 14,
+                                                ),
+                                                const SizedBox(width: 5),
+                                                Text(
+                                                  'Follow',
+                                                  style: Theme.of(context)
+                                                      .textTheme
+                                                      .headlineSmall
+                                                      ?.copyWith(
                                                         fontSize: 12,
                                                         fontWeight:
                                                             FontWeight.w700,
-                                                        color: darkColorScheme
-                                                            .background),
-                                              ),
-                                            ]),
+                                                      ),
+                                                ),
+                                              ]),
+                                            ),
                                           ),
-                                          child: GradientOutlinedButton(
-                                            onPressed: () {
-                                              controller.follow();
-                                            },
-                                            child: Row(children: [
-                                              const Icon(
-                                                Icons.person_add_alt_1,
-                                                size: 14,
-                                              ),
-                                              const SizedBox(width: 5),
-                                              Text(
-                                                'Follow',
-                                                style: Theme.of(context)
-                                                    .textTheme
-                                                    .headlineSmall
-                                                    ?.copyWith(
-                                                      fontSize: 12,
-                                                      fontWeight:
-                                                          FontWeight.w700,
-                                                    ),
-                                              ),
-                                            ]),
+                                          const SizedBox(width: 10),
+                                          InkWell(
+                                            onTap: () => Get.snackbar(
+                                                'Coming Soon',
+                                                'Feature coming soon'),
+                                            child: SvgPicture.asset(
+                                              'assets/icons/msg.svg',
+                                              color: Theme.of(context)
+                                                  .colorScheme
+                                                  .onBackground,
+                                            ),
                                           ),
-                                        ),
-                                        const SizedBox(width: 10),
-                                        InkWell(
-                                          onTap: () => Get.snackbar(
-                                              'Coming Soon',
-                                              'Feature coming soon'),
-                                          child: const Icon(
-                                            Icons.chat_bubble_outline,
-                                            size: 25,
-                                          ),
-                                        ),
-                                      ]),
+                                        ],
+                                      ),
                                     ),
                                   ),
                                   const Spacer(),

@@ -15,6 +15,8 @@ class DetailClubController extends GetxController {
 
   final ClubService _clubService = sl<ClubService>();
 
+  var isExpanded = false.obs;
+
   @override
   void onInit() {
     super.onInit();

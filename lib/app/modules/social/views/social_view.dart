@@ -33,6 +33,7 @@ class SocialView extends GetView<SocialController> {
 
   PreferredSizeWidget _buildAppBar(BuildContext context) {
     return AppBar(
+      toolbarHeight: 100,
       title: RichText(
         text: TextSpan(
           children: <TextSpan>[

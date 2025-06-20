@@ -11,7 +11,7 @@ import 'package:zest_mobile/app/routes/app_routes.dart';
 class CustomTabBar extends GetView<TabBarController> {
   CustomTabBar({super.key});
 
-  final List<String> tabs = ['Overview', 'Challenge', 'Events'];
+  final List<String> tabs = ['Overview', 'Challenges', 'Events'];
 
   final ProfileMainController profileController = Get.find();
   @override
@@ -85,7 +85,7 @@ class CustomTabBar extends GetView<TabBarController> {
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   Text(
-                    'Challenge',
+                    'Challenges',
                     style: Theme.of(context).textTheme.headlineSmall,
                   ),
                   const SizedBox(height: 8),

@@ -25,6 +25,7 @@ class ClubModel extends Model<ClubModel> {
     this.isPendingJoin = false,
     this.isOwner = false,
     this.isJoined = false,
+    this.isMember = false,
     this.friendsTotal,
     this.friendsNames,
   });
@@ -48,6 +49,7 @@ class ClubModel extends Model<ClubModel> {
   final int? challengeCount;
   final bool? isPendingJoin;
   final bool? isJoined;
+  final bool? isMember;
   bool? isOwner;
   int? friendsTotal;
   List<String>? friendsNames;
@@ -74,6 +76,7 @@ class ClubModel extends Model<ClubModel> {
     bool? isPendingJoin,
     bool? isOwner,
     bool? isJoined,
+    bool? isMember,
     int? friendsTotal,
     List<String>? friendsNames,
   }) {
@@ -98,6 +101,7 @@ class ClubModel extends Model<ClubModel> {
       isPendingJoin: isPendingJoin ?? this.isPendingJoin,
       isOwner: isOwner ?? this.isOwner,
       isJoined: isJoined ?? this.isJoined,
+      isMember: isMember ?? this.isMember,
       friendsTotal: friendsTotal ?? this.friendsTotal,
       friendsNames: friendsNames ?? this.friendsNames,
     );
@@ -114,9 +118,14 @@ class ClubModel extends Model<ClubModel> {
       country: json["country"],
       province: json["province"],
       district: json["district"],
-      privacy: json["privacy"] != null ? ClubPrivacyEnum.fromValue(int.parse(json["privacy"].toString())) : null,
+      privacy: json["privacy"] != null
+          ? ClubPrivacyEnum.fromValue(int.parse(json["privacy"].toString()))
+          : null,
       privacyText: json["privacy_text"],
-      postPermission: json["post_permission"] != null ? ClubPostPermissionEnum.fromValue(int.parse(json["post_permission"].toString())) : null,
+      postPermission: json["post_permission"] != null
+          ? ClubPostPermissionEnum.fromValue(
+              int.parse(json["post_permission"].toString()))
+          : null,
       postPermissionText: json["post_permission_text"],
       createdAt: DateTime.tryParse(json["created_at"] ?? ""),
       eventsCount: json["events_count"],
@@ -125,8 +134,11 @@ class ClubModel extends Model<ClubModel> {
       isPendingJoin: json["is_pending_join"] == 1,
       isOwner: json["is_owner"] != null && json["is_owner"] == 1,
       isJoined: json["is_joined"] == 1,
+      isMember: json["is_member"] == 1,
       friendsTotal: json["friends_total"],
-      friendsNames: json["friends_names"] == null ? [] : List<String>.from(json["friends_names"].map((x) => x)),
+      friendsNames: json["friends_names"] == null
+          ? []
+          : List<String>.from(json["friends_names"].map((x) => x)),
     );
   }
 
@@ -151,7 +163,8 @@ class ClubModel extends Model<ClubModel> {
         "challenge_count": challengeCount,
         "is_pending_join": isPendingJoin == true ? 1 : 0,
         "is_owner": isOwner == true ? 1 : 0,
-        "is_joined": isJoined == true ? 1 : 0
+        "is_joined": isJoined == true ? 1 : 0,
+        "is_member": isMember == true ? 1 : 0
       };
 
   @override
@@ -176,6 +189,7 @@ class ClubModel extends Model<ClubModel> {
         isPendingJoin,
         isOwner,
         isJoined,
+        isMember,
         friendsTotal,
         friendsNames
       ];

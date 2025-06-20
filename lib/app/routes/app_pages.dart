@@ -229,7 +229,7 @@ class AppPages {
     ),
     GetPage(
       name: AppRoutes.memberListInClub,
-      page: () => const MemberListClubView(),
+      page: () => MemberListClubView(),
       binding: MemberListClubBinding(),
     ),
     GetPage(

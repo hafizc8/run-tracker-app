@@ -19,6 +19,7 @@ class ChooseLocationEventController extends GetxController {
   GoogleMapController? mapController;
   TextEditingController placeNameController = TextEditingController(text: '');
   final RxString address = ''.obs;
+  final GlobalKey<FormState> formKey = GlobalKey<FormState>();
 
   Timer? _debounce;
   bool allowReverseGeocode = false;

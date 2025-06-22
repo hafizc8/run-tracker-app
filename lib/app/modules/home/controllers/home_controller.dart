@@ -3,17 +3,21 @@ import 'package:firebase_crashlytics/firebase_crashlytics.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:pedometer/pedometer.dart';
+import 'package:zest_mobile/app/core/di/service_locator.dart';
+import 'package:zest_mobile/app/core/models/model/user_model.dart';
+import 'package:zest_mobile/app/core/services/auth_service.dart';
 
 class HomeController extends GetxController {
   final RxInt _currentSteps = 0.obs;
   int get currentSteps => _currentSteps.value;
 
-  final int maxSteps = 30000;
-
   final RxString _error = ''.obs;
   String get error => _error.value;
 
   late StreamSubscription<StepCount> _stepCountSubscription;
+
+  final AuthService _authService = sl<AuthService>();
+  UserModel? get user => _authService.user;
 
   @override
   void onInit() {
@@ -49,7 +53,7 @@ class HomeController extends GetxController {
     }
   }
 
-  double get progressValue => (currentSteps / maxSteps).clamp(0.0, 1.0);
+  double get progressValue => (currentSteps / (user?.userPreference?.dailyStepGoals ?? 0)).clamp(0.0, 1.0);
 
 
 

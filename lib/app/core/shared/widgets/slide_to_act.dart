@@ -91,14 +91,6 @@ class _SlideToActionState extends State<SlideToAction> with SingleTickerProvider
       });
       widget.onSubmit();
     }
-    
-    final animation = Tween<double>(
-      begin: _sliderPosition,
-      end: 0.0,
-    ).animate(CurvedAnimation(
-      parent: _animationController,
-      curve: Curves.easeOut,
-    ));
 
     _animationController.value = _sliderPosition / maxPosition;
     _animationController.reverse(from: _sliderPosition / maxPosition);

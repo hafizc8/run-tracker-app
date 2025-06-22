@@ -20,7 +20,7 @@ class PostMediaScroll extends StatelessWidget {
     final screenWidth = MediaQuery.of(context).size.width;
     final isSingleMedia = mediaItems.length == 1;
     // Atur lebar item berdasarkan jumlah media
-    final mediaWidth = isSingleMedia ? screenWidth * 0.80 : screenWidth * 0.7;
+    final mediaWidth = isSingleMedia ? screenWidth : screenWidth * 0.7;
 
     if (isSingleMedia) {
       return ClipRRect(

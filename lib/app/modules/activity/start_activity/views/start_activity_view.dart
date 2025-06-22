@@ -71,7 +71,7 @@ class StartActivityView extends GetView<StartActivityController> {
                       ),
                       const SizedBox(width: 8),
                       Text(
-                        '2.5',
+                        '${controller.user?.currentUserCoin?.currentAmount}',
                         style: Theme.of(context).textTheme.titleSmall,
                       ),
                     ],
@@ -92,17 +92,8 @@ class StartActivityView extends GetView<StartActivityController> {
                       ),
                       const SizedBox(width: 8),
                       Text(
-                        '2/10',
+                        '${controller.user?.currentUserStamina?.currentAmount}/${controller.user?.currentUserXp?.levelDetail?.staminaIncreaseTotal}',
                         style: Theme.of(context).textTheme.titleSmall,
-                      ),
-                      const SizedBox(width: 8),
-                      Text(
-                        '6:00',
-                        style: Theme.of(context).textTheme.titleSmall?.copyWith(
-                          color: const Color(0xFF7B7B7B),
-                          fontSize: 13,
-                          fontWeight: FontWeight.w400,
-                        ),
                       ),
                     ],
                   ),

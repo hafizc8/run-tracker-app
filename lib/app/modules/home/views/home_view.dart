@@ -1,10 +1,9 @@
 import 'package:flutter/material.dart';
-import 'package:flutter/widgets.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:get/get.dart';
+import 'package:zest_mobile/app/core/shared/helpers/number_helper.dart';
 import 'package:zest_mobile/app/core/shared/theme/color_schemes.dart';
-// Pastikan path import ini benar sesuai struktur proyek Anda
 import 'package:zest_mobile/app/core/shared/widgets/step_tracker_widget.dart';
 import 'package:zest_mobile/app/modules/home/widgets/custom_exp_progress_bar.dart';
 import 'package:zest_mobile/app/modules/home/widgets/walker_profile.dart';
@@ -38,7 +37,7 @@ class HomeView extends GetView<HomeController> {
                             ),
                           ),
                           Text(
-                            'Afif Naufal',
+                            '${controller.user?.name}',
                             style: Theme.of(context).textTheme.titleSmall?.copyWith(
                               fontSize: 20,
                               fontWeight: FontWeight.w700,
@@ -47,29 +46,39 @@ class HomeView extends GetView<HomeController> {
                         ],
                       ),
                       const Spacer(),
-                      Container(
-                        decoration: const BoxDecoration(
-                          color: Color(0xFF494949),
-                          shape: BoxShape.circle,
-                        ),
-                        padding: const EdgeInsets.all(12),
-                        child: const FaIcon(
-                          FontAwesomeIcons.solidBell,
-                          color: Colors.white,
-                          size: 20,
+                      InkWell(
+                        onTap: () {
+                          Get.snackbar('Coming Soon', 'Feature will be added soon', backgroundColor: Colors.green, colorText: Colors.white);
+                        },
+                        child: Container(
+                          decoration: const BoxDecoration(
+                            color: Color(0xFF494949),
+                            shape: BoxShape.circle,
+                          ),
+                          padding: const EdgeInsets.all(12),
+                          child: const FaIcon(
+                            FontAwesomeIcons.solidBell,
+                            color: Colors.white,
+                            size: 20,
+                          ),
                         ),
                       ),
                       const SizedBox(width: 12),
-                      Container(
-                        decoration: const BoxDecoration(
-                          color: Color(0xFF494949),
-                          shape: BoxShape.circle,
-                        ),
-                        padding: const EdgeInsets.all(12),
-                        child: const FaIcon(
-                          FontAwesomeIcons.solidEnvelope,
-                          color: Colors.white,
-                          size: 20,
+                      InkWell(
+                        onTap: () {
+                          Get.snackbar('Coming Soon', 'Feature will be added soon', backgroundColor: Colors.green, colorText: Colors.white);
+                        },
+                        child: Container(
+                          decoration: const BoxDecoration(
+                            color: Color(0xFF494949),
+                            shape: BoxShape.circle,
+                          ),
+                          padding: const EdgeInsets.all(12),
+                          child: const FaIcon(
+                            FontAwesomeIcons.solidEnvelope,
+                            color: Colors.white,
+                            size: 20,
+                          ),
                         ),
                       ),
                     ],
@@ -82,16 +91,16 @@ class HomeView extends GetView<HomeController> {
                   child: Row(
                     children: [
                       Text(
-                        'Level 4',
+                        'Level ${controller.user?.currentUserXp?.currentLevel}',
                         style: Theme.of(context).textTheme.headlineSmall
                       ),
                       const SizedBox(width: 8),
                       // Widget Progress bar exp
                       SizedBox(
                         width: MediaQuery.of(context).size.width * 0.3,
-                        child: const CustomExpProgressBar(
-                          currentExp: 50,
-                          maxExp: 100,
+                        child: CustomExpProgressBar(
+                          currentExp: controller.user?.currentUserXp?.currentAmount ?? 0,
+                          maxExp: controller.user?.currentUserXp?.levelDetail?.xpNeeded ?? 0,
                           height: 15,
                         ),
                       ),
@@ -112,7 +121,7 @@ class HomeView extends GetView<HomeController> {
                           ),
                           const SizedBox(width: 4),
                           Text(
-                            '2.5',
+                            '${controller.user?.currentUserCoin?.currentAmount ?? 0}',
                             style: Theme.of(context).textTheme.headlineSmall?.copyWith(
                               fontSize: 14,
                               fontWeight: FontWeight.w700,
@@ -131,7 +140,7 @@ class HomeView extends GetView<HomeController> {
                           ),
                           const SizedBox(width: 4),
                           Text(
-                            '2/10',
+                            '${controller.user?.currentUserStamina?.currentAmount ?? 0}/${controller.user?.currentUserXp?.levelDetail?.staminaIncreaseTotal ?? 0}',
                             style: Theme.of(context).textTheme.headlineSmall?.copyWith(
                               fontSize: 14,
                               fontWeight: FontWeight.w700,
@@ -148,14 +157,11 @@ class HomeView extends GetView<HomeController> {
                 // Widget Step Tracker
                 Container(
                   margin: const EdgeInsets.symmetric(horizontal: 42),
-                  child: Obx(() {
-                    // Jika tidak ada error, tampilkan widget tracker.
-                    return StepsTrackerWidget(
-                      progressValue: controller.progressValue,
-                      currentSteps: controller.currentSteps,
-                      maxSteps: controller.maxSteps,
-                    );
-                  }),
+                  child: StepsTrackerWidget(
+                    progressValue: controller.progressValue,
+                    currentSteps: controller.currentSteps,
+                    maxSteps: controller.user?.userPreference?.dailyStepGoals ?? 0,
+                  ),
                 ),
                 // Error message when step sensor not found
                 Obx(
@@ -178,7 +184,7 @@ class HomeView extends GetView<HomeController> {
                   }
                 ),
                 Text(
-                  'Just 20,000 steps left to crush your goal!',
+                  'Just ${NumberHelper().formatNumberToKWithComma(controller.user?.userPreference?.dailyStepGoals ?? 0)} steps left to crush your goal!',
                   style: Theme.of(context).textTheme.titleSmall,
                 ),
                 const SizedBox(height: 18),
@@ -193,7 +199,7 @@ class HomeView extends GetView<HomeController> {
                         ),
                         const SizedBox(width: 8),
                         Text(
-                          '60 Mins',
+                          '0 Mins',
                           style: Theme.of(context).textTheme.titleSmall?.copyWith(
                             fontSize: 12.5,
                           ),
@@ -209,7 +215,7 @@ class HomeView extends GetView<HomeController> {
                         ),
                         const SizedBox(width: 8),
                         Text(
-                          '100 Cal',
+                          '0 Cal',
                           style: Theme.of(context).textTheme.titleSmall?.copyWith(
                             fontSize: 12.5,
                           ),

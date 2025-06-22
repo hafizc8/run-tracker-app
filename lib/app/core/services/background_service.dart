@@ -5,89 +5,80 @@ import 'package:flutter_background_service/flutter_background_service.dart';
 import 'package:geolocator/geolocator.dart';
 import 'package:pedometer/pedometer.dart';
 import 'package:zest_mobile/app/core/models/model/location_point_model.dart';
+import 'package:zest_mobile/app/core/shared/helpers/number_helper.dart';
 
 // --- Entry Point untuk Service ---
 @pragma('vm:entry-point')
 void onStart(ServiceInstance service) async {
   DartPluginRegistrant.ensureInitialized();
+  print("✅ Background Service: onStart. Initializing permanent sensor streams.");
 
-  // Listener untuk menghentikan service, ini adalah fallback jika event 'setAppDirectory' belum diterima
-  service.on('stopService').listen((event) {
-    service.stopSelf();
-  });
-}
+  // --- State Utama Service ---
+  bool isRecording = false; // Flag utama untuk mengontrol sesi perekaman
+  bool isPaused = false;
 
-// --- ✨ SEMUA LOGIKA UTAMA PINDAH KE FUNGSI INI ✨ ---
-void setupActivityTracking(ServiceInstance service) {
-  print("✅ Background Service: Setting up listeners for tracking...");
-
-  // --- Variabel State ---
+  // --- State Sesi Perekaman ---
   int elapsedTimeInSeconds = 0;
   int stepsInSession = 0;
-  int? initialStepCount;
+  int totalStepsAtStart = 0;
+  int totalStepsAtPause = 0;
   double currentDistanceInMeters = 0.0;
   final List<LocationPoint> currentPath = [];
   Map<String, dynamic>? latestLocation;
-  bool isPaused = false;
-  int? lastStepCountBeforePause;
+  Timer? updateTimer;
 
-  // --- Stream Subscriptions ---
-  Timer? timer;
-  StreamSubscription<StepCount>? stepCountSubscription;
-  StreamSubscription<Position>? positionSubscription;
+  // =========================================================================
+  // KUNCI #1: ARSITEKTUR SENSOR SELALU AKTIF
+  // Stream diinisialisasi satu kali saja dan berjalan selama service hidup.
+  // Ini mencegah error inisialisasi ulang.
+  // =========================================================================
 
-  // Fungsi untuk membatalkan semua stream saat service berhenti
-  void stopAllStreams() {
-    timer?.cancel();
-    stepCountSubscription?.cancel();
-    positionSubscription?.cancel();
-    print("⛔ Background Service: All streams have been canceled.");
-  }
-
-  // Definisikan ulang listener 'stopService' di sini agar bisa memanggil stopAllStreams
-  service.on('stopService').listen((event) {
-    stopAllStreams();
-    service.stopSelf();
-  });
-
-  // --- Mulai semua listener untuk tracking ---
-
-  stepCountSubscription = Pedometer.stepCountStream.listen((StepCount event) {
-    if (isPaused) {
-      lastStepCountBeforePause = event.steps;
+  // --- Listener Pedometer (Selalu Aktif) ---
+  final pedometerStream = Pedometer.stepCountStream;
+  pedometerStream.listen((StepCount event) {
+    if (!isRecording || isPaused) {
+      // Jika tidak merekam, cukup simpan state terakhir untuk perhitungan nanti
+      totalStepsAtPause = event.steps;
       return;
     }
-    if (lastStepCountBeforePause != null) {
-      int stepsDuringPause = event.steps - lastStepCountBeforePause!;
-      initialStepCount = (initialStepCount ?? 0) + stepsDuringPause;
-      lastStepCountBeforePause = null;
+
+    // Jika baru saja resume dari pause
+    if (totalStepsAtPause > 0) {
+      int stepsDuringPause = event.steps - totalStepsAtPause;
+      totalStepsAtStart += stepsDuringPause; // Tambahkan langkah saat pause ke offset
+      totalStepsAtPause = 0; // Reset
     }
-    initialStepCount ??= event.steps;
-    stepsInSession = event.steps - initialStepCount!;
+
+    stepsInSession = event.steps - totalStepsAtStart;
+  }).onError((error) {
+    print("⛔ Pedometer Stream Error: $error");
+    // Anda bisa mengirim error ini ke UI jika perlu
+    // service.invoke('error', {'source': 'pedometer', 'message': error.toString()});
   });
 
-  positionSubscription = Geolocator.getPositionStream(
+  // --- Listener Geolocator (Selalu Aktif) ---
+  final positionStream = Geolocator.getPositionStream(
     locationSettings: const LocationSettings(
       accuracy: LocationAccuracy.bestForNavigation,
-      distanceFilter: 0,
+      distanceFilter: 2, // Filter jarak 2 meter untuk efisiensi baterai
     ),
-  ).listen((Position position) {
-    if (isPaused) return;
+  );
+  positionStream.listen((Position position) {
+    if (!isRecording || isPaused) return; // Abaikan jika tidak merekam atau sedang pause
 
     final newPoint = LocationPoint(
-      latitude: position.latitude,
-      longitude: position.longitude,
-      timestamp: position.timestamp,
-    );
+        latitude: position.latitude,
+        longitude: position.longitude,
+        timestamp: position.timestamp);
 
     if (currentPath.isNotEmpty) {
       final lastPoint = currentPath.last;
-      double distanceInMeter = Geolocator.distanceBetween(
+      double distance = Geolocator.distanceBetween(
         lastPoint.latitude, lastPoint.longitude,
         newPoint.latitude, newPoint.longitude,
       );
-      if (distanceInMeter >= 0) {
-        currentDistanceInMeters += distanceInMeter;
+      if (distance > 0 && distance < 30) {
+        currentDistanceInMeters += distance;
       }
     }
     currentPath.add(newPoint);
@@ -97,34 +88,100 @@ void setupActivityTracking(ServiceInstance service) {
       "longitude": newPoint.longitude,
       "timestamp": newPoint.timestamp.toIso8601String(),
     };
+  }).onError((error) {
+    print("⛔ Geolocator Stream Error: $error");
   });
 
-  timer = Timer.periodic(const Duration(seconds: 1), (timer) {
-    if (!isPaused) {
-      elapsedTimeInSeconds++;
+  // =========================================================================
+  // LISTENER UNTUK PERINTAH DARI UI
+  // =========================================================================
+
+  service.on('startRecording').listen((event) {
+    print("Background Service: ==> Event 'startRecording' received.");
+    if (isRecording) {
+      print("Warning: startRecording called, but a session is already active.");
+      return;
     }
-    service.invoke('update', {
-      "elapsedTime": elapsedTimeInSeconds,
-      "steps": stepsInSession,
-      "distance": currentDistanceInMeters,
-      "location": latestLocation,
+    // Reset semua state sesi
+    elapsedTimeInSeconds = 0;
+    stepsInSession = 0;
+    currentDistanceInMeters = 0.0;
+    currentPath.clear();
+    isPaused = false;
+    totalStepsAtPause = 0;
+    
+    // Ambil total langkah saat ini sebagai titik awal (offset)
+    Pedometer.stepCountStream.first.then((value) => totalStepsAtStart = value.steps);
+
+    isRecording = true;
+
+    // Mulai Timer yang mengirim update ke UI & Notifikasi
+    updateTimer?.cancel();
+    updateTimer = Timer.periodic(const Duration(seconds: 1), (timer) {
+      if (!isRecording) {
+        timer.cancel();
+        return;
+      }
+      if (!isPaused) {
+        elapsedTimeInSeconds++;
+      }
+      // Kirim update ke UI
+      service.invoke('update', {
+        "elapsedTime": elapsedTimeInSeconds,
+        "steps": stepsInSession,
+        "distance": currentDistanceInMeters,
+        "location": latestLocation,
+      });
+      latestLocation = null;
+
+      // Update notifikasi foreground
+      final String content = "Time: ${NumberHelper().formatDuration(elapsedTimeInSeconds)}, Distance: ${NumberHelper().formatDistanceMeterToKm(currentDistanceInMeters)}";
+      service.invoke(
+        'update_notification',
+        {
+          "title": isPaused ? "Record Activity Paused" : "Record Activity Active",
+          "content": content,
+        },
+      );
     });
-    latestLocation = null;
   });
 
-  // Listener untuk event dari UI
-  service.on('pause').listen((event) => isPaused = true);
-  service.on('resume').listen((event) => isPaused = false);
-  service.on('restoreState').listen((data) {
-    if (data == null) return;
-    elapsedTimeInSeconds = data['elapsedTime'] ?? 0;
-    currentDistanceInMeters = data['distance'] ?? 0.0;
-    stepsInSession = data['steps'] ?? 0;
-    isPaused = true;
-    initialStepCount = null;
-    print("Background service state restored.");
+  service.on('stopRecording').listen((event) {
+    print("Background Service: ==> Event 'stopRecording' received.");
+    isRecording = false;
+    isPaused = false;
+    updateTimer?.cancel();
+    // Kirim data final ke UI jika perlu
+    service.invoke('final_update', { /* data final */ });
   });
+
+  service.on('pause').listen((event) {
+    print("Background Service: ==> Event 'pause' received.");
+    if (!isPaused && isRecording) {
+      isPaused = true;
+    }
+  });
+
+  service.on('resume').listen((event) {
+    print("Background Service: ==> Event 'resume' received.");
+    if (isPaused && isRecording) {
+      isPaused = false;
+    }
+  });
+  
+  service.on('stopService').listen((event) {
+    print("⛔ Background Service: ==> Event 'stopService' received. Shutting down.");
+    updateTimer?.cancel();
+    // Tidak perlu membatalkan stream utama karena mereka terikat pada siklus hidup service
+    service.stopSelf();
+  });
+
+  service.invoke('service_ready');
+  print("✅ Background Service: All listeners are set up. Service is ready.");
 }
+
+
+
 
 // ✨ BARU: Buat fungsi wrapper khusus untuk background iOS
 @pragma('vm:entry-point')

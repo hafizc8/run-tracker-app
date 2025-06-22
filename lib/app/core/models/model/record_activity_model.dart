@@ -21,6 +21,7 @@ class RecordActivityModel extends Model {
     this.recordActivityLogsSumDistance,
     this.recordActivityLogsSumTime,
     this.recordActivityLogsSumStep,
+    this.lastRecordActivityLog,
   });
 
   final String? id;
@@ -41,6 +42,7 @@ class RecordActivityModel extends Model {
   double? recordActivityLogsSumDistance;
   int? recordActivityLogsSumTime;
   int? recordActivityLogsSumStep;
+  final RecordActivityLogModel? lastRecordActivityLog;
 
   RecordActivityModel copyWith({
     String? id,
@@ -61,6 +63,7 @@ class RecordActivityModel extends Model {
     double? recordActivityLogsSumDistance,
     int? recordActivityLogsSumTime,
     int? recordActivityLogsSumStep,
+    RecordActivityLogModel? lastRecordActivityLog,
   }) {
     return RecordActivityModel(
       id: id ?? this.id,
@@ -81,6 +84,7 @@ class RecordActivityModel extends Model {
       recordActivityLogsSumDistance: recordActivityLogsSumDistance ?? this.recordActivityLogsSumDistance,
       recordActivityLogsSumTime: recordActivityLogsSumTime ?? this.recordActivityLogsSumTime,
       recordActivityLogsSumStep: recordActivityLogsSumStep ?? this.recordActivityLogsSumStep,
+      lastRecordActivityLog: lastRecordActivityLog ?? this.lastRecordActivityLog,
     );
   }
 
@@ -106,6 +110,7 @@ class RecordActivityModel extends Model {
       recordActivityLogsSumDistance: json["record_activity_logs_sum_distance"] == null ? null : double.parse(json["record_activity_logs_sum_distance"]),
       recordActivityLogsSumTime: json["record_activity_logs_sum_time"] == null ? null : int.parse(json["record_activity_logs_sum_time"]),
       recordActivityLogsSumStep: json["record_activity_logs_sum_step"] == null ? null : int.parse(json["record_activity_logs_sum_step"]),
+      lastRecordActivityLog: json["last_record_activity_log"] == null ? null : RecordActivityLogModel.fromJson(json["last_record_activity_log"]),
     );
   }
 
@@ -124,6 +129,7 @@ class RecordActivityModel extends Model {
         "postcode": postcode,
         "created_at": createdAt?.toIso8601String(),
         "record_activity_logs": recordActivityLogs.map((x) => x.toJson()).toList(),
+        "last_record_activity_log": lastRecordActivityLog?.toJson(),
       };
 
   @override
@@ -146,6 +152,7 @@ class RecordActivityModel extends Model {
         recordActivityLogsSumDistance,
         recordActivityLogsSumTime,
         recordActivityLogsSumStep,
+        lastRecordActivityLog,
       ];
 }
 

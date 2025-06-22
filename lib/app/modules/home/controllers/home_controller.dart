@@ -19,10 +19,13 @@ class HomeController extends GetxController {
   final AuthService _authService = sl<AuthService>();
   UserModel? get user => _authService.user;
 
+  RxBool isLoadingGetUserData = true.obs;
+
   @override
   void onInit() {
     super.onInit();
     _initPedometer();
+    _waitForUser();
   }
 
   @override
@@ -54,6 +57,33 @@ class HomeController extends GetxController {
   }
 
   double get progressValue => (currentSteps / (user?.userPreference?.dailyStepGoals ?? 0)).clamp(0.0, 1.0);
+
+  void _waitForUser() async {
+    await Future.delayed(const Duration(seconds: 1));
+
+    // Check immediately when the controller starts.
+    if (_authService.user != null) {
+      isLoadingGetUserData.value = false;
+      print("User found immediately in storage.");
+    } else {
+      print("User not found. Waiting for other services to load...");
+
+      await Future.delayed(const Duration(milliseconds: 500));
+      
+      // After the delay, check one more time.
+      if (_authService.user != null) {
+        isLoadingGetUserData.value = false;
+        print("User found after delay.");
+      } else {
+        isLoadingGetUserData.value = false;
+        _error.value = "User session could not be loaded.";
+        print("User still not found. Stopping loading state.");
+      }
+      
+      // Manually trigger a UI update to be safe.
+      update();
+    }
+  }
 
 
 

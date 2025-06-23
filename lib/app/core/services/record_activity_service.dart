@@ -10,7 +10,7 @@ class RecordActivityService {
   Future<dynamic> createSession({
     required double latitude,
     required double longitude,
-    required int stamina
+    int stamina = 0
   }) async {
     try {
       final response = await _apiService.request(
@@ -19,7 +19,7 @@ class RecordActivityService {
         data: {
           'latitude': latitude.toString(),
           'longitude': longitude.toString(),
-          'stamina': stamina
+          if (stamina != 0) 'stamina': stamina
         }
       );
 

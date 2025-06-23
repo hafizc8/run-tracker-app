@@ -220,10 +220,11 @@ class RecordActivityController extends GetxController {
       var response = await _recordActivityService.createSession(
         latitude: startPosition.latitude,
         longitude: startPosition.longitude,
-        stamina: staminaToUse,
+        // stamina: staminaToUse, // TODO: Will be actived when BE is ready
       );
       _recordActivityId = response['id'];
     } catch (e, s) {
+      Get.back();
       Get.snackbar('Error', 'Failed to create activity session.');
       FirebaseCrashlytics.instance.recordError(e, s, reason: 'Failed to create session');
       return;

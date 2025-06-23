@@ -11,7 +11,8 @@ import 'dart:async';
 
 import 'package:zest_mobile/app/core/shared/helpers/debouncer.dart';
 
-class SocialSearchController extends GetxController with GetSingleTickerProviderStateMixin {
+class SocialSearchController extends GetxController
+    with GetSingleTickerProviderStateMixin {
   var isLoadingPeopleYouMayKnow = false.obs;
   var isLoadingFriends = false.obs;
   var isLoadingFollow = false.obs;
@@ -93,18 +94,14 @@ class SocialSearchController extends GetxController with GetSingleTickerProvider
       var maxScroll = scrollExploreClubController.position.pixels >=
           scrollExploreClubController.position.maxScrollExtent - 200;
 
-      print('[explore] maxScroll: $maxScroll');
-
       if (maxScroll && !hasReacheMaxExploreClub.value) {
         getExploreClub();
       }
     });
 
     scrollClubsController.addListener(() {
-      var maxScroll = scrollClubsController.position.pixels >= 
-        scrollClubsController.position.maxScrollExtent - 200;
-      
-      print('[search-club] maxScroll: $maxScroll');
+      var maxScroll = scrollClubsController.position.pixels >=
+          scrollClubsController.position.maxScrollExtent - 200;
 
       if (maxScroll && !hasReacheMaxClub.value) {
         searchClubs(searchClub.value);
@@ -285,13 +282,12 @@ class SocialSearchController extends GetxController with GetSingleTickerProvider
   Future<void> searchClubYouMayKnow() async {
     isLoadingClubYouMayKnow.value = true;
     try {
-      PaginatedDataResponse<ClubModel> response =
-          await _clubService.getAll(
-            page: 1, 
-            joinStatus: 'unjoined', 
-            order: 'recomendation',
-            limit: 10,
-          );
+      PaginatedDataResponse<ClubModel> response = await _clubService.getAll(
+        page: 1,
+        joinStatus: 'unjoined',
+        order: 'recomendation',
+        limit: 10,
+      );
       List<ClubModel> clubs = response.data;
       if (response.data.length > 10) {
         clubs = response.data.sublist(0, 10);
@@ -324,10 +320,9 @@ class SocialSearchController extends GetxController with GetSingleTickerProvider
 
       pageClubExplore++;
 
-      if (
-        (response.pagination.next == null || response.pagination.next == '') || 
-        response.pagination.total < 6) 
-      {
+      if ((response.pagination.next == null ||
+              response.pagination.next == '') ||
+          response.pagination.total < 6) {
         hasReacheMaxExploreClub.value = true;
       }
 
@@ -398,6 +393,16 @@ class SocialSearchController extends GetxController with GetSingleTickerProvider
       bool res = await _clubService.accOrJoinOrLeave(clubId: id);
 
       if (res) {
+        if (clubExplore.isNotEmpty) {
+          int index = clubExplore.indexWhere((element) => element.id == id);
+          if (index != -1) {
+            final club = clubExplore[index];
+            clubExplore[index] = club.copyWith(
+              isJoined: res,
+            );
+          }
+        }
+
         if (searchClub.value.isNotEmpty && clubs.isNotEmpty) {
           int index = clubs.indexWhere((element) => element.id == id);
           if (index != -1) {

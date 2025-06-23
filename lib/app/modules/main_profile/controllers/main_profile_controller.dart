@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:intl/intl.dart';
+import 'package:url_launcher/url_launcher.dart';
 import 'package:zest_mobile/app/core/di/service_locator.dart';
 import 'package:zest_mobile/app/core/exception/app_exception.dart';
 import 'package:zest_mobile/app/core/exception/handler/app_exception_handler_info.dart';
@@ -110,6 +111,96 @@ class ProfileMainController extends GetxController {
         ),
       ),
     );
+  }
+
+  Future<void> confirmLeaveEvent(String id) async {
+    await Get.dialog(
+      Obx(
+        () => ConfirmationDialog(
+          onConfirm: () => cancelEvent(id),
+          title: 'Leaving?',
+          subtitle:
+              'If you need to leave an event after joining, please message the host to explain. It keeps things respectful and helps with planning.',
+          labelConfirm: 'Leave Event',
+          isLoading: isLoadingActionEvent.value,
+        ),
+      ),
+    );
+  }
+
+  Future<void> confirmAccLeaveJoinEvent(String id) async {
+    await Get.dialog(
+      Obx(
+        () => ConfirmationDialog(
+          onConfirm: () => accLeaveJoinEvent(id),
+          title: 'Confirm Joining?',
+          subtitle:
+              'Events take effort to set up, so if you join, make sure you can be there!',
+          labelConfirm: 'Join Event',
+          isLoading: isLoadingActionEvent.value,
+        ),
+      ),
+    );
+  }
+
+  Future<void> accLeaveJoinEvent(String id, {String? leave}) async {
+    isLoadingActionEvent.value = true;
+    try {
+      final bool res = await _eventService.accLeaveJoinEvent(id, leave: leave);
+      if (res) {
+        Get.back();
+      }
+      int index = events.indexWhere((element) => element.id == id);
+      if (index != -1) {
+        final event = events[index];
+        if (leave != null) {
+          events[index] = event.copyWith(
+            isJoined: 0,
+            userOnEventsCount: (events[index].userOnEventsCount ?? 0) - 1,
+          );
+          return;
+        }
+
+        events[index] = event.copyWith(
+          isJoined: res ? 1 : 0,
+          userOnEventsCount:
+              res ? (events[index].userOnEventsCount ?? 0) + 1 : null,
+        );
+      }
+    } on AppException catch (e) {
+      // show error snackbar, toast, etc
+      AppExceptionHandlerInfo.handle(e);
+    } catch (e) {
+      Get.snackbar(
+        'Error',
+        e.toString(),
+        backgroundColor: Colors.red,
+        colorText: Colors.white,
+      );
+    } finally {
+      isLoadingActionEvent.value = false;
+    }
+  }
+
+  String formatTime(TimeOfDay time) =>
+      '${time.hour.toString().padLeft(2, '0')}.${time.minute.toString().padLeft(2, '0')}';
+
+  String formatTimeOfDayToHms(TimeOfDay time) {
+    final now = DateTime.now();
+    final dateTime =
+        DateTime(now.year, now.month, now.day, time.hour, time.minute);
+    return DateFormat('HH:mm:ss').format(dateTime);
+  }
+
+  Future<void> openGoogleMaps(String placeName) async {
+    final Uri url = Uri.parse(
+        "https://www.google.com/maps/search/?api=1&query=${Uri.encodeComponent(placeName)}");
+
+    if (await canLaunchUrl(url)) {
+      await launchUrl(url, mode: LaunchMode.externalApplication);
+    } else {
+      throw 'Tidak dapat membuka Google Maps';
+    }
   }
 
   Future<void> getEvents({bool refresh = false}) async {

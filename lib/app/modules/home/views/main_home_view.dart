@@ -20,51 +20,50 @@ class MainHomeView extends GetView<MainHomeController> {
   // Didefinisikan di sini agar konsisten digunakan di _buildStartButton dan di Row spacer
   static const double _startButtonDiameter = 88.0;
 
-
   Widget _buildNavItem(
-  BuildContext context, {
-  required String svgPath,
-  required int index,
-  required Function() onTap,
-}) {
-  final bool isSelected = controller.currentIndex.value == index;
-  final Color inactiveColor = Theme.of(context).colorScheme.secondary;
+    BuildContext context, {
+    required String svgPath,
+    required int index,
+    required Function() onTap,
+  }) {
+    final bool isSelected = controller.currentIndex.value == index;
+    final Color inactiveColor = Theme.of(context).colorScheme.secondary;
 
-  Widget iconWidget;
+    Widget iconWidget;
 
-  if (isSelected) {
-    iconWidget = ShaderMask(
-      blendMode: BlendMode.srcIn,
-      shaderCallback: (Rect bounds) {
-        return kStartButtonGradient.createShader(bounds);
-      },
-      child: SvgPicture.asset(
+    if (isSelected) {
+      iconWidget = ShaderMask(
+        blendMode: BlendMode.srcIn,
+        shaderCallback: (Rect bounds) {
+          return kStartButtonGradient.createShader(bounds);
+        },
+        child: SvgPicture.asset(
+          svgPath,
+          colorFilter: const ColorFilter.mode(Colors.white, BlendMode.srcIn),
+          width: 28,
+        ),
+      );
+    } else {
+      iconWidget = SvgPicture.asset(
         svgPath,
-        colorFilter: const ColorFilter.mode(Colors.white, BlendMode.srcIn),
+        colorFilter: ColorFilter.mode(
+          inactiveColor,
+          BlendMode.srcIn,
+        ),
         width: 28,
+      );
+    }
+
+    return Expanded(
+      child: GestureDetector(
+        onTap: onTap,
+        behavior: HitTestBehavior.opaque,
+        child: Center(
+          child: iconWidget,
+        ),
       ),
-    );
-  } else {
-    iconWidget = SvgPicture.asset(
-      svgPath,
-      colorFilter: ColorFilter.mode(
-        inactiveColor,
-        BlendMode.srcIn,
-      ),
-      width: 28,
     );
   }
-
-  return Expanded(
-    child: GestureDetector(
-      onTap: onTap,
-      behavior: HitTestBehavior.opaque,
-      child: Center(
-        child: iconWidget,
-      ),
-    ),
-  );
-}
 
   Widget _buildStartButton(BuildContext context) {
     return SizedBox(
@@ -108,7 +107,7 @@ class MainHomeView extends GetView<MainHomeController> {
 
   @override
   Widget build(BuildContext context) {
-    const double bottomBarHeight = 70.0;
+    const double bottomBarHeight = 65.0;
     // Menggunakan _startButtonDiameter yang sudah didefinisikan di atas
     // untuk konsistensi pada spacer dan kalkulasi posisi.
 
@@ -132,12 +131,24 @@ class MainHomeView extends GetView<MainHomeController> {
                 ),
                 child: Row(
                   children: [
-                    _buildNavItem(context, svgPath: 'assets/icons/ic_home.svg', index: 0, onTap: () => controller.changeTab(0)),
-                    _buildNavItem(context, svgPath: 'assets/icons/ic_social.svg', index: 1, onTap: () => controller.changeTab(1)),
+                    _buildNavItem(context,
+                        svgPath: 'assets/icons/ic_home.svg',
+                        index: 0,
+                        onTap: () => controller.changeTab(0)),
+                    _buildNavItem(context,
+                        svgPath: 'assets/icons/ic_social.svg',
+                        index: 1,
+                        onTap: () => controller.changeTab(1)),
                     // Spacer untuk tombol START di tengah, menggunakan _startButtonDiameter
                     const SizedBox(width: _startButtonDiameter),
-                    _buildNavItem(context, svgPath: 'assets/icons/ic_shop.svg', index: 2, onTap: () => controller.changeTab(2)),
-                    _buildNavItem(context, svgPath: 'assets/icons/ic_profile.svg', index: 3, onTap: () => controller.changeTab(3)),
+                    _buildNavItem(context,
+                        svgPath: 'assets/icons/ic_shop.svg',
+                        index: 2,
+                        onTap: () => controller.changeTab(2)),
+                    _buildNavItem(context,
+                        svgPath: 'assets/icons/ic_profile.svg',
+                        index: 3,
+                        onTap: () => controller.changeTab(3)),
                   ],
                 ),
               ),
@@ -145,7 +156,9 @@ class MainHomeView extends GetView<MainHomeController> {
           ),
           Positioned(
             // Menggunakan _startButtonDiameter untuk kalkulasi posisi
-            bottom: bottomBarHeight - (_startButtonDiameter / 1.7), // Sesuaikan nilai 1.7 ini untuk seberapa menonjolnya
+            bottom: bottomBarHeight -
+                (_startButtonDiameter /
+                    1.7), // Sesuaikan nilai 1.7 ini untuk seberapa menonjolnya
             left: 0,
             right: 0,
             child: Align(

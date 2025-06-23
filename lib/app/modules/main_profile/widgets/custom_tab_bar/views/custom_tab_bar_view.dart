@@ -4,8 +4,9 @@ import 'package:zest_mobile/app/core/models/model/event_model.dart';
 import 'package:zest_mobile/app/core/shared/widgets/card_activity.dart';
 import 'package:zest_mobile/app/core/shared/widgets/card_challenge.dart';
 import 'package:zest_mobile/app/modules/main_profile/controllers/main_profile_controller.dart';
+import 'package:zest_mobile/app/modules/main_profile/widgets/card_event/card_event_profile.dart';
 import 'package:zest_mobile/app/modules/main_profile/widgets/custom_tab_bar/controllers/custom_tab_bar_controller.dart';
-import 'package:zest_mobile/app/modules/social/widgets/event_card.dart';
+
 import 'package:zest_mobile/app/routes/app_routes.dart';
 
 class CustomTabBar extends GetView<TabBarController> {
@@ -57,11 +58,6 @@ class CustomTabBar extends GetView<TabBarController> {
               return Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  Text(
-                    'Latest Activity',
-                    style: Theme.of(context).textTheme.headlineSmall,
-                  ),
-                  const SizedBox(height: 8),
                   const CardActivity(),
                   const SizedBox(height: 8),
                   Center(
@@ -84,11 +80,6 @@ class CustomTabBar extends GetView<TabBarController> {
               return Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  Text(
-                    'Challenges',
-                    style: Theme.of(context).textTheme.headlineSmall,
-                  ),
-                  const SizedBox(height: 8),
                   Obx(() {
                     return ListView.separated(
                       shrinkWrap: true,
@@ -119,15 +110,6 @@ class CustomTabBar extends GetView<TabBarController> {
               return Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  Text(
-                    'Events List',
-                    style: Theme.of(context).textTheme.headlineSmall?.copyWith(
-                          color: Color(0xFFA5A5A5),
-                          fontSize: 17,
-                          fontWeight: FontWeight.w400,
-                        ),
-                  ),
-                  const SizedBox(height: 8),
                   Obx(() {
                     return ListView.separated(
                       shrinkWrap: true,
@@ -160,8 +142,8 @@ class CustomTabBar extends GetView<TabBarController> {
                               );
                             }
                           },
-                          onCancelEvent: () =>
-                              profileController.cancelEvent(event.id ?? ''),
+                          onCancelEvent: () => profileController
+                              .confirmCancelEvent(event.id ?? ''),
                           eventModel: event,
                         );
                       },

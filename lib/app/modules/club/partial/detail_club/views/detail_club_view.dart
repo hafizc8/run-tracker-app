@@ -207,20 +207,15 @@ class DetailClubView extends GetView<DetailClubController> {
                 onTap: () {
                   controller.isExpanded.toggle();
                 },
-                child: ConstrainedBox(
-                  constraints: BoxConstraints(
-                    maxWidth: MediaQuery.of(context).size.width * 0.4,
-                  ),
-                  child: Text(
-                    club?.description ?? 'No description',
-                    maxLines: controller.isExpanded.value ? null : 1,
-                    overflow: controller.isExpanded.value
-                        ? TextOverflow.visible
-                        : TextOverflow.ellipsis,
-                    style: Theme.of(context).textTheme.bodyMedium?.copyWith(
-                          fontSize: 12,
-                        ),
-                  ),
+                child: Text(
+                  club?.description ?? 'No description',
+                  maxLines: controller.isExpanded.value ? null : 1,
+                  overflow: controller.isExpanded.value
+                      ? TextOverflow.visible
+                      : TextOverflow.ellipsis,
+                  style: Theme.of(context).textTheme.bodyMedium?.copyWith(
+                        fontSize: 12,
+                      ),
                 ),
               ),
             ),
@@ -412,7 +407,7 @@ class DetailClubView extends GetView<DetailClubController> {
             } else if (value == 'mute_club') {
               Get.snackbar('Coming soon', 'Feature is coming soon');
             } else if (value == 'leave_club') {
-              await controller.leaveClub();
+              await controller.confirmCancelEvent();
             }
           },
           surfaceTintColor: Theme.of(context).colorScheme.onPrimary,

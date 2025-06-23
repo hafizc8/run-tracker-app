@@ -295,9 +295,7 @@ class SocialSearchView extends GetView<SocialSearchController> {
                                               return;
                                             }
 
-                                            if (user.isFollowing == 1) {
-                                              controller.unFollow(user.id);
-                                            } else {
+                                            if (user.isFollowing == 0) {
                                               controller.follow(user.id);
                                             }
                                           },
@@ -306,37 +304,15 @@ class SocialSearchView extends GetView<SocialSearchController> {
                                                 controller.userId.value,
                                             replacement: Visibility(
                                               visible: user.isFollowing == 0,
-                                              replacement: Visibility(
-                                                visible: user.isFollower == 0,
-                                                replacement: Icon(
-                                                  Icons.chat_bubble_outline,
-                                                  color: Theme.of(context)
-                                                      .colorScheme
-                                                      .primary,
-                                                  size: 18,
-                                                ),
-                                                child: Icon(
-                                                  Icons
-                                                      .person_remove_alt_1_outlined,
-                                                  color: Theme.of(context)
-                                                      .colorScheme
-                                                      .primary,
-                                                  size: 18,
-                                                ),
+                                              replacement: SvgPicture.asset(
+                                                'assets/icons/msg.svg',
                                               ),
-                                              child: Icon(
-                                                Icons.person_add_alt,
-                                                color: Theme.of(context)
-                                                    .colorScheme
-                                                    .primary,
-                                                size: 18,
+                                              child: SvgPicture.asset(
+                                                'assets/icons/follback.svg',
                                               ),
                                             ),
-                                            child: Center(
-                                              child:
-                                                  CustomCircularProgressIndicator(
-                                                      indicatorSize: 15),
-                                            ),
+                                            child:
+                                                CustomCircularProgressIndicator(),
                                           ),
                                         ),
                                       ),
@@ -441,9 +417,7 @@ class SocialSearchView extends GetView<SocialSearchController> {
                                   return;
                                 }
 
-                                if (user.isFollowing == 1) {
-                                  controller.unFollow(user.id);
-                                } else {
+                                if (user.isFollowing == 0) {
                                   controller.follow(user.id);
                                 }
                               },
@@ -451,32 +425,14 @@ class SocialSearchView extends GetView<SocialSearchController> {
                                 visible: user.id == controller.userId.value,
                                 replacement: Visibility(
                                   visible: user.isFollowing == 0,
-                                  replacement: Visibility(
-                                    visible: user.isFollower == 0,
-                                    replacement: Icon(
-                                      Icons.chat_bubble_outline,
-                                      color:
-                                          Theme.of(context).colorScheme.primary,
-                                      size: 23,
-                                    ),
-                                    child: Icon(
-                                      Icons.person_remove_alt_1_outlined,
-                                      color:
-                                          Theme.of(context).colorScheme.primary,
-                                      size: 23,
-                                    ),
+                                  replacement: SvgPicture.asset(
+                                    'assets/icons/msg.svg',
                                   ),
-                                  child: Icon(
-                                    Icons.person_add_alt,
-                                    color:
-                                        Theme.of(context).colorScheme.primary,
-                                    size: 23,
+                                  child: SvgPicture.asset(
+                                    'assets/icons/follback.svg',
                                   ),
                                 ),
-                                child: Center(
-                                  child: CustomCircularProgressIndicator(
-                                      indicatorSize: 15),
-                                ),
+                                child: CustomCircularProgressIndicator(),
                               ),
                             ),
                           ),

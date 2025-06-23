@@ -41,7 +41,7 @@ class ConfirmationDialog extends GetView<EventController> {
           margin: const EdgeInsets.all(2),
           padding: const EdgeInsets.symmetric(
             horizontal: 24,
-            vertical: 12,
+            vertical: 24,
           ),
           width: double.infinity,
           decoration: BoxDecoration(
@@ -135,7 +135,7 @@ class ConfirmationDialog extends GetView<EventController> {
                     ),
                   )
                 ],
-              )
+              ),
             ],
           ),
         ),

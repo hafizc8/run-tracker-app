@@ -126,8 +126,7 @@ class EventDetailCard extends GetView<EventDetailController> {
                           eventActionController.gotToEdit(event!, from: 'list');
                           var res = await Get.toNamed(AppRoutes.eventCreate);
                           if (res != null) {
-                            Get.toNamed(AppRoutes.socialYourPageEventDetail,
-                                arguments: {'eventId': res.id});
+                            controller.detailEvent();
                           }
                         } else if (value == 'cancel_event') {
                           // Handle Cancel Event action

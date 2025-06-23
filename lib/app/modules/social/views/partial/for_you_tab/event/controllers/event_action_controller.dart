@@ -501,7 +501,7 @@ class EventActionController extends GetxController {
     imageController.text =
         event.imageUrl == null ? '' : event.imageUrl.split('/').last;
     addressController.text = event.address;
-    placeNameController.text = event.placeName ?? '';
+    placeNameController.text = event.placeName ?? event.address;
     dateController.text = result;
 
     getCachedImageFile(event.imageUrl ?? '').then((value) {

@@ -4,201 +4,148 @@ import 'package:flutter/material.dart';
 import 'package:flutter_background_service/flutter_background_service.dart';
 import 'package:get/get.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
-import 'package:path_provider/path_provider.dart';
 import 'package:permission_handler/permission_handler.dart';
 import 'package:zest_mobile/app/core/di/service_locator.dart';
 import 'package:zest_mobile/app/core/models/model/activity_data_point_model.dart';
 import 'package:zest_mobile/app/core/models/model/location_point_model.dart';
+import 'package:zest_mobile/app/core/models/model/user_model.dart';
+import 'package:zest_mobile/app/core/services/auth_service.dart';
 import 'package:zest_mobile/app/core/services/local_activity_service.dart';
 import 'package:zest_mobile/app/core/services/location_service.dart';
 import 'package:zest_mobile/app/core/services/record_activity_service.dart';
 import 'package:zest_mobile/app/core/shared/theme/color_schemes.dart';
+import 'package:zest_mobile/app/core/shared/widgets/custom_dialog_confirmation.dart';
+import 'package:zest_mobile/app/modules/activity/record_activity/views/widgets/use_stamina_dialog.dart';
 import 'package:zest_mobile/app/routes/app_routes.dart';
 
 class RecordActivityController extends GetxController {
-  var isTracking = false.obs;
-  var stepsInSession = 0.obs;
-  var currentPath = <LocationPoint>[].obs;
-  var currentDistanceInMeters = 0.0.obs;
-  var elapsedTimeInSeconds = 0.obs;
-  Rxn<LatLng> currentPosition = Rxn<LatLng>();
-  RxBool isMapViewMode = false.obs;
-  GoogleMapController? mapController;
+  final _service = FlutterBackgroundService(); // Instance service
   final _localDb = LocalActivityService();
-  String? _recordActivityId;
-  final RecordActivityService _recordActivityService = sl<RecordActivityService>();
+  final _recordActivityService = sl<RecordActivityService>();
   final _locationService = sl<LocationService>();
+  final AuthService _authService = sl<AuthService>();
+  UserModel? get user => _authService.user;
+  
+  // --- UI State ---
+  var isTracking = false.obs;
   var isPaused = false.obs;
-  RxBool isLoadingSaveRecordActivity = false.obs;
+  var isLoadingSaveRecordActivity = false.obs;
+  var elapsedTimeInSeconds = 0.obs;
+  var stepsInSession = 0.obs;
+  var currentDistanceInMeters = 0.0.obs;
+  var currentPath = <LocationPoint>[].obs;
+  
+  // ✨ --- Stamina State --- ✨
+  var totalStaminaToUse = 0.obs;
+  var staminaRemainingCount = 0.obs; 
+  var staminaTotalTimeRemainingInSeconds = 0.obs; 
+  Timer? _staminaTimer;
+  
+  // --- Map State ---
+  GoogleMapController? mapController;
+  RxBool isMapViewMode = false.obs;
 
-  @override
-  void onClose() {
-    _closeActivity();
-    super.onClose();
-  }
+  // --- Session State ---
+  String? _recordActivityId;
 
   @override
   void onInit() {
     super.onInit();
-
     _listenToBackgroundService();
     _initializeSession();
   }
 
+  @override
+  void onClose() {
+    _staminaTimer?.cancel();
+    _saveStateToLocalDb();
+    super.onClose();
+  }
+
   void _listenToBackgroundService() {
-    FlutterBackgroundService().on('update').listen((data) {
-      if (data == null) return;
-      
-      isTracking.value = true;
+    _service.on('update').listen((data) {
+      if (data == null || !isTracking.value) return;
+
       elapsedTimeInSeconds.value = data['elapsedTime'];
       stepsInSession.value = data['steps'];
-      currentDistanceInMeters.value = double.parse(data['distance'].toString());
+      currentDistanceInMeters.value = (data['distance'] as num).toDouble();
 
       if (data['location'] != null) {
         final loc = data['location'];
         final newPoint = LocationPoint(
-          latitude: loc['latitude'],
-          longitude: loc['longitude'],
-          timestamp: DateTime.parse(loc['timestamp']),
-        );
+            latitude: loc['latitude'],
+            longitude: loc['longitude'],
+            timestamp: DateTime.parse(loc['timestamp']));
         currentPath.add(newPoint);
 
-        double paceInSecondsPerKm = 0;
-        if (elapsedTimeInSeconds.value > 0 && currentDistanceInMeters.value > 0) {
-          double paceInSecondsPerMeter = elapsedTimeInSeconds.value / currentDistanceInMeters.value;
-          paceInSecondsPerKm = paceInSecondsPerMeter * 1000;
-        }
-
-        final dataPoint = ActivityDataPoint(
-          latitude: loc['latitude'], longitude: loc['longitude'],
-          step: stepsInSession.value, distance: currentDistanceInMeters.value,
-          pace: paceInSecondsPerKm, time: elapsedTimeInSeconds.value,
-          timestamp: DateTime.parse(loc['timestamp']),
-        );
-
-        _localDb.addDataPoint(dataPoint); 
-
+        _saveDataPointToLocalDb(loc, newPoint.timestamp);
         _updateCameraForRoute();
       }
     });
   }
 
   Future<void> _initializeSession() async {
-    // Cek apakah ada sesi dan data point yang belum disinkronisasi
     final unsyncedSession = await _localDb.getUnsyncedSession();
-    final unsyncedPoints = await _localDb.getAllDataPoints();
-
-    if (unsyncedSession != null && unsyncedPoints.isNotEmpty) {
-      // Jika ada, tampilkan dialog konfirmasi
+    if (unsyncedSession != null) {
+      final unsyncedPoints = await _localDb.getAllDataPoints();
       _showResumeOrDiscardDialog(unsyncedSession, unsyncedPoints);
-    }  else {
-      // Jika tidak ada, mulai aktivitas baru seperti biasa
-      await startActivity();
+    } else {
+      await chooseStamina();
     }
   }
 
   void _showResumeOrDiscardDialog(Map<String, dynamic> sessionData, List<ActivityDataPoint> points) {
     Get.dialog(
-      AlertDialog(
-        backgroundColor: darkColorScheme.background,
-        title: Text("Unfinished Activity Found", style: Theme.of(Get.context!).textTheme.titleSmall?.copyWith(fontSize: 18, fontWeight: FontWeight.bold)),
-        content: Text("You have an unsynced activity. Would you like to resume it or discard it and start a new one?", style: Theme.of(Get.context!).textTheme.titleSmall),
-        actions: [
-          TextButton(
-            child: Text("DISCARD & START NEW", style: Theme.of(Get.context!).textTheme.titleSmall?.copyWith(fontWeight: FontWeight.bold)),
-            onPressed: () {
-              Get.back(); // Tutup dialog
-              _discardAndStartNew();
-            },
-          ),
-          ElevatedButton(
-            child: Text("RESUME", style: Theme.of(Get.context!).textTheme.titleSmall?.copyWith(fontWeight: FontWeight.bold)),
-            onPressed: () {
-              Get.back(); // Tutup dialog
-              _resumeActivityFromLocal(sessionData, points);
-            },
-          ),
-        ],
-      ),
-      barrierDismissible: false, // User harus memilih salah satu
+      CustomDialogConfirmation(
+        title: 'Unfinished Activity Found',
+        subtitle: 'You have an unsynced activity. Would you like to resume it or discard it and start a new one?',
+        labelConfirm: 'Resume',
+        onConfirm: () {
+          Get.back();
+          _resumeActivityFromLocal(sessionData, points);
+        },
+        labelCancel: 'Discard',
+        onCancel: () {
+          Get.back();
+          _discardAndStartNew();
+        },
+      )
     );
   }
 
-  Future<void> _resumeActivityFromLocal(Map<String, dynamic> sessionData, List<ActivityDataPoint> points) async {
-    // 1. Restore state dari data lokal
+  void _resumeActivityFromLocal(Map<String, dynamic> sessionData, List<ActivityDataPoint> points) {
     _recordActivityId = sessionData['id'];
     elapsedTimeInSeconds.value = sessionData['elapsedTime'];
-    stepsInSession.value = sessionData['steps'];
     currentDistanceInMeters.value = sessionData['distance'];
-    currentPath.assignAll(
-      points.map((loc) => LocationPoint(
-          latitude: loc.latitude,
-          longitude: loc.longitude,
-          timestamp: loc.timestamp,
-      )).toList()
-    );
+    currentPath.assignAll(points.map((p) => LocationPoint(
+          latitude: p.latitude, longitude: p.longitude, timestamp: p.timestamp))
+        .toList());
 
-    // 2. Restart background service dengan state yang sudah dipulihkan
-    final service = FlutterBackgroundService();
-    var isRunning = await service.isRunning();
-    if (isRunning) {
-        // Jika service sudah jalan (misalnya dari sesi sebelumnya), panggil restoreState
-        service.invoke('restoreState', {
-          'elapsedTime': elapsedTimeInSeconds.value,
-          'distance': currentDistanceInMeters.value,
-          'steps': stepsInSession.value
-        });
-    } else {
-        // Jika service belum jalan, mulai dulu
-        await service.startService();
-        // Beri sedikit jeda agar service siap sebelum mengirim event
-        await Future.delayed(const Duration(milliseconds: 500));
-        service.invoke('restoreState', {
-          'elapsedTime': elapsedTimeInSeconds.value,
-          'distance': currentDistanceInMeters.value,
-          'steps': stepsInSession.value
-        });
-    }
+    // Beritahu service untuk mulai merekam dengan state yang sudah dipulihkan
+    _service.invoke('startRecording', {
+      'elapsedTime': elapsedTimeInSeconds.value,
+      'distance': currentDistanceInMeters.value,
+      'isPaused': true, // Mulai dalam keadaan pause
+    });
 
     isTracking.value = true;
-    isPaused.value = true; // Mulai dalam keadaan jeda
-    
-    Get.snackbar("Activity Resumed", "Tracking is paused. Press resume to continue.");
-
-    // Update peta dengan rute yang sudah ada
-    WidgetsBinding.instance.addPostFrameCallback((_) {
-      _updateCameraForRoute();
-    });
+    isPaused.value = true; // Set UI ke mode pause
+    Get.snackbar("Activity Resumed", "Press resume to continue tracking.");
+    WidgetsBinding.instance.addPostFrameCallback((_) => _updateCameraForRoute());
   }
 
   Future<void> _discardAndStartNew() async {
-    // Hapus data lama dari database lokal
     await _localDb.clearAllUnsyncedData();
-
-    // Reset UI dan state
-    isTracking.value = false;
-    isPaused.value = false;
-    elapsedTimeInSeconds.value = 0;
-    stepsInSession.value = 0;
-    currentDistanceInMeters.value = 0.0;
-    currentPath.clear();
-    _recordActivityId = null;
-    
-    // Mulai aktivitas baru
-    await startActivity();
+    await chooseStamina();
   }
 
   void togglePauseResume() {
-    final service = FlutterBackgroundService();
-    if (isPaused.value) {
-      service.invoke('resume');
-      Get.snackbar("Activity Resumed", "Tracking is active again.");
-    } else {
-      service.invoke('pause');
-      Get.snackbar("Activity Paused", "Tracking is temporarily paused.");
-    }
-
+    if (!isTracking.value) return;
     isPaused.value = !isPaused.value;
+    _service.invoke(isPaused.value ? 'pause' : 'resume');
+    Get.snackbar(
+        isPaused.value ? "Activity Paused" : "Activity Resumed",
+        isPaused.value ? "Tracking is paused." : "Tracking is active again.");
   }
 
   Future<bool> _requestPermissions() async {
@@ -216,84 +163,140 @@ class RecordActivityController extends GetxController {
     return true;
   }
 
-  Future<void> startActivity() async {
-    bool permissionsGranted = await _requestPermissions();
-    if (!permissionsGranted) return;
+  Future<void> chooseStamina() async {
+    if (user?.currentUserStamina?.currentAmount == 0) {
+      startActivity();
+      return;
+    }
 
-    // Reset state di UI
-    elapsedTimeInSeconds.value = 0;
-    stepsInSession.value = 0;
-    currentDistanceInMeters.value = 0.0;
-    currentPath.clear();
-    isPaused.value = false;
+    Get.dialog(
+      UseStaminaDialog(
+        title: 'Stamina',
+        subtitle: 'Stamina will be used continuously until it runs out\nMultiplier bonus: 1x',
+        
+        // Berikan nilai awal, minimum, dan maksimum untuk stamina
+        initialValue: 1,
+        minValue: 1,
+        maxValue: user?.currentUserStamina?.currentAmount ?? 0,
+        
+        // Bangun label tombol konfirmasi secara dinamis
+        labelConfirmBuilder: (int staminaValue) {
+          // Logika: setiap 1 stamina = 3 menit sesi
+          final int totalMinutes = staminaValue * 3;
+          return Text(
+            'Running Sessions: $totalMinutes mins',
+            style: Get.textTheme.labelSmall?.copyWith(fontSize: 10, fontWeight: FontWeight.w700),
+          );
+        },
+
+        // Tangani nilai stamina yang dikembalikan saat dikonfirmasi
+        onConfirm: (int finalStaminaValue) {
+          print('User confirmed to use $finalStaminaValue stamina.');
+          // Tutup dialog
+          Get.back();
+          // Lanjutkan logika Anda dengan nilai stamina ini...
+          startActivity(staminaToUse: finalStaminaValue);
+        },
+
+        // Anda tetap bisa menggunakan onCancel jika perlu
+        labelCancel: 'Back',
+      ),
+      barrierDismissible: false, // User harus memilih
+    );
+  }
+
+  Future<void> startActivity({int staminaToUse = 0}) async {
+    print('Starting activity...');
+
+    if (isTracking.value) return;
+    if (!(await _requestPermissions())) return;
+
+    _resetUiState();
+
+    print('[2] Starting activity...');
 
     try {
       LatLng startPosition = await _locationService.getCurrentLocation();
-      var response = await _recordActivityService.createSession(latitude: startPosition.latitude, longitude: startPosition.longitude, stamina: 0);
+      var response = await _recordActivityService.createSession(
+        latitude: startPosition.latitude,
+        longitude: startPosition.longitude,
+        stamina: staminaToUse,
+      );
       _recordActivityId = response['id'];
-
-      // PENTING: Simpan ID sesi dan state awal ke local DB
-      await _localDb.saveUnsyncedSession({
-        'id': _recordActivityId,
-        'elapsedTime': 0,
-        'distance': 0.0,
-        'steps': 0,
-      });
-
     } catch (e, s) {
-      Get.back();
-      Get.snackbar('Error', 'Failed to create activity session. Please try again.');
+      Get.snackbar('Error', 'Failed to create activity session.');
       FirebaseCrashlytics.instance.recordError(e, s, reason: 'Failed to create session');
       return;
     }
 
-    final service = FlutterBackgroundService();
-    var isRunning = await service.isRunning();
-    if (!isRunning) {
-      service.startService();
-      final directory = await getApplicationDocumentsDirectory();
+    totalStaminaToUse.value = staminaToUse;
+    _startStaminaCountdown(staminaToUse: staminaToUse);
 
-      await Future.delayed(const Duration(milliseconds: 500));
-      service.invoke('setAppDirectory', {'path': directory.path});
+    void initiateRecording() {
+      _service.invoke('startRecording');
+      isTracking.value = true;
+      Get.snackbar("Activity Started", "Tracking is running in the background.");
     }
-    
-    isTracking.value = true;
-    Get.snackbar("Activity Started", "Tracking is running in the background.");
+
+    var isRunning = await _service.isRunning();
+    if (isRunning) {
+      // Jika service sudah berjalan (misalnya dari aktivitas sebelumnya yang tidak ditutup),
+      // berarti ia sudah siap. Langsung kirim perintah.
+      print("UI LOG: Service already running. Sending 'startRecording' command.");
+      initiateRecording();
+    } else {
+      // Jika service belum berjalan, kita harus memulainya DAN menunggu sinyal 'service_ready'
+      print("UI LOG: Service not running. Starting service and waiting for 'ready' signal...");
+      
+      // Siapkan listener satu kali untuk menangkap sinyal 'service_ready'
+      // .take(1) memastikan listener ini hanya berjalan sekali lalu otomatis berhenti.
+      _service.on('service_ready').take(1).listen((event) {
+        print("UI LOG: 'service_ready' signal received. Sending 'startRecording' command.");
+        initiateRecording();
+      });
+
+      // Baru setelah listener siap, kita mulai service-nya.
+      await _service.startService();
+    }
+  }
+
+  void checkBeforeStopActivity() async {
+    if (!isPaused.value) togglePauseResume();
+
+    final dataPoints = await _localDb.getAllDataPoints();
+    if (dataPoints.isEmpty || dataPoints.length < 2) {
+      return Get.dialog(
+        CustomDialogConfirmation(
+          title: 'Insufficient Location Data',
+          subtitle: 'Your activity has insufficient location data. Do you want to delete the activity?',
+          labelConfirm: 'Yes, delete',
+          onConfirm: () {
+            stopActivity();
+          },
+          onCancel: () => Get.back(),
+        )
+      );
+    } else {
+      stopActivity();
+    }
   }
 
   void stopActivity() async {
-    // isLoadingSaveRecordActivity.value = true;
+    if (!isTracking.value) return;
 
-    final service = FlutterBackgroundService();
-    service.invoke("stopService");
+    isLoadingSaveRecordActivity.value = true;
     isTracking.value = false;
 
-    Get.snackbar("Syncing", "Synchronizing activity data...");
+    _staminaTimer?.cancel();
+
+    Get.snackbar("Syncing", "Finalizing your activity...");
+
+    _service.invoke("stopRecording");
 
     try {
-      print('get unsession data');
-      final unsyncedSession = await _localDb.getUnsyncedSession();
-      print(unsyncedSession);
-
       final dataPoints = await _localDb.getAllDataPoints();
-      if (dataPoints.isEmpty) {
-        // Jika tidak ada data point tapi ada sesi, coba akhiri saja
-        if (_recordActivityId != null) {
-          final recordActivityData = await _recordActivityService.endSession(recordActivityId: _recordActivityId!);
-          if (recordActivityData.id?.isNotEmpty ?? false) {
-              await _localDb.clearAllUnsyncedData(); // Hapus sesi yg tersimpan
-              Get.offAndToNamed(AppRoutes.activityEdit, arguments: recordActivityData);
-              return; // Keluar dari fungsi setelah berhasil
-          }
-        }
-        
-        Get.snackbar("Info", "No data to sync.");
-        isLoadingSaveRecordActivity.value = false;
-        return;
-      }
-
+      
       final jsonData = dataPoints.map((p) => p.toJson()).toList();
-      print("JSON DATA: $jsonData");
       bool syncSuccess = await _recordActivityService.syncRecordActivity(
         recordActivityId: _recordActivityId!,
         data: jsonData,
@@ -301,20 +304,25 @@ class RecordActivityController extends GetxController {
 
       if (syncSuccess) {
         final recordActivityData = await _recordActivityService.endSession(recordActivityId: _recordActivityId!);
-        
         if (recordActivityData.id?.isNotEmpty ?? false) {
           await _localDb.clearAllUnsyncedData();
           Get.offAndToNamed(AppRoutes.activityEdit, arguments: recordActivityData);
         } else {
-          Get.snackbar("Failed", "Failed to end activity session.");
+          // Gagal mengakhiri sesi di server, simpan lagi datanya
+          _saveStateToLocalDb();
+          Get.snackbar("Failed", "Failed to end activity session. Your progress is saved locally.");
         }
       } else {
-        Get.snackbar("Failed", "Failed to sync activity data.");
+        // Gagal sinkronisasi, simpan lagi datanya
+        _saveStateToLocalDb();
+        Get.snackbar("Sync Failed", "Could not sync data. Your progress is saved locally for next time.");
       }
-    } catch (e) {
-      Get.snackbar("Error", "Failed to sync activity data: $e");
+    } catch (e, s) {
+      FirebaseCrashlytics.instance.recordError(e, s, reason: 'Failed to sync/end session');
+      _saveStateToLocalDb();
+      Get.snackbar("Error", "An error occurred. Your progress is saved locally.");
     } finally {
-      // isLoadingSaveRecordActivity.value = false;
+      isLoadingSaveRecordActivity.value = false;
     }
   }
 
@@ -324,19 +332,37 @@ class RecordActivityController extends GetxController {
     await _localDb.clearAllUnsyncedData();
   }
 
-  void _closeActivity() async {
-    print('Save activity closed');
-    final service = FlutterBackgroundService();
-    var isRunning = await service.isRunning();
-    if (isRunning) {
-      service.invoke("stopService");
-      await _localDb.saveUnsyncedSession({
-        'id': _recordActivityId,
-        'elapsedTime': elapsedTimeInSeconds.value,
-        'distance': currentDistanceInMeters.value,
-        'steps': stepsInSession.value,
-      });
+  void _resetUiState() {
+    elapsedTimeInSeconds.value = 0;
+    stepsInSession.value = 0;
+    currentDistanceInMeters.value = 0.0;
+    currentPath.clear();
+    isPaused.value = false;
+    _recordActivityId = null;
+  }
+
+  void _saveDataPointToLocalDb(Map<String, dynamic> loc, DateTime timestamp) {
+    double paceInSecondsPerKm = 0;
+    if (elapsedTimeInSeconds.value > 0 && currentDistanceInMeters.value > 0) {
+      paceInSecondsPerKm = (elapsedTimeInSeconds.value / currentDistanceInMeters.value) * 1000;
     }
+    final dataPoint = ActivityDataPoint(
+        latitude: loc['latitude'], longitude: loc['longitude'],
+        step: stepsInSession.value, distance: currentDistanceInMeters.value,
+        pace: paceInSecondsPerKm, time: elapsedTimeInSeconds.value,
+        timestamp: timestamp);
+    _localDb.addDataPoint(dataPoint);
+  }
+
+  void _saveStateToLocalDb() {
+    if (!isTracking.value || _recordActivityId == null) return;
+    print('Saving current session state to local DB before closing...');
+    _localDb.saveUnsyncedSession({
+      'id': _recordActivityId,
+      'elapsedTime': elapsedTimeInSeconds.value,
+      'distance': currentDistanceInMeters.value,
+      'steps': stepsInSession.value,
+    });
   }
 
   void onMapCreated(GoogleMapController controller) {
@@ -383,6 +409,48 @@ class RecordActivityController extends GetxController {
         CameraUpdate.newLatLngBounds(bounds, 60.0), // Tambah sedikit padding
       );
     }
+  }
+
+  void _startStaminaCountdown({required int staminaToUse}) {
+    _staminaTimer?.cancel(); // Batalkan timer lama jika ada
+
+    if (staminaToUse <= 0) return;
+
+    // 1. Set state awal berdasarkan total stamina yang dipilih
+    totalStaminaToUse.value = staminaToUse;
+    staminaRemainingCount.value = staminaToUse;
+    // Hitung TOTAL waktu untuk semua stamina
+    staminaTotalTimeRemainingInSeconds.value = staminaToUse * 3 * 60; 
+
+    _staminaTimer = Timer.periodic(const Duration(seconds: 1), (timer) {
+      // Countdown hanya berjalan jika tracking aktif dan tidak di-pause
+      if (!isTracking.value || isPaused.value) return;
+
+      // Selalu kurangi total sisa waktu
+      staminaTotalTimeRemainingInSeconds.value--;
+
+      // 2. Logika baru untuk mengurangi jumlah stamina
+      // Cek apakah sisa waktu adalah kelipatan dari waktu per stamina (3 menit)
+      // Ini menandakan satu blok stamina telah selesai.
+      if (staminaTotalTimeRemainingInSeconds.value % (3 * 60) == 0 &&
+          staminaTotalTimeRemainingInSeconds.value > 0) {
+        staminaRemainingCount.value--;
+      }
+      
+      // 3. Logika akhir saat semua waktu habis
+      if (staminaTotalTimeRemainingInSeconds.value <= 0) {
+        staminaRemainingCount.value = 0; // Pastikan sisa stamina 0
+        timer.cancel();
+        Get.snackbar("Stamina Depleted", "All stamina has been used.");
+      }
+    });
+  }
+
+  // ✨ Getter untuk memformat sisa waktu stamina ke "MM:SS"
+  String get formattedStaminaTime {
+    final int minutes = staminaTotalTimeRemainingInSeconds.value ~/ 60;
+    final int seconds = staminaTotalTimeRemainingInSeconds.value % 60;
+    return "${minutes.toString().padLeft(2, '0')}:${seconds.toString().padLeft(2, '0')}";
   }
 
   // Helper untuk format jarak (bisa dipindah ke file util terpisah)

@@ -11,6 +11,7 @@ import 'package:zest_mobile/app/core/shared/widgets/gradient_outlined_button.dar
 import 'package:zest_mobile/app/core/shared/widgets/shimmer_loading_list.dart';
 import 'package:zest_mobile/app/modules/activity/edit_activity/controllers/edit_activity_controller.dart';
 import 'package:zest_mobile/app/modules/social/widgets/media_preview_edit.dart';
+import 'package:zest_mobile/app/routes/app_routes.dart';
 
 class EditActivityView extends GetView<EditActivityController> {
   const EditActivityView({super.key});
@@ -87,7 +88,7 @@ class EditActivityView extends GetView<EditActivityController> {
 
                 const SizedBox(height: 12),
 
-                (form.currentGalleries ?? []).isNotEmpty 
+                (form.newGalleries ?? []).isNotEmpty 
                 ? MediaPreviewEdit(
                   currentGalleries: form.currentGalleries ?? [],
                   newGalleries: form.newGalleries ?? [],
@@ -152,23 +153,23 @@ class EditActivityView extends GetView<EditActivityController> {
 
                 const SizedBox(height: 24),
 
-                Container(
-                  margin: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
-                  height: 55,
-                  child: GradientOutlinedButton(
-                    onPressed: controller.isLoadingSaveRecordActivity.value
-                      ? null
-                      : () {
-                          Get.back();
+                Obx(
+                  () {
+                    if (controller.isLoadingSaveRecordActivity.value) {
+                      return const SizedBox();
+                    }
+                    return Container(
+                      margin: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+                      height: 55,
+                      child: GradientOutlinedButton(
+                        onPressed: () {
+                          Get.offAllNamed(AppRoutes.mainHome);
                           Get.snackbar('Success', 'Successfully delete activity');
                         },
-                    child: Visibility(
-                      visible: controller.isLoadingSaveRecordActivity.value,
-                      replacement: const Text('Delete'),
-                      child: CustomCircularProgressIndicator(),
-                    ),
-                  ),
-                ),
+                        child: const Text('Delete'),
+                      ),
+                    );
+                }),
                 Obx(
                   () {
                     return Container(

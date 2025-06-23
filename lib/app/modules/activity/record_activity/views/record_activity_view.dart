@@ -1,10 +1,13 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/widgets.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:get/get.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:zest_mobile/app/core/shared/theme/color_schemes.dart';
+import 'package:zest_mobile/app/core/shared/widgets/custom_dialog_confirmation.dart';
 import 'package:zest_mobile/app/modules/activity/record_activity/controllers/record_activity_controller.dart';
+import 'package:zest_mobile/app/routes/app_routes.dart';
 
 class RecordActivityView extends GetView<RecordActivityController> {
   const RecordActivityView({super.key});
@@ -43,24 +46,15 @@ class RecordActivityView extends GetView<RecordActivityController> {
           onTap: () {
             // confirm dialog
             Get.dialog(
-              AlertDialog(
-                surfaceTintColor: darkColorScheme.background,
-                title: const Text('Delete Activity'),
-                content: const Text('Are you sure you want to delete this activity?'),
-                actions: [
-                  TextButton(
-                    onPressed: () => Get.back(),
-                    child: const Text('Cancel'),
-                  ),
-                  TextButton(
-                    onPressed: () {
-                      controller.deleteActivity();
-                      Get.back(closeOverlays: true);
-                    },
-                    child: const Text('Delete'),
-                  ),
-                ],
-              ),
+              CustomDialogConfirmation(
+                title: 'Delete Activity',
+                subtitle: 'Are you sure you want to delete this activity?',
+                labelConfirm: 'Yes',
+                onConfirm: () {
+                  controller.deleteActivity();
+                  Get.offAllNamed(AppRoutes.mainHome);
+                },
+              )
             );
           },
           child: Icon(
@@ -101,14 +95,14 @@ class RecordActivityView extends GetView<RecordActivityController> {
                         ),
                         const SizedBox(width: 8),
                         Text(
-                          '2.5',
+                          '${controller.user?.currentUserCoin?.currentAmount}',
                           style: Theme.of(context).textTheme.titleSmall,
                         ),
                       ],
                     ),
                   ),
                   const SizedBox(width: 16),
-                  Container(
+                  Obx(() => Container(
                     padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 12),
                     decoration: BoxDecoration(
                       color: const Color(0xFF373737),
@@ -121,12 +115,12 @@ class RecordActivityView extends GetView<RecordActivityController> {
                         ),
                         const SizedBox(width: 8),
                         Text(
-                          '2/10',
+                          '${controller.staminaRemainingCount.value}/${controller.totalStaminaToUse.value}',
                           style: Theme.of(context).textTheme.titleSmall,
                         ),
                         const SizedBox(width: 8),
                         Text(
-                          '6:00',
+                          controller.formattedStaminaTime,
                           style: Theme.of(context).textTheme.titleSmall?.copyWith(
                             color: const Color(0xFF7B7B7B),
                             fontSize: 13,
@@ -135,7 +129,7 @@ class RecordActivityView extends GetView<RecordActivityController> {
                         ),
                       ],
                     ),
-                  ),
+                  )),
                 ],
               ),
           
@@ -147,20 +141,44 @@ class RecordActivityView extends GetView<RecordActivityController> {
                     index: controller.isMapViewMode.value ? 0 : 1,
                     children: [
                       // Layer Map
-                      Container(
-                        height: 310,
-                        margin: const EdgeInsets.symmetric(horizontal: 16),
-                        child: GoogleMap(
-                          initialCameraPosition: CameraPosition(
-                            target: controller.currentPosition.value ?? const LatLng(-6.2615, 106.8106),
-                            zoom: 16,
+                      Visibility(
+                        visible: controller.currentPath.isNotEmpty,
+                        replacement: Container(
+                          height: 310,
+                          width: double.infinity,
+                          margin: const EdgeInsets.symmetric(horizontal: 16),
+                          child: Column(
+                            mainAxisAlignment: MainAxisAlignment.center,
+                            crossAxisAlignment: CrossAxisAlignment.center,
+                            children: [
+                              const CircularProgressIndicator(),
+                              const SizedBox(height: 16),
+                              Text(
+                                'Please move your device to start recording',
+                                style: Theme.of(context).textTheme.titleSmall,
+                                textAlign: TextAlign.center,
+                              ),
+                            ],
                           ),
-                          myLocationEnabled: false,
-                          myLocationButtonEnabled: false,
-                          zoomControlsEnabled: false,
-                          minMaxZoomPreference: const MinMaxZoomPreference(5, 20),
-                          polylines: controller.activityPolylines, 
-                          onMapCreated: controller.onMapCreated,
+                        ),
+                        child: Container(
+                          height: 310,
+                          margin: const EdgeInsets.symmetric(horizontal: 16),
+                          child: GoogleMap(
+                            initialCameraPosition: CameraPosition(
+                              target: LatLng(
+                                controller.currentPath.length > 1 ? controller.currentPath.last.latitude : 0, 
+                                controller.currentPath.length > 1 ? controller.currentPath.last.longitude : 0,
+                              ),
+                              zoom: 16,
+                            ),
+                            myLocationEnabled: false,
+                            myLocationButtonEnabled: false,
+                            zoomControlsEnabled: false,
+                            minMaxZoomPreference: const MinMaxZoomPreference(5, 20),
+                            polylines: controller.activityPolylines, 
+                            onMapCreated: controller.onMapCreated,
+                          ),
                         ),
                       ),
 
@@ -267,7 +285,7 @@ class RecordActivityView extends GetView<RecordActivityController> {
           
               Obx(
                 () {
-                  if (controller.isLoadingSaveRecordActivity.value) {
+                  if (controller.isLoadingSaveRecordActivity.value && controller.elapsedTimeInSeconds.value == 0) {
                     return const Center(child: CircularProgressIndicator());
                   }
 
@@ -285,7 +303,7 @@ class RecordActivityView extends GetView<RecordActivityController> {
                           onTap: () {
                             controller.isMapViewMode.value = !controller.isMapViewMode.value;
                           },
-                          child: Container(
+                          child: Obx(() => Container(
                             decoration: BoxDecoration(
                               shape: BoxShape.circle,
                               border: Border.all(
@@ -294,12 +312,12 @@ class RecordActivityView extends GetView<RecordActivityController> {
                               )
                             ),
                             padding: const EdgeInsets.all(18),
-                            child: const FaIcon(
-                              FontAwesomeIcons.locationArrow,
+                            child: FaIcon(
+                              controller.isMapViewMode.value ? FontAwesomeIcons.solidFlag : FontAwesomeIcons.locationArrow,
                               size: 28,
-                              color: Color(0xFF5A5A5A),
+                              color: const Color(0xFF5A5A5A),
                             ),
-                          ),
+                          )),
                         ),
                             
                         InkWell(
@@ -327,24 +345,15 @@ class RecordActivityView extends GetView<RecordActivityController> {
                         InkWell(
                           onTap: () {
                             Get.dialog(
-                              AlertDialog(
-                                surfaceTintColor: darkColorScheme.background,
-                                title: const Text('Stop Activity'),
-                                content: const Text('Are you sure you want to stop the activity?'),
-                                actions: [
-                                  TextButton(
-                                    onPressed: () => Get.back(),
-                                    child: const Text('Cancel'),
-                                  ),
-                                  TextButton(
-                                    onPressed: () {
-                                      Get.back();
-                                      controller.stopActivity();
-                                    },
-                                    child: const Text('Stop'),
-                                  ),
-                                ],
-                              ),
+                              CustomDialogConfirmation(
+                                title: 'Stop Activity',
+                                subtitle: 'Are you sure you want to stop the activity?',
+                                labelConfirm: 'Yes',
+                                onConfirm: () {
+                                  Get.back();
+                                  controller.checkBeforeStopActivity();
+                                },
+                              )
                             );
                           },
                           child: Container(

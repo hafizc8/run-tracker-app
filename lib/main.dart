@@ -1,5 +1,3 @@
-import 'package:zest_mobile/app/core/shared/helpers/number_helper.dart';
-
 import 'app/app.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:firebase_crashlytics/firebase_crashlytics.dart';
@@ -15,50 +13,87 @@ import 'package:zest_mobile/app/core/models/model/activity_data_point_model.dart
 import 'package:zest_mobile/app/core/services/background_service.dart' as bg;
 
 void main() async {
+  // 1. Inisialisasi dasar Flutter
   WidgetsFlutterBinding.ensureInitialized();
-  
-  setupServiceLocator();
-  await GetStorage.init();
+
+  // 2. Inisialisasi service-service inti (bisa berjalan paralel)
+  await Future.wait([
+    GetStorage.init(),
+    Firebase.initializeApp(),
+    // Hive bisa dipisah jika ada dependensi
+  ]);
+
+  // 3. Inisialisasi Hive (setelah initFlutter)
   await Hive.initFlutter();
   Hive.registerAdapter(ActivityDataPointAdapter());
 
-  await initializeService();
-  configureNotificationListener();
+  // 4. Inisialisasi Dependency Injection dan Background Service
+  setupServiceLocator();
+  await initializeService(); // Sekarang hanya mengkonfigurasi service
 
-  await Firebase.initializeApp();
-
-  // ✨ KONFIGURASI CRASHLYTICS ✨
-  // Mengirim semua error yang ditangani oleh Flutter framework
-  FlutterError.onError = (errorDetails) {
-    FirebaseCrashlytics.instance.recordFlutterFatalError(errorDetails);
-  };
-  
-  // Mengirim semua error yang tidak ditangani oleh Flutter (misal: dari native code)
-  PlatformDispatcher.instance.onError = (error, stack) {
-    FirebaseCrashlytics.instance.recordError(error, stack, fatal: true);
-    return true;
-  };
-
+  // 5. Konfigurasi Crashlytics dan Orientasi Layar
+  if (kReleaseMode) { // Hanya aktifkan Crashlytics di mode release
+    FlutterError.onError = (errorDetails) {
+      FirebaseCrashlytics.instance.recordFlutterFatalError(errorDetails);
+    };
+    PlatformDispatcher.instance.onError = (error, stack) {
+      FirebaseCrashlytics.instance.recordError(error, stack, fatal: true);
+      return true;
+    };
+  }
   SystemChrome.setPreferredOrientations([
     DeviceOrientation.portraitUp,
   ]);
+
+  // 6. Jalankan Aplikasi
   runApp(const App());
 }
 
-void configureNotificationListener() {
+Future<void> initializeService() async {
   final service = FlutterBackgroundService();
-  service.on('update').listen((data) {
+
+  const String notificationChannelId = 'zest_channel';
+  const String notificationChannelName = 'Zest Background Service';
+
+  // Inisialisasi plugin notifikasi dan buat channel
+  await FlutterLocalNotificationsPlugin()
+      .resolvePlatformSpecificImplementation<AndroidFlutterLocalNotificationsPlugin>()
+      ?.createNotificationChannel(const AndroidNotificationChannel(
+        notificationChannelId,
+        notificationChannelName,
+        description: 'Channel ini digunakan untuk melacak aktivitas.',
+        importance: Importance.low, // Gunakan low agar tidak ada suara/getar
+      ));
+
+  await service.configure(
+    iosConfiguration: IosConfiguration(
+      autoStart: false,
+      onForeground: bg.onStart,
+      onBackground: bg.onIosBackground,
+    ),
+    androidConfiguration: AndroidConfiguration(
+      onStart: bg.onStart,
+      isForegroundMode: true,
+      autoStart: false,
+      notificationChannelId: notificationChannelId,
+      initialNotificationTitle: 'Zest Menunggu',
+      initialNotificationContent: 'Aktivitas siap dimulai.',
+      foregroundServiceNotificationId: 888,
+      foregroundServiceTypes: [
+        AndroidForegroundType.location,
+        AndroidForegroundType.health,
+      ],
+    ),
+  );
+
+  service.on('update_notification').listen((data) {
     if (data == null) return;
-    
-    final int elapsedTime = data['elapsedTime'] as int;
-    final distance = double.parse(data['distance'].toString());
-    
-    final String content = "Durasi: ${NumberHelper().formatDuration(elapsedTime)}, Jarak: ${NumberHelper().formatDistanceMeterToKm(distance)}";
-    
+
+    // Panggil setNotificationInfo dari sini (Dunia UI), ini cara yang benar.
     FlutterLocalNotificationsPlugin().show(
       888,
-      'Aktivitas Berlangsung',
-      content,
+      data['title'],
+      data['content'],
       const NotificationDetails(
         android: AndroidNotificationDetails(
           'zest_channel',
@@ -71,48 +106,4 @@ void configureNotificationListener() {
       ),
     );
   });
-}
-
-Future<void> initializeService() async {
-  final service = FlutterBackgroundService();
-
-  // ✨ BARU: Channel ID dan Name untuk notifikasi
-  const String notificationChannelId = 'zest_channel';
-  const String notificationChannelName = 'Zest Background Service';
-
-  // Buat notification channel
-  var channel = const AndroidNotificationChannel(
-    notificationChannelId,
-    notificationChannelName,
-    description: 'Channel ini digunakan untuk melacak aktivitas.',
-    importance: Importance.defaultImportance,
-  );
-
-  // Inisialisasi plugin notifikasi dan buat channel
-  await FlutterLocalNotificationsPlugin()
-      .resolvePlatformSpecificImplementation<AndroidFlutterLocalNotificationsPlugin>()
-      ?.createNotificationChannel(channel);
-
-  await service.configure(
-    iosConfiguration: IosConfiguration(
-      autoStart: false,
-      onForeground: bg.onStart,
-      onBackground: bg.onIosBackground,
-    ),
-    androidConfiguration: AndroidConfiguration(
-      onStart: bg.onStart,
-      isForegroundMode: true,
-      autoStart: false,
-      // ✨ PENTING: Gunakan channel ID dan set detail notifikasi awal di sini
-      notificationChannelId: notificationChannelId, 
-      initialNotificationTitle: 'Zest Menunggu',
-      initialNotificationContent: 'Aktivitas siap dimulai.',
-      foregroundServiceNotificationId: 888,
-      foregroundServiceTypes: [
-        AndroidForegroundType.location,
-        AndroidForegroundType.health,
-        AndroidForegroundType.dataSync,
-      ],
-    ),
-  );
 }

@@ -386,9 +386,9 @@ class ActivityCard extends StatelessWidget {
       child: Row(
         mainAxisAlignment: MainAxisAlignment.spaceAround,
         children: [
-          StatisticsColumn(title: 'Distance', value: NumberHelper().formatDistanceMeterToKm(recordActivity?.recordActivityLogsSumDistance ?? 0)),
-          StatisticsColumn(title: 'AVG Pace', value: NumberHelper().formatDuration(int.parse((recordActivity?.recordActivityLogsAvgPace ?? 0.0).toStringAsFixed(0)))),
-          StatisticsColumn(title: 'Moving Time', value: NumberHelper().formatDuration(recordActivity?.recordActivityLogsSumTime ?? 0)),
+          StatisticsColumn(title: 'Distance', value: NumberHelper().formatDistanceMeterToKm(recordActivity?.lastRecordActivityLog?.distance ?? 0)),
+          StatisticsColumn(title: 'AVG Pace', value: NumberHelper().formatDuration(int.parse((recordActivity?.lastRecordActivityLog?.pace ?? 0.0).toStringAsFixed(0)))),
+          StatisticsColumn(title: 'Moving Time', value: NumberHelper().formatDuration(recordActivity?.lastRecordActivityLog?.time ?? 0)),
         ],
       ),
     );

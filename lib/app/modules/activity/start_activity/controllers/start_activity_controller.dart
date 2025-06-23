@@ -4,12 +4,17 @@ import 'package:get/get.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:permission_handler/permission_handler.dart';
 import 'package:zest_mobile/app/core/di/service_locator.dart';
+import 'package:zest_mobile/app/core/models/model/user_model.dart';
+import 'package:zest_mobile/app/core/services/auth_service.dart';
 import 'package:zest_mobile/app/core/services/location_service.dart';
 
 class StartActivityController extends GetxController {
   Rxn<LatLng> currentPosition = Rxn<LatLng>();
 
   final _locationService = sl<LocationService>();
+
+  final AuthService _authService = sl<AuthService>();
+  UserModel? get user => _authService.user;
 
   @override
   void onInit() {

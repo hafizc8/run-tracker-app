@@ -38,4 +38,13 @@ class NumberHelper {
       return "${distanceInKm.toStringAsFixed(2)} km";
     }
   }
+
+  // format number from 10000 to 10.000
+  String formatNumberToKWithComma(num? number) {
+    if (number == null) {
+      return "0"; // Nilai default jika angka null
+    }
+    final formatter = NumberFormat("#,###", "id_ID");
+    return formatter.format(number);
+  }
 }

@@ -13,6 +13,7 @@ import 'package:zest_mobile/app/core/models/model/post_model.dart';
 import 'package:zest_mobile/app/core/models/model/record_activity_model.dart';
 import 'package:zest_mobile/app/core/services/post_service.dart';
 import 'package:zest_mobile/app/core/shared/theme/color_schemes.dart';
+import 'package:zest_mobile/app/routes/app_routes.dart';
 
 class EditActivityController extends GetxController {
   final RecordActivityModel recordActivityData;
@@ -101,6 +102,8 @@ class EditActivityController extends GetxController {
       allowMultiple: true,
     );
 
+    print("result: $result");
+
     if (result != null) {
       editActivityForm.value = editActivityForm.value.copyWith(
         newGalleries: result.xFiles.map((e) => File(e.path)).toList(),
@@ -153,8 +156,7 @@ class EditActivityController extends GetxController {
       bool isSuccess = await _postService.shareRecordActivity(editActivityForm.value);
 
       if (isSuccess) {
-        Get.back(closeOverlays: true);
-        Get.back(closeOverlays: true);
+        Get.offAllNamed(AppRoutes.mainHome);
         Get.snackbar('Success', 'Successfully share activity');
       }
     } on AppException catch (e) {

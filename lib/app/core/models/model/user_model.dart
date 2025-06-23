@@ -1,4 +1,8 @@
 import 'package:zest_mobile/app/core/models/interface/model_interface.dart';
+import 'package:zest_mobile/app/core/models/model/user_current_coin_model.dart';
+import 'package:zest_mobile/app/core/models/model/user_current_stamina_model.dart';
+import 'package:zest_mobile/app/core/models/model/user_current_xp_model.dart';
+import 'package:zest_mobile/app/core/models/model/user_preference_model.dart';
 
 class UserModel extends Model<UserModel> {
   UserModel({
@@ -28,6 +32,16 @@ class UserModel extends Model<UserModel> {
     required this.createdAt,
     required this.updatedAt,
     required this.deletedAt,
+
+    this.genderText,
+    this.followersCount,
+    this.followingCount,
+    this.clubsCount,
+    this.badgesCount,
+    this.userPreference,
+    this.currentUserXp,
+    this.currentUserStamina,
+    this.currentUserCoin,
   });
 
   final String? id;
@@ -57,6 +71,16 @@ class UserModel extends Model<UserModel> {
   final DateTime? updatedAt;
   final dynamic deletedAt;
 
+  final String? genderText;
+  final int? followersCount;
+  final int? followingCount;
+  final int? clubsCount;
+  final int? badgesCount;
+  final UserPreferenceModel? userPreference;
+  final CurrentUserXpModel? currentUserXp;
+  final CurrentUserStaminaModel? currentUserStamina;
+  final CurrentUserCoinModel? currentUserCoin;
+
   @override
   UserModel copyWith({
     String? name,
@@ -84,6 +108,16 @@ class UserModel extends Model<UserModel> {
     DateTime? createdAt,
     DateTime? updatedAt,
     DateTime? deletedAt,
+
+    String? genderText,
+    int? followersCount,
+    int? followingCount,
+    int? clubsCount,
+    int? badgesCount,
+    UserPreferenceModel? userPreference,
+    CurrentUserXpModel? currentUserXp,
+    CurrentUserStaminaModel? currentUserStamina,
+    CurrentUserCoinModel? currentUserCoin,
   }) {
     return UserModel(
       id: id,
@@ -112,6 +146,16 @@ class UserModel extends Model<UserModel> {
       createdAt: createdAt ?? this.createdAt,
       updatedAt: updatedAt ?? this.updatedAt,
       deletedAt: deletedAt ?? this.deletedAt,
+
+      genderText: genderText ?? this.genderText,
+      followersCount: followersCount ?? this.followersCount,
+      followingCount: followingCount ?? this.followingCount,
+      clubsCount: clubsCount ?? this.clubsCount,
+      badgesCount: badgesCount ?? this.badgesCount,
+      userPreference: userPreference ?? this.userPreference,
+      currentUserXp: currentUserXp ?? this.currentUserXp,
+      currentUserStamina: currentUserStamina ?? this.currentUserStamina,
+      currentUserCoin: currentUserCoin ?? this.currentUserCoin,
     );
   }
 
@@ -143,6 +187,16 @@ class UserModel extends Model<UserModel> {
       createdAt: json["created_at"] != null ? DateTime.tryParse(json["created_at"]) : null,
       updatedAt: json["updated_at"] != null ? DateTime.tryParse(json["updated_at"]) : null,
       deletedAt: json["deleted_at"],
+
+      genderText: json["gender_text"],
+      followersCount: json["followers_count"],
+      followingCount: json["following_count"],
+      clubsCount: json["clubs_count"],
+      badgesCount: json["badges_count"],
+      userPreference: json["user_preference"] != null ? UserPreferenceModel.fromJson(json["user_preference"]) : null,
+      currentUserXp: json["current_user_xp"] != null ? CurrentUserXpModel.fromJson(json["current_user_xp"]) : null,
+      currentUserStamina: json["current_user_stamina"] != null ? CurrentUserStaminaModel.fromJson(json["current_user_stamina"]) : null,
+      currentUserCoin: json["current_user_coin"] != null ? CurrentUserCoinModel.fromJson(json["current_user_coin"]) : null,
     );
   }
 
@@ -177,6 +231,16 @@ class UserModel extends Model<UserModel> {
         "created_at": createdAt?.toIso8601String(),
         "updated_at": updatedAt?.toIso8601String(),
         "deleted_at": deletedAt,
+
+        "gender_text": genderText,
+        "followers_count": followersCount,
+        "following_count": followingCount,
+        "clubs_count": clubsCount,
+        "badges_count": badgesCount,
+        "user_preference": userPreference?.toJson(),
+        "current_user_xp": currentUserXp?.toJson(),
+        "current_user_stamina": currentUserStamina?.toJson(),
+        "current_user_coin": currentUserCoin?.toJson(),
       };
 
   @override
@@ -207,5 +271,15 @@ class UserModel extends Model<UserModel> {
         createdAt,
         updatedAt,
         deletedAt,
+
+        genderText,
+        followersCount,
+        followingCount,
+        clubsCount,
+        badgesCount,
+        userPreference,
+        currentUserXp,
+        currentUserStamina,
+        currentUserCoin,
       ];
 }

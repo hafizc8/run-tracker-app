@@ -166,7 +166,7 @@ class HomeView extends GetView<HomeController> {
                       margin: const EdgeInsets.symmetric(horizontal: 42),
                       child: StepsTrackerWidget(
                         progressValue: controller.progressValue,
-                        currentSteps: controller.currentSteps,
+                        currentSteps: controller.validatedSteps,
                         maxSteps: controller.user?.userPreference?.dailyStepGoals ?? 0,
                       ),
                     ),

@@ -68,6 +68,8 @@ dependencies:
   firebase_core: ^3.1.1
   firebase_crashlytics: ^4.0.1
   syncfusion_flutter_datepicker: ^24.2.9
+  sensors_plus: ^6.1.1
+  collection: ^1.18.0
 
 dependency_overrides:
   pedometer: 4.0.2

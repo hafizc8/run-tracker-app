@@ -1,5 +1,6 @@
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/widgets.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:get/get.dart';
@@ -27,12 +28,13 @@ class ProfileView extends GetView<ProfileController> {
         centerTitle: true,
         automaticallyImplyLeading: false,
         elevation: 1,
-        leading: GestureDetector(
-          onTap: () => Get.back(),
-          child: Icon(
+        leading: IconButton(
+          icon: Icon(
             Icons.chevron_left,
             color: Theme.of(context).colorScheme.onBackground,
+            size: 35,
           ),
+          onPressed: () => Get.back(),
         ),
       ),
       body: SingleChildScrollView(
@@ -167,75 +169,86 @@ class ProfileView extends GetView<ProfileController> {
                                     ),
                                   ),
                                   const SizedBox(height: 16),
-                                  ConstrainedBox(
-                                    constraints: BoxConstraints(
-                                      maxWidth:
-                                          MediaQuery.of(context).size.width *
-                                              0.58,
+                                  Visibility(
+                                    visible: controller.user.value?.id !=
+                                        controller.currentUser?.id,
+                                    child: ConstrainedBox(
+                                      constraints: BoxConstraints(
+                                        maxWidth:
+                                            MediaQuery.of(context).size.width *
+                                                0.58,
+                                      ),
+                                      child: Row(
+                                        children: [
+                                          Visibility(
+                                            visible: controller
+                                                    .user.value?.isFollowing ==
+                                                0,
+                                            replacement: GradientOutlinedButton(
+                                              onPressed: () {
+                                                controller.unfollow();
+                                              },
+                                              child: Row(children: [
+                                                FaIcon(
+                                                  FontAwesomeIcons.userCheck,
+                                                  size: 13,
+                                                  color: darkColorScheme
+                                                      .background,
+                                                ),
+                                                const SizedBox(width: 5),
+                                                Text(
+                                                  'Following',
+                                                  style: Theme.of(context)
+                                                      .textTheme
+                                                      .headlineSmall
+                                                      ?.copyWith(
+                                                          fontSize: 12,
+                                                          fontWeight:
+                                                              FontWeight.w700,
+                                                          color: darkColorScheme
+                                                              .background),
+                                                ),
+                                              ]),
+                                            ),
+                                            child: GradientOutlinedButton(
+                                              onPressed: () {
+                                                controller.follow();
+                                              },
+                                              child: Row(children: [
+                                                const Icon(
+                                                  Icons.person_add_alt_1,
+                                                  size: 14,
+                                                ),
+                                                const SizedBox(width: 5),
+                                                Text(
+                                                  'Follow',
+                                                  style: Theme.of(context)
+                                                      .textTheme
+                                                      .headlineSmall
+                                                      ?.copyWith(
+                                                        fontSize: 12,
+                                                        fontWeight:
+                                                            FontWeight.w700,
+                                                      ),
+                                                ),
+                                              ]),
+                                            ),
+                                          ),
+                                          const SizedBox(width: 10),
+                                          InkWell(
+                                            onTap: () => Get.snackbar(
+                                                'Coming Soon',
+                                                'Feature coming soon'),
+                                            child: SvgPicture.asset(
+                                              'assets/icons/msg.svg',
+                                              color: Theme.of(context)
+                                                  .colorScheme
+                                                  .onBackground,
+                                            ),
+                                          ),
+                                        ],
+                                      ),
                                     ),
-                                    child: Row(children: [
-                                      Visibility(
-                                        visible: controller
-                                                .user.value?.isFollowing ==
-                                            0,
-                                        replacement: GradientOutlinedButton(
-                                          onPressed: () {
-                                            controller.unfollow();
-                                          },
-                                          child: Row(children: [
-                                            FaIcon(
-                                              FontAwesomeIcons.userCheck,
-                                              size: 13,
-                                              color: darkColorScheme.background,
-                                            ),
-                                            const SizedBox(width: 5),
-                                            Text(
-                                              'Following',
-                                              style: Theme.of(context)
-                                                  .textTheme
-                                                  .headlineSmall
-                                                  ?.copyWith(
-                                                      fontSize: 12,
-                                                      fontWeight:
-                                                          FontWeight.w700,
-                                                      color: darkColorScheme
-                                                          .background),
-                                            ),
-                                          ]),
-                                        ),
-                                        child: GradientOutlinedButton(
-                                          onPressed: () {
-                                            controller.follow();
-                                          },
-                                          child: Row(children: [
-                                            const Icon(
-                                              Icons.person_add_alt_1,
-                                              size: 14,
-                                            ),
-                                            const SizedBox(width: 5),
-                                            Text(
-                                              'Follow',
-                                              style: Theme.of(context)
-                                                  .textTheme
-                                                  .headlineSmall
-                                                  ?.copyWith(
-                                                    fontSize: 12,
-                                                    fontWeight: FontWeight.w700,
-                                                  ),
-                                            ),
-                                          ]),
-                                        ),
-                                      ),
-                                      const SizedBox(width: 10),
-                                      InkWell(
-                                        onTap: () => Get.snackbar('Coming Soon',
-                                            'Feature coming soon'),
-                                        child: const Icon(
-                                          Icons.chat_bubble_outline,
-                                          size: 25,
-                                        ),
-                                      ),
-                                    ]),
                                   ),
                                   const Spacer(),
                                 ],

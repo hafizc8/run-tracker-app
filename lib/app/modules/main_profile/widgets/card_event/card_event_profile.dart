@@ -1,6 +1,5 @@
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/widgets.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:get/get.dart';
 import 'package:intl/intl.dart';
@@ -10,8 +9,8 @@ import 'package:zest_mobile/app/core/models/model/event_model.dart';
 import 'package:zest_mobile/app/core/shared/widgets/gradient_elevated_button.dart';
 import 'package:zest_mobile/app/core/shared/widgets/shimmer_loading_circle.dart';
 import 'package:zest_mobile/app/modules/club/partial/detail_club/partial/tab_bar_club/views/widgets/participants_avatars.dart';
+import 'package:zest_mobile/app/modules/main_profile/controllers/main_profile_controller.dart';
 import 'package:zest_mobile/app/modules/social/views/partial/for_you_tab/event/controllers/event_action_controller.dart';
-import 'package:zest_mobile/app/modules/social/views/partial/for_you_tab/event/controllers/event_controller.dart';
 import 'package:zest_mobile/app/routes/app_routes.dart';
 
 class EventCard extends StatelessWidget {
@@ -27,8 +26,8 @@ class EventCard extends StatelessWidget {
   final void Function()? onCancelEvent;
   final Color backgroundColor;
 
-  final eventController = Get.find<EventController>();
-  final eventActionController = Get.find<EventActionController>();
+  final ProfileMainController profileController = Get.find();
+  final EventActionController eventActionController = Get.find();
 
   @override
   Widget build(BuildContext context) {
@@ -155,19 +154,13 @@ class EventCard extends StatelessWidget {
                                   arguments: {'eventId': res.id});
 
                               if (result != null && result is EventModel) {
-                                int index = eventController.events.indexWhere(
+                                int index = profileController.events.indexWhere(
                                     (element) => element.id == result.id);
-                                eventController.events[index] = result;
+                                profileController.events[index] = result;
                               }
                             }
                           } else if (value == 'cancel_event') {
-                            // Handle Cancel Event action
-                            if (onCancelEvent != null) {
-                              onCancelEvent!();
-                              return;
-                            }
-
-                            await eventController
+                            await profileController
                                 .confirmCancelEvent(eventModel!.id!);
                           }
                         },
@@ -250,11 +243,11 @@ class EventCard extends StatelessWidget {
                   ),
                   title: 'Date & Time',
                   subtitle:
-                      '${DateFormat('d MMM yyyy').format(eventModel!.datetime!)}, ${eventModel?.startTime != null ? eventActionController.formatTime(eventModel!.startTime!) : 'Start'}–${eventModel?.endTime != null ? eventActionController.formatTime(eventModel!.endTime!) : 'Finish'}',
+                      '${DateFormat('d MMM yyyy').format(eventModel!.datetime!)}, ${eventModel?.startTime != null ? profileController.formatTime(eventModel!.startTime!) : 'Start'}–${eventModel?.endTime != null ? profileController.formatTime(eventModel!.endTime!) : 'Finish'}',
                 ),
                 const SizedBox(height: 12),
                 GestureDetector(
-                  onTap: () => eventActionController.openGoogleMaps(
+                  onTap: () => profileController.openGoogleMaps(
                       eventModel?.placeName ?? eventModel?.address ?? '-'),
                   child: _buildInfoItem(
                     context,
@@ -302,7 +295,7 @@ class EventCard extends StatelessWidget {
               GradientElevatedButton(
                 onPressed: eventModel?.isJoined == 0
                     ? () {
-                        eventController
+                        profileController
                             .confirmAccLeaveJoinEvent(eventModel?.id ?? '');
                       }
                     : null,

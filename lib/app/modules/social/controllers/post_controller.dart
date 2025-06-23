@@ -136,7 +136,6 @@ class PostController extends GetxController {
       bool resp = await _postService.create(form.value);
       if (resp) {
         refreshAllPosts();
-        Get.snackbar("Success", "Successfully create post");
       }
     } on AppException catch (e) {
       if (e.type == AppExceptionType.validation) {

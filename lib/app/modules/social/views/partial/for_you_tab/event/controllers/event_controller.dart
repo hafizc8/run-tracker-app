@@ -1,3 +1,5 @@
+import 'dart:math';
+
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:syncfusion_flutter_datepicker/datepicker.dart';
@@ -239,6 +241,21 @@ class EventController extends GetxController {
           onConfirm: () => cancelEvent(id),
           title: 'Cancelling?',
           subtitle:
+              'Are you sure you want to cancel this event? The event will be removed from all participants schedules. If possible, let them know the reason—it helps maintain trust and clarity.',
+          labelConfirm: 'Cancel Event',
+          isLoading: isLoadingAction.value,
+        ),
+      ),
+    );
+  }
+
+  Future<void> confirmLeaveEvent(String id) async {
+    await Get.dialog(
+      Obx(
+        () => ConfirmationDialog(
+          onConfirm: () => cancelEvent(id),
+          title: 'Leaving?',
+          subtitle:
               'If you need to leave an event after joining, please message the host to explain. It keeps things respectful and helps with planning.',
           labelConfirm: 'Leave Event',
           isLoading: isLoadingAction.value,
@@ -261,20 +278,25 @@ class EventController extends GetxController {
           if (this.event.value != null) {
             this.event.value = event.copyWith(
               isJoined: 0,
+              userOnEventsCount: (event.userOnEventsCount ?? 0) - 1,
             );
           }
           events[index] = event.copyWith(
             isJoined: 0,
+            userOnEventsCount: (events[index].userOnEventsCount ?? 0) - 1,
           );
           return;
         }
         if (this.event.value != null) {
           this.event.value = event.copyWith(
             isJoined: res ? 1 : 0,
+            userOnEventsCount: res ? (event.userOnEventsCount ?? 0) + 1 : null,
           );
         }
         events[index] = event.copyWith(
           isJoined: res ? 1 : 0,
+          userOnEventsCount:
+              res ? (events[index].userOnEventsCount ?? 0) + 1 : null,
         );
       }
     } on AppException catch (e) {

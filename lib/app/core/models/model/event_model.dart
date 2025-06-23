@@ -6,6 +6,7 @@ class EventModel extends Equatable {
   EventModel({
     required this.id,
     required this.activity,
+    required this.activityImageUrl,
     required this.title,
     required this.slug,
     required this.description,
@@ -38,6 +39,7 @@ class EventModel extends Equatable {
 
   final String? id;
   final String? activity;
+  final String? activityImageUrl;
   final String? title;
   final String? slug;
   final String? description;
@@ -70,6 +72,7 @@ class EventModel extends Equatable {
   EventModel copyWith({
     String? id,
     String? activity,
+    String? activityImageUrl,
     String? title,
     String? slug,
     String? description,
@@ -102,6 +105,7 @@ class EventModel extends Equatable {
     return EventModel(
       id: id ?? this.id,
       activity: activity ?? this.activity,
+      activityImageUrl: activityImageUrl ?? this.activityImageUrl,
       title: title ?? this.title,
       slug: slug ?? this.slug,
       description: description ?? this.description,
@@ -140,6 +144,7 @@ class EventModel extends Equatable {
     return EventModel(
       id: json["id"],
       activity: json["activity"],
+      activityImageUrl: json["activity_image_url"],
       title: json["title"],
       slug: json["slug"],
       description: json["description"],
@@ -189,6 +194,7 @@ class EventModel extends Equatable {
   Map<String, dynamic> toJson() => {
         "id": id,
         "activity": activity,
+        "activity_image_url": activityImageUrl,
         "title": title,
         "slug": slug,
         "description": description,

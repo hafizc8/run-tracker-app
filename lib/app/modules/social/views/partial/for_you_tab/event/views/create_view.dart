@@ -203,6 +203,10 @@ class EventCreateView extends GetView<EventActionController> {
                         if (res != null) {
                           if (res['placeName'] != null &&
                               res['placeName'] is String) {
+                            controller.form.value = form.copyWith(
+                              placeName: res['placeName'],
+                            );
+
                             controller.placeNameController.text =
                                 res['placeName'];
                           }

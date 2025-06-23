@@ -2,6 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:zest_mobile/app/core/di/service_locator.dart';
 import 'package:zest_mobile/app/core/models/model/user_detail_model.dart';
+import 'package:zest_mobile/app/core/models/model/user_model.dart';
+import 'package:zest_mobile/app/core/services/auth_service.dart';
 import 'package:zest_mobile/app/core/services/user_service.dart';
 
 class ProfileController extends GetxController {
@@ -12,6 +14,9 @@ class ProfileController extends GetxController {
   var activeIndex = 0.obs;
 
   final _userService = sl<UserService>();
+  final _authService = sl<AuthService>();
+
+  UserModel? get currentUser => _authService.user;
 
   Rx<UserDetailModel?> user = Rx<UserDetailModel?>(null);
 
@@ -21,6 +26,7 @@ class ProfileController extends GetxController {
   @override
   void onInit() {
     getDetailUser();
+
     super.onInit();
   }
 
@@ -47,7 +53,6 @@ class ProfileController extends GetxController {
       if (res) {
         await getDetailUser();
       }
-
     } catch (e) {
       Get.snackbar(
         'Error',
@@ -67,7 +72,6 @@ class ProfileController extends GetxController {
       if (res) {
         await getDetailUser();
       }
-
     } catch (e) {
       Get.snackbar(
         'Error',

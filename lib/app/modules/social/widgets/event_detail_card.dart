@@ -124,9 +124,13 @@ class EventDetailCard extends GetView<EventDetailController> {
                         if (value == 'edit_event') {
                           // Handle Edit Event action
                           eventActionController.gotToEdit(event!, from: 'list');
+                          var res = await Get.toNamed(AppRoutes.eventCreate);
+                          if (res != null) {
+                            controller.detailEvent();
+                          }
                         } else if (value == 'cancel_event') {
                           // Handle Cancel Event action
-                          await eventController.cancelEvent(event?.id ?? '');
+                          await eventController.confirmCancelEvent(event!.id!);
                         }
                       },
                       surfaceTintColor: Theme.of(context).colorScheme.onPrimary,
@@ -264,15 +268,19 @@ class EventDetailCard extends GetView<EventDetailController> {
                     '${DateFormat('d MMM yyyy').format(event!.datetime!)}, ${event?.startTime != null ? eventActionController.formatTime(event!.startTime!) : 'Start'}–${event?.endTime != null ? eventActionController.formatTime(event!.endTime!) : 'Finish'}',
               ),
               const SizedBox(height: 12),
-              _buildInfoItem(
-                context,
-                icon: SvgPicture.asset(
-                  'assets/icons/pin_location.svg',
-                  height: 22,
-                  width: 27,
+              GestureDetector(
+                onTap: () => eventActionController
+                    .openGoogleMaps(event?.placeName ?? event?.address ?? '-'),
+                child: _buildInfoItem(
+                  context,
+                  icon: SvgPicture.asset(
+                    'assets/icons/pin_location.svg',
+                    height: 22,
+                    width: 27,
+                  ),
+                  title: 'Location',
+                  subtitle: event?.placeName ?? event?.address ?? '-',
                 ),
-                title: 'Location',
-                subtitle: event?.address ?? '-',
               ),
               const SizedBox(height: 16),
               _buildInfoItem(

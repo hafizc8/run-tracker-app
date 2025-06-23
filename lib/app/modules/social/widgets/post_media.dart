@@ -23,12 +23,14 @@ class PostMediaScroll extends StatelessWidget {
     final mediaWidth = isSingleMedia ? screenWidth : screenWidth * 0.7;
 
     if (isSingleMedia) {
-      return ClipRRect(
-        borderRadius: BorderRadius.circular(12),
-        child: SizedBox(
-          height: 300,
-          width: mediaWidth,
-          child: mediaItems.first,
+      return Center(
+        child: ClipRRect(
+          borderRadius: BorderRadius.circular(12),
+          child: SizedBox(
+            height: 300,
+            width: mediaWidth,
+            child: mediaItems.first,
+          ),
         ),
       );
     }
@@ -56,7 +58,6 @@ class PostMediaScroll extends StatelessWidget {
   }
 }
 
-
 // --- Widget PostVideoPlayer tidak perlu diubah ---
 // Widget ini akan kita panggil dari luar PostMediaScroll sekarang
 class PostVideoPlayer extends StatefulWidget {
@@ -81,8 +82,7 @@ class _PostVideoPlayerState extends State<PostVideoPlayer> {
         mixWithOthers: false,
         allowBackgroundPlayback: false,
       ),
-    )
-      ..initialize().then((_) {
+    )..initialize().then((_) {
         setState(() => _initialized = true);
         _controller.setLooping(true);
         _controller.setVolume(0);
@@ -107,12 +107,14 @@ class _PostVideoPlayerState extends State<PostVideoPlayer> {
 
     // Gunakan Stack untuk menumpuk video dan progress indicator
     return Stack(
-      fit: StackFit.expand, // Pastikan Stack mengisi seluruh area yang diberikan
+      fit:
+          StackFit.expand, // Pastikan Stack mengisi seluruh area yang diberikan
       children: [
         // Widget untuk menampilkan video dengan behavior 'cover'
         FittedBox(
           fit: BoxFit.cover, // ✅ Ini adalah kuncinya
-          clipBehavior: Clip.hardEdge, // Memotong bagian video yang keluar dari bounds
+          clipBehavior:
+              Clip.hardEdge, // Memotong bagian video yang keluar dari bounds
           child: SizedBox(
             // Beri tahu FittedBox ukuran asli video
             width: _controller.value.size.width,
@@ -120,7 +122,7 @@ class _PostVideoPlayerState extends State<PostVideoPlayer> {
             child: VideoPlayer(_controller),
           ),
         ),
-        
+
         // Letakkan progress indicator di atas video
         Positioned(
           bottom: 0,
@@ -130,7 +132,8 @@ class _PostVideoPlayerState extends State<PostVideoPlayer> {
             _controller,
             allowScrubbing: true,
             colors: VideoProgressColors(
-              backgroundColor: Colors.black.withOpacity(0.3), // Beri sedikit background agar terlihat
+              backgroundColor: Colors.black
+                  .withOpacity(0.3), // Beri sedikit background agar terlihat
               playedColor: Colors.white, // Ganti warna played agar kontras
               bufferedColor: Colors.white38,
             ),

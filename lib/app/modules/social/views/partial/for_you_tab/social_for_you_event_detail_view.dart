@@ -215,21 +215,19 @@ class SocialForYouEventDetailView extends GetView<EventDetailController> {
 
         if (controller.event.value?.isJoined == 0 &&
             controller.event.value?.isPublic == 1) {
-          return Obx(
-            () => SizedBox(
-              height: 55,
-              child: GradientElevatedButton(
-                onPressed: () {
-                  controller.confirmAccLeaveJoinEvent(
-                      controller.event.value?.id ?? '');
-                },
-                child: Text(
-                  'Join!',
-                  style: Theme.of(context).textTheme.labelMedium?.copyWith(
-                        fontSize: 13,
-                        fontWeight: FontWeight.bold,
-                      ),
-                ),
+          return SizedBox(
+            height: 55,
+            child: GradientElevatedButton(
+              onPressed: () {
+                controller
+                    .confirmAccLeaveJoinEvent(controller.event.value?.id ?? '');
+              },
+              child: Text(
+                'Join!',
+                style: Theme.of(context).textTheme.labelMedium?.copyWith(
+                      fontSize: 13,
+                      fontWeight: FontWeight.bold,
+                    ),
               ),
             ),
           );

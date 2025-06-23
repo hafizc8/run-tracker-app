@@ -146,32 +146,35 @@ class ChooseLocationEventView extends GetView<ChooseLocationEventController> {
               padding: const EdgeInsets.symmetric(
                 horizontal: 16,
               ),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Text(
-                    'Place Name',
-                    style: Theme.of(context).textTheme.labelMedium?.copyWith(
-                          color: Theme.of(context).colorScheme.onBackground,
-                        ),
-                  ),
-                  const SizedBox(height: 12),
-                  TextFormField(
-                    cursorColor: Colors.white,
-                    keyboardType: TextInputType.text,
-                    controller: controller.placeNameController,
-                    decoration: const InputDecoration(
-                      hintText: 'Enter Place Name',
+              child: Form(
+                key: controller.formKey,
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(
+                      'Place Name',
+                      style: Theme.of(context).textTheme.labelMedium?.copyWith(
+                            color: Theme.of(context).colorScheme.onBackground,
+                          ),
                     ),
-                    validator: (value) {
-                      if (value == null || value.isEmpty) {
-                        return 'The place name is required';
-                      }
-                      return null;
-                    },
-                    textInputAction: TextInputAction.done,
-                  ),
-                ],
+                    const SizedBox(height: 12),
+                    TextFormField(
+                      cursorColor: Colors.white,
+                      keyboardType: TextInputType.text,
+                      controller: controller.placeNameController,
+                      decoration: const InputDecoration(
+                        hintText: 'Enter Place Name',
+                      ),
+                      validator: (value) {
+                        if (value == null || value.isEmpty) {
+                          return 'The place name is required';
+                        }
+                        return null;
+                      },
+                      textInputAction: TextInputAction.done,
+                    ),
+                  ],
+                ),
               ),
             ),
             const SizedBox(height: 12),
@@ -202,11 +205,14 @@ class ChooseLocationEventView extends GetView<ChooseLocationEventController> {
           () => GradientElevatedButton(
             onPressed: !controller.canUpdate
                 ? null
-                : () => Get.back(result: {
+                : () {
+                    if (!controller.formKey.currentState!.validate()) return;
+                    Get.back(result: {
                       'address': controller.address.value,
                       'placeName': controller.placeNameController.text,
                       'location': controller.currentPosition.value,
-                    }),
+                    });
+                  },
             child: const Text('Update'),
           ),
         ),

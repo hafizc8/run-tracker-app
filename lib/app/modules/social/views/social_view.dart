@@ -33,6 +33,7 @@ class SocialView extends GetView<SocialController> {
 
   PreferredSizeWidget _buildAppBar(BuildContext context) {
     return AppBar(
+      toolbarHeight: 100,
       title: RichText(
         text: TextSpan(
           children: <TextSpan>[
@@ -93,6 +94,8 @@ class SocialView extends GetView<SocialController> {
               ),
             ];
           },
+          offset: const Offset(0, 10),
+          position: PopupMenuPosition.under,
           child: Container(
             width: 36,
             height: 36,

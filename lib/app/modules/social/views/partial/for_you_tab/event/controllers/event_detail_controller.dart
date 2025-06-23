@@ -111,7 +111,7 @@ class EventDetailController extends GetxController {
       Obx(
         () => ConfirmationDialog(
           onConfirm: () => accLeaveJoinEvent(id, leave: '1'),
-          title: 'Cancelling?',
+          title: 'Leaving?',
           subtitle:
               'If you need to leave an event after joining, please message the host to explain. It keeps things respectful and helps with planning.',
           labelConfirm: 'Leave Event',
@@ -128,8 +128,8 @@ class EventDetailController extends GetxController {
           onConfirm: () => cancelEvent(id),
           title: 'Cancelling?',
           subtitle:
-              'If you need to leave an event after joining, please message the host to explain. It keeps things respectful and helps with planning.',
-          labelConfirm: 'Leave Event',
+              'Are you sure you want to cancel this event? The event will be removed from all participants schedules. If possible, let them know the reason—it helps maintain trust and clarity.',
+          labelConfirm: 'Cancel Event',
           isLoading: isLoadingAction.value,
         ),
       ),

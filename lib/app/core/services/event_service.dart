@@ -88,7 +88,7 @@ class EventService {
     }
   }
 
-  Future<bool> accLeaveJoinEvent(String id, {String? leave}) async {
+  Future<EventUserModel?> accLeaveJoinEvent(String id, {String? leave}) async {
     try {
       final response = await _apiService.request(
           path: AppConstants.eventAccLeaveJoin(id),
@@ -97,7 +97,7 @@ class EventService {
             if (leave != null) 'leave': leave,
           });
 
-      return response.data['success'];
+      return EventUserModel.fromJson(response.data['data']);
     } catch (e) {
       rethrow;
     }

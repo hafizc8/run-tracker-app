@@ -267,8 +267,9 @@ class EventController extends GetxController {
   Future<void> accLeaveJoinEvent(String id, {String? leave}) async {
     isLoadingAction.value = true;
     try {
-      final bool res = await _eventService.accLeaveJoinEvent(id, leave: leave);
-      if (res) {
+      EventUserModel? res =
+          await _eventService.accLeaveJoinEvent(id, leave: leave);
+      if (res != null) {
         Get.back();
       }
       int index = events.indexWhere((element) => element.id == id);
@@ -289,14 +290,16 @@ class EventController extends GetxController {
         }
         if (this.event.value != null) {
           this.event.value = event.copyWith(
-            isJoined: res ? 1 : 0,
-            userOnEventsCount: res ? (event.userOnEventsCount ?? 0) + 1 : null,
+            isJoined: res != null ? 1 : 0,
+            userOnEventsCount:
+                res != null ? (event.userOnEventsCount ?? 0) + 1 : null,
           );
         }
         events[index] = event.copyWith(
-          isJoined: res ? 1 : 0,
+          isJoined: res != null ? 1 : 0,
           userOnEventsCount:
-              res ? (events[index].userOnEventsCount ?? 0) + 1 : null,
+              res != null ? (events[index].userOnEventsCount ?? 0) + 1 : null,
+          userOnEvents: res != null ? [res, ...event.userOnEvents ?? []] : null,
         );
       }
     } on AppException catch (e) {

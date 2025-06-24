@@ -146,8 +146,9 @@ class ProfileMainController extends GetxController {
   Future<void> accLeaveJoinEvent(String id, {String? leave}) async {
     isLoadingActionEvent.value = true;
     try {
-      final bool res = await _eventService.accLeaveJoinEvent(id, leave: leave);
-      if (res) {
+      EventUserModel? res =
+          await _eventService.accLeaveJoinEvent(id, leave: leave);
+      if (res != null) {
         Get.back();
       }
       int index = events.indexWhere((element) => element.id == id);
@@ -162,9 +163,9 @@ class ProfileMainController extends GetxController {
         }
 
         events[index] = event.copyWith(
-          isJoined: res ? 1 : 0,
+          isJoined: res != null ? 1 : 0,
           userOnEventsCount:
-              res ? (events[index].userOnEventsCount ?? 0) + 1 : null,
+              res != null ? (events[index].userOnEventsCount ?? 0) + 1 : null,
         );
       }
     } on AppException catch (e) {

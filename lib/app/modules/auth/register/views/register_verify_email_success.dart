@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 
 import 'package:get/get.dart';
@@ -13,23 +14,26 @@ class RegisterVerifyEmailSuccessView
     return Scaffold(
       body: Center(
         child: Padding(
-          padding: const EdgeInsets.symmetric(horizontal: 16),
+          padding: EdgeInsets.symmetric(horizontal: 8.w),
           child: Column(
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
-              SvgPicture.asset('assets/icons/check_circle.svg', width: 72),
-              const SizedBox(height: 24),
+              SvgPicture.asset(
+                'assets/icons/check_circle.svg',
+                width: 72.w,
+              ),
+              SizedBox(height: 24.h),
               Text(
                 'Email Verified',
                 style: Theme.of(context).textTheme.headlineMedium,
               ),
-              const SizedBox(height: 12),
+              SizedBox(height: 12.h),
               Text(
                 'Your email has been verified. You can continue using the application.',
                 style: Theme.of(context).textTheme.bodyMedium,
                 textAlign: TextAlign.center,
               ),
-              const SizedBox(height: 24),
+              SizedBox(height: 24.h),
               Obx(
                 () => Text(
                   'Redirecting you to the next page in ${controller.countDown.value}s',

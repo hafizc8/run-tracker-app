@@ -1,5 +1,6 @@
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:get/get.dart';
 import 'package:zest_mobile/app/core/models/forms/login_form.dart';
@@ -31,16 +32,16 @@ class LoginView extends GetView<LoginController> {
           ),
 
           SingleChildScrollView(
-            padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 48),
+            padding: EdgeInsets.symmetric(horizontal: 8.w, vertical: 48.h),
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.center,
               children: [
-                const SizedBox(height: 24),
+                SizedBox(height: 24.h),
                 SvgPicture.asset(
                   'assets/images/zest-logo.svg',
                   height: 68,
                 ),
-                const SizedBox(height: 24),
+                SizedBox(height: 24.h),
                 Obx(() {
                   LoginFormModel form = controller.form.value;
                   return Column(
@@ -50,7 +51,7 @@ class LoginView extends GetView<LoginController> {
                         'Login',
                         style: Theme.of(context).textTheme.headlineSmall,
                       ),
-                      const SizedBox(height: 16),
+                      SizedBox(height: 6.h),
                       Column(
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
@@ -58,7 +59,7 @@ class LoginView extends GetView<LoginController> {
                             'Email',
                             style: Theme.of(context).textTheme.titleSmall,
                           ),
-                          const SizedBox(height: 12),
+                          SizedBox(height: 6.h),
                           GradientBorderTextField(
                             cursorColor: Colors.white,
                             keyboardType: TextInputType.emailAddress,
@@ -75,7 +76,7 @@ class LoginView extends GetView<LoginController> {
                           ),
                         ],
                       ),
-                      const SizedBox(height: 16),
+                      SizedBox(height: 10.h),
                       Column(
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
@@ -83,7 +84,7 @@ class LoginView extends GetView<LoginController> {
                             'Password',
                             style: Theme.of(context).textTheme.titleSmall,
                           ),
-                          const SizedBox(height: 12),
+                          SizedBox(height: 6.h),
                           Obx(
                             () => GradientBorderTextField(
                               cursorColor: Colors.white,
@@ -114,7 +115,7 @@ class LoginView extends GetView<LoginController> {
                     ],
                   );
                 }),
-                const SizedBox(height: 8),
+                SizedBox(height: 17.h),
                 Align(
                   alignment: Alignment.centerRight,
                   child: TextButton(
@@ -125,6 +126,7 @@ class LoginView extends GetView<LoginController> {
                     ),
                   ),
                 ),
+                SizedBox(height: 31.h),
                 Obx(
                   () => GradientElevatedButton(
                     onPressed: controller.isLoading.value
@@ -140,40 +142,44 @@ class LoginView extends GetView<LoginController> {
                     ),
                   ),
                 ),
-                const SizedBox(height: 20),
+                SizedBox(height: 20.h),
                 Text(
                   'or sign in with',
                   style: Theme.of(context).textTheme.headlineSmall,
                 ),
-                const SizedBox(height: 16),
+                SizedBox(height: 16.h),
                 Row(
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
                     SvgPicture.asset(
                       'assets/icons/ic_google.svg',
-                      width: 36,
+                      width: 36.w,
                       colorFilter: const ColorFilter.mode(
                         Colors.white, // Warna yang diinginkan
-                        BlendMode.srcIn, // BlendMode ini akan menerapkan warna ke SVG
+                        BlendMode
+                            .srcIn, // BlendMode ini akan menerapkan warna ke SVG
                       ),
                     ),
-                    const SizedBox(width: 20),
+                    SizedBox(width: 20.w),
                     SvgPicture.asset(
                       'assets/icons/ic_fb.svg',
-                      width: 36,
+                      width: 36.w,
                       colorFilter: const ColorFilter.mode(
                         Colors.white, // Warna yang diinginkan
-                        BlendMode.srcIn, // BlendMode ini akan menerapkan warna ke SVG
+                        BlendMode
+                            .srcIn, // BlendMode ini akan menerapkan warna ke SVG
                       ),
                     ),
                   ],
                 ),
-                const SizedBox(height: 24),
+                SizedBox(height: 24.h),
                 RichText(
                   text: TextSpan(
                     style: Theme.of(context).textTheme.titleSmall,
                     children: <TextSpan>[
-                      const TextSpan(text: 'Don\'t have account? '), // Tambahkan spasi di akhir
+                      const TextSpan(
+                          text:
+                              'Don\'t have account? '), // Tambahkan spasi di akhir
                       TextSpan(
                         text: 'Sign Up',
                         style: Theme.of(context).textTheme.headlineSmall,

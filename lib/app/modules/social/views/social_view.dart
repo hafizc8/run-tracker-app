@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:get/get.dart';
 import 'package:google_fonts/google_fonts.dart';
@@ -21,9 +22,8 @@ class SocialView extends GetView<SocialController> {
         backgroundColor: Theme.of(context).colorScheme.background,
         body: Column(
           children: [
-            const SizedBox(height: 16),
             _buildCustomTabBar(context),
-            const SizedBox(height: 8),
+            SizedBox(height: 8.h),
             Expanded(child: _buildTabBarView(context)),
           ],
         ),
@@ -33,7 +33,6 @@ class SocialView extends GetView<SocialController> {
 
   PreferredSizeWidget _buildAppBar(BuildContext context) {
     return AppBar(
-      toolbarHeight: 100,
       title: RichText(
         text: TextSpan(
           children: <TextSpan>[
@@ -157,26 +156,26 @@ class SocialView extends GetView<SocialController> {
 
       if (currentTab == 0) {
         indicatorBorderRadius = const BorderRadius.only(
-          topLeft: Radius.circular(11),
-          bottomLeft: Radius.circular(11),
+          topLeft: Radius.circular(8),
+          bottomLeft: Radius.circular(8),
         );
       } else {
         indicatorBorderRadius = const BorderRadius.only(
-          topRight: Radius.circular(11),
-          bottomRight: Radius.circular(11),
+          topRight: Radius.circular(8),
+          bottomRight: Radius.circular(8),
         );
       }
 
       return Container(
         margin: const EdgeInsets.symmetric(horizontal: 16),
-        height: 38,
+        height: 38.h,
         decoration: BoxDecoration(
           border: Border.all(color: Theme.of(context).colorScheme.primary),
-          borderRadius: BorderRadius.circular(16),
+          borderRadius: BorderRadius.circular(11),
           color: Theme.of(context).colorScheme.onPrimary,
         ),
         child: ClipRRect(
-          borderRadius: BorderRadius.circular(15),
+          borderRadius: BorderRadius.circular(10),
           child: TabBar(
             controller: controller.tabBarController,
             indicator: BoxDecoration(

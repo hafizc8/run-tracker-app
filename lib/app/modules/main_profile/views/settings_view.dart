@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:font_awesome_flutter/font_awesome_flutter.dart';
+import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:flutter_svg/flutter_svg.dart';
 
 import 'package:get/get.dart';
 import 'package:zest_mobile/app/modules/main_profile/controllers/settings_controller.dart';
@@ -19,115 +20,158 @@ class SettingsView extends GetView<SettingsController> {
         automaticallyImplyLeading: false,
         centerTitle: true,
         elevation: 4,
-        leading: GestureDetector(
-          onTap: () => Get.back(),
-          child: Icon(
-            Icons.chevron_left,
-            size: 48,
-            color: Color(0xFFA5A5A5),
+        leading: Padding(
+          padding: EdgeInsets.only(left: 8.w),
+          child: GestureDetector(
+            onTap: () => Get.back(),
+            child: const Icon(
+              Icons.chevron_left,
+              color: Color(0xFFA5A5A5),
+            ),
           ),
         ),
       ),
-      body: Column(
+      body: ListView(
+        padding: EdgeInsets.symmetric(horizontal: 16.w, vertical: 16.h),
         children: [
           ListTile(
+            contentPadding: EdgeInsets.zero,
             title: Row(
               children: [
-                FaIcon(
-                  FontAwesomeIcons.gauge,
-                  color: Theme.of(context).colorScheme.primary,
+                SvgPicture.asset(
+                  'assets/icons/ic_unit.svg',
                 ),
-                const SizedBox(width: 5),
+                SizedBox(width: 5.w),
                 Expanded(
                   child: Text(
-                    'Units of Measurements',
+                    'Unit',
                     maxLines: 1,
                     overflow: TextOverflow.ellipsis,
                     style: Theme.of(context).textTheme.labelLarge?.copyWith(
                           color: Theme.of(context).colorScheme.onBackground,
+                          fontSize: 15.sp,
+                          fontWeight: FontWeight.w400,
                         ),
                   ),
                 ),
               ],
             ),
-            trailing: Text(
-              'Kilometers',
-              maxLines: 1,
-              overflow: TextOverflow.ellipsis,
-              style: Theme.of(context).textTheme.labelLarge?.copyWith(
-                    color: Theme.of(context).colorScheme.primary,
-                  ),
+            trailing: ShaderMask(
+              shaderCallback: (bounds) => const LinearGradient(
+                begin: Alignment.centerLeft,
+                end: Alignment.centerRight,
+                colors: [
+                  Color(0xFFA2FF00),
+                  Color(0xFF00FF7F),
+                ],
+              ).createShader(Rect.fromLTWH(0, 0, bounds.width, bounds.height)),
+              child: Text(
+                'Kilometers',
+                maxLines: 1,
+                overflow: TextOverflow.ellipsis,
+                style: Theme.of(context).textTheme.labelLarge?.copyWith(
+                      color: Theme.of(context).colorScheme.onBackground,
+                      fontSize: 15.sp,
+                      fontWeight: FontWeight.w400,
+                    ),
+              ),
             ),
           ),
           ListTile(
+            contentPadding: EdgeInsets.zero,
             onTap: () => controller.showNotifDialog(context),
             title: Row(
               children: [
-                FaIcon(
-                  FontAwesomeIcons.bell,
-                  color: Theme.of(context).colorScheme.primary,
+                SvgPicture.asset(
+                  'assets/icons/ic_notif.svg',
                 ),
-                const SizedBox(width: 5),
+                SizedBox(width: 5.w),
                 Text(
                   'Notification',
                   style: Theme.of(context).textTheme.labelLarge?.copyWith(
                         color: Theme.of(context).colorScheme.onBackground,
+                        fontSize: 15.sp,
+                        fontWeight: FontWeight.w400,
                       ),
                 ),
               ],
             ),
           ),
           ListTile(
+            contentPadding: EdgeInsets.zero,
             onTap: () => controller.showPrivacyPolicyDialog(context),
             title: Row(
               children: [
-                Icon(
-                  Icons.info_outline,
-                  color: Theme.of(context).colorScheme.primary,
+                SvgPicture.asset(
+                  'assets/icons/ic_privacy_policy.svg',
                 ),
-                const SizedBox(width: 5),
+                SizedBox(width: 5.w),
                 Text(
                   'Privacy Policy',
                   style: Theme.of(context).textTheme.labelLarge?.copyWith(
                         color: Theme.of(context).colorScheme.onBackground,
+                        fontSize: 15.sp,
+                        fontWeight: FontWeight.w400,
                       ),
                 ),
               ],
             ),
           ),
           ListTile(
+            contentPadding: EdgeInsets.zero,
             title: Row(
               children: [
-                Icon(
-                  Icons.info_outline,
-                  color: Theme.of(context).colorScheme.primary,
+                SvgPicture.asset(
+                  'assets/icons/ic_tnc.svg',
                 ),
-                const SizedBox(width: 5),
+                SizedBox(width: 5.w),
                 Text(
                   'Terms & Conditions',
                   style: Theme.of(context).textTheme.labelLarge?.copyWith(
                         color: Theme.of(context).colorScheme.onBackground,
+                        fontSize: 15.sp,
+                        fontWeight: FontWeight.w400,
                       ),
                 ),
               ],
             ),
           ),
+          const Divider(
+            color: Color(0xFF4A4A4A),
+          ),
           ListTile(
+            contentPadding: EdgeInsets.zero,
             onTap: () => controller.showLogoutDialog(context),
             title: Row(
               children: [
-                Icon(
-                  Icons.logout,
-                  color: Theme.of(context).colorScheme.primary,
+                SvgPicture.asset(
+                  'assets/icons/ic_logout.svg',
                 ),
-                const SizedBox(width: 5),
+                SizedBox(width: 5.w),
                 Text(
                   'Logout',
                   style: Theme.of(context).textTheme.labelLarge?.copyWith(
                         color: Theme.of(context).colorScheme.onBackground,
+                        fontSize: 15.sp,
+                        fontWeight: FontWeight.w400,
                       ),
                 ),
               ],
+            ),
+          ),
+          SizedBox(height: 37.h),
+          const Divider(
+            color: Color(0xFF4A4A4A),
+          ),
+          SizedBox(height: 8.h),
+          Obx(
+            () => Text(
+              "Version ${controller.appVersion.value ?? '-'}",
+              textAlign: TextAlign.center,
+              style: Theme.of(context)
+                  .textTheme
+                  .bodySmall
+                  ?.copyWith(color: Theme.of(context).colorScheme.onBackground),
             ),
           ),
         ],

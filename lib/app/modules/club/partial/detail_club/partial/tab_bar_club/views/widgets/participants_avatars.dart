@@ -1,5 +1,6 @@
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:zest_mobile/app/core/shared/widgets/shimmer_loading_circle.dart';
 
 // ignore: must_be_immutable
@@ -45,9 +46,9 @@ class ParticipantsAvatars extends StatelessWidget {
                   backgroundColor: Theme.of(context).colorScheme.secondary,
                   child: Text(
                     '+${extraCount > 999 ? '999' : extraCount}',
-                    style: const TextStyle(
+                    style: TextStyle(
                       color: Colors.white,
-                      fontSize: 12,
+                      fontSize: 12.sp,
                       fontWeight: FontWeight.bold,
                     ),
                   ),
@@ -61,7 +62,7 @@ class ParticipantsAvatars extends StatelessWidget {
             child: Container(
               width: avatarSize,
               height: avatarSize,
-              padding: const EdgeInsets.all(0),
+              padding: EdgeInsets.zero,
               decoration: const BoxDecoration(
                 color: Colors.white,
                 shape: BoxShape.circle,
@@ -69,11 +70,11 @@ class ParticipantsAvatars extends StatelessWidget {
               child: ClipOval(
                 child: CachedNetworkImage(
                   imageUrl: imageUrls[index],
-                  width: avatarSize,
-                  height: avatarSize,
+                  width: avatarSize.r,
+                  height: avatarSize.r,
                   fit: BoxFit.cover,
                   placeholder: (context, url) =>
-                      ShimmerLoadingCircle(size: avatarSize),
+                      ShimmerLoadingCircle(size: avatarSize.r),
                   errorWidget: (context, url, error) => const CircleAvatar(
                     backgroundImage:
                         AssetImage('assets/images/empty_profile.png'),

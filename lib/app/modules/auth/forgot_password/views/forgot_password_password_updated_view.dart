@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 
 import 'package:get/get.dart';
@@ -16,7 +17,7 @@ class ForgotPasswordPasswordUpdatedView
     return Scaffold(
       body: Center(
         child: SingleChildScrollView(
-          padding: const EdgeInsets.symmetric(horizontal: 24),
+          padding: EdgeInsets.symmetric(horizontal: 8.w),
           child: Column(
             mainAxisAlignment: MainAxisAlignment.center,
             crossAxisAlignment: CrossAxisAlignment.center,
@@ -25,14 +26,16 @@ class ForgotPasswordPasswordUpdatedView
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.center,
                   children: [
-                    SvgPicture.asset('assets/icons/check_circle.svg',
-                        width: 72),
-                    const SizedBox(height: 24),
+                    SvgPicture.asset(
+                      'assets/icons/check_circle.svg',
+                      width: 72.w,
+                    ),
+                    SizedBox(height: 24.h),
                     Text(
                       'Password Updated!',
                       style: Theme.of(context).textTheme.headlineMedium,
                     ),
-                    const SizedBox(height: 18),
+                    SizedBox(height: 18.h),
                     Text(
                       'You\'re all set! Your new password is locked in and ready to go.',
                       textAlign: TextAlign.center,
@@ -41,10 +44,13 @@ class ForgotPasswordPasswordUpdatedView
                   ],
                 ),
               ),
-              const SizedBox(height: 24),
+              SizedBox(height: 24.h),
               GradientElevatedButton(
                 onPressed: () => Get.offAllNamed(AppRoutes.login),
-                child: const Text('Back to Login'),
+                child: Text(
+                  'Back to Login',
+                  style: Theme.of(context).textTheme.bodyMedium,
+                ),
               ),
             ],
           ),

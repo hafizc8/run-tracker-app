@@ -1,5 +1,6 @@
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:get/get.dart';
 import 'package:zest_mobile/app/core/shared/widgets/shimmer_loading_circle.dart';
@@ -40,7 +41,7 @@ class MainProfileView extends GetView<ProfileMainController> {
           child: SingleChildScrollView(
             controller: scrollController,
             physics: const AlwaysScrollableScrollPhysics(),
-            padding: const EdgeInsets.all(16),
+            padding: EdgeInsets.all(16.w),
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
@@ -48,10 +49,10 @@ class MainProfileView extends GetView<ProfileMainController> {
                   () => Stack(
                     children: [
                       Container(
-                        padding: const EdgeInsets.only(
-                          left: 16,
+                        padding: EdgeInsets.only(
+                          left: 16.w,
                         ),
-                        height: 256,
+                        height: 256.h,
                         decoration: BoxDecoration(
                           color: Theme.of(context).colorScheme.surface,
                           borderRadius: BorderRadius.circular(8),
@@ -64,7 +65,7 @@ class MainProfileView extends GetView<ProfileMainController> {
                               crossAxisAlignment: CrossAxisAlignment.start,
                               children: [
                                 Padding(
-                                  padding: const EdgeInsets.only(top: 16),
+                                  padding: EdgeInsets.only(top: 16.h),
                                   child: Row(
                                     children: [
                                       ClipOval(
@@ -72,21 +73,23 @@ class MainProfileView extends GetView<ProfileMainController> {
                                           imageUrl:
                                               controller.user.value?.imageUrl ??
                                                   '',
-                                          width: 50,
-                                          height: 50,
+                                          width: 50.r,
+                                          height: 50.r,
                                           fit: BoxFit.cover,
                                           placeholder: (context, url) =>
-                                              const ShimmerLoadingCircle(
-                                                  size: 50),
+                                              ShimmerLoadingCircle(
+                                            size: 50.r,
+                                          ),
                                           errorWidget: (context, url, error) =>
-                                              const CircleAvatar(
-                                            radius: 32,
-                                            backgroundImage: AssetImage(
-                                                'assets/images/empty_profile.png'),
+                                              CircleAvatar(
+                                            radius: 32.r,
+                                            backgroundImage: const AssetImage(
+                                              'assets/images/empty_profile.png',
+                                            ),
                                           ),
                                         ),
                                       ),
-                                      const SizedBox(width: 8),
+                                      SizedBox(width: 8.w),
                                       Column(
                                         crossAxisAlignment:
                                             CrossAxisAlignment.start,
@@ -95,9 +98,9 @@ class MainProfileView extends GetView<ProfileMainController> {
                                             mainAxisSize: MainAxisSize.min,
                                             children: [
                                               ConstrainedBox(
-                                                constraints:
-                                                    const BoxConstraints(
-                                                        maxWidth: 150),
+                                                constraints: BoxConstraints(
+                                                  maxWidth: 150.r,
+                                                ),
                                                 child: Text(
                                                   controller.user.value?.name ??
                                                       '-',
@@ -114,7 +117,7 @@ class MainProfileView extends GetView<ProfileMainController> {
                                                       ),
                                                 ),
                                               ),
-                                              const SizedBox(width: 8),
+                                              SizedBox(width: 8.w),
                                               GestureDetector(
                                                 onTap: () async {
                                                   var res = await Get.toNamed(
@@ -182,13 +185,14 @@ class MainProfileView extends GetView<ProfileMainController> {
                                     'assets/icons/share.svg',
                                     color:
                                         Theme.of(context).colorScheme.primary,
-                                    height: 22,
-                                    width: 27,
+                                    height: 22.h,
+                                    width: 27.w,
                                   ),
                                 ),
-                                const SizedBox(width: 8),
+                                SizedBox(width: 8.w),
                                 IconButton(
                                   icon: const Icon(Icons.settings_outlined),
+                                  iconSize: 22.h,
                                   onPressed: () =>
                                       Get.toNamed(AppRoutes.settings),
                                 ),
@@ -202,7 +206,7 @@ class MainProfileView extends GetView<ProfileMainController> {
                         left: 0,
                         right: 0,
                         child: Container(
-                          height: 57,
+                          height: 57.h,
                           decoration: BoxDecoration(
                             color: Color(0xFF404040),
                             borderRadius: BorderRadius.circular(8),
@@ -216,7 +220,12 @@ class MainProfileView extends GetView<ProfileMainController> {
                                 children: [
                                   Column(
                                     children: [
-                                      Text('Following'),
+                                      Text(
+                                        'Following',
+                                        style: Theme.of(context)
+                                            .textTheme
+                                            .bodyMedium,
+                                      ),
                                       Text(
                                         '${controller.user.value?.followingCount ?? 0}',
                                         maxLines: 1,
@@ -234,7 +243,12 @@ class MainProfileView extends GetView<ProfileMainController> {
                                   ),
                                   Column(
                                     children: [
-                                      Text('Followers'),
+                                      Text(
+                                        'Followers',
+                                        style: Theme.of(context)
+                                            .textTheme
+                                            .bodyMedium,
+                                      ),
                                       Text(
                                         '${controller.user.value?.followersCount ?? 0}',
                                         maxLines: 1,
@@ -252,7 +266,12 @@ class MainProfileView extends GetView<ProfileMainController> {
                                   ),
                                   Column(
                                     children: [
-                                      Text('Clubs'),
+                                      Text(
+                                        'Clubs',
+                                        style: Theme.of(context)
+                                            .textTheme
+                                            .bodyMedium,
+                                      ),
                                       Text(
                                         '${controller.user.value?.clubsCount ?? 0}',
                                         maxLines: 1,
@@ -277,7 +296,7 @@ class MainProfileView extends GetView<ProfileMainController> {
                     ],
                   ),
                 ),
-                const SizedBox(height: 16),
+                SizedBox(height: 16.h),
                 Row(
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
@@ -302,16 +321,17 @@ class MainProfileView extends GetView<ProfileMainController> {
                                   ),
                             ),
                           ),
-                          const Icon(
+                          Icon(
                             Icons.chevron_right,
                             color: Color(0xFFA5A5A5),
+                            size: 22.h,
                           ),
                         ],
                       ),
                     ),
                   ],
                 ),
-                const SizedBox(height: 16),
+                SizedBox(height: 16.h),
                 Obx(
                   () => Row(
                     mainAxisAlignment: MainAxisAlignment.center,
@@ -319,9 +339,12 @@ class MainProfileView extends GetView<ProfileMainController> {
                         .map(
                           (e) => Flexible(
                             child: Container(
-                              margin: const EdgeInsets.symmetric(horizontal: 5),
-                              padding: const EdgeInsets.only(
-                                  left: 12, right: 12, bottom: 12),
+                              margin: EdgeInsets.symmetric(horizontal: 5.w),
+                              padding: EdgeInsets.only(
+                                left: 12.w,
+                                right: 12.w,
+                                bottom: 12.h,
+                              ),
                               decoration: const BoxDecoration(
                                 borderRadius:
                                     BorderRadius.all(Radius.circular(10)),
@@ -333,25 +356,27 @@ class MainProfileView extends GetView<ProfileMainController> {
                                   ClipOval(
                                     child: CachedNetworkImage(
                                       imageUrl: e.badgeIconUrl ?? '',
-                                      width: 50,
-                                      height: 50,
+                                      width: 50.r,
+                                      height: 50.r,
                                       fit: BoxFit.cover,
                                       placeholder: (context, url) =>
-                                          const ShimmerLoadingCircle(size: 50),
+                                          ShimmerLoadingCircle(size: 50.r),
                                       errorWidget: (context, url, error) =>
-                                          const CircleAvatar(
-                                        radius: 32,
-                                        backgroundImage: AssetImage(
+                                          CircleAvatar(
+                                        radius: 32.r,
+                                        backgroundImage: const AssetImage(
                                             'assets/images/empty_profile.png'),
                                       ),
                                     ),
                                   ),
-                                  const SizedBox(height: 5),
+                                  SizedBox(height: 5.h),
                                   Text(
                                     e.badgeName ?? '-',
                                     maxLines: 1,
                                     overflow: TextOverflow.ellipsis,
                                     textAlign: TextAlign.center,
+                                    style:
+                                        Theme.of(context).textTheme.bodyMedium,
                                   ),
                                 ],
                               ),
@@ -361,10 +386,10 @@ class MainProfileView extends GetView<ProfileMainController> {
                         .toList(),
                   ),
                 ),
-                const SizedBox(height: 16),
+                SizedBox(height: 16.h),
                 Container(
-                  height: 48,
-                  padding: const EdgeInsets.symmetric(horizontal: 8),
+                  height: 48.h,
+                  padding: EdgeInsets.symmetric(horizontal: 8.w),
                   decoration: BoxDecoration(
                     border: Border.all(
                         color: Theme.of(context).colorScheme.primary),
@@ -375,7 +400,7 @@ class MainProfileView extends GetView<ProfileMainController> {
                     children: [
                       Row(children: [
                         SvgPicture.asset('assets/icons/overall_mileage.svg'),
-                        const SizedBox(width: 8),
+                        SizedBox(width: 8.w),
                         Text(
                           'Overall Mileage',
                           style: Theme.of(context)
@@ -397,9 +422,9 @@ class MainProfileView extends GetView<ProfileMainController> {
                     ],
                   ),
                 ),
-                const SizedBox(height: 16),
+                SizedBox(height: 16.h),
                 CustomTabBar(),
-                const SizedBox(height: 32),
+                SizedBox(height: 32.h),
               ],
             ),
           ),

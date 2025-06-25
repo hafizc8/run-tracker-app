@@ -35,7 +35,6 @@ class EventCreateView extends GetView<EventActionController> {
             onTap: () => Get.back(),
             child: const Icon(
               Icons.chevron_left,
-              size: 48,
               color: Color(0xFFA5A5A5),
             ),
           ),
@@ -263,7 +262,7 @@ class EventCreateView extends GetView<EventActionController> {
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     Text(
-                      'Htm',
+                      'Fee',
                       style: Theme.of(context).textTheme.labelMedium?.copyWith(
                             color: Theme.of(context).colorScheme.onBackground,
                           ),
@@ -283,7 +282,7 @@ class EventCreateView extends GetView<EventActionController> {
                         );
                       },
                       decoration: InputDecoration(
-                        hintText: 'Enter Htm',
+                        hintText: 'Enter Fee',
                         errorText: form.errors?['price'],
                       ),
                       textInputAction: TextInputAction.next,

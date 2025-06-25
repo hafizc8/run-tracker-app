@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
 import 'package:zest_mobile/app/core/models/forms/forgot_password_form.dart';
 import 'package:zest_mobile/app/core/shared/widgets/custom_circular_progress_indicator.dart';
@@ -15,7 +16,7 @@ class ForgotPasswordView extends GetView<ForgotPasswordController> {
     return Scaffold(
       body: Center(
         child: SingleChildScrollView(
-          padding: const EdgeInsets.symmetric(horizontal: 24),
+          padding: EdgeInsets.symmetric(horizontal: 8.w),
           child: Column(
             mainAxisAlignment: MainAxisAlignment.center, // vertical center
             crossAxisAlignment: CrossAxisAlignment.center,
@@ -28,12 +29,12 @@ class ForgotPasswordView extends GetView<ForgotPasswordController> {
                       'Forgot Password',
                       style: Theme.of(context).textTheme.headlineMedium,
                     ),
-                    const SizedBox(height: 18),
+                    SizedBox(height: 18.h),
                     Text(
                       'Enter an email address that associated with your account and we will sent you instructions to reset your password.',
                       style: Theme.of(context).textTheme.bodyMedium,
                     ),
-                    const SizedBox(height: 18),
+                    SizedBox(height: 18.h),
                     Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
@@ -41,7 +42,7 @@ class ForgotPasswordView extends GetView<ForgotPasswordController> {
                           'Email',
                           style: Theme.of(context).textTheme.titleSmall,
                         ),
-                        const SizedBox(height: 12),
+                        SizedBox(height: 6.h),
                         Obx(() {
                           ForgotPasswordFormModel form = controller.form.value;
                           return GradientBorderTextField(
@@ -64,7 +65,7 @@ class ForgotPasswordView extends GetView<ForgotPasswordController> {
                   ],
                 ),
               ),
-              const SizedBox(height: 24),
+              SizedBox(height: 24.h),
               Obx(
                 () => GradientElevatedButton(
                   onPressed: controller.isLoading.value
@@ -74,11 +75,15 @@ class ForgotPasswordView extends GetView<ForgotPasswordController> {
                         },
                   child: Visibility(
                     visible: controller.isLoading.value,
-                    replacement: const Text('Continue'),
+                    replacement: Text(
+                      'Continue',
+                      style: Theme.of(context).textTheme.labelMedium,
+                    ),
                     child: CustomCircularProgressIndicator(),
                   ),
                 ),
               ),
+              SizedBox(height: 16.h),
               TextButton(
                 onPressed: () => Get.back(),
                 child: ShaderMask(

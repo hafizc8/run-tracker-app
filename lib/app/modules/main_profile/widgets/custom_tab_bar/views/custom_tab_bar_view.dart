@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
 import 'package:zest_mobile/app/core/models/model/event_model.dart';
 import 'package:zest_mobile/app/core/shared/widgets/card_activity.dart';
@@ -28,12 +29,12 @@ class CustomTabBar extends GetView<TabBarController> {
                 child: GestureDetector(
                   onTap: () => controller.changeTabIndex(index),
                   child: Container(
-                    margin: const EdgeInsets.symmetric(horizontal: 5),
+                    margin: EdgeInsets.symmetric(horizontal: 5.w),
                     padding:
-                        const EdgeInsets.symmetric(vertical: 8, horizontal: 16),
+                        EdgeInsets.symmetric(vertical: 8.h, horizontal: 16.w),
                     decoration: BoxDecoration(
                       color: Color(0xFF393939),
-                      borderRadius: BorderRadius.circular(8),
+                      borderRadius: BorderRadius.circular(10.r),
                     ),
                     child: Text(
                       tabs[index],
@@ -51,7 +52,7 @@ class CustomTabBar extends GetView<TabBarController> {
             });
           }),
         ),
-        const SizedBox(height: 16),
+        SizedBox(height: 16.h),
         Obx(() {
           switch (controller.selectedIndex.value) {
             case 0:
@@ -59,7 +60,7 @@ class CustomTabBar extends GetView<TabBarController> {
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   const CardActivity(),
-                  const SizedBox(height: 8),
+                  SizedBox(height: 8.h),
                   Center(
                     child: TextButton(
                       onPressed: () => Get.toNamed(AppRoutes.activity),
@@ -95,8 +96,8 @@ class CustomTabBar extends GetView<TabBarController> {
                           challengeModel: challenge,
                         );
                       },
-                      separatorBuilder: (context, index) => const SizedBox(
-                        height: 16,
+                      separatorBuilder: (context, index) => SizedBox(
+                        height: 16.h,
                       ),
                       itemCount: profileController.challenges.length +
                           (profileController.hasReacheMaxChallenge.value

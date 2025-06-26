@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:get/get.dart';
 import 'package:zest_mobile/app/core/models/model/event_location_model.dart';
@@ -22,13 +23,13 @@ class FilterDialog extends GetView<EventController> {
       },
       child: Dialog(
         surfaceTintColor: Theme.of(context).colorScheme.onPrimary,
-        insetPadding: const EdgeInsets.all(32),
+        insetPadding: EdgeInsets.all(32.w),
         shape: RoundedRectangleBorder(
-          borderRadius: BorderRadius.circular(15),
+          borderRadius: BorderRadius.circular(15.r),
         ),
         child: Container(
           decoration: BoxDecoration(
-            borderRadius: BorderRadius.circular(15),
+            borderRadius: BorderRadius.circular(15.r),
             gradient: const LinearGradient(
               colors: [Color(0xFFA2FF00), Color(0xFF00FF7F)],
               begin: Alignment.topCenter,
@@ -36,15 +37,15 @@ class FilterDialog extends GetView<EventController> {
             ),
           ),
           child: Container(
-            margin: const EdgeInsets.all(2),
-            padding: const EdgeInsets.symmetric(
-              horizontal: 24,
-              vertical: 12,
+            margin: EdgeInsets.all(2.w),
+            padding: EdgeInsets.symmetric(
+              horizontal: 24.w,
+              vertical: 12.h,
             ),
             width: double.infinity,
             decoration: BoxDecoration(
               color: Theme.of(context).colorScheme.onPrimary,
-              borderRadius: BorderRadius.circular(14),
+              borderRadius: BorderRadius.circular(14.r),
             ),
             child: Column(
               mainAxisSize: MainAxisSize.min,
@@ -57,7 +58,7 @@ class FilterDialog extends GetView<EventController> {
                       'Filter',
                       style:
                           Theme.of(context).textTheme.headlineSmall?.copyWith(
-                                fontSize: 17,
+                                fontSize: 17.sp,
                                 fontWeight: FontWeight.w700,
                               ),
                     ),
@@ -69,7 +70,7 @@ class FilterDialog extends GetView<EventController> {
                         'Reset Filter',
                         style:
                             Theme.of(context).textTheme.headlineSmall?.copyWith(
-                                  fontSize: 15,
+                                  fontSize: 15.sp,
                                   fontWeight: FontWeight.w400,
                                   color: const Color(0xFF969696),
                                 ),
@@ -77,7 +78,7 @@ class FilterDialog extends GetView<EventController> {
                     ),
                   ],
                 ),
-                const SizedBox(height: 10),
+                SizedBox(height: 10.h),
                 Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
@@ -87,12 +88,12 @@ class FilterDialog extends GetView<EventController> {
                           .textTheme
                           .headlineSmall
                           ?.copyWith(
-                            fontSize: 17,
+                            fontSize: 17.sp,
                             fontWeight: FontWeight.w700,
                             color: Theme.of(context).colorScheme.onBackground,
                           ),
                     ),
-                    const SizedBox(height: 10),
+                    SizedBox(height: 10.h),
                     Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: List.generate(
@@ -195,7 +196,7 @@ class FilterDialog extends GetView<EventController> {
                   ],
                 ),
 
-                const SizedBox(height: 20),
+                SizedBox(height: 20.h),
 
                 TextFormField(
                   readOnly: true,
@@ -207,10 +208,10 @@ class FilterDialog extends GetView<EventController> {
                     isDense: true,
                     filled: true,
                     fillColor: Theme.of(context).colorScheme.onPrimary,
-                    contentPadding: const EdgeInsets.all(8),
+                    contentPadding: EdgeInsets.all(8.w),
                     suffixIcon: Padding(
-                      padding: const EdgeInsets.all(
-                        12,
+                      padding: EdgeInsets.all(
+                        12.sp,
                       ), // optional: untuk sesuaikan padding
                       child: SizedBox(
                         width: 20,
@@ -239,7 +240,7 @@ class FilterDialog extends GetView<EventController> {
                   ),
                 ),
 
-                const SizedBox(height: 20),
+                SizedBox(height: 20.h),
 
                 // Location Dropdown
                 DropdownButtonFormField<EventLocationModel?>(
@@ -281,7 +282,7 @@ class FilterDialog extends GetView<EventController> {
                     isDense: true,
                     filled: true,
                     fillColor: Theme.of(context).colorScheme.onPrimary,
-                    contentPadding: const EdgeInsets.all(8),
+                    contentPadding: EdgeInsets.all(8.w),
                     enabledBorder: const UnderlineInputBorder(
                       borderSide: BorderSide(
                         color: Color(0xFF969696),
@@ -299,28 +300,28 @@ class FilterDialog extends GetView<EventController> {
                         ),
                   ),
                   icon: SizedBox(
-                    width: 20,
-                    height: 20,
+                    width: 20.r,
+                    height: 20.r,
                     child: SvgPicture.asset(
                       'assets/icons/arrow_down.svg',
                     ),
                   ),
-                  iconSize: 20,
+                  iconSize: 20.r,
                 ),
 
-                const SizedBox(height: 30),
+                SizedBox(height: 30.h),
 
                 // Buttons
                 Row(
                   children: [
                     Expanded(
                       child: SizedBox(
-                        height: 50,
+                        height: 50.h,
                         child: GradientOutlinedButton(
                             style: ButtonStyle(
                               shape: MaterialStateProperty.all(
                                 RoundedRectangleBorder(
-                                  borderRadius: BorderRadius.circular(8),
+                                  borderRadius: BorderRadius.circular(8.r),
                                 ),
                               ),
                             ),
@@ -331,11 +332,11 @@ class FilterDialog extends GetView<EventController> {
                             onPressed: () => Get.back()),
                       ),
                     ),
-                    const SizedBox(width: 16),
+                    SizedBox(width: 16.w),
                     Expanded(
                       flex: 2,
                       child: SizedBox(
-                        height: 50,
+                        height: 50.h,
                         child: GradientElevatedButton(
                           style: ButtonStyle(
                             padding: MaterialStateProperty.all(
@@ -343,7 +344,7 @@ class FilterDialog extends GetView<EventController> {
                             ),
                             shape: MaterialStateProperty.all(
                               RoundedRectangleBorder(
-                                borderRadius: BorderRadius.circular(8),
+                                borderRadius: BorderRadius.circular(8.r),
                               ),
                             ),
                           ),

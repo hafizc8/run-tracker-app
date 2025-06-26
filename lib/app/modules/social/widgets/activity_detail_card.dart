@@ -1,5 +1,6 @@
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:get/get.dart';
@@ -27,8 +28,6 @@ class ActivityDetailCard extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Container(
-      margin: const EdgeInsets.symmetric(vertical: 10, horizontal: 3),
-      padding: const EdgeInsets.all(16),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
@@ -40,92 +39,94 @@ class ActivityDetailCard extends StatelessWidget {
             createdAt: postData?.createdAt?.toHumanPostDate() ?? '',
             district: postData?.district ?? '',
           ),
-          const SizedBox(height: 8),
+          SizedBox(height: 8.h),
           _buildCardContent(
             context: context,
             title: postData?.title ?? '',
             content: postData?.content ?? '',
           ),
-          const SizedBox(height: 15),
+          SizedBox(height: 15.h),
 
           // Media Horizontal (Maps, Image, Video)
-          Builder(
-            builder: (context) {
-              // 1. Siapkan list kosong untuk menampung semua media
-              final List<Widget> allMediaItems = [];
+          Builder(builder: (context) {
+            // 1. Siapkan list kosong untuk menampung semua media
+            final List<Widget> allMediaItems = [];
 
-              // 2. Tambahkan widget peta sebagai item pertama jika ada data
-              if (postData?.recordActivity != null) {
-                allMediaItems.add(
-                    Visibility(
-                      visible: (postData?.galleries ?? []).isEmpty,
-                      // when galleries is not empty
-                      replacement: _buildMapPlaceholder(postData?.recordActivity),
-                      // when galleries is empty
-                      child: Stack(
-                        children: [
-                          _buildMapPlaceholder(postData?.recordActivity),
-                          Positioned(
-                            bottom: 0,
-                            right: 0,
-                            left: 0,
-                            child: ClipRRect(
-                              borderRadius: BorderRadius.circular(10),
-                              child: _buildStatisticsSection(
-                                context: context,
-                                recordActivity: postData?.recordActivity,
-                              ),
-                            ),
+            // 2. Tambahkan widget peta sebagai item pertama jika ada data
+            if (postData?.recordActivity != null) {
+              allMediaItems.add(
+                Visibility(
+                  visible: (postData?.galleries ?? []).isEmpty,
+                  // when galleries is not empty
+                  replacement: _buildMapPlaceholder(postData?.recordActivity),
+                  // when galleries is empty
+                  child: Stack(
+                    children: [
+                      _buildMapPlaceholder(postData?.recordActivity),
+                      Positioned(
+                        bottom: 0,
+                        right: 0,
+                        left: 0,
+                        child: ClipRRect(
+                          borderRadius: BorderRadius.circular(10.r),
+                          child: _buildStatisticsSection(
+                            context: context,
+                            recordActivity: postData?.recordActivity,
                           ),
-                        ],
+                        ),
                       ),
+                    ],
+                  ),
+                ),
+              );
+            }
+
+            // 3. Tambahkan gambar dan video dari galeri
+            for (var galleryItem in postData?.galleries ?? []) {
+              final url = galleryItem.url ?? '';
+              if (url.isNotEmpty) {
+                // Logika untuk membedakan video atau gambar dipindahkan ke sini
+                bool isVideo = url.endsWith('.mp4') ||
+                    url.endsWith('.mov') ||
+                    url.endsWith('.webm');
+
+                if (isVideo) {
+                  continue;
+                } else {
+                  allMediaItems.add(
+                    Image.network(
+                      url,
+                      fit: BoxFit.cover,
+                      errorBuilder: (context, error, _) => Container(
+                        color: Colors.grey.shade300,
+                        child: const Center(child: Icon(Icons.broken_image)),
+                      ),
+                      loadingBuilder: (context, child, progress) {
+                        if (progress == null) return child;
+                        return Container(
+                          color: Colors.grey.shade300,
+                          child:
+                              const Center(child: CircularProgressIndicator()),
+                        );
+                      },
                     ),
                   );
-              }
-
-              // 3. Tambahkan gambar dan video dari galeri
-              for (var galleryItem in postData?.galleries ?? []) {
-                final url = galleryItem.url ?? '';
-                if (url.isNotEmpty) {
-                  // Logika untuk membedakan video atau gambar dipindahkan ke sini
-                  bool isVideo = url.endsWith('.mp4') || url.endsWith('.mov') || url.endsWith('.webm');
-                  
-                  if (isVideo) {
-                    continue;
-                  } else {
-                    allMediaItems.add(
-                      Image.network(
-                        url,
-                        fit: BoxFit.cover,
-                        errorBuilder: (context, error, _) => Container(
-                          color: Colors.grey.shade300,
-                          child: const Center(child: Icon(Icons.broken_image)),
-                        ),
-                        loadingBuilder: (context, child, progress) {
-                          if (progress == null) return child;
-                          return Container(
-                            color: Colors.grey.shade300,
-                            child: const Center(child: CircularProgressIndicator()),
-                          );
-                        },
-                      ),
-                    );
-                  }
                 }
               }
-
-              // 4. Panggil PostMediaScroll yang sudah dimodifikasi dengan list widget
-              return PostMediaScroll(mediaItems: allMediaItems);
             }
-          ),
-          
+
+            // 4. Panggil PostMediaScroll yang sudah dimodifikasi dengan list widget
+            return PostMediaScroll(mediaItems: allMediaItems);
+          }),
+
           // Statistic with media > 1
           Visibility(
-            visible: postData?.recordActivity != null && (postData?.galleries ?? []).isNotEmpty,
+            visible: postData?.recordActivity != null &&
+                (postData?.galleries ?? []).isNotEmpty,
             child: Container(
-              margin: const EdgeInsets.only(top: 10, bottom: 10),
+              margin: EdgeInsets.only(top: 10.h, bottom: 10.h),
               child: ClipRRect(
-                borderRadius: BorderRadius.circular(10),
+                borderRadius: BorderRadius.circular(10.r),
                 child: _buildStatisticsSection(
                   context: context,
                   recordActivity: postData?.recordActivity,
@@ -152,7 +153,7 @@ class ActivityDetailCard extends StatelessWidget {
                     text: TextSpan(
                       style: Theme.of(context).textTheme.titleSmall?.copyWith(
                             fontWeight: FontWeight.w700,
-                            fontSize: 13,
+                            fontSize: 13.sp,
                           ),
                       children: <TextSpan>[
                         TextSpan(text: postData?.likesCount.toString()),
@@ -160,7 +161,7 @@ class ActivityDetailCard extends StatelessWidget {
                           text: ' Likes',
                           style:
                               Theme.of(context).textTheme.titleSmall?.copyWith(
-                                    fontSize: 13,
+                                    fontSize: 13.sp,
                                   ),
                         ),
                       ],
@@ -170,9 +171,9 @@ class ActivityDetailCard extends StatelessWidget {
               ),
             ),
           ),
-          const SizedBox(height: 15),
+          SizedBox(height: 15.h),
           _buildSocialActions(postData: postData),
-          const SizedBox(height: 15),
+          SizedBox(height: 15.h),
           _buildCommentSection(
             context: context,
             postId: postData?.id ?? '',
@@ -198,18 +199,18 @@ class ActivityDetailCard extends StatelessWidget {
           ClipOval(
             child: CachedNetworkImage(
               imageUrl: userImageUrl,
-              width: 30,
-              height: 30,
+              width: 30.r,
+              height: 30.r,
               fit: BoxFit.cover,
-              placeholder: (context, url) =>
-                  const ShimmerLoadingCircle(size: 30),
-              errorWidget: (context, url, error) => const CircleAvatar(
-                radius: 30,
-                backgroundImage: AssetImage('assets/images/empty_profile.png'),
+              placeholder: (context, url) => ShimmerLoadingCircle(size: 30.r),
+              errorWidget: (context, url, error) => CircleAvatar(
+                radius: 30.r,
+                backgroundImage:
+                    const AssetImage('assets/images/empty_profile.png'),
               ),
             ),
           ),
-          const SizedBox(width: 8),
+          SizedBox(width: 8.w),
           Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
@@ -228,7 +229,7 @@ class ActivityDetailCard extends StatelessWidget {
                 overflow: TextOverflow.ellipsis,
                 style: Theme.of(context).textTheme.bodyMedium?.copyWith(
                       color: const Color(0xFF6C6C6C),
-                      fontSize: 11,
+                      fontSize: 11.sp,
                     ),
               ),
             ],
@@ -250,7 +251,7 @@ class ActivityDetailCard extends StatelessWidget {
               Text(
                 content,
                 style: Theme.of(context).textTheme.bodySmall?.copyWith(
-                      fontSize: 12,
+                      fontSize: 12.sp,
                       fontWeight: FontWeight.w700,
                     ),
               ),
@@ -259,15 +260,15 @@ class ActivityDetailCard extends StatelessWidget {
               Text(
                 title,
                 style: Theme.of(context).textTheme.bodySmall?.copyWith(
-                      fontSize: 12,
+                      fontSize: 12.sp,
                       fontWeight: FontWeight.w700,
                     ),
               ),
-              const SizedBox(height: 5),
+              SizedBox(height: 5.h),
               Text(
                 content,
                 style: Theme.of(context).textTheme.bodySmall?.copyWith(
-                      fontSize: 12,
+                      fontSize: 12.sp,
                       fontWeight: FontWeight.w400,
                     ),
               ),
@@ -278,7 +279,7 @@ class ActivityDetailCard extends StatelessWidget {
   Widget _buildMapPlaceholder(RecordActivityModel? recordActivity) {
     return StaticRouteMap(
       activityLogs: recordActivity?.recordActivityLogs ?? [],
-      height: 310,
+      height: 310.h,
     );
   }
 
@@ -289,13 +290,14 @@ class ActivityDetailCard extends StatelessWidget {
         borderRadius: BorderRadius.circular(12),
         child: Container(
           color: Colors.grey.shade300,
-          child: const Center(
+          child: Center(
             child: Column(
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
-                Icon(Icons.image, size: 64, color: Colors.grey),
-                SizedBox(height: 8),
-                Text('Image Placeholder', style: TextStyle(color: Colors.grey)),
+                Icon(Icons.image, size: 64.r, color: Colors.grey),
+                SizedBox(height: 8.h),
+                const Text('Image Placeholder',
+                    style: TextStyle(color: Colors.grey)),
               ],
             ),
           ),
@@ -309,14 +311,24 @@ class ActivityDetailCard extends StatelessWidget {
     required RecordActivityModel? recordActivity,
   }) {
     return Container(
-      padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 10),
+      padding: EdgeInsets.symmetric(horizontal: 10.w, vertical: 10.h),
       color: Theme.of(context).colorScheme.primary,
       child: Row(
         mainAxisAlignment: MainAxisAlignment.spaceAround,
         children: [
-          StatisticsColumn(title: 'Distance', value: NumberHelper().formatDistanceMeterToKm(recordActivity?.lastRecordActivityLog?.distance ?? 0)),
-          StatisticsColumn(title: 'AVG Pace', value: NumberHelper().formatDuration(int.parse((recordActivity?.lastRecordActivityLog?.pace ?? 0.0).toStringAsFixed(0)))),
-          StatisticsColumn(title: 'Moving Time', value: NumberHelper().formatDuration(recordActivity?.lastRecordActivityLog?.time ?? 0)),
+          StatisticsColumn(
+              title: 'Distance',
+              value: NumberHelper().formatDistanceMeterToKm(
+                  recordActivity?.lastRecordActivityLog?.distance ?? 0)),
+          StatisticsColumn(
+              title: 'AVG Pace',
+              value: NumberHelper().formatDuration(int.parse(
+                  (recordActivity?.lastRecordActivityLog?.pace ?? 0.0)
+                      .toStringAsFixed(0)))),
+          StatisticsColumn(
+              title: 'Moving Time',
+              value: NumberHelper().formatDuration(
+                  recordActivity?.lastRecordActivityLog?.time ?? 0)),
         ],
       ),
     );
@@ -330,7 +342,7 @@ class ActivityDetailCard extends StatelessWidget {
           flex: 1,
           child: Container(
             width: double.infinity,
-            margin: const EdgeInsets.symmetric(horizontal: 4),
+            margin: EdgeInsets.symmetric(horizontal: 4.w),
             child: SocialActionButton(
               icon: AnimatedSwitcher(
                 duration: const Duration(milliseconds: 400),
@@ -342,7 +354,7 @@ class ActivityDetailCard extends StatelessWidget {
                 },
                 child: FaIcon(
                   FontAwesomeIcons.fire,
-                  size: 15,
+                  size: 15.r,
                   color: (postData?.isLiked ?? false)
                       ? darkColorScheme.primary
                       : darkColorScheme.onBackground,
@@ -362,11 +374,11 @@ class ActivityDetailCard extends StatelessWidget {
           flex: 1,
           child: Container(
             width: double.infinity,
-            margin: const EdgeInsets.symmetric(horizontal: 4),
+            margin: EdgeInsets.symmetric(horizontal: 4.w),
             child: SocialActionButton(
               icon: FaIcon(
                 FontAwesomeIcons.comment,
-                size: 15,
+                size: 15.r,
                 color: darkColorScheme.onBackground,
               ),
               label: 'Comment',
@@ -378,11 +390,11 @@ class ActivityDetailCard extends StatelessWidget {
           flex: 1,
           child: Container(
             width: double.infinity,
-            margin: const EdgeInsets.symmetric(horizontal: 4),
+            margin: EdgeInsets.symmetric(horizontal: 4.w),
             child: SocialActionButton(
               icon: FaIcon(
                 FontAwesomeIcons.paperPlane,
-                size: 15,
+                size: 15.r,
                 color: darkColorScheme.onBackground,
               ),
               label: 'Share',
@@ -404,7 +416,7 @@ class ActivityDetailCard extends StatelessWidget {
       children: [
         Divider(
             color: Theme.of(context).colorScheme.onTertiary, thickness: 0.3),
-        const SizedBox(height: 15),
+        SizedBox(height: 15.h),
         Text(
           'Comments',
           style: Theme.of(context)
@@ -412,15 +424,14 @@ class ActivityDetailCard extends StatelessWidget {
               .labelMedium
               ?.copyWith(color: Theme.of(context).colorScheme.primary),
         ),
-        const SizedBox(height: 15),
+        SizedBox(height: 15.h),
         (comments ?? []).isNotEmpty
             ? Container(
                 decoration: BoxDecoration(
                   color: Theme.of(context).colorScheme.surface,
-                  borderRadius: BorderRadius.circular(10),
+                  borderRadius: BorderRadius.circular(10.r),
                 ),
-                padding:
-                    const EdgeInsets.symmetric(horizontal: 16, vertical: 16),
+                padding: EdgeInsets.symmetric(horizontal: 16.w, vertical: 16.h),
                 child: ListView.builder(
                   itemCount: comments?.length,
                   shrinkWrap: true,
@@ -451,9 +462,11 @@ class ActivityDetailCard extends StatelessWidget {
                 child: Column(
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
-                    SvgPicture.asset('assets/icons/ic_no_comment.svg',
-                        width: 74),
-                    const SizedBox(height: 18),
+                    SvgPicture.asset(
+                      'assets/icons/ic_no_comment.svg',
+                      width: 74.w,
+                    ),
+                    SizedBox(height: 18.h),
                     Text(
                       'No Comment',
                       style: Theme.of(context)
@@ -462,7 +475,7 @@ class ActivityDetailCard extends StatelessWidget {
                           ?.copyWith(
                               color: Theme.of(context).colorScheme.onTertiary),
                     ),
-                    const SizedBox(height: 5),
+                    SizedBox(height: 5.h),
                     Text(
                       'Be the first to say something!',
                       style: Theme.of(context).textTheme.labelMedium?.copyWith(
@@ -486,7 +499,7 @@ class ActivityDetailCard extends StatelessWidget {
     List<Widget>? replies = const [],
   }) {
     return Padding(
-      padding: const EdgeInsets.symmetric(vertical: 8),
+      padding: EdgeInsets.symmetric(vertical: 8.h),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
@@ -497,43 +510,43 @@ class ActivityDetailCard extends StatelessWidget {
               ClipOval(
                 child: CachedNetworkImage(
                   imageUrl: comment?.user?.imageUrl ?? '',
-                  width: 20,
-                  height: 20,
+                  width: 20.r,
+                  height: 20.r,
                   fit: BoxFit.cover,
                   placeholder: (context, url) =>
-                      const ShimmerLoadingCircle(size: 20),
-                  errorWidget: (context, url, error) => const CircleAvatar(
-                    radius: 20,
+                      ShimmerLoadingCircle(size: 20.r),
+                  errorWidget: (context, url, error) => CircleAvatar(
+                    radius: 20.r,
                     backgroundImage:
-                        AssetImage('assets/images/empty_profile.png'),
+                        const AssetImage('assets/images/empty_profile.png'),
                   ),
                 ),
               ),
-              const SizedBox(width: 10),
+              SizedBox(width: 10.w),
               // Name & Date
               Text(
                 comment?.user?.name ?? '',
                 style: Theme.of(context).textTheme.labelSmall?.copyWith(
                       fontWeight: FontWeight.w700,
-                      fontSize: 11,
+                      fontSize: 11.sp,
                       color: const Color(0xFFA5A5A5),
                     ),
               ),
-              const SizedBox(width: 10),
+              SizedBox(width: 10.w),
               Text(
                 comment?.createdAt?.toHumanPostDate() ?? '',
                 style: Theme.of(context).textTheme.labelMedium?.copyWith(
                       fontWeight: FontWeight.w400,
-                      fontSize: 11,
+                      fontSize: 11.sp,
                       color: const Color(0xFFA5A5A5),
                     ),
               ),
             ],
           ),
-          const SizedBox(height: 8),
+          SizedBox(height: 8.h),
           // Isi Komentar
           Padding(
-            padding: const EdgeInsets.only(left: 35),
+            padding: EdgeInsets.only(left: 35.w),
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
@@ -541,12 +554,12 @@ class ActivityDetailCard extends StatelessWidget {
                   comment?.content ?? '',
                   style: Theme.of(context).textTheme.labelMedium?.copyWith(
                         fontWeight: FontWeight.w400,
-                        fontSize: 11,
+                        fontSize: 11.sp,
                         color: const Color(0xFFA5A5A5),
                         height: 1.8,
                       ),
                 ),
-                const SizedBox(height: 6),
+                SizedBox(height: 6.h),
                 isCommentReply
                     ? const SizedBox()
                     : TextButton(
@@ -558,13 +571,17 @@ class ActivityDetailCard extends StatelessWidget {
                           tapTargetSize: MaterialTapTargetSize.shrinkWrap,
                           alignment: Alignment.centerLeft,
                         ),
-                        child: Text('Reply',
-                            style: Theme.of(context)
-                                .textTheme
-                                .headlineSmall
-                                ?.copyWith(fontSize: 12)),
+                        child: Text(
+                          'Reply',
+                          style: Theme.of(context)
+                              .textTheme
+                              .headlineSmall
+                              ?.copyWith(
+                                fontSize: 12.sp,
+                              ),
+                        ),
                       ),
-                const SizedBox(height: 10),
+                SizedBox(height: 10.h),
                 // Kalau ada balasan (nested replies)
                 if (replies != null) ...replies,
               ],

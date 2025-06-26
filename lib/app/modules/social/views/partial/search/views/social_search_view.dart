@@ -1,5 +1,6 @@
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:get/get.dart';
 import 'package:shimmer/shimmer.dart';
@@ -25,9 +26,9 @@ class SocialSearchView extends GetView<SocialSearchController> {
         body: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            const SizedBox(height: 16),
+            SizedBox(height: 16.h),
             _buildCustomTabBar(context),
-            const SizedBox(height: 16),
+            SizedBox(height: 16.h),
             Expanded(
               child: TabBarView(
                 controller: controller.tabBarController,
@@ -57,7 +58,6 @@ class SocialSearchView extends GetView<SocialSearchController> {
       leading: IconButton(
         icon: Icon(
           Icons.chevron_left,
-          size: 35,
           color: Theme.of(context).colorScheme.onBackground,
         ),
         onPressed: () => Get.back(),
@@ -74,27 +74,27 @@ class SocialSearchView extends GetView<SocialSearchController> {
       int currentTab = controller.selectedIndex.value;
 
       if (currentTab == 0) {
-        indicatorBorderRadius = const BorderRadius.only(
-          topLeft: Radius.circular(11),
-          bottomLeft: Radius.circular(11),
+        indicatorBorderRadius = BorderRadius.only(
+          topLeft: Radius.circular(11.r),
+          bottomLeft: Radius.circular(11.r),
         );
       } else {
-        indicatorBorderRadius = const BorderRadius.only(
-          topRight: Radius.circular(11),
-          bottomRight: Radius.circular(11),
+        indicatorBorderRadius = BorderRadius.only(
+          topRight: Radius.circular(11.r),
+          bottomRight: Radius.circular(11.r),
         );
       }
 
       return Container(
-        margin: const EdgeInsets.symmetric(horizontal: 16),
-        height: 38,
+        margin: EdgeInsets.symmetric(horizontal: 16.w),
+        height: 38.h,
         decoration: BoxDecoration(
           border: Border.all(color: Theme.of(context).colorScheme.primary),
-          borderRadius: BorderRadius.circular(16),
+          borderRadius: BorderRadius.circular(16.r),
           color: Theme.of(context).colorScheme.onPrimary,
         ),
         child: ClipRRect(
-          borderRadius: BorderRadius.circular(15),
+          borderRadius: BorderRadius.circular(15.r),
           child: TabBar(
             controller: controller.tabBarController,
             indicator: BoxDecoration(
@@ -128,7 +128,7 @@ class SocialSearchView extends GetView<SocialSearchController> {
     return Column(
       children: [
         Padding(
-          padding: const EdgeInsets.symmetric(horizontal: 16),
+          padding: EdgeInsets.symmetric(horizontal: 16.w, vertical: 16.h),
           child: TextFormField(
             onChanged: (value) => controller.onSearchChanged(value),
             style: Theme.of(context)
@@ -145,7 +145,7 @@ class SocialSearchView extends GetView<SocialSearchController> {
             ),
           ),
         ),
-        const SizedBox(height: 16),
+        SizedBox(height: 16.h),
         Obx(
           () => Visibility(
             visible: controller.friends.isNotEmpty ||
@@ -155,66 +155,66 @@ class SocialSearchView extends GetView<SocialSearchController> {
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 Padding(
-                  padding: const EdgeInsets.symmetric(horizontal: 16),
+                  padding: EdgeInsets.symmetric(horizontal: 16.w),
                   child: Text(
                     'People you may know',
                     style: Theme.of(context).textTheme.headlineSmall,
                   ),
                 ),
-                const SizedBox(height: 16),
+                SizedBox(height: 16.h),
                 Obx(() {
                   if (controller.isLoadingPeopleYouMayKnow.value) {
                     return Shimmer.fromColors(
                       baseColor: Colors.grey.shade800,
                       highlightColor: Colors.grey.shade700,
                       child: SizedBox(
-                        height: 150,
+                        height: 150.h,
                         child: ListView.separated(
                           shrinkWrap: true,
                           separatorBuilder: (context, index) =>
-                              const SizedBox(width: 10),
-                          padding: const EdgeInsets.symmetric(horizontal: 16),
+                              SizedBox(width: 10.w),
+                          padding: EdgeInsets.symmetric(horizontal: 16.w),
                           scrollDirection: Axis.horizontal,
                           itemCount: 5,
                           itemBuilder: (context, index) => Container(
-                            width: 120,
-                            padding: const EdgeInsets.symmetric(
-                              vertical: 16,
-                              horizontal: 12,
+                            width: 120.w,
+                            padding: EdgeInsets.symmetric(
+                              vertical: 16.h,
+                              horizontal: 12.w,
                             ),
                             decoration: BoxDecoration(
                               color: Colors.white,
-                              borderRadius: BorderRadius.circular(12),
+                              borderRadius: BorderRadius.circular(12.r),
                             ),
                             child: Column(
                               children: [
                                 // Avatar
                                 Container(
-                                  width: 48,
-                                  height: 48,
+                                  width: 48.r,
+                                  height: 48.r,
                                   decoration: const BoxDecoration(
                                     color: Colors.grey,
                                     shape: BoxShape.circle,
                                   ),
                                 ),
-                                const SizedBox(height: 8),
+                                SizedBox(height: 8.h),
                                 // Name
                                 Container(
-                                  height: 12,
-                                  width: 60,
+                                  height: 12.h,
+                                  width: 60.w,
                                   decoration: BoxDecoration(
                                     color: Colors.grey,
-                                    borderRadius: BorderRadius.circular(4),
+                                    borderRadius: BorderRadius.circular(4.r),
                                   ),
                                 ),
-                                const SizedBox(height: 16),
+                                SizedBox(height: 16.h),
                                 // Follow Button
                                 Container(
-                                  height: 32,
+                                  height: 32.h,
                                   width: double.infinity,
                                   decoration: BoxDecoration(
                                     color: Colors.grey,
-                                    borderRadius: BorderRadius.circular(20),
+                                    borderRadius: BorderRadius.circular(20.r),
                                   ),
                                 ),
                               ],
@@ -225,13 +225,14 @@ class SocialSearchView extends GetView<SocialSearchController> {
                     );
                   }
                   return SizedBox(
-                    height: 180, // Atur tinggi agar horizontal scroll terlihat
+                    height:
+                        180.h, // Atur tinggi agar horizontal scroll terlihat
                     child: ListView.separated(
                       scrollDirection: Axis.horizontal,
                       itemCount: controller.friendsPeopleYouMayKnow.length,
                       separatorBuilder: (context, index) =>
-                          const SizedBox(width: 10),
-                      padding: const EdgeInsets.symmetric(horizontal: 16),
+                          SizedBox(width: 10.w),
+                      padding: EdgeInsets.symmetric(horizontal: 16.w),
                       itemBuilder: (context, index) {
                         UserMiniModel user =
                             controller.friendsPeopleYouMayKnow[index];
@@ -243,11 +244,11 @@ class SocialSearchView extends GetView<SocialSearchController> {
                                 Theme.of(context).colorScheme.background,
                             elevation: 2,
                             shape: RoundedRectangleBorder(
-                              borderRadius: BorderRadius.circular(12),
+                              borderRadius: BorderRadius.circular(12.r),
                             ),
                             child: Container(
-                              constraints: const BoxConstraints(maxWidth: 130),
-                              padding: const EdgeInsets.all(12),
+                              constraints: BoxConstraints(maxWidth: 130.r),
+                              padding: EdgeInsets.all(12.w),
                               alignment: Alignment.center,
                               child: Column(
                                 mainAxisAlignment: MainAxisAlignment.center,
@@ -255,20 +256,21 @@ class SocialSearchView extends GetView<SocialSearchController> {
                                   ClipOval(
                                     child: CachedNetworkImage(
                                       imageUrl: user.imageUrl ?? '',
-                                      width: 45,
-                                      height: 45,
+                                      width: 45.r,
+                                      height: 45.r,
                                       fit: BoxFit.cover,
                                       placeholder: (context, url) =>
-                                          const ShimmerLoadingCircle(size: 45),
+                                          ShimmerLoadingCircle(size: 45.r),
                                       errorWidget: (context, url, error) =>
-                                          const CircleAvatar(
-                                        radius: 45,
-                                        backgroundImage: AssetImage(
-                                            'assets/images/empty_profile.png'),
+                                          CircleAvatar(
+                                        radius: 45.r,
+                                        backgroundImage: const AssetImage(
+                                          'assets/images/empty_profile.png',
+                                        ),
                                       ),
                                     ),
                                   ),
-                                  const SizedBox(height: 12),
+                                  SizedBox(height: 12.h),
                                   Text(
                                     user.name,
                                     maxLines: 1,
@@ -278,14 +280,14 @@ class SocialSearchView extends GetView<SocialSearchController> {
                                         .textTheme
                                         .bodyMedium
                                         ?.copyWith(
-                                          fontSize: 12,
+                                          fontSize: 12.sp,
                                         ),
                                   ),
-                                  const SizedBox(height: 24),
+                                  SizedBox(height: 24.h),
                                   Flexible(
                                     child: Obx(
                                       () => SizedBox(
-                                        height: 38,
+                                        height: 38.h,
                                         child: GradientOutlinedButton(
                                           onPressed: () {
                                             if (user.isFollowing == 1 &&
@@ -332,7 +334,7 @@ class SocialSearchView extends GetView<SocialSearchController> {
             child: Obx(() {
               if (controller.resultSearchEmpty.value) {
                 return Padding(
-                  padding: const EdgeInsets.symmetric(horizontal: 16),
+                  padding: EdgeInsets.symmetric(horizontal: 16.w),
                   child: Text(
                     'No result for “${controller.search.value}”',
                     style: Theme.of(context).textTheme.bodyMedium?.copyWith(
@@ -351,8 +353,8 @@ class SocialSearchView extends GetView<SocialSearchController> {
                     itemCount: controller.friends.length +
                         (controller.hasReacheMax.value ? 0 : 1),
                     separatorBuilder: (context, index) =>
-                        const SizedBox(height: 10),
-                    padding: const EdgeInsets.symmetric(horizontal: 16),
+                        SizedBox(height: 10.h),
+                    padding: EdgeInsets.symmetric(horizontal: 16.w),
                     controller: controller.scrollFriendsController
                       ..addListener(() {
                         var maxScroll = controller
@@ -369,7 +371,7 @@ class SocialSearchView extends GetView<SocialSearchController> {
                       if (index == controller.friends.length) {
                         return Center(
                           child: Container(
-                            margin: const EdgeInsets.symmetric(vertical: 10),
+                            margin: EdgeInsets.symmetric(vertical: 10.h),
                             child: const CircularProgressIndicator(),
                           ),
                         );
@@ -383,16 +385,15 @@ class SocialSearchView extends GetView<SocialSearchController> {
                         leading: ClipOval(
                           child: CachedNetworkImage(
                             imageUrl: user.imageUrl ?? '',
-                            width: 32,
-                            height: 32,
+                            width: 32.r,
+                            height: 32.r,
                             fit: BoxFit.cover,
                             placeholder: (context, url) =>
-                                const ShimmerLoadingCircle(size: 32),
-                            errorWidget: (context, url, error) =>
-                                const CircleAvatar(
-                              radius: 32,
-                              backgroundImage:
-                                  AssetImage('assets/images/empty_profile.png'),
+                                ShimmerLoadingCircle(size: 32.r),
+                            errorWidget: (context, url, error) => CircleAvatar(
+                              radius: 32.r,
+                              backgroundImage: const AssetImage(
+                                  'assets/images/empty_profile.png'),
                             ),
                           ),
                         ),
@@ -402,7 +403,7 @@ class SocialSearchView extends GetView<SocialSearchController> {
                           overflow: TextOverflow.ellipsis,
                           style:
                               Theme.of(context).textTheme.bodyMedium?.copyWith(
-                                    fontSize: 12,
+                                    fontSize: 12.sp,
                                   ),
                         ),
                         trailing:
@@ -457,7 +458,7 @@ class SocialSearchView extends GetView<SocialSearchController> {
             : controller.scrollClubsController,
         child: Column(children: [
           Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 16),
+            padding: EdgeInsets.symmetric(horizontal: 16.w, vertical: 16.h),
             child: TextFormField(
               onChanged: (value) => controller.onSearchClubChanged(value),
               style: Theme.of(context)
@@ -474,7 +475,6 @@ class SocialSearchView extends GetView<SocialSearchController> {
               ),
             ),
           ),
-          const SizedBox(height: 16),
           Obx(
             () => Visibility(
               visible: controller.clubs.isNotEmpty ||
@@ -484,66 +484,66 @@ class SocialSearchView extends GetView<SocialSearchController> {
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   Padding(
-                    padding: const EdgeInsets.symmetric(horizontal: 16),
+                    padding: EdgeInsets.symmetric(horizontal: 16.w),
                     child: Text(
                       'Join a Club That Matches Your Passion',
                       style: Theme.of(context).textTheme.headlineSmall,
                     ),
                   ),
-                  const SizedBox(height: 16),
+                  SizedBox(height: 16.h),
                   Obx(() {
                     if (controller.isLoadingClubYouMayKnow.value) {
                       return Shimmer.fromColors(
                         baseColor: Colors.grey.shade800,
                         highlightColor: Colors.grey.shade700,
                         child: SizedBox(
-                          height: 150,
+                          height: 150.h,
                           child: ListView.separated(
                             shrinkWrap: true,
                             separatorBuilder: (context, index) =>
-                                const SizedBox(width: 10),
-                            padding: const EdgeInsets.symmetric(horizontal: 16),
+                                SizedBox(width: 10.w),
+                            padding: EdgeInsets.symmetric(horizontal: 16.w),
                             scrollDirection: Axis.horizontal,
                             itemCount: 5,
                             itemBuilder: (context, index) => Container(
-                              width: 120,
-                              padding: const EdgeInsets.symmetric(
-                                vertical: 16,
-                                horizontal: 12,
+                              width: 120.w,
+                              padding: EdgeInsets.symmetric(
+                                vertical: 16.h,
+                                horizontal: 12.w,
                               ),
                               decoration: BoxDecoration(
                                 color: Colors.white,
-                                borderRadius: BorderRadius.circular(12),
+                                borderRadius: BorderRadius.circular(12.r),
                               ),
                               child: Column(
                                 children: [
                                   // Avatar
                                   Container(
-                                    width: 48,
-                                    height: 48,
+                                    width: 48.r,
+                                    height: 48.r,
                                     decoration: const BoxDecoration(
                                       color: Colors.grey,
                                       shape: BoxShape.circle,
                                     ),
                                   ),
-                                  const SizedBox(height: 8),
+                                  SizedBox(height: 8.h),
                                   // Name
                                   Container(
-                                    height: 12,
-                                    width: 60,
+                                    height: 12.h,
+                                    width: 60.w,
                                     decoration: BoxDecoration(
                                       color: Colors.grey,
-                                      borderRadius: BorderRadius.circular(4),
+                                      borderRadius: BorderRadius.circular(4.r),
                                     ),
                                   ),
-                                  const SizedBox(height: 16),
+                                  SizedBox(height: 16.h),
                                   // Follow Button
                                   Container(
-                                    height: 32,
+                                    height: 32.h,
                                     width: double.infinity,
                                     decoration: BoxDecoration(
                                       color: Colors.grey,
-                                      borderRadius: BorderRadius.circular(20),
+                                      borderRadius: BorderRadius.circular(20.r),
                                     ),
                                   ),
                                 ],
@@ -554,13 +554,13 @@ class SocialSearchView extends GetView<SocialSearchController> {
                       );
                     }
                     return SizedBox(
-                      height: 210,
+                      height: 210.h,
                       child: ListView.separated(
                         scrollDirection: Axis.horizontal,
                         itemCount: controller.clubMayYouKnow.length,
                         separatorBuilder: (context, index) =>
-                            const SizedBox(width: 10),
-                        padding: const EdgeInsets.symmetric(horizontal: 16),
+                            SizedBox(width: 10.w),
+                        padding: EdgeInsets.symmetric(horizontal: 16.w),
                         itemBuilder: (context, index) {
                           ClubModel club = controller.clubMayYouKnow[index];
                           return InkWell(
@@ -576,12 +576,15 @@ class SocialSearchView extends GetView<SocialSearchController> {
                       ),
                     );
                   }),
-                  const SizedBox(height: 16),
+                  SizedBox(height: 16.h),
                   Visibility(
                     visible: controller.clubExplore.isNotEmpty,
                     child: Padding(
-                      padding: const EdgeInsets.only(
-                          left: 16, right: 16, bottom: 16),
+                      padding: EdgeInsets.only(
+                        left: 16.w,
+                        right: 16.w,
+                        bottom: 16.h,
+                      ),
                       child: Text(
                         'Explore Clubs',
                         style: Theme.of(context).textTheme.headlineSmall,
@@ -590,8 +593,11 @@ class SocialSearchView extends GetView<SocialSearchController> {
                   ),
                   Obx(() {
                     return GridView.builder(
-                      padding: const EdgeInsets.only(
-                          bottom: 16, right: 16, left: 16),
+                      padding: EdgeInsets.only(
+                        bottom: 16.h,
+                        right: 16.w,
+                        left: 16.w,
+                      ),
                       shrinkWrap: true,
                       physics: const NeverScrollableScrollPhysics(),
                       gridDelegate:
@@ -624,19 +630,21 @@ class SocialSearchView extends GetView<SocialSearchController> {
                 if (controller.resultSearchEmptyClub.value) {
                   return Column(
                     children: [
-                      const SizedBox(height: 30),
-                      SvgPicture.asset('assets/icons/ic_no_club_yet.svg',
-                          width: 160),
-                      const SizedBox(height: 16),
+                      SizedBox(height: 30.h),
+                      SvgPicture.asset(
+                        'assets/icons/ic_no_club_yet.svg',
+                        width: 160.w,
+                      ),
+                      SizedBox(height: 16.h),
                       Text(
                         'Nothing Here Yet',
                         style:
                             Theme.of(context).textTheme.titleMedium?.copyWith(
                                   color: const Color(0xFF5C5C5C),
-                                  fontSize: 20,
+                                  fontSize: 20.sp,
                                 ),
                       ),
-                      const SizedBox(height: 3),
+                      SizedBox(height: 3.h),
                       Text(
                         'Try a different keyword',
                         style: Theme.of(context).textTheme.titleSmall?.copyWith(
@@ -653,13 +661,13 @@ class SocialSearchView extends GetView<SocialSearchController> {
                     itemCount: controller.clubs.length +
                         (controller.hasReacheMaxClub.value ? 0 : 1),
                     separatorBuilder: (context, index) =>
-                        const SizedBox(height: 10),
-                    padding: const EdgeInsets.symmetric(horizontal: 16),
+                        SizedBox(height: 10.h),
+                    padding: EdgeInsets.symmetric(horizontal: 16.w),
                     itemBuilder: (context, index) {
                       if (index == controller.clubs.length) {
                         return Center(
                           child: Container(
-                            margin: const EdgeInsets.symmetric(vertical: 10),
+                            margin: EdgeInsets.symmetric(vertical: 10.h),
                             child: const CircularProgressIndicator(),
                           ),
                         );
@@ -673,16 +681,15 @@ class SocialSearchView extends GetView<SocialSearchController> {
                         leading: ClipOval(
                           child: CachedNetworkImage(
                             imageUrl: club.imageUrl ?? '',
-                            width: 32,
-                            height: 32,
+                            width: 32.r,
+                            height: 32.r,
                             fit: BoxFit.cover,
                             placeholder: (context, url) =>
-                                const ShimmerLoadingCircle(size: 32),
-                            errorWidget: (context, url, error) =>
-                                const CircleAvatar(
-                              radius: 32,
-                              backgroundImage:
-                                  AssetImage('assets/images/empty_profile.png'),
+                                ShimmerLoadingCircle(size: 32.r),
+                            errorWidget: (context, url, error) => CircleAvatar(
+                              radius: 32.r,
+                              backgroundImage: const AssetImage(
+                                  'assets/images/empty_profile.png'),
                             ),
                           ),
                         ),
@@ -693,7 +700,7 @@ class SocialSearchView extends GetView<SocialSearchController> {
                           style:
                               Theme.of(context).textTheme.bodyMedium?.copyWith(
                                     fontWeight: FontWeight.bold,
-                                    fontSize: 12,
+                                    fontSize: 12.sp,
                                   ),
                         ),
                         subtitle: Text(
@@ -703,14 +710,14 @@ class SocialSearchView extends GetView<SocialSearchController> {
                           style:
                               Theme.of(context).textTheme.bodyMedium?.copyWith(
                                     color: const Color(0xFF858585),
-                                    fontSize: 11,
+                                    fontSize: 11.sp,
                                   ),
                         ),
                         trailing: Visibility(
                           visible: club.privacy == ClubPrivacyEnum.public,
                           child: SizedBox(
-                            height: 35,
-                            width: 65,
+                            height: 35.h,
+                            width: 65.w,
                             child: GradientOutlinedButton(
                               onPressed: () {
                                 if (!(club.isJoined ?? false)) {
@@ -734,7 +741,7 @@ class SocialSearchView extends GetView<SocialSearchController> {
                                             .colorScheme
                                             .primary,
                                         fontWeight: FontWeight.bold,
-                                        fontSize: 10,
+                                        fontSize: 10.sp,
                                       ),
                                 ),
                                 child: const Center(

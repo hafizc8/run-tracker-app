@@ -68,8 +68,8 @@ class MainHomeView extends GetView<MainHomeController> {
 
   Widget _buildStartButton(BuildContext context) {
     return SizedBox(
-      height: MainHomeView._startButtonDiameter.h,
-      width: MainHomeView._startButtonDiameter.w,
+      height: MainHomeView._startButtonDiameter.r,
+      width: MainHomeView._startButtonDiameter.r,
       child: GestureDetector(
         onTap: () {
           Get.toNamed(AppRoutes.activityStart);

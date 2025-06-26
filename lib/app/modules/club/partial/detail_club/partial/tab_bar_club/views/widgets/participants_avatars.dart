@@ -26,8 +26,8 @@ class ParticipantsAvatars extends StatelessWidget {
     final extraCount = imageUrls.length - maxVisible;
 
     return SizedBox(
-      height: avatarSize + 2, // 2 for padding
-      width: displayCount * overlapOffset + avatarSize,
+      height: avatarSize.h + 2, // 2 for padding
+      width: displayCount.w * overlapOffset.w + avatarSize.w,
       child: Stack(
         children: List.generate(displayCount, (index) {
           // Last avatar is the "+X"
@@ -35,13 +35,13 @@ class ParticipantsAvatars extends StatelessWidget {
             return Positioned(
               left: index * overlapOffset,
               child: Container(
-                width: avatarSize,
-                height: avatarSize,
+                width: avatarSize.r,
+                height: avatarSize.r,
                 decoration: const BoxDecoration(
                   color: Colors.white,
                   shape: BoxShape.circle,
                 ),
-                padding: const EdgeInsets.all(0),
+                padding: EdgeInsets.zero,
                 child: CircleAvatar(
                   backgroundColor: Theme.of(context).colorScheme.secondary,
                   child: Text(
@@ -60,8 +60,8 @@ class ParticipantsAvatars extends StatelessWidget {
           return Positioned(
             left: index * overlapOffset,
             child: Container(
-              width: avatarSize,
-              height: avatarSize,
+              width: avatarSize.r,
+              height: avatarSize.r,
               padding: EdgeInsets.zero,
               decoration: const BoxDecoration(
                 color: Colors.white,

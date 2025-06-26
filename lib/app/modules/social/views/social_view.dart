@@ -23,7 +23,7 @@ class SocialView extends GetView<SocialController> {
         body: Column(
           children: [
             _buildCustomTabBar(context),
-            SizedBox(height: 8.h),
+            SizedBox(height: 24.h),
             Expanded(child: _buildTabBarView(context)),
           ],
         ),
@@ -33,21 +33,24 @@ class SocialView extends GetView<SocialController> {
 
   PreferredSizeWidget _buildAppBar(BuildContext context) {
     return AppBar(
-      title: RichText(
-        text: TextSpan(
-          children: <TextSpan>[
-            TextSpan(
-                text: 'ZEST+ ',
-                style: GoogleFonts.poppins(
-                  fontWeight: FontWeight.w700,
-                  fontSize: 25,
-                  color: darkColorScheme.primary,
-                )),
-            TextSpan(
-              text: 'Social',
-              style: Theme.of(context).textTheme.titleLarge,
-            ),
-          ],
+      title: Padding(
+        padding: EdgeInsets.all(8.0.w),
+        child: RichText(
+          text: TextSpan(
+            children: <TextSpan>[
+              TextSpan(
+                  text: 'ZEST+ ',
+                  style: GoogleFonts.poppins(
+                    fontWeight: FontWeight.w700,
+                    fontSize: 25.sp,
+                    color: darkColorScheme.primary,
+                  )),
+              TextSpan(
+                text: 'Social',
+                style: Theme.of(context).textTheme.titleLarge,
+              ),
+            ],
+          ),
         ),
       ),
       elevation: 0,
@@ -96,35 +99,35 @@ class SocialView extends GetView<SocialController> {
           offset: const Offset(0, 10),
           position: PopupMenuPosition.under,
           child: Container(
-            width: 36,
-            height: 36,
-            padding: const EdgeInsets.all(8),
+            width: 36.r,
+            height: 36.r,
+            padding: EdgeInsets.all(8.w),
             decoration: BoxDecoration(
               color: Theme.of(context).colorScheme.outline,
               shape: BoxShape.circle,
             ),
             child: SvgPicture.asset(
               'assets/icons/add.svg',
-              width: 18,
-              height: 18,
+              width: 18.r,
+              height: 18.r,
               fit: BoxFit.cover,
             ),
           ),
         ),
         Padding(
-          padding: const EdgeInsets.only(right: 12, left: 10),
+          padding: EdgeInsets.only(right: 16.w, left: 10.w),
           child: GestureDetector(
             onTap: () => Get.toNamed(AppRoutes.socialSearch),
             child: Container(
-              width: 36,
-              height: 36,
+              width: 36.r,
+              height: 36.r,
               decoration: BoxDecoration(
                 color: Theme.of(context).colorScheme.outline,
                 shape: BoxShape.circle,
               ),
-              child: const Icon(
+              child: Icon(
                 Icons.search,
-                size: 18,
+                size: 18.r,
                 color: Colors.white,
               ),
             ),
@@ -136,8 +139,7 @@ class SocialView extends GetView<SocialController> {
 
   Widget _buildTabBarView(BuildContext context) {
     return Container(
-      padding: const EdgeInsets.symmetric(horizontal: 16),
-      margin: const EdgeInsets.symmetric(horizontal: 3),
+      padding: EdgeInsets.symmetric(horizontal: 16.w),
       child: TabBarView(
         controller: controller.tabBarController,
         children: [
@@ -167,7 +169,7 @@ class SocialView extends GetView<SocialController> {
       }
 
       return Container(
-        margin: const EdgeInsets.symmetric(horizontal: 16),
+        margin: EdgeInsets.symmetric(horizontal: 16.w),
         height: 38.h,
         decoration: BoxDecoration(
           border: Border.all(color: Theme.of(context).colorScheme.primary),

@@ -32,7 +32,7 @@ class LoginView extends GetView<LoginController> {
           ),
 
           SingleChildScrollView(
-            padding: EdgeInsets.symmetric(horizontal: 8.w, vertical: 48.h),
+            padding: EdgeInsets.symmetric(horizontal: 16.w, vertical: 48.h),
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.center,
               children: [

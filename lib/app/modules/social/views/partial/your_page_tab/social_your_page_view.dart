@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
 import 'package:zest_mobile/app/core/models/enums/social_page_enum.dart';
 import 'package:zest_mobile/app/core/shared/theme/color_schemes.dart';
@@ -34,7 +35,7 @@ class SocialYourPageView extends GetView<SocialController> {
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 _buildChipFilter(context),
-                const SizedBox(height: 10),
+                SizedBox(height: 24.h),
                 SocialYourPageUpdatesView(),
               ],
             ),
@@ -52,7 +53,7 @@ class SocialYourPageView extends GetView<SocialController> {
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 _buildChipFilter(context),
-                const SizedBox(height: 10),
+                SizedBox(height: 24.h),
                 const SocialYourPageFollowingView(),
               ],
             ),
@@ -70,7 +71,7 @@ class SocialYourPageView extends GetView<SocialController> {
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 _buildChipFilter(context),
-                const SizedBox(height: 10),
+                SizedBox(height: 24.h),
                 const SocialYourPageFollowersView(),
               ],
             ),
@@ -88,7 +89,7 @@ class SocialYourPageView extends GetView<SocialController> {
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 _buildChipFilter(context),
-                const SizedBox(height: 10),
+                SizedBox(height: 24.h),
                 const SocialYourPageClubsView(),
               ],
             ),
@@ -101,7 +102,7 @@ class SocialYourPageView extends GetView<SocialController> {
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             _buildChipFilter(context),
-            const SizedBox(height: 10),
+            SizedBox(height: 24.h),
             Center(child: Text('No content for "$selected" yet')),
           ],
         ),
@@ -113,16 +114,14 @@ class SocialYourPageView extends GetView<SocialController> {
     return Obx(() {
       return SingleChildScrollView(
         scrollDirection: Axis.horizontal,
-        padding: const EdgeInsets.symmetric(
-            horizontal: 8), // biar ada space kiri-kanan
         child: Row(
           children: [
             _buildFilterChip(context, 'Updates', YourPageChip.updates),
-            const SizedBox(width: 8),
+            SizedBox(width: 8.w),
             _buildFilterChip(context, 'Following', YourPageChip.following),
-            const SizedBox(width: 8),
+            SizedBox(width: 8.w),
             _buildFilterChip(context, 'Followers', YourPageChip.followers),
-            const SizedBox(width: 8),
+            SizedBox(width: 8.w),
             _buildFilterChip(context, 'Clubs', YourPageChip.clubs),
           ],
         ),
@@ -136,18 +135,18 @@ class SocialYourPageView extends GetView<SocialController> {
       onTap: () {
         controller.selectChip(chipType);
       },
-      borderRadius: BorderRadius.circular(10),
+      borderRadius: BorderRadius.circular(10.r),
       child: Chip(
         label: Text(label),
         backgroundColor: const Color(0xFF393939),
         labelStyle: Theme.of(context).textTheme.headlineSmall?.copyWith(
-          fontSize: 12,
-          color: (controller.selectedChip.value == chipType)
-              ? darkColorScheme.primary
-              : const Color(0xFFA5A5A5),
-        ),
+              fontSize: 12.sp,
+              color: (controller.selectedChip.value == chipType)
+                  ? darkColorScheme.primary
+                  : const Color(0xFFA5A5A5),
+            ),
         shape: RoundedRectangleBorder(
-          borderRadius: BorderRadius.circular(10),
+          borderRadius: BorderRadius.circular(10.r),
           side: BorderSide(
             color: (controller.selectedChip.value == chipType)
                 ? darkColorScheme.primary

@@ -1,5 +1,6 @@
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:zest_mobile/app/core/models/forms/create_post_form.dart';
@@ -21,11 +22,11 @@ class CreatePostDialog extends GetView<SocialController> {
       shadowColor: Theme.of(context).colorScheme.onPrimary,
       surfaceTintColor: Theme.of(context).colorScheme.onPrimary,
       shape: RoundedRectangleBorder(
-        borderRadius: BorderRadius.circular(16),
+        borderRadius: BorderRadius.circular(16.r),
       ),
-      insetPadding: const EdgeInsets.all(16),
+      insetPadding: EdgeInsets.all(16.w),
       child: SingleChildScrollView(
-        padding: const EdgeInsets.all(18),
+        padding: EdgeInsets.all(18.w),
         child: Column(
           mainAxisSize: MainAxisSize.min,
           children: [
@@ -36,26 +37,31 @@ class CreatePostDialog extends GetView<SocialController> {
                 ClipOval(
                   child: CachedNetworkImage(
                     imageUrl: postController.user?.imageUrl ?? '',
-                    width: 35,
-                    height: 35,
+                    width: 35.r,
+                    height: 35.r,
                     fit: BoxFit.cover,
-                    placeholder: (context, url) => const ShimmerLoadingCircle(size: 35),
-                    errorWidget: (context, url, error) => const CircleAvatar(
-                      radius: 32,
-                      backgroundImage: AssetImage('assets/images/empty_profile.png'),
+                    placeholder: (context, url) =>
+                        ShimmerLoadingCircle(size: 35.r),
+                    errorWidget: (context, url, error) => CircleAvatar(
+                      radius: 32.r,
+                      backgroundImage:
+                          const AssetImage('assets/images/empty_profile.png'),
                     ),
                   ),
                 ),
-                const SizedBox(width: 8),
+                SizedBox(width: 8.w),
                 Flexible(
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
                       Text(
                         'What\'s up ${postController.user?.name}?',
-                        style: Theme.of(context).textTheme.bodyMedium?.copyWith(fontWeight: FontWeight.w600),
+                        style: Theme.of(context)
+                            .textTheme
+                            .bodyMedium
+                            ?.copyWith(fontWeight: FontWeight.w600),
                       ),
-                      const SizedBox(height: 4),
+                      SizedBox(height: 4.h),
                       Text(
                         'Share a photo, post, or activity with your followers!',
                         style: Theme.of(context).textTheme.bodySmall?.copyWith(
@@ -70,88 +76,97 @@ class CreatePostDialog extends GetView<SocialController> {
                 ),
               ],
             ),
-            const SizedBox(height: 12),
-        
-            Obx(
-              () {
-                CreatePostFormModel form = postController.form.value;
+            SizedBox(height: 12.h),
 
-                return Column(
-                  children: [
-                    TextFormField(
-                      maxLines: 4,
-                      decoration: InputDecoration(
-                        hintText: 'Jot down your activity here',
-                        border: OutlineInputBorder(borderRadius: BorderRadius.circular(12)),
-                        errorText: form.errors?['content'],
-                      ),
-                      onChanged: (value) {
-                        postController.form.value = form.copyWith(
-                          field: 'content',
-                          content: value,
-                        );
-                      },
+            Obx(() {
+              CreatePostFormModel form = postController.form.value;
+
+              return Column(
+                children: [
+                  TextFormField(
+                    maxLines: 4,
+                    decoration: InputDecoration(
+                      hintText: 'Jot down your activity here',
+                      border: OutlineInputBorder(
+                          borderRadius: BorderRadius.circular(12)),
+                      errorText: form.errors?['content'],
                     ),
+                    onChanged: (value) {
+                      postController.form.value = form.copyWith(
+                        field: 'content',
+                        content: value,
+                      );
+                    },
+                  ),
 
-                    const SizedBox(height: 12),
+                  SizedBox(height: 12.h),
 
-                    // Optional: Media Upload / Tags / Location
-                    Row(
-                      children: [
-                        TextButton.icon(
-                          onPressed: () {
-                            postController.pickMultipleMedia();
-                          }, 
-                          icon: const Icon(
-                            Icons.photo,
-                            size: 18,
-                          ), 
-                          label: Text(
-                            'Add Photo',
-                            style: Theme.of(context).textTheme.headlineSmall?.copyWith(
-                              fontSize: 12,
-                            ),
-                          ),
-                          style: ButtonStyle(
-                            backgroundColor: MaterialStateProperty.all(Theme.of(context).colorScheme.primary.withOpacity(0.2)),
-                            shape: MaterialStateProperty.all(
-                              RoundedRectangleBorder(
-                                borderRadius: BorderRadius.circular(20),
-                              ),
-                            ),
-                            padding: MaterialStateProperty.all(const EdgeInsets.symmetric(horizontal: 15)),
-                          ),
+                  // Optional: Media Upload / Tags / Location
+                  Row(
+                    children: [
+                      TextButton.icon(
+                        onPressed: () {
+                          postController.pickMultipleMedia();
+                        },
+                        icon: Icon(
+                          Icons.photo,
+                          size: 18.r,
                         ),
-                      ],
-                    ),
-
-                    const SizedBox(height: 20),
-                  ],
-                );
-              }
-            ),
-
-            Obx(
-              () {
-                if ((postController.form.value.galleries ?? []).isEmpty) return const SizedBox();
-                return Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Text(
-                      'Selected Media: ',
-                      style: Theme.of(context).textTheme.bodySmall?.copyWith(
-                        fontWeight: FontWeight.w600,
-                        color: Theme.of(context).colorScheme.onSurfaceVariant,
+                        label: Text(
+                          'Add Photo',
+                          style: Theme.of(context)
+                              .textTheme
+                              .headlineSmall
+                              ?.copyWith(
+                                fontSize: 12.sp,
+                              ),
+                        ),
+                        style: ButtonStyle(
+                          backgroundColor: MaterialStateProperty.all(
+                              Theme.of(context)
+                                  .colorScheme
+                                  .primary
+                                  .withOpacity(0.2)),
+                          shape: MaterialStateProperty.all(
+                            RoundedRectangleBorder(
+                              borderRadius: BorderRadius.circular(20.w),
+                            ),
+                          ),
+                          padding: MaterialStateProperty.all(
+                              EdgeInsets.symmetric(horizontal: 15.w)),
+                        ),
                       ),
-                    ),
-                    const SizedBox(height: 10),
-                    MediaPreview(medias: (postController.form.value.galleries?? []).map((e) => XFile(e.path)).toList()),
-                  ],
-                );
-              }
-            ),
+                    ],
+                  ),
 
-            const SizedBox(height: 20),
+                  SizedBox(height: 20.h),
+                ],
+              );
+            }),
+
+            Obx(() {
+              if ((postController.form.value.galleries ?? []).isEmpty)
+                return const SizedBox();
+              return Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text(
+                    'Selected Media: ',
+                    style: Theme.of(context).textTheme.bodySmall?.copyWith(
+                          fontWeight: FontWeight.w600,
+                          color: Theme.of(context).colorScheme.onSurfaceVariant,
+                        ),
+                  ),
+                  SizedBox(height: 10.h),
+                  MediaPreview(
+                      medias: (postController.form.value.galleries ?? [])
+                          .map((e) => XFile(e.path))
+                          .toList()),
+                ],
+              );
+            }),
+
+            SizedBox(height: 20.h),
 
             // Action Button
             Row(
@@ -160,7 +175,7 @@ class CreatePostDialog extends GetView<SocialController> {
                 Expanded(
                   flex: 3,
                   child: SizedBox(
-                    height: 50,
+                    height: 50.h,
                     child: GradientOutlinedButton(
                       onPressed: () {
                         Get.back();
@@ -168,23 +183,23 @@ class CreatePostDialog extends GetView<SocialController> {
                       child: Text(
                         'Back',
                         style: Theme.of(context).textTheme.bodyMedium?.copyWith(
-                          fontWeight: FontWeight.w600,
-                          fontSize: 12,
-                          color: Theme.of(context).colorScheme.primary,
-                        ),
+                              fontWeight: FontWeight.w600,
+                              fontSize: 12.sp,
+                              color: Theme.of(context).colorScheme.primary,
+                            ),
                       ),
                     ),
                   ),
                 ),
-                const SizedBox(width: 12),
+                SizedBox(width: 12.w),
 
                 // Tombol Post (70%)
                 Expanded(
                   flex: 7,
                   child: Container(
-                    height: 50,
+                    height: 50.h,
                     decoration: BoxDecoration(
-                      borderRadius: BorderRadius.circular(100),
+                      borderRadius: BorderRadius.circular(100.r),
                     ),
                     clipBehavior: Clip.hardEdge,
                     child: GradientElevatedButton(
@@ -194,10 +209,10 @@ class CreatePostDialog extends GetView<SocialController> {
                       child: Text(
                         'Post',
                         style: Theme.of(context).textTheme.bodyMedium?.copyWith(
-                          fontWeight: FontWeight.w600,
-                          fontSize: 12,
-                          color: Theme.of(context).colorScheme.onPrimary,
-                        ),
+                              fontWeight: FontWeight.w600,
+                              fontSize: 12.sp,
+                              color: Theme.of(context).colorScheme.onPrimary,
+                            ),
                       ),
                     ),
                   ),

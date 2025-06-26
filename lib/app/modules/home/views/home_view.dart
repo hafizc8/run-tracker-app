@@ -31,7 +31,7 @@ class HomeView extends GetView<HomeController> {
                 children: [
                   // Widget Profile
                   Container(
-                    margin: EdgeInsets.only(top: 16.h, left: 8.w, right: 8.w),
+                    margin: EdgeInsets.only(top: 16.h, left: 16.w, right: 16.w),
                     child: Row(
                       children: [
                         Column(
@@ -106,7 +106,7 @@ class HomeView extends GetView<HomeController> {
 
                   // Level
                   Container(
-                    margin: EdgeInsets.only(left: 8.w, top: 10.h),
+                    margin: EdgeInsets.only(left: 16.w, top: 10.h),
                     child: Row(
                       children: [
                         Text(
@@ -132,7 +132,8 @@ class HomeView extends GetView<HomeController> {
 
                   // coin & energy
                   Container(
-                    margin: EdgeInsets.only(left: 8.w, top: 14.h, bottom: 10.h),
+                    margin:
+                        EdgeInsets.only(left: 16.w, top: 14.h, bottom: 10.h),
                     child: Row(
                       children: [
                         Row(
@@ -184,7 +185,7 @@ class HomeView extends GetView<HomeController> {
 
                   // Widget Step Tracker
                   Container(
-                    margin: EdgeInsets.symmetric(horizontal: 42.w),
+                    margin: EdgeInsets.symmetric(horizontal: 16.w),
                     child: StepsTrackerWidget(
                       progressValue: controller.progressValue,
                       currentSteps: controller.validatedSteps,
@@ -271,7 +272,7 @@ class HomeView extends GetView<HomeController> {
                         .start, // Agar judul "Top Walkers" rata kiri
                     children: [
                       Padding(
-                        padding: EdgeInsets.only(left: 8.0.w),
+                        padding: EdgeInsets.only(left: 16.0.w),
                         child: Text(
                           'Top Walkers',
                           style: Theme.of(context).textTheme.titleSmall,
@@ -283,7 +284,7 @@ class HomeView extends GetView<HomeController> {
                           color: darkColorScheme.surface,
                           borderRadius: BorderRadius.circular(12),
                         ),
-                        margin: EdgeInsets.symmetric(horizontal: 8.w),
+                        margin: EdgeInsets.symmetric(horizontal: 16.w),
                         child: const Row(
                           mainAxisAlignment: MainAxisAlignment.spaceBetween,
                           children: [
@@ -327,7 +328,7 @@ class HomeView extends GetView<HomeController> {
                       borderRadius: BorderRadius.circular(12),
                     ),
                     margin:
-                        EdgeInsets.symmetric(horizontal: 8.w, vertical: 12.h),
+                        EdgeInsets.symmetric(horizontal: 16.w, vertical: 12.h),
                     padding:
                         EdgeInsets.symmetric(horizontal: 20.w, vertical: 12.h),
                     child: Row(

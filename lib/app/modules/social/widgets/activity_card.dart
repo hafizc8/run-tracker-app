@@ -1,5 +1,6 @@
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:get/get.dart';
 import 'package:zest_mobile/app/core/models/model/post_model.dart';
@@ -32,12 +33,14 @@ class ActivityCard extends StatelessWidget {
   Widget build(BuildContext context) {
     return InkWell(
       onTap: onTap,
-      borderRadius: BorderRadius.circular(10),
+      borderRadius: BorderRadius.circular(10.r),
       child: Container(
-        margin: const EdgeInsets.symmetric(vertical: 10, horizontal: 3),
-        padding: const EdgeInsets.all(16),
+        margin: EdgeInsets.symmetric(
+          vertical: 10.h,
+        ),
+        padding: EdgeInsets.all(16.w),
         decoration: BoxDecoration(
-          borderRadius: BorderRadius.circular(10),
+          borderRadius: BorderRadius.circular(10.r),
           color: Theme.of(context).colorScheme.surface,
         ),
         child: Column(
@@ -51,92 +54,94 @@ class ActivityCard extends StatelessWidget {
                 createdAt: postData.createdAt?.toHumanPostDate() ?? '',
                 district: postData.district ?? '',
                 isOwner: postData.isOwner ?? false),
-            const SizedBox(height: 8),
+            SizedBox(height: 8.h),
             _buildCardContent(
               context: context,
               title: postData.title ?? '',
               content: postData.content ?? '',
             ),
-            const SizedBox(height: 15),
+            SizedBox(height: 15.h),
 
             // Media Horizontal (Maps, Image, Video)
-            Builder(
-              builder: (context) {
-                // 1. Siapkan list kosong untuk menampung semua media
-                final List<Widget> allMediaItems = [];
+            Builder(builder: (context) {
+              // 1. Siapkan list kosong untuk menampung semua media
+              final List<Widget> allMediaItems = [];
 
-                // 2. Tambahkan widget peta sebagai item pertama jika ada data
-                if (postData.recordActivity != null) {
-                  allMediaItems.add(
-                    Visibility(
-                      visible: postData.galleries.isEmpty,
-                      // when galleries is not empty
-                      replacement: _buildMapPlaceholder(postData.recordActivity),
-                      // when galleries is empty
-                      child: Stack(
-                        children: [
-                          _buildMapPlaceholder(postData.recordActivity),
-                          Positioned(
-                            bottom: 0,
-                            right: 0,
-                            left: 0,
-                            child: ClipRRect(
-                              borderRadius: BorderRadius.circular(10),
-                              child: _buildStatisticsSection(
-                                context: context,
-                                recordActivity: postData.recordActivity,
-                              ),
+              // 2. Tambahkan widget peta sebagai item pertama jika ada data
+              if (postData.recordActivity != null) {
+                allMediaItems.add(
+                  Visibility(
+                    visible: postData.galleries.isEmpty,
+                    // when galleries is not empty
+                    replacement: _buildMapPlaceholder(postData.recordActivity),
+                    // when galleries is empty
+                    child: Stack(
+                      children: [
+                        _buildMapPlaceholder(postData.recordActivity),
+                        Positioned(
+                          bottom: 0,
+                          right: 0,
+                          left: 0,
+                          child: ClipRRect(
+                            borderRadius: BorderRadius.circular(10),
+                            child: _buildStatisticsSection(
+                              context: context,
+                              recordActivity: postData.recordActivity,
                             ),
                           ),
-                        ],
-                      ),
-                    ),
-                  );
-                }
-
-                // 3. Tambahkan gambar dan video dari galeri
-                for (var galleryItem in postData.galleries) {
-                  final url = galleryItem.url ?? '';
-                  if (url.isNotEmpty) {
-                    // Logika untuk membedakan video atau gambar dipindahkan ke sini
-                    bool isVideo = url.endsWith('.mp4') || url.endsWith('.mov') || url.endsWith('.webm');
-                    
-                    if (isVideo) {
-                      continue;
-                    } else {
-                      allMediaItems.add(
-                        Image.network(
-                          url,
-                          fit: BoxFit.cover,
-                          errorBuilder: (context, error, _) => Container(
-                            color: Colors.grey.shade300,
-                            child: const Center(child: Icon(Icons.broken_image)),
-                          ),
-                          loadingBuilder: (context, child, progress) {
-                            if (progress == null) return child;
-                            return Container(
-                              color: Colors.grey.shade300,
-                              child: const Center(child: CircularProgressIndicator()),
-                            );
-                          },
                         ),
-                      );
-                    }
+                      ],
+                    ),
+                  ),
+                );
+              }
+
+              // 3. Tambahkan gambar dan video dari galeri
+              for (var galleryItem in postData.galleries) {
+                final url = galleryItem.url ?? '';
+                if (url.isNotEmpty) {
+                  // Logika untuk membedakan video atau gambar dipindahkan ke sini
+                  bool isVideo = url.endsWith('.mp4') ||
+                      url.endsWith('.mov') ||
+                      url.endsWith('.webm');
+
+                  if (isVideo) {
+                    continue;
+                  } else {
+                    allMediaItems.add(
+                      Image.network(
+                        url,
+                        fit: BoxFit.cover,
+                        errorBuilder: (context, error, _) => Container(
+                          color: Colors.grey.shade300,
+                          child: const Center(child: Icon(Icons.broken_image)),
+                        ),
+                        loadingBuilder: (context, child, progress) {
+                          if (progress == null) return child;
+                          return Container(
+                            color: Colors.grey.shade300,
+                            child: const Center(
+                                child: CircularProgressIndicator()),
+                          );
+                        },
+                      ),
+                    );
                   }
                 }
-
-                // 4. Panggil PostMediaScroll yang sudah dimodifikasi dengan list widget
-                return PostMediaScroll(mediaItems: allMediaItems);
               }
-            ),
+
+              // 4. Panggil PostMediaScroll yang sudah dimodifikasi dengan list widget
+              return PostMediaScroll(mediaItems: allMediaItems);
+            }),
 
             // Statistic with media > 1
             Visibility(
-              visible: postData.recordActivity != null && postData.galleries.isNotEmpty,
+              visible: postData.recordActivity != null &&
+                  postData.galleries.isNotEmpty,
               child: Container(
-                margin: const EdgeInsets.only(top: 10, bottom: 10),
+                margin: EdgeInsets.only(top: 10.h, bottom: 10.h),
                 child: ClipRRect(
-                  borderRadius: BorderRadius.circular(10),
+                  borderRadius: BorderRadius.circular(10.r),
                   child: _buildStatisticsSection(
                     context: context,
                     recordActivity: postData.recordActivity,
@@ -148,7 +153,7 @@ class ActivityCard extends StatelessWidget {
             Visibility(
               visible: (postData.likesCount ?? 0) > 0,
               child: Container(
-                margin: const EdgeInsets.only(top: 10),
+                margin: EdgeInsets.only(top: 10.h),
                 child: Row(
                   children: [
                     ParticipantsAvatars(
@@ -164,7 +169,7 @@ class ActivityCard extends StatelessWidget {
                       text: TextSpan(
                         style: Theme.of(context).textTheme.titleSmall?.copyWith(
                               fontWeight: FontWeight.w700,
-                              fontSize: 13,
+                              fontSize: 13.sp,
                             ),
                         children: <TextSpan>[
                           TextSpan(text: postData.likesCount.toString()),
@@ -174,7 +179,7 @@ class ActivityCard extends StatelessWidget {
                                 .textTheme
                                 .titleSmall
                                 ?.copyWith(
-                                  fontSize: 13,
+                                  fontSize: 13.sp,
                                 ),
                           ),
                         ],
@@ -184,7 +189,7 @@ class ActivityCard extends StatelessWidget {
                 ),
               ),
             ),
-            const SizedBox(height: 15),
+            SizedBox(height: 15.h),
             _buildSocialActions(),
           ],
         ),
@@ -214,19 +219,19 @@ class ActivityCard extends StatelessWidget {
                 ClipOval(
                   child: CachedNetworkImage(
                     imageUrl: userImageUrl,
-                    width: 30,
-                    height: 30,
+                    width: 30.r,
+                    height: 30.r,
                     fit: BoxFit.cover,
                     placeholder: (context, url) =>
-                        const ShimmerLoadingCircle(size: 30),
-                    errorWidget: (context, url, error) => const CircleAvatar(
-                      radius: 30,
+                        ShimmerLoadingCircle(size: 30.r),
+                    errorWidget: (context, url, error) => CircleAvatar(
+                      radius: 30.r,
                       backgroundImage:
-                          AssetImage('assets/images/empty_profile.png'),
+                          const AssetImage('assets/images/empty_profile.png'),
                     ),
                   ),
                 ),
-                const SizedBox(width: 8),
+                SizedBox(width: 8.w),
                 // Column di tengah
                 Flexible(
                   fit: FlexFit.loose,
@@ -248,7 +253,7 @@ class ActivityCard extends StatelessWidget {
                         overflow: TextOverflow.ellipsis,
                         style: Theme.of(context).textTheme.bodyMedium?.copyWith(
                               color: const Color(0xFF6C6C6C),
-                              fontSize: 11,
+                              fontSize: 11.sp,
                             ),
                       ),
                     ],
@@ -309,7 +314,7 @@ class ActivityCard extends StatelessWidget {
                     },
                     child: Icon(
                       Icons.more_horiz,
-                      size: 35,
+                      size: 35.r,
                       color: Theme.of(context).colorScheme.outline,
                     ),
                   ),
@@ -321,7 +326,7 @@ class ActivityCard extends StatelessWidget {
                   textAlign: TextAlign.end,
                   style: Theme.of(context).textTheme.bodyMedium?.copyWith(
                         color: const Color(0xFF6C6C6C),
-                        fontSize: 11,
+                        fontSize: 11.sp,
                       ),
                 ),
               ],
@@ -344,7 +349,7 @@ class ActivityCard extends StatelessWidget {
               Text(
                 content,
                 style: Theme.of(context).textTheme.bodySmall?.copyWith(
-                      fontSize: 12,
+                      fontSize: 12.sp,
                       fontWeight: FontWeight.w700,
                     ),
               ),
@@ -353,15 +358,15 @@ class ActivityCard extends StatelessWidget {
               Text(
                 title,
                 style: Theme.of(context).textTheme.bodySmall?.copyWith(
-                      fontSize: 12,
+                      fontSize: 12.sp,
                       fontWeight: FontWeight.w700,
                     ),
               ),
-              const SizedBox(height: 5),
+              SizedBox(height: 5.h),
               Text(
                 content,
                 style: Theme.of(context).textTheme.bodySmall?.copyWith(
-                      fontSize: 12,
+                      fontSize: 12.sp,
                       fontWeight: FontWeight.w400,
                     ),
               ),
@@ -372,7 +377,7 @@ class ActivityCard extends StatelessWidget {
   Widget _buildMapPlaceholder(RecordActivityModel? recordActivity) {
     return StaticRouteMap(
       activityLogs: recordActivity?.recordActivityLogs ?? [],
-      height: 310,
+      height: 310.h,
     );
   }
 
@@ -381,14 +386,24 @@ class ActivityCard extends StatelessWidget {
     required RecordActivityModel? recordActivity,
   }) {
     return Container(
-      padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 10),
+      padding: EdgeInsets.symmetric(horizontal: 10.w, vertical: 10.h),
       color: Theme.of(context).colorScheme.primary,
       child: Row(
         mainAxisAlignment: MainAxisAlignment.spaceAround,
         children: [
-          StatisticsColumn(title: 'Distance', value: NumberHelper().formatDistanceMeterToKm(recordActivity?.lastRecordActivityLog?.distance ?? 0)),
-          StatisticsColumn(title: 'AVG Pace', value: NumberHelper().formatDuration(int.parse((recordActivity?.lastRecordActivityLog?.pace ?? 0.0).toStringAsFixed(0)))),
-          StatisticsColumn(title: 'Moving Time', value: NumberHelper().formatDuration(recordActivity?.lastRecordActivityLog?.time ?? 0)),
+          StatisticsColumn(
+              title: 'Distance',
+              value: NumberHelper().formatDistanceMeterToKm(
+                  recordActivity?.lastRecordActivityLog?.distance ?? 0)),
+          StatisticsColumn(
+              title: 'AVG Pace',
+              value: NumberHelper().formatDuration(int.parse(
+                  (recordActivity?.lastRecordActivityLog?.pace ?? 0.0)
+                      .toStringAsFixed(0)))),
+          StatisticsColumn(
+              title: 'Moving Time',
+              value: NumberHelper().formatDuration(
+                  recordActivity?.lastRecordActivityLog?.time ?? 0)),
         ],
       ),
     );
@@ -402,7 +417,7 @@ class ActivityCard extends StatelessWidget {
           flex: 1,
           child: Container(
             width: double.infinity,
-            margin: const EdgeInsets.symmetric(horizontal: 4),
+            margin: EdgeInsets.symmetric(horizontal: 4.w),
             child: SocialActionButton(
               icon: AnimatedSwitcher(
                 duration: const Duration(milliseconds: 400),
@@ -414,7 +429,7 @@ class ActivityCard extends StatelessWidget {
                 },
                 child: FaIcon(
                   FontAwesomeIcons.fire,
-                  size: 15,
+                  size: 15.r,
                   color: postData.isLiked!
                       ? darkColorScheme.primary
                       : darkColorScheme.onBackground,
@@ -434,11 +449,11 @@ class ActivityCard extends StatelessWidget {
           flex: 1,
           child: Container(
             width: double.infinity,
-            margin: const EdgeInsets.symmetric(horizontal: 4),
+            margin: EdgeInsets.symmetric(horizontal: 4.w),
             child: SocialActionButton(
               icon: FaIcon(
                 FontAwesomeIcons.comment,
-                size: 15,
+                size: 15.r,
                 color: darkColorScheme.onBackground,
               ),
               label: 'Comment',
@@ -451,11 +466,11 @@ class ActivityCard extends StatelessWidget {
           flex: 1,
           child: Container(
             width: double.infinity,
-            margin: const EdgeInsets.symmetric(horizontal: 4),
+            margin: EdgeInsets.symmetric(horizontal: 4.w),
             child: SocialActionButton(
               icon: FaIcon(
                 FontAwesomeIcons.paperPlane,
-                size: 15,
+                size: 15.r,
                 color: darkColorScheme.onBackground,
               ),
               label: 'Share',

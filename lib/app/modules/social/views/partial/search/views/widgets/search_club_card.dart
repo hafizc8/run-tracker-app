@@ -1,5 +1,6 @@
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
 import 'package:zest_mobile/app/core/models/enums/club_privacy_enum.dart';
 import 'package:zest_mobile/app/core/models/model/club_model.dart';
@@ -11,7 +12,12 @@ import 'package:zest_mobile/app/routes/app_routes.dart';
 
 // ignore: must_be_immutable
 class SearchClubCard extends StatelessWidget {
-  SearchClubCard({super.key, required this.club, this.cardWidth = 115, this.cardHeight = 190, this.showDescription = false});
+  SearchClubCard(
+      {super.key,
+      required this.club,
+      this.cardWidth = 115,
+      this.cardHeight = 190,
+      this.showDescription = false});
 
   final ClubModel club;
   final controller = Get.find<SocialSearchController>();
@@ -24,13 +30,13 @@ class SearchClubCard extends StatelessWidget {
     return Column(
       children: [
         Container(
-          width: cardWidth,
-          height: cardHeight * 0.62,
-          decoration: const BoxDecoration(
-            color: Color(0xFF474747),
+          width: cardWidth.w,
+          height: cardHeight.h * 0.62,
+          decoration: BoxDecoration(
+            color: const Color(0xFF474747),
             borderRadius: BorderRadius.only(
-              topLeft: Radius.circular(16),
-              topRight: Radius.circular(16),
+              topLeft: Radius.circular(16.r),
+              topRight: Radius.circular(16.r),
             ),
           ),
           padding: const EdgeInsets.only(
@@ -44,46 +50,40 @@ class SearchClubCard extends StatelessWidget {
               ClipOval(
                 child: CachedNetworkImage(
                   imageUrl: club.imageUrl ?? '',
-                  width: 50,
-                  height: 50,
+                  width: 50.r,
+                  height: 50.r,
                   fit: BoxFit.cover,
-                  placeholder: (context, url) => const ShimmerLoadingCircle(size: 50),
-                  errorWidget: (context, url, error) =>
-                      const CircleAvatar(
-                    radius: 50,
-                    backgroundImage: AssetImage(
-                        'assets/images/empty_profile.png'),
+                  placeholder: (context, url) =>
+                      ShimmerLoadingCircle(size: 50.r),
+                  errorWidget: (context, url, error) => CircleAvatar(
+                    radius: 50.r,
+                    backgroundImage:
+                        const AssetImage('assets/images/empty_profile.png'),
                   ),
                 ),
               ),
-              const SizedBox(height: 12),
+              SizedBox(height: 12.h),
               Text(
                 club.name ?? '',
                 maxLines: 1,
                 overflow: TextOverflow.ellipsis,
                 textAlign: TextAlign.center,
-                style: Theme.of(context)
-                    .textTheme
-                    .bodySmall
-                    ?.copyWith(
+                style: Theme.of(context).textTheme.bodySmall?.copyWith(
                       fontWeight: FontWeight.w400,
                     ),
               ),
               Visibility(
                 visible: showDescription,
                 child: Padding(
-                  padding: const EdgeInsets.only(top: 4),
+                  padding: EdgeInsets.only(top: 4.h),
                   child: Text(
                     club.description ?? 'No description',
                     maxLines: 1,
                     overflow: TextOverflow.ellipsis,
                     textAlign: TextAlign.center,
-                    style: Theme.of(context)
-                        .textTheme
-                        .bodySmall
-                        ?.copyWith(
+                    style: Theme.of(context).textTheme.bodySmall?.copyWith(
                           fontWeight: FontWeight.w400,
-                          fontSize: 10,
+                          fontSize: 10.sp,
                           color: const Color(0xFF9E9E9E),
                         ),
                   ),
@@ -93,32 +93,33 @@ class SearchClubCard extends StatelessWidget {
           ),
         ),
         Container(
-          width: cardWidth,
+          width: cardWidth.w,
           decoration: const BoxDecoration(
             color: Color(0xFF474747),
           ),
-          padding: const EdgeInsets.only(
-            right: 16,
-            left: 16,
-            bottom: 16,
+          padding: EdgeInsets.only(
+            right: 16.w,
+            left: 16.w,
+            bottom: 16.h,
           ),
           child: Column(
             children: [
               RichText(
                 text: TextSpan(
                   style: Theme.of(context).textTheme.bodySmall?.copyWith(
-                    fontWeight: FontWeight.w700,
-                    fontSize: 10,
-                  ),
+                        fontWeight: FontWeight.w700,
+                        fontSize: 10.sp,
+                      ),
                   children: <TextSpan>[
-                    TextSpan(text: '${NumberHelper().formatNumberToK(club.clubUsersCount ?? 0)} '),
+                    TextSpan(
+                        text:
+                            '${NumberHelper().formatNumberToK(club.clubUsersCount ?? 0)} '),
                     TextSpan(
                       text: 'Members',
                       style: Theme.of(context).textTheme.bodySmall?.copyWith(
-                        fontWeight: FontWeight.w400,
-                        fontSize: 10,
-                        color: const Color(0xFF9E9E9E)
-                      ),
+                          fontWeight: FontWeight.w400,
+                          fontSize: 10.sp,
+                          color: const Color(0xFF9E9E9E)),
                     ),
                   ],
                 ),
@@ -127,13 +128,13 @@ class SearchClubCard extends StatelessWidget {
           ),
         ),
         Container(
-          width: cardWidth,
-          height: cardHeight * 0.32,
-          decoration: const BoxDecoration(
-            color: Color(0xFF3C3C3C),
+          width: cardWidth.w,
+          height: cardHeight.h * 0.32,
+          decoration: BoxDecoration(
+            color: const Color(0xFF3C3C3C),
             borderRadius: BorderRadius.only(
-              bottomLeft: Radius.circular(16),
-              bottomRight: Radius.circular(16),
+              bottomLeft: Radius.circular(16.r),
+              bottomRight: Radius.circular(16.r),
             ),
           ),
           padding: const EdgeInsets.only(
@@ -147,9 +148,9 @@ class SearchClubCard extends StatelessWidget {
               Visibility(
                 visible: club.privacy == ClubPrivacyEnum.public,
                 replacement: SizedBox(
-                  height: 30,
+                  height: 30.h,
                   child: GradientOutlinedButton(
-                    contentPadding: const EdgeInsets.symmetric(vertical: 0, horizontal: 12),
+                    contentPadding: EdgeInsets.symmetric(horizontal: 12.w),
                     onPressed: () {
                       Get.toNamed(AppRoutes.previewClub, arguments: club.id);
                     },
@@ -158,10 +159,10 @@ class SearchClubCard extends StatelessWidget {
                       replacement: Text(
                         'Details',
                         style: Theme.of(context).textTheme.bodyMedium?.copyWith(
-                          color: Theme.of(context).colorScheme.primary,
-                          fontWeight: FontWeight.bold,
-                          fontSize: 10,
-                        ),
+                              color: Theme.of(context).colorScheme.primary,
+                              fontWeight: FontWeight.bold,
+                              fontSize: 10.sp,
+                            ),
                       ),
                       child: const Center(
                         child: CircularProgressIndicator(),
@@ -170,9 +171,9 @@ class SearchClubCard extends StatelessWidget {
                   ),
                 ),
                 child: SizedBox(
-                  height: 30,
+                  height: 30.h,
                   child: GradientOutlinedButton(
-                    contentPadding: const EdgeInsets.symmetric(vertical: 0, horizontal: 12),
+                    contentPadding: EdgeInsets.symmetric(horizontal: 12.w),
                     onPressed: () {
                       if (!(club.isJoined ?? false)) {
                         controller.joinClub(club.id ?? '');
@@ -183,14 +184,12 @@ class SearchClubCard extends StatelessWidget {
                     child: Visibility(
                       visible: club.id == controller.clubId.value,
                       replacement: Text(
-                        (club.isJoined ?? false)
-                          ? 'Joined'
-                          : 'Join',
+                        (club.isJoined ?? false) ? 'Joined' : 'Join',
                         style: Theme.of(context).textTheme.bodyMedium?.copyWith(
-                          color: Theme.of(context).colorScheme.primary,
-                          fontWeight: FontWeight.bold,
-                          fontSize: 10,
-                        ),
+                              color: Theme.of(context).colorScheme.primary,
+                              fontWeight: FontWeight.bold,
+                              fontSize: 10.sp,
+                            ),
                       ),
                       child: const Center(
                         child: CircularProgressIndicator(),

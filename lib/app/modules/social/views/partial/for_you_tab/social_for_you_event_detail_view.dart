@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:get/get.dart';
 import 'package:shimmer/shimmer.dart';
@@ -39,9 +40,9 @@ class SocialForYouEventDetailView extends GetView<EventDetailController> {
               replacement: EventDetailCard(
                 event: controller.event.value,
               ),
-              child: const Padding(
-                padding: EdgeInsets.all(16.0),
-                child: EventShimmer(),
+              child: Padding(
+                padding: EdgeInsets.all(16.0.w),
+                child: const EventShimmer(),
               ),
             ),
           ),
@@ -63,7 +64,6 @@ class SocialForYouEventDetailView extends GetView<EventDetailController> {
         icon: Icon(
           Icons.chevron_left,
           color: Theme.of(context).colorScheme.onBackground,
-          size: 35,
         ),
         onPressed: () => Get.back(result: controller.eventLastUpdated.value),
       ),
@@ -82,7 +82,7 @@ class SocialForYouEventDetailView extends GetView<EventDetailController> {
 
   Widget _buildBottomBar(BuildContext context) {
     return Container(
-      padding: const EdgeInsets.all(16),
+      padding: EdgeInsets.all(16.w),
       decoration: BoxDecoration(
         color: Theme.of(context).colorScheme.background,
       ),
@@ -91,15 +91,15 @@ class SocialForYouEventDetailView extends GetView<EventDetailController> {
           return Shimmer.fromColors(
             baseColor: Colors.grey.shade800,
             highlightColor: Colors.grey.shade700,
-            child: const SizedBox(
-              height: 40,
-              width: 200,
+            child: SizedBox(
+              height: 40.h,
+              width: 200.w,
             ),
           );
         }
         if (controller.event.value?.cancelledAt != null) {
           return SizedBox(
-            height: 55,
+            height: 55.h,
             child: GradientOutlinedButton(
               onPressed: null,
               child: Text(
@@ -118,12 +118,12 @@ class SocialForYouEventDetailView extends GetView<EventDetailController> {
                   child: Visibility(
                     visible: controller.event.value?.isOwner == 0,
                     replacement: SizedBox(
-                      height: 55,
+                      height: 55.h,
                       child: GradientOutlinedButton(
                         style: ButtonStyle(
                           shape: MaterialStateProperty.all(
                             RoundedRectangleBorder(
-                              borderRadius: BorderRadius.circular(11),
+                              borderRadius: BorderRadius.circular(11.r),
                             ),
                           ),
                         ),
@@ -148,7 +148,7 @@ class SocialForYouEventDetailView extends GetView<EventDetailController> {
                       ),
                     ),
                     child: SizedBox(
-                      height: 55,
+                      height: 55.h,
                       child: GradientOutlinedButton(
                         style: ButtonStyle(
                           shape: MaterialStateProperty.all(
@@ -175,11 +175,11 @@ class SocialForYouEventDetailView extends GetView<EventDetailController> {
                     ),
                   ),
                 ),
-                const SizedBox(width: 10),
+                SizedBox(width: 10.w),
                 Expanded(
                   flex: 2,
                   child: SizedBox(
-                    height: 55,
+                    height: 55.h,
                     child: GradientElevatedButton(
                       onPressed: () async {
                         var res = await Get.toNamed(
@@ -194,10 +194,10 @@ class SocialForYouEventDetailView extends GetView<EventDetailController> {
                         children: [
                           SvgPicture.asset(
                             'assets/icons/add_friends.svg',
-                            height: 22,
-                            width: 27,
+                            height: 22.h,
+                            width: 27.w,
                           ),
-                          const SizedBox(width: 10),
+                          SizedBox(width: 10.w),
                           Text(
                             'Invite Your Friends',
                             textAlign: TextAlign.center,
@@ -216,7 +216,7 @@ class SocialForYouEventDetailView extends GetView<EventDetailController> {
         if (controller.event.value?.isJoined == 0 &&
             controller.event.value?.isPublic == 1) {
           return SizedBox(
-            height: 55,
+            height: 55.h,
             child: GradientElevatedButton(
               onPressed: () {
                 controller
@@ -225,7 +225,7 @@ class SocialForYouEventDetailView extends GetView<EventDetailController> {
               child: Text(
                 'Join!',
                 style: Theme.of(context).textTheme.labelMedium?.copyWith(
-                      fontSize: 13,
+                      fontSize: 13.sp,
                       fontWeight: FontWeight.bold,
                     ),
               ),

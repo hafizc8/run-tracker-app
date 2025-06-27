@@ -1,5 +1,6 @@
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:get/get.dart';
@@ -27,7 +28,7 @@ class SocialYourPageClubsView extends GetView<SocialClubSearchController> {
             fillColor: Theme.of(context).colorScheme.background,
           ),
         ),
-        const SizedBox(height: 16),
+        SizedBox(height: 16.h),
         Row(
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
           children: [
@@ -49,22 +50,22 @@ class SocialYourPageClubsView extends GetView<SocialClubSearchController> {
             ),
           ],
         ),
-        const SizedBox(height: 16),
+        SizedBox(height: 16.h),
         Obx(() {
           if (controller.resultSearchEmpty.value) {
             return Column(
               children: [
-                const SizedBox(height: 30),
-                SvgPicture.asset('assets/icons/ic_not_found.svg', width: 160),
-                const SizedBox(height: 16),
+                SizedBox(height: 30.h),
+                SvgPicture.asset('assets/icons/ic_not_found.svg', width: 160.w),
+                SizedBox(height: 16.h),
                 Text(
                   'Nothing Here Yet',
                   style: Theme.of(context).textTheme.titleMedium?.copyWith(
                         color: const Color(0xFF5C5C5C),
-                        fontSize: 20,
+                        fontSize: 20.sp,
                       ),
                 ),
-                const SizedBox(height: 3),
+                SizedBox(height: 3.h),
                 Text(
                   'Try a different keyword',
                   style: Theme.of(context).textTheme.titleSmall?.copyWith(
@@ -79,17 +80,20 @@ class SocialYourPageClubsView extends GetView<SocialClubSearchController> {
               !controller.isLoading.value) {
             return Column(
               children: [
-                const SizedBox(height: 30),
-                SvgPicture.asset('assets/icons/ic_no_club_yet.svg', width: 160),
-                const SizedBox(height: 16),
+                SizedBox(height: 30.h),
+                SvgPicture.asset(
+                  'assets/icons/ic_no_club_yet.svg',
+                  width: 160.w,
+                ),
+                SizedBox(height: 16.h),
                 Text(
                   'Nothing Here Yet',
                   style: Theme.of(context).textTheme.titleMedium?.copyWith(
                         color: const Color(0xFF5C5C5C),
-                        fontSize: 20,
+                        fontSize: 20.sp,
                       ),
                 ),
-                const SizedBox(height: 3),
+                SizedBox(height: 3.h),
                 Text(
                   'Try a different keyword',
                   style: Theme.of(context).textTheme.titleSmall?.copyWith(
@@ -101,7 +105,7 @@ class SocialYourPageClubsView extends GetView<SocialClubSearchController> {
           }
 
           return GridView.builder(
-            padding: const EdgeInsets.only(bottom: 16),
+            padding: EdgeInsets.only(bottom: 16.h),
             shrinkWrap: true,
             physics: const NeverScrollableScrollPhysics(),
             gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
@@ -115,7 +119,7 @@ class SocialYourPageClubsView extends GetView<SocialClubSearchController> {
               if (index == controller.clubs.length) {
                 return Center(
                   child: Container(
-                    margin: const EdgeInsets.symmetric(vertical: 10),
+                    margin: EdgeInsets.symmetric(vertical: 10.h),
                     child: const CircularProgressIndicator(),
                   ),
                 );
@@ -138,22 +142,22 @@ class SocialYourPageClubsView extends GetView<SocialClubSearchController> {
     return Column(
       children: [
         Padding(
-          padding: const EdgeInsets.only(right: 8),
+          padding: EdgeInsets.only(right: 8.w),
           child: Stack(
             clipBehavior: Clip.none,
             children: [
               ClipOval(
                 child: CachedNetworkImage(
                   imageUrl: club.imageUrl ?? '',
-                  width: 68,
-                  height: 68,
+                  width: 68.r,
+                  height: 68.r,
                   fit: BoxFit.cover,
                   placeholder: (context, url) =>
-                      const ShimmerLoadingCircle(size: 68),
-                  errorWidget: (context, url, error) => const CircleAvatar(
-                    radius: 68,
+                      ShimmerLoadingCircle(size: 68.r),
+                  errorWidget: (context, url, error) => CircleAvatar(
+                    radius: 68.r,
                     backgroundImage:
-                        AssetImage('assets/images/empty_profile.png'),
+                        const AssetImage('assets/images/empty_profile.png'),
                   ),
                 ),
               ),
@@ -162,14 +166,14 @@ class SocialYourPageClubsView extends GetView<SocialClubSearchController> {
                       bottom: 0,
                       right: -5,
                       child: Container(
-                          padding: const EdgeInsets.all(6),
+                          padding: EdgeInsets.all(6.w),
                           decoration: BoxDecoration(
                             color: Theme.of(context).colorScheme.primary,
                             shape: BoxShape.circle,
                           ),
                           child: FaIcon(
                             FontAwesomeIcons.crown,
-                            size: 12,
+                            size: 12.r,
                             color: Theme.of(context).colorScheme.onPrimary,
                           )),
                     )
@@ -177,7 +181,7 @@ class SocialYourPageClubsView extends GetView<SocialClubSearchController> {
             ],
           ),
         ),
-        const SizedBox(height: 10),
+        SizedBox(height: 10.h),
         Text(
           club.name ?? '',
           style: Theme.of(context).textTheme.bodySmall?.copyWith(

@@ -1,6 +1,7 @@
 import 'dart:io';
 
 import 'package:flutter/material.dart';
+import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
 import 'package:zest_mobile/app/core/models/forms/update_post_form.dart';
 import 'package:zest_mobile/app/core/models/model/post_model.dart';
@@ -28,14 +29,14 @@ class EditPostView extends GetView<PostController> {
         ),
       ),
       body: SingleChildScrollView(
-        padding: const EdgeInsets.all(16),
+        padding: EdgeInsets.all(16.w),
         child: Obx(
           () {
             if (controller.isLoadingLoadUpdatePost.value) {
-              return const ShimmerLoadingList(
+              return ShimmerLoadingList(
                 itemCount: 10,
                 itemHeight: 50,
-                padding: EdgeInsets.symmetric(horizontal: 20, vertical: 20),
+                padding: EdgeInsets.symmetric(horizontal: 16.w, vertical: 16.h),
               );
             }
 
@@ -43,12 +44,12 @@ class EditPostView extends GetView<PostController> {
             return Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                const SizedBox(height: 16),
+                SizedBox(height: 16.h),
                 Text(
                   'Title',
                   style: Theme.of(context).textTheme.titleSmall,
                 ),
-                const SizedBox(height: 12),
+                SizedBox(height: 12.h),
                 TextFormField(
                   cursorColor: Colors.black,
                   initialValue: form.title,
@@ -63,7 +64,7 @@ class EditPostView extends GetView<PostController> {
                     errorText: form.errors?['title'],
                   ),
                 ),
-                const SizedBox(height: 12),
+                SizedBox(height: 12.h),
                 TextFormField(
                   cursorColor: Colors.black,
                   initialValue: form.content,
@@ -80,47 +81,47 @@ class EditPostView extends GetView<PostController> {
                     errorText: form.errors?['content'],
                   ),
                 ),
-
-                const SizedBox(height: 12),
-
-                (form.currentGalleries ?? []).isNotEmpty 
-                ? MediaPreviewEdit(
-                  currentGalleries: form.currentGalleries ?? [],
-                  newGalleries: form.newGalleries ?? [],
-                  onRemove: (int index, bool isFromServer, Gallery? gallery, File? file) {
-                    controller.removeMedia(
-                      isFromServer: isFromServer,
-                      gallery: gallery,
-                      file: file,
-                    );
-                  },
-                )
-                : const SizedBox(),
-
-                const SizedBox(height: 12),
-
+                SizedBox(height: 12.h),
+                (form.currentGalleries ?? []).isNotEmpty
+                    ? MediaPreviewEdit(
+                        currentGalleries: form.currentGalleries ?? [],
+                        newGalleries: form.newGalleries ?? [],
+                        onRemove: (int index, bool isFromServer,
+                            Gallery? gallery, File? file) {
+                          controller.removeMedia(
+                            isFromServer: isFromServer,
+                            gallery: gallery,
+                            file: file,
+                          );
+                        },
+                      )
+                    : const SizedBox(),
+                SizedBox(height: 12.h),
                 InkWell(
                   onTap: () {
                     controller.pickMultipleMediaToUpdate();
                   },
                   child: Container(
                     decoration: BoxDecoration(
-                      borderRadius: BorderRadius.circular(5),
+                      borderRadius: BorderRadius.circular(5.r),
                       border: Border.all(
                         color: Colors.grey.shade400,
                       ),
                     ),
-                    padding: const EdgeInsets.symmetric(vertical: 10),
+                    padding: EdgeInsets.symmetric(vertical: 10.h),
                     child: Row(
                       mainAxisAlignment: MainAxisAlignment.center,
                       children: [
                         const Icon(
                           Icons.upload_outlined,
                         ),
-                        const SizedBox(width: 8),
+                        SizedBox(height: 8.h),
                         Text(
                           'Upload Image',
-                          style: Theme.of(context).textTheme.bodyMedium?.copyWith(fontWeight: FontWeight.bold),
+                          style: Theme.of(context)
+                              .textTheme
+                              .bodyMedium
+                              ?.copyWith(fontWeight: FontWeight.bold),
                         )
                       ],
                     ),
@@ -131,33 +132,30 @@ class EditPostView extends GetView<PostController> {
           },
         ),
       ),
-      bottomNavigationBar: Padding(
-        padding: const EdgeInsets.all(16.0),
-        child: Container(
-          margin: const EdgeInsets.symmetric(horizontal: 16, vertical: 16),
-          height: 55,
-          child: Obx(
-            () {
-              if (controller.isLoadingLoadUpdatePost.value) {
-                const SizedBox();
-              }
-          
-              return GradientElevatedButton(
-                onPressed: !controller.isValidToUpdate
-                    ? null
-                    : controller.isLoadingUpdatePost.value
-                        ? null
-                        : () {
-                            controller.updatePost();
-                          },
-                child: Visibility(
-                  visible: controller.isLoadingUpdatePost.value,
-                  replacement: const Text('Continue'),
-                  child: const CircularProgressIndicator(),
-                ),
-              );
-            },
-          ),
+      bottomNavigationBar: Container(
+        margin: EdgeInsets.symmetric(horizontal: 16.w, vertical: 16.h),
+        height: 55.h,
+        child: Obx(
+          () {
+            if (controller.isLoadingLoadUpdatePost.value) {
+              const SizedBox();
+            }
+
+            return GradientElevatedButton(
+              onPressed: !controller.isValidToUpdate
+                  ? null
+                  : controller.isLoadingUpdatePost.value
+                      ? null
+                      : () {
+                          controller.updatePost();
+                        },
+              child: Visibility(
+                visible: controller.isLoadingUpdatePost.value,
+                replacement: const Text('Continue'),
+                child: const CircularProgressIndicator(),
+              ),
+            );
+          },
         ),
       ),
     );

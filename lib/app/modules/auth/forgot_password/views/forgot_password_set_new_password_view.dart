@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
 import 'package:zest_mobile/app/core/models/forms/reset_password_form.dart';
 import 'package:zest_mobile/app/core/shared/widgets/custom_circular_progress_indicator.dart';
@@ -16,7 +17,7 @@ class ForgotPasswordSetNewPasswordView
     return Scaffold(
       body: Center(
         child: SingleChildScrollView(
-          padding: const EdgeInsets.symmetric(horizontal: 24),
+          padding: EdgeInsets.symmetric(horizontal: 16.w),
           child: Column(
             mainAxisAlignment: MainAxisAlignment.center, // vertical center
             crossAxisAlignment: CrossAxisAlignment.center,
@@ -30,7 +31,7 @@ class ForgotPasswordSetNewPasswordView
                       'Set Your New Password',
                       style: Theme.of(context).textTheme.headlineMedium,
                     ),
-                    const SizedBox(height: 18),
+                    SizedBox(height: 18.h),
                     Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
@@ -38,9 +39,9 @@ class ForgotPasswordSetNewPasswordView
                           'New Password',
                           style: Theme.of(context).textTheme.titleSmall,
                         ),
-                        const SizedBox(height: 12),
+                        SizedBox(height: 12.h),
                         GradientBorderTextField(
-                          cursorColor: Colors.black,
+                          cursorColor: Colors.white,
                           obscureText: controller.isVisiblePassword.value,
                           onChanged: (value) {
                             controller.formReset.value = form.copyWith(
@@ -62,14 +63,14 @@ class ForgotPasswordSetNewPasswordView
                           errorText: form.errors?['password'],
                           textInputAction: TextInputAction.next,
                         ),
-                        const SizedBox(height: 16),
+                        SizedBox(height: 16.h),
                         Text(
                           'Confirm Password',
                           style: Theme.of(context).textTheme.titleSmall,
                         ),
-                        const SizedBox(height: 12),
+                        SizedBox(height: 12.h),
                         GradientBorderTextField(
-                          cursorColor: Colors.black,
+                          cursorColor: Colors.white,
                           obscureText:
                               controller.isVisiblePasswordConfirmation.value,
                           onChanged: (value) {
@@ -98,7 +99,7 @@ class ForgotPasswordSetNewPasswordView
                   ],
                 );
               }),
-              const SizedBox(height: 24),
+              SizedBox(height: 24.h),
               Obx(
                 () => GradientElevatedButton(
                   onPressed: controller.isLoading.value
@@ -108,7 +109,10 @@ class ForgotPasswordSetNewPasswordView
                         },
                   child: Visibility(
                     visible: controller.isLoading.value,
-                    replacement: const Text('Update Password'),
+                    replacement: Text(
+                      'Update Password',
+                      style: Theme.of(context).textTheme.bodyMedium,
+                    ),
                     child: CustomCircularProgressIndicator(),
                   ),
                 ),

@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:zest_mobile/app/core/shared/theme/color_schemes.dart';
 import 'package:zest_mobile/app/core/shared/theme/text_theme.dart';
@@ -13,11 +14,11 @@ class TAppBarTheme {
     ),
     iconTheme: IconThemeData(
       color: lightColorScheme.primary,
-      size: 32,
+      size: 35.w,
     ),
     actionsIconTheme: IconThemeData(
       color: lightColorScheme.primary,
-      size: 32,
+      size: 35.w,
     ),
   );
 
@@ -25,6 +26,7 @@ class TAppBarTheme {
   static AppBarTheme darkAppBarTheme = AppBarTheme(
     elevation: 0,
     centerTitle: false,
+    toolbarHeight: 100.h,
     scrolledUnderElevation: 0,
     backgroundColor:
         darkColorScheme.background, // Latar belakang AppBar untuk mode gelap
@@ -37,12 +39,12 @@ class TAppBarTheme {
     iconTheme: IconThemeData(
       color:
           darkColorScheme.primary, // Ikon utama menggunakan warna primer gelap
-      size: 24,
+      size: 35.w,
     ),
     actionsIconTheme: IconThemeData(
       color: darkColorScheme
           .primary, // Ikon di actions menggunakan warna primer gelap
-      size: 24,
+      size: 35.w,
     ),
   );
 }

@@ -1,5 +1,6 @@
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:get/get.dart';
 import 'package:intl/intl.dart';
@@ -21,8 +22,7 @@ class EventDetailCard extends GetView<EventDetailController> {
   @override
   Widget build(BuildContext context) {
     return Container(
-      margin: const EdgeInsets.symmetric(vertical: 10, horizontal: 3),
-      padding: const EdgeInsets.all(16),
+      padding: EdgeInsets.all(16.w),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
@@ -31,7 +31,7 @@ class EventDetailCard extends GetView<EventDetailController> {
             AspectRatio(
               aspectRatio: 1,
               child: ClipRRect(
-                borderRadius: BorderRadius.circular(12),
+                borderRadius: BorderRadius.circular(12.r),
                 child: Container(
                   color: Colors.grey.shade300,
                   child: CachedNetworkImage(
@@ -42,13 +42,13 @@ class EventDetailCard extends GetView<EventDetailController> {
                       highlightColor: Colors.grey.shade700,
                       child: const SizedBox.shrink(),
                     ),
-                    errorWidget: (context, url, error) => const Center(
+                    errorWidget: (context, url, error) => Center(
                       child: Column(
                         mainAxisAlignment: MainAxisAlignment.center,
                         children: [
-                          Icon(Icons.image, size: 64, color: Colors.grey),
-                          SizedBox(height: 8),
-                          Text('Image Placeholder',
+                          Icon(Icons.image, size: 64.r, color: Colors.grey),
+                          SizedBox(height: 8.h),
+                          const Text('Image Placeholder',
                               style: TextStyle(color: Colors.grey)),
                         ],
                       ),
@@ -58,42 +58,44 @@ class EventDetailCard extends GetView<EventDetailController> {
               ),
             ),
           ],
-          const SizedBox(height: 15),
+          SizedBox(height: 15.h),
           Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
               Container(
-                padding: const EdgeInsets.all(2), // Lebar border
+                padding: EdgeInsets.all(2.w), // Lebar border
                 decoration: BoxDecoration(
                   gradient: const LinearGradient(
                     colors: [Color(0xFFA2FF00), Color(0xFF00FF7F)],
                     begin: Alignment.centerLeft,
                     end: Alignment.centerRight,
                   ),
-                  borderRadius: BorderRadius.circular(12),
+                  borderRadius: BorderRadius.circular(12.r),
                 ),
                 child: Container(
-                  padding:
-                      const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
+                  padding: EdgeInsets.symmetric(
+                    horizontal: 12.w,
+                    vertical: 6.h,
+                  ),
                   decoration: BoxDecoration(
                     color: Theme.of(context).colorScheme.background,
-                    borderRadius: BorderRadius.circular(10),
+                    borderRadius: BorderRadius.circular(10.r),
                   ),
                   child: Row(
                     children: [
                       CachedNetworkImage(
                         imageUrl: event?.activity ?? '',
-                        width: 13,
-                        height: 13,
+                        width: 13.r,
+                        height: 13.r,
                         fit: BoxFit.cover,
                         placeholder: (context, url) =>
-                            const ShimmerLoadingCircle(size: 13),
-                        errorWidget: (context, url, error) => const Icon(
-                          size: 13,
+                            ShimmerLoadingCircle(size: 13.r),
+                        errorWidget: (context, url, error) => Icon(
+                          size: 13.r,
                           Icons.error,
                         ),
                       ),
-                      const SizedBox(width: 8),
+                      SizedBox(width: 8.w),
                       Text(
                         event?.activity ?? '-',
                         style: Theme.of(context).textTheme.bodyMedium?.copyWith(
@@ -109,10 +111,10 @@ class EventDetailCard extends GetView<EventDetailController> {
                   SvgPicture.asset(
                     'assets/icons/share.svg',
                     color: Theme.of(context).colorScheme.primary,
-                    height: 22,
-                    width: 27,
+                    height: 22.h,
+                    width: 27.w,
                   ),
-                  const SizedBox(width: 16),
+                  SizedBox(width: 16.w),
                   Visibility(
                     visible: event?.isOwner == 1 &&
                         (event?.datetime ?? DateTime.now()).isDateTimePassed(
@@ -168,7 +170,7 @@ class EventDetailCard extends GetView<EventDetailController> {
                       },
                       child: Icon(
                         Icons.more_vert,
-                        size: 27,
+                        size: 27.r,
                         color: Theme.of(context).colorScheme.primary,
                       ),
                     ),
@@ -177,49 +179,49 @@ class EventDetailCard extends GetView<EventDetailController> {
               ),
             ],
           ),
-          const SizedBox(height: 16),
+          SizedBox(height: 16.h),
           // title text
           Text(
             event?.title ?? '-',
             style: Theme.of(context).textTheme.bodyMedium?.copyWith(
                   fontWeight: FontWeight.w600,
-                  fontSize: 17,
+                  fontSize: 17.sp,
                   color: Theme.of(context).colorScheme.primary,
                 ),
           ),
-          const SizedBox(height: 16),
+          SizedBox(height: 16.h),
           Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               Text(
                 'Organized By',
                 style: Theme.of(context).textTheme.labelSmall?.copyWith(
-                      fontSize: 12,
+                      fontSize: 12.sp,
                       fontWeight: FontWeight.w400,
                       color: Color(0xFFA5A5A5),
                     ),
               ),
-              const SizedBox(height: 8),
+              SizedBox(height: 8.h),
               Row(
                 children: [
                   ClipOval(
                     child: CachedNetworkImage(
                       imageUrl: event?.user?.imageUrl ?? '',
-                      width: 29,
-                      height: 29,
+                      width: 29.r,
+                      height: 29.r,
                       fit: BoxFit.cover,
                       placeholder: (context, url) => Shimmer.fromColors(
                         baseColor: Colors.grey.shade800,
                         highlightColor: Colors.grey.shade700,
                         child: const SizedBox.shrink(),
                       ),
-                      errorWidget: (context, url, error) => const Center(
+                      errorWidget: (context, url, error) => Center(
                         child: Column(
                           mainAxisAlignment: MainAxisAlignment.center,
                           children: [
                             Icon(
                               Icons.person,
-                              size: 24,
+                              size: 24.r,
                               color: Colors.grey,
                             ),
                           ],
@@ -227,7 +229,7 @@ class EventDetailCard extends GetView<EventDetailController> {
                       ),
                     ),
                   ),
-                  const SizedBox(width: 8),
+                  SizedBox(width: 8.w),
                   Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
@@ -244,7 +246,7 @@ class EventDetailCard extends GetView<EventDetailController> {
             ],
           ),
 
-          const SizedBox(height: 15),
+          SizedBox(height: 15.h),
           // description
           Text(
             event?.description ?? '-',
@@ -252,7 +254,7 @@ class EventDetailCard extends GetView<EventDetailController> {
             overflow: TextOverflow.ellipsis,
             style: Theme.of(context).textTheme.titleSmall,
           ),
-          const SizedBox(height: 15),
+          SizedBox(height: 15.h),
           Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
@@ -260,14 +262,14 @@ class EventDetailCard extends GetView<EventDetailController> {
                 context,
                 icon: SvgPicture.asset(
                   'assets/icons/calendar.svg',
-                  height: 22,
-                  width: 27,
+                  height: 22.h,
+                  width: 27.w,
                 ),
                 title: 'Date & Time',
                 subtitle:
                     '${DateFormat('d MMM yyyy').format(event!.datetime!)}, ${event?.startTime != null ? eventActionController.formatTime(event!.startTime!) : 'Start'}–${event?.endTime != null ? eventActionController.formatTime(event!.endTime!) : 'Finish'}',
               ),
-              const SizedBox(height: 12),
+              SizedBox(height: 12.h),
               GestureDetector(
                 onTap: () => eventActionController
                     .openGoogleMaps(event?.placeName ?? event?.address ?? '-'),
@@ -275,20 +277,20 @@ class EventDetailCard extends GetView<EventDetailController> {
                   context,
                   icon: SvgPicture.asset(
                     'assets/icons/pin_location.svg',
-                    height: 22,
-                    width: 27,
+                    height: 22.h,
+                    width: 27.w,
                   ),
                   title: 'Location',
                   subtitle: event?.placeName ?? event?.address ?? '-',
                 ),
               ),
-              const SizedBox(height: 16),
+              SizedBox(height: 16.h),
               _buildInfoItem(
                 context,
                 icon: SvgPicture.asset(
                   'assets/icons/dollar.svg',
-                  height: 22,
-                  width: 27,
+                  height: 22.h,
+                  width: 27.w,
                 ),
                 title: 'Fee',
                 subtitle:
@@ -324,7 +326,7 @@ class EventDetailCard extends GetView<EventDetailController> {
               ),
             );
           }),
-          const SizedBox(height: 15),
+          SizedBox(height: 15.h),
           // Waitlist
           Obx(() {
             if (controller.isLoadingWaitList.value) {
@@ -365,7 +367,7 @@ class EventDetailCard extends GetView<EventDetailController> {
     return Container(
       padding: const EdgeInsets.all(15),
       decoration: BoxDecoration(
-        borderRadius: BorderRadius.circular(12),
+        borderRadius: BorderRadius.circular(12.r),
       ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
@@ -387,10 +389,10 @@ class EventDetailCard extends GetView<EventDetailController> {
                         'See all',
                         style: Theme.of(context).textTheme.headlineSmall,
                       ),
-                      const SizedBox(width: 5),
+                      SizedBox(width: 5.w),
                       Icon(
                         Icons.arrow_forward_ios,
-                        size: 16,
+                        size: 16.r,
                         color: Theme.of(context).colorScheme.primary,
                       ),
                     ],
@@ -426,7 +428,7 @@ class EventDetailCard extends GetView<EventDetailController> {
     return Row(
       children: [
         icon,
-        const SizedBox(width: 8),
+        SizedBox(width: 8.w),
         Expanded(
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
@@ -436,7 +438,7 @@ class EventDetailCard extends GetView<EventDetailController> {
                 style: Theme.of(context).textTheme.bodyMedium?.copyWith(
                       fontWeight: FontWeight.w400,
                       color: Theme.of(context).colorScheme.secondary,
-                      fontSize: 12,
+                      fontSize: 12.sp,
                     ),
                 maxLines: 1,
                 overflow: TextOverflow.ellipsis,
@@ -446,7 +448,7 @@ class EventDetailCard extends GetView<EventDetailController> {
                 style: Theme.of(context).textTheme.bodyMedium?.copyWith(
                       fontWeight: FontWeight.w400,
                       color: Theme.of(context).colorScheme.onBackground,
-                      fontSize: 12,
+                      fontSize: 12.sp,
                     ),
                 maxLines: 1,
                 overflow: TextOverflow.ellipsis,
@@ -460,9 +462,9 @@ class EventDetailCard extends GetView<EventDetailController> {
 
   Widget _buildPersonList(BuildContext context, [EventUserModel? user]) {
     return Container(
-      padding: const EdgeInsets.only(top: 8),
+      padding: EdgeInsets.only(top: 8.h),
       decoration: BoxDecoration(
-        borderRadius: BorderRadius.circular(16),
+        borderRadius: BorderRadius.circular(16.r),
         color: Color(0xFF4C4C4C),
       ),
       child: Column(
@@ -472,18 +474,18 @@ class EventDetailCard extends GetView<EventDetailController> {
           ClipOval(
             child: CachedNetworkImage(
               imageUrl: user?.user?.imageUrl ?? '',
-              width: 50,
-              height: 50,
+              width: 50.r,
+              height: 50.r,
               fit: BoxFit.cover,
-              placeholder: (context, url) =>
-                  const ShimmerLoadingCircle(size: 50),
-              errorWidget: (context, url, error) => const CircleAvatar(
-                radius: 32,
-                backgroundImage: AssetImage('assets/images/empty_profile.png'),
+              placeholder: (context, url) => ShimmerLoadingCircle(size: 50.r),
+              errorWidget: (context, url, error) => CircleAvatar(
+                radius: 32.r,
+                backgroundImage:
+                    const AssetImage('assets/images/empty_profile.png'),
               ),
             ),
           ),
-          const SizedBox(height: 8),
+          SizedBox(height: 8.h),
           Text(
             user?.user?.name ?? '',
             maxLines: 1,

@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:get/get.dart';
 import 'package:google_fonts/google_fonts.dart';
@@ -21,9 +22,8 @@ class SocialView extends GetView<SocialController> {
         backgroundColor: Theme.of(context).colorScheme.background,
         body: Column(
           children: [
-            const SizedBox(height: 16),
             _buildCustomTabBar(context),
-            const SizedBox(height: 8),
+            SizedBox(height: 24.h),
             Expanded(child: _buildTabBarView(context)),
           ],
         ),
@@ -33,22 +33,24 @@ class SocialView extends GetView<SocialController> {
 
   PreferredSizeWidget _buildAppBar(BuildContext context) {
     return AppBar(
-      toolbarHeight: 100,
-      title: RichText(
-        text: TextSpan(
-          children: <TextSpan>[
-            TextSpan(
-                text: 'ZEST+ ',
-                style: GoogleFonts.poppins(
-                  fontWeight: FontWeight.w700,
-                  fontSize: 25,
-                  color: darkColorScheme.primary,
-                )),
-            TextSpan(
-              text: 'Social',
-              style: Theme.of(context).textTheme.titleLarge,
-            ),
-          ],
+      title: Padding(
+        padding: EdgeInsets.all(8.0.w),
+        child: RichText(
+          text: TextSpan(
+            children: <TextSpan>[
+              TextSpan(
+                  text: 'ZEST+ ',
+                  style: GoogleFonts.poppins(
+                    fontWeight: FontWeight.w700,
+                    fontSize: 25.sp,
+                    color: darkColorScheme.primary,
+                  )),
+              TextSpan(
+                text: 'Social',
+                style: Theme.of(context).textTheme.titleLarge,
+              ),
+            ],
+          ),
         ),
       ),
       elevation: 0,
@@ -97,35 +99,35 @@ class SocialView extends GetView<SocialController> {
           offset: const Offset(0, 10),
           position: PopupMenuPosition.under,
           child: Container(
-            width: 36,
-            height: 36,
-            padding: const EdgeInsets.all(8),
+            width: 36.r,
+            height: 36.r,
+            padding: EdgeInsets.all(8.w),
             decoration: BoxDecoration(
               color: Theme.of(context).colorScheme.outline,
               shape: BoxShape.circle,
             ),
             child: SvgPicture.asset(
               'assets/icons/add.svg',
-              width: 18,
-              height: 18,
+              width: 18.r,
+              height: 18.r,
               fit: BoxFit.cover,
             ),
           ),
         ),
         Padding(
-          padding: const EdgeInsets.only(right: 12, left: 10),
+          padding: EdgeInsets.only(right: 16.w, left: 10.w),
           child: GestureDetector(
             onTap: () => Get.toNamed(AppRoutes.socialSearch),
             child: Container(
-              width: 36,
-              height: 36,
+              width: 36.r,
+              height: 36.r,
               decoration: BoxDecoration(
                 color: Theme.of(context).colorScheme.outline,
                 shape: BoxShape.circle,
               ),
-              child: const Icon(
+              child: Icon(
                 Icons.search,
-                size: 18,
+                size: 18.r,
                 color: Colors.white,
               ),
             ),
@@ -137,8 +139,7 @@ class SocialView extends GetView<SocialController> {
 
   Widget _buildTabBarView(BuildContext context) {
     return Container(
-      padding: const EdgeInsets.symmetric(horizontal: 16),
-      margin: const EdgeInsets.symmetric(horizontal: 3),
+      padding: EdgeInsets.symmetric(horizontal: 16.w),
       child: TabBarView(
         controller: controller.tabBarController,
         children: [
@@ -157,26 +158,26 @@ class SocialView extends GetView<SocialController> {
 
       if (currentTab == 0) {
         indicatorBorderRadius = const BorderRadius.only(
-          topLeft: Radius.circular(11),
-          bottomLeft: Radius.circular(11),
+          topLeft: Radius.circular(8),
+          bottomLeft: Radius.circular(8),
         );
       } else {
         indicatorBorderRadius = const BorderRadius.only(
-          topRight: Radius.circular(11),
-          bottomRight: Radius.circular(11),
+          topRight: Radius.circular(8),
+          bottomRight: Radius.circular(8),
         );
       }
 
       return Container(
-        margin: const EdgeInsets.symmetric(horizontal: 16),
-        height: 38,
+        margin: EdgeInsets.symmetric(horizontal: 16.w),
+        height: 38.h,
         decoration: BoxDecoration(
           border: Border.all(color: Theme.of(context).colorScheme.primary),
-          borderRadius: BorderRadius.circular(16),
+          borderRadius: BorderRadius.circular(11),
           color: Theme.of(context).colorScheme.onPrimary,
         ),
         child: ClipRRect(
-          borderRadius: BorderRadius.circular(15),
+          borderRadius: BorderRadius.circular(10),
           child: TabBar(
             controller: controller.tabBarController,
             indicator: BoxDecoration(

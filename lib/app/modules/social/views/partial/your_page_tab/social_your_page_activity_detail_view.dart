@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
 import 'package:zest_mobile/app/core/shared/widgets/gradient_border_text_field.dart';
 import 'package:zest_mobile/app/core/shared/widgets/shimmer_loading_event.dart';
@@ -14,9 +15,9 @@ class SocialYourPageActivityDetailView extends GetView<PostController> {
       appBar: _buildAppBar(context),
       body: Obx(() {
         if (controller.isLoadingPostDetail.value) {
-          return const Padding(
-            padding: EdgeInsets.all(16.0),
-            child: EventShimmer(),
+          return Padding(
+            padding: EdgeInsets.all(16.0.w),
+            child: const EventShimmer(),
           );
         }
 
@@ -25,6 +26,7 @@ class SocialYourPageActivityDetailView extends GetView<PostController> {
             children: [
               Flexible(
                 child: SingleChildScrollView(
+                  padding: EdgeInsets.symmetric(horizontal: 16.w),
                   child: ActivityDetailCard(
                     postData: controller.postDetail.value,
                   ),
@@ -33,15 +35,14 @@ class SocialYourPageActivityDetailView extends GetView<PostController> {
 
               // Fixed TextField di bawah
               Padding(
-                padding:
-                    const EdgeInsets.symmetric(horizontal: 20, vertical: 12),
+                padding: EdgeInsets.symmetric(horizontal: 16.w, vertical: 12.h),
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     // ⬇ Tampilkan ini saat membalas komentar
                     if (controller.focusedComment.value != null)
                       Padding(
-                        padding: const EdgeInsets.only(bottom: 10),
+                        padding: EdgeInsets.only(bottom: 10.h),
                         child: Row(
                           mainAxisAlignment: MainAxisAlignment.spaceBetween,
                           children: [
@@ -64,7 +65,7 @@ class SocialYourPageActivityDetailView extends GetView<PostController> {
                             ),
                             GestureDetector(
                               onTap: () => controller.deleteReplyToComment(),
-                              child: const Icon(Icons.close, size: 20),
+                              child: Icon(Icons.close, size: 20.r),
                             )
                           ],
                         ),
@@ -106,16 +107,18 @@ class SocialYourPageActivityDetailView extends GetView<PostController> {
         icon: Icon(
           Icons.chevron_left,
           color: Theme.of(context).colorScheme.onBackground,
-          size: 35,
         ),
         onPressed: () => Get.back(),
       ),
-      title: Text(
-        'Post Details',
-        style: Theme.of(context).textTheme.headlineMedium?.copyWith(
-              fontWeight: FontWeight.w600,
-              color: Theme.of(context).colorScheme.onBackground,
-            ),
+      title: Padding(
+        padding: EdgeInsets.all(8.0.w),
+        child: Text(
+          'Post Details',
+          style: Theme.of(context).textTheme.headlineMedium?.copyWith(
+                fontWeight: FontWeight.w600,
+                color: Theme.of(context).colorScheme.onBackground,
+              ),
+        ),
       ),
       centerTitle: true,
       actions: [
@@ -132,10 +135,13 @@ class SocialYourPageActivityDetailView extends GetView<PostController> {
                   isPostDetail: true);
             }
           },
-          icon: Icon(
-            Icons.more_horiz,
-            size: 30,
-            color: Theme.of(context).colorScheme.onBackground,
+          icon: Padding(
+            padding: EdgeInsets.all(8.0.w),
+            child: Icon(
+              Icons.more_horiz,
+              size: 30.r,
+              color: Theme.of(context).colorScheme.onBackground,
+            ),
           ),
           surfaceTintColor: Theme.of(context).colorScheme.onPrimary,
           itemBuilder: (BuildContext context) {

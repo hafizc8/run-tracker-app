@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:get/get.dart';
 import 'package:zest_mobile/app/core/models/model/event_model.dart';
@@ -54,7 +55,7 @@ class SocialForYouView extends GetView<SocialController> {
                 ),
               ],
             ),
-            const SizedBox(height: 24),
+            SizedBox(height: 24.h),
             Obx(() {
               if (eventController.isLoading.value &&
                   eventController.page == 1) {
@@ -107,7 +108,7 @@ class SocialForYouView extends GetView<SocialController> {
                 },
               );
             }),
-            const SizedBox(height: 30),
+            SizedBox(height: 30.h),
           ],
         ),
       ),

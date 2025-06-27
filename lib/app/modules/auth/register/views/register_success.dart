@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
 import 'package:zest_mobile/app/core/shared/widgets/gradient_elevated_button.dart';
 import 'package:zest_mobile/app/routes/app_routes.dart';
@@ -10,7 +11,7 @@ class RegisterSuccessView extends StatelessWidget {
     return Scaffold(
       body: Center(
         child: Padding(
-          padding: const EdgeInsets.symmetric(horizontal: 16),
+          padding: EdgeInsets.symmetric(horizontal: 16.w),
           child: Column(
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
@@ -19,17 +20,20 @@ class RegisterSuccessView extends StatelessWidget {
                 style: Theme.of(context).textTheme.headlineMedium,
                 textAlign: TextAlign.center,
               ),
-              const SizedBox(height: 16),
+              SizedBox(height: 16.h),
               Text(
                 'Welcome to the squad! Time to move, earn rewards, and have some fun.',
                 style: Theme.of(context).textTheme.bodyMedium!.copyWith(
                     color: Theme.of(context).colorScheme.onBackground),
                 textAlign: TextAlign.center,
               ),
-              const SizedBox(height: 16),
+              SizedBox(height: 16.h),
               GradientElevatedButton(
                 onPressed: () => Get.offAllNamed(AppRoutes.mainHome),
-                child: const Text('Let’s Go!'),
+                child: Text(
+                  'Let’s Go!',
+                  style: Theme.of(context).textTheme.labelMedium,
+                ),
               ),
             ],
           ),

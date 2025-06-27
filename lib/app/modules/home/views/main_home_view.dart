@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:get/get.dart';
 import 'package:google_fonts/google_fonts.dart';
@@ -40,7 +41,7 @@ class MainHomeView extends GetView<MainHomeController> {
         child: SvgPicture.asset(
           svgPath,
           colorFilter: const ColorFilter.mode(Colors.white, BlendMode.srcIn),
-          width: 28,
+          width: 28.w,
         ),
       );
     } else {
@@ -50,7 +51,7 @@ class MainHomeView extends GetView<MainHomeController> {
           inactiveColor,
           BlendMode.srcIn,
         ),
-        width: 28,
+        width: 28.w,
       );
     }
 
@@ -67,8 +68,8 @@ class MainHomeView extends GetView<MainHomeController> {
 
   Widget _buildStartButton(BuildContext context) {
     return SizedBox(
-      height: MainHomeView._startButtonDiameter,
-      width: MainHomeView._startButtonDiameter,
+      height: MainHomeView._startButtonDiameter.r,
+      width: MainHomeView._startButtonDiameter.r,
       child: GestureDetector(
         onTap: () {
           Get.toNamed(AppRoutes.activityStart);
@@ -93,7 +94,7 @@ class MainHomeView extends GetView<MainHomeController> {
                   style: GoogleFonts.poppins(
                     fontWeight: FontWeight.w900,
                     fontStyle: FontStyle.italic,
-                    fontSize: 18,
+                    fontSize: 18.sp,
                     color: darkColorScheme.onPrimary,
                   ),
                 ),
@@ -107,7 +108,7 @@ class MainHomeView extends GetView<MainHomeController> {
 
   @override
   Widget build(BuildContext context) {
-    const double bottomBarHeight = 65.0;
+    final double bottomBarHeight = 65.0.h;
     // Menggunakan _startButtonDiameter yang sudah didefinisikan di atas
     // untuk konsistensi pada spacer dan kalkulasi posisi.
 

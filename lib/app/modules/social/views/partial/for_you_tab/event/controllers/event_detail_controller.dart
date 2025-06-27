@@ -139,9 +139,10 @@ class EventDetailController extends GetxController {
   Future<void> accLeaveJoinEvent(String id, {String? leave}) async {
     isLoadingAction.value = true;
     try {
-      final bool res = await _eventService.accLeaveJoinEvent(id, leave: leave);
+      EventUserModel? res =
+          await _eventService.accLeaveJoinEvent(id, leave: leave);
 
-      if (res) {
+      if (res != null) {
         Get.back();
         await refreshUsersOnEvent();
 

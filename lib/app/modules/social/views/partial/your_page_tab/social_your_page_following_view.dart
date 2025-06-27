@@ -1,5 +1,6 @@
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:get/get.dart';
 import 'package:zest_mobile/app/core/models/model/user_mini_model.dart';
@@ -34,7 +35,7 @@ class SocialYourPageFollowingView extends GetView<SocialFollowingController> {
             ),
           ),
         ),
-        const SizedBox(height: 16),
+        SizedBox(height: 16.h),
         Row(
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
           children: [
@@ -56,11 +57,11 @@ class SocialYourPageFollowingView extends GetView<SocialFollowingController> {
             ),
           ],
         ),
-        const SizedBox(height: 16),
+        SizedBox(height: 16.h),
         Obx(() {
           if (controller.resultSearchEmpty.value) {
             return Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 16),
+              padding: EdgeInsets.symmetric(horizontal: 16.w),
               child: Text(
                 'No result for “${controller.search.value}”',
                 style: Theme.of(context).textTheme.bodyMedium?.copyWith(
@@ -73,7 +74,7 @@ class SocialYourPageFollowingView extends GetView<SocialFollowingController> {
           if (controller.isLoading.value && controller.pageFriend == 1) {
             return Center(
               child: Container(
-                margin: const EdgeInsets.symmetric(vertical: 10),
+                margin: EdgeInsets.symmetric(vertical: 10.h),
                 child: const CircularProgressIndicator(),
               ),
             );
@@ -97,7 +98,7 @@ class SocialYourPageFollowingView extends GetView<SocialFollowingController> {
               if (index == controller.friends.length) {
                 return Center(
                   child: Container(
-                    margin: const EdgeInsets.symmetric(vertical: 10),
+                    margin: EdgeInsets.symmetric(vertical: 10.h),
                     child: const CircularProgressIndicator(),
                   ),
                 );
@@ -108,7 +109,7 @@ class SocialYourPageFollowingView extends GetView<SocialFollowingController> {
                 mainAxisSize: MainAxisSize.min,
                 children: [
                   _buildFollowingListItem(context, user),
-                  const SizedBox(height: 15),
+                  SizedBox(height: 15.h),
                 ],
               );
             },
@@ -125,19 +126,21 @@ class SocialYourPageFollowingView extends GetView<SocialFollowingController> {
       leading: ClipOval(
         child: CachedNetworkImage(
           imageUrl: user.imageUrl ?? '',
-          width: 35,
-          height: 35,
+          width: 35.r,
+          height: 35.r,
           fit: BoxFit.cover,
-          placeholder: (context, url) => const ShimmerLoadingCircle(size: 35),
-          errorWidget: (context, url, error) => const CircleAvatar(
-            radius: 35,
-            backgroundImage: AssetImage('assets/images/empty_profile.png'),
+          placeholder: (context, url) => ShimmerLoadingCircle(size: 35.r),
+          errorWidget: (context, url, error) => CircleAvatar(
+            radius: 35.r,
+            backgroundImage:
+                const AssetImage('assets/images/empty_profile.png'),
           ),
         ),
       ),
       title: Text(
         user.name,
-        style: Theme.of(context).textTheme.bodyMedium?.copyWith(fontSize: 12),
+        style:
+            Theme.of(context).textTheme.bodyMedium?.copyWith(fontSize: 12.sp),
       ),
       trailing: Row(
         mainAxisSize: MainAxisSize.min,
@@ -168,7 +171,7 @@ class SocialYourPageFollowingView extends GetView<SocialFollowingController> {
             visible: user.isFollowing == 1,
             child: Row(
               children: [
-                const SizedBox(width: 16),
+                SizedBox(width: 16.w),
                 PopupMenuButton<String>(
                   onSelected: (value) async {
                     // Handle the selection
@@ -202,7 +205,7 @@ class SocialYourPageFollowingView extends GetView<SocialFollowingController> {
                   },
                   child: Icon(
                     Icons.more_vert,
-                    size: 22,
+                    size: 22.r,
                     color: Theme.of(context).colorScheme.onBackground,
                   ),
                 ),

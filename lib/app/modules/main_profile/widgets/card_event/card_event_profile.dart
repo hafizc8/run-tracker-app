@@ -1,5 +1,6 @@
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:get/get.dart';
 import 'package:intl/intl.dart';
@@ -35,12 +36,12 @@ class EventCard extends StatelessWidget {
       onTap: onTap,
       borderRadius: BorderRadius.circular(10),
       child: Container(
-        margin: const EdgeInsets.symmetric(vertical: 10, horizontal: 3),
+        margin: EdgeInsets.symmetric(vertical: 10.h, horizontal: 3.w),
         decoration: BoxDecoration(
           color: backgroundColor,
-          borderRadius: BorderRadius.circular(12),
+          borderRadius: BorderRadius.circular(12.r),
         ),
-        padding: const EdgeInsets.all(16),
+        padding: EdgeInsets.all(16.r),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           mainAxisSize: MainAxisSize.min,
@@ -56,9 +57,9 @@ class EventCard extends StatelessWidget {
                     fit: BoxFit.cover,
                     errorBuilder: (context, error, stackTrace) => Container(
                       color: Colors.grey.shade800,
-                      child: const Center(
+                      child: Center(
                         child: Icon(Icons.broken_image,
-                            size: 64, color: Colors.grey),
+                            size: 64.r, color: Colors.grey),
                       ),
                     ),
                     loadingBuilder: (context, child, loadingProgress) {
@@ -79,37 +80,39 @@ class EventCard extends StatelessWidget {
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
                 Container(
-                  padding: const EdgeInsets.all(2), // Lebar border
+                  padding: EdgeInsets.all(2.w), // Lebar border
                   decoration: BoxDecoration(
                     gradient: const LinearGradient(
                       colors: [Color(0xFFA2FF00), Color(0xFF00FF7F)],
                       begin: Alignment.centerLeft,
                       end: Alignment.centerRight,
                     ),
-                    borderRadius: BorderRadius.circular(12),
+                    borderRadius: BorderRadius.circular(12.r),
                   ),
                   child: Container(
-                    padding:
-                        const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
+                    padding: EdgeInsets.symmetric(
+                      horizontal: 12.w,
+                      vertical: 6.r,
+                    ),
                     decoration: BoxDecoration(
                       color: Theme.of(context).colorScheme.background,
-                      borderRadius: BorderRadius.circular(10),
+                      borderRadius: BorderRadius.circular(10.r),
                     ),
                     child: Row(
                       children: [
                         CachedNetworkImage(
                           imageUrl: eventModel?.activityImageUrl ?? '',
-                          width: 13,
-                          height: 13,
+                          width: 13.r,
+                          height: 13.r,
                           fit: BoxFit.cover,
                           placeholder: (context, url) =>
-                              const ShimmerLoadingCircle(size: 13),
-                          errorWidget: (context, url, error) => const Icon(
-                            size: 13,
+                              ShimmerLoadingCircle(size: 13.r),
+                          errorWidget: (context, url, error) => Icon(
+                            size: 13.r,
                             Icons.error,
                           ),
                         ),
-                        const SizedBox(width: 8),
+                        SizedBox(width: 8.w),
                         Text(
                           eventModel?.activity ?? '-',
                           style: Theme.of(context)
@@ -129,11 +132,11 @@ class EventCard extends StatelessWidget {
                       child: SvgPicture.asset(
                         'assets/icons/share.svg',
                         color: Theme.of(context).colorScheme.primary,
-                        height: 22,
-                        width: 27,
+                        height: 22.h,
+                        width: 27.w,
                       ),
                     ),
-                    const SizedBox(width: 16),
+                    SizedBox(width: 16.w),
                     Visibility(
                       visible: eventModel?.isOwner == 1 &&
                           (eventModel?.datetime ?? DateTime.now())
@@ -192,7 +195,7 @@ class EventCard extends StatelessWidget {
                         },
                         child: Icon(
                           Icons.more_vert,
-                          size: 27,
+                          size: 27.r,
                           color: Theme.of(context).colorScheme.primary,
                         ),
                       ),
@@ -201,17 +204,17 @@ class EventCard extends StatelessWidget {
                 ),
               ],
             ),
-            const SizedBox(height: 16),
+            SizedBox(height: 16.h),
             // title text
             Text(
               eventModel?.title ?? '-',
               style: Theme.of(context).textTheme.bodyMedium?.copyWith(
                     fontWeight: FontWeight.w600,
-                    fontSize: 17,
+                    fontSize: 17.sp,
                     color: Theme.of(context).colorScheme.primary,
                   ),
             ),
-            const SizedBox(height: 16),
+            SizedBox(height: 16.h),
 
             ParticipantsAvatars(
               imageUrls: eventModel?.userOnEvents
@@ -222,7 +225,7 @@ class EventCard extends StatelessWidget {
               overlapOffset: 32,
               maxVisible: 3,
             ),
-            const SizedBox(height: 8),
+            SizedBox(height: 8.h),
             Text(
               "${eventModel?.userOnEventsCount ?? 0} / ${eventModel?.quota} are Going",
               style: Theme.of(context)
@@ -230,7 +233,7 @@ class EventCard extends StatelessWidget {
                   .bodyMedium
                   ?.copyWith(fontWeight: FontWeight.w600),
             ),
-            const SizedBox(height: 16),
+            SizedBox(height: 16.h),
             Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
@@ -238,14 +241,14 @@ class EventCard extends StatelessWidget {
                   context,
                   icon: SvgPicture.asset(
                     'assets/icons/calendar.svg',
-                    height: 22,
-                    width: 27,
+                    height: 22.h,
+                    width: 27.w,
                   ),
                   title: 'Date & Time',
                   subtitle:
                       '${DateFormat('d MMM yyyy').format(eventModel!.datetime!)}, ${eventModel?.startTime != null ? profileController.formatTime(eventModel!.startTime!) : 'Start'}–${eventModel?.endTime != null ? profileController.formatTime(eventModel!.endTime!) : 'Finish'}',
                 ),
-                const SizedBox(height: 12),
+                SizedBox(height: 12.h),
                 GestureDetector(
                   onTap: () => profileController.openGoogleMaps(
                       eventModel?.placeName ?? eventModel?.address ?? '-'),
@@ -253,21 +256,21 @@ class EventCard extends StatelessWidget {
                     context,
                     icon: SvgPicture.asset(
                       'assets/icons/pin_location.svg',
-                      height: 22,
-                      width: 27,
+                      height: 22.h,
+                      width: 27.w,
                     ),
                     title: 'Location',
                     subtitle:
                         eventModel?.placeName ?? eventModel?.address ?? '-',
                   ),
                 ),
-                const SizedBox(height: 16),
+                SizedBox(height: 16.h),
                 _buildInfoItem(
                   context,
                   icon: SvgPicture.asset(
                     'assets/icons/dollar.svg',
-                    height: 22,
-                    width: 27,
+                    height: 22.h,
+                    width: 27.w,
                   ),
                   title: 'Fee',
                   subtitle:
@@ -275,7 +278,7 @@ class EventCard extends StatelessWidget {
                 ),
               ],
             ),
-            const SizedBox(height: 15),
+            SizedBox(height: 15.h),
 
             if (eventModel?.cancelledAt != null) ...[
               GradientElevatedButton(
@@ -302,7 +305,7 @@ class EventCard extends StatelessWidget {
                 child: Text(
                   (eventModel?.isJoined ?? 0).toEventStatus,
                   style: Theme.of(context).textTheme.labelMedium?.copyWith(
-                        fontSize: 13,
+                        fontSize: 13.sp,
                         fontWeight: FontWeight.bold,
                       ),
                 ),
@@ -323,7 +326,7 @@ class EventCard extends StatelessWidget {
     return Row(
       children: [
         icon,
-        const SizedBox(width: 8),
+        SizedBox(width: 8.w),
         Expanded(
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
@@ -333,7 +336,7 @@ class EventCard extends StatelessWidget {
                 style: Theme.of(context).textTheme.bodyMedium?.copyWith(
                       fontWeight: FontWeight.w400,
                       color: Theme.of(context).colorScheme.secondary,
-                      fontSize: 12,
+                      fontSize: 12.sp,
                     ),
                 maxLines: 1,
                 overflow: TextOverflow.ellipsis,
@@ -343,7 +346,7 @@ class EventCard extends StatelessWidget {
                 style: Theme.of(context).textTheme.bodyMedium?.copyWith(
                       fontWeight: FontWeight.w400,
                       color: Theme.of(context).colorScheme.onBackground,
-                      fontSize: 12,
+                      fontSize: 12.sp,
                     ),
                 maxLines: 1,
                 overflow: TextOverflow.ellipsis,

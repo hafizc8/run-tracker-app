@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
 import 'package:zest_mobile/app/core/shared/theme/elevated_btn_theme.dart';
 import 'package:zest_mobile/app/core/shared/widgets/shimmer_loading_list.dart';
@@ -16,26 +17,25 @@ class SocialYourPageUpdatesView extends GetView<SocialController> {
   Widget build(BuildContext context) {
     return Column(
       children: [
-        Obx(
-          () {
-            if (postController.isLoadingCreatePost.value) {
-              return const LoadingCreatePost();
-            }
-    
-            return _buildActivityPrompt(context);
-          }
-        ),
-        const SizedBox(height: 10),
         Obx(() {
-          if (postController.isLoadingGetAllPost.value && postController.pagePost == 1) {
+          if (postController.isLoadingCreatePost.value) {
+            return const LoadingCreatePost();
+          }
+
+          return _buildActivityPrompt(context);
+        }),
+        SizedBox(height: 10.h),
+        Obx(() {
+          if (postController.isLoadingGetAllPost.value &&
+              postController.pagePost == 1) {
             return const ShimmerLoadingList(
               itemCount: 5,
               itemHeight: 120,
               itemSpacing: 15,
-              padding: EdgeInsets.all(0),
+              padding: EdgeInsets.zero,
             );
           }
-        
+
           if (postController.posts.isEmpty) {
             return Center(
               child: Text(
@@ -44,22 +44,24 @@ class SocialYourPageUpdatesView extends GetView<SocialController> {
               ),
             );
           }
-        
+
           return ListView.builder(
             shrinkWrap: true,
             physics: const NeverScrollableScrollPhysics(),
-            itemCount: postController.posts.length + (postController.hasReacheMax.value ? 0 : 1),
+            itemCount: postController.posts.length +
+                (postController.hasReacheMax.value ? 0 : 1),
             itemBuilder: (context, index) {
               if (index == postController.posts.length) {
-                return const Padding(
-                  padding: EdgeInsets.symmetric(vertical: 10),
-                  child: Center(child: CircularProgressIndicator()),
+                return Padding(
+                  padding: EdgeInsets.symmetric(vertical: 10.h),
+                  child: const Center(child: CircularProgressIndicator()),
                 );
               }
-          
+
               return ActivityCard(
                 postData: postController.posts[index]!,
-                onTap: () => postController.goToDetail(postId: postController.posts[index]!.id!),
+                onTap: () => postController.goToDetail(
+                    postId: postController.posts[index]!.id!),
               );
             },
           );
@@ -73,18 +75,21 @@ class SocialYourPageUpdatesView extends GetView<SocialController> {
       onTap: () {
         postController.openCreatePostDialog();
       },
-      borderRadius: BorderRadius.circular(12),
+      borderRadius: BorderRadius.circular(12.r),
       child: Ink(
         decoration: BoxDecoration(
           gradient: kAppDefaultButtonGradient,
-          borderRadius: BorderRadius.circular(12),
+          borderRadius: BorderRadius.circular(12.r),
         ),
         child: Container(
-          padding: const EdgeInsets.all(12),
+          padding: EdgeInsets.all(12.w),
           child: Center(
             child: Text(
               'Share your today’s vibe!',
-              style: Theme.of(context).textTheme.labelMedium?.copyWith(fontSize: 14),
+              style: Theme.of(context)
+                  .textTheme
+                  .labelMedium
+                  ?.copyWith(fontSize: 14.sp),
             ),
           ),
         ),

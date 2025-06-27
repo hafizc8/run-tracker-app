@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
 import 'package:zest_mobile/app/core/shared/widgets/custom_circular_progress_indicator.dart';
 import 'package:zest_mobile/app/core/shared/widgets/gradient_elevated_button.dart';
@@ -24,13 +25,13 @@ class ConfirmationDialog extends GetView<EventController> {
   Widget build(BuildContext context) {
     return Dialog(
       surfaceTintColor: Theme.of(context).colorScheme.onPrimary,
-      insetPadding: const EdgeInsets.all(32),
+      insetPadding: EdgeInsets.all(32.w),
       shape: RoundedRectangleBorder(
-        borderRadius: BorderRadius.circular(15),
+        borderRadius: BorderRadius.circular(15.r),
       ),
       child: Container(
         decoration: BoxDecoration(
-          borderRadius: BorderRadius.circular(15),
+          borderRadius: BorderRadius.circular(15.r),
           gradient: const LinearGradient(
             colors: [Color(0xFFA2FF00), Color(0xFF00FF7F)],
             begin: Alignment.topCenter,
@@ -38,15 +39,15 @@ class ConfirmationDialog extends GetView<EventController> {
           ),
         ),
         child: Container(
-          margin: const EdgeInsets.all(2),
-          padding: const EdgeInsets.symmetric(
-            horizontal: 24,
-            vertical: 24,
+          margin: EdgeInsets.all(2.w),
+          padding: EdgeInsets.symmetric(
+            horizontal: 24.w,
+            vertical: 24.h,
           ),
           width: double.infinity,
           decoration: BoxDecoration(
             color: Theme.of(context).colorScheme.onPrimary,
-            borderRadius: BorderRadius.circular(14),
+            borderRadius: BorderRadius.circular(14.r),
           ),
           child: Column(
             mainAxisSize: MainAxisSize.min,
@@ -67,14 +68,14 @@ class ConfirmationDialog extends GetView<EventController> {
                   ),
                   child: Text(
                     title,
-                    style: const TextStyle(
-                      fontSize: 17,
+                    style: TextStyle(
+                      fontSize: 17.sp,
                       fontWeight: FontWeight.w700,
                     ),
                   ),
                 ),
               ),
-              const SizedBox(height: 10),
+              SizedBox(height: 10.h),
               Text(
                 subtitle,
                 textAlign: TextAlign.center,
@@ -82,14 +83,14 @@ class ConfirmationDialog extends GetView<EventController> {
                       fontWeight: FontWeight.w400,
                     ),
               ),
-              const SizedBox(height: 30),
+              SizedBox(height: 30.h),
 
               // Buttons
               Row(
                 children: [
                   Expanded(
                     child: SizedBox(
-                      height: 50,
+                      height: 50.h,
                       child: GradientOutlinedButton(
                         style: ButtonStyle(
                           shape: MaterialStateProperty.all(
@@ -106,11 +107,11 @@ class ConfirmationDialog extends GetView<EventController> {
                       ),
                     ),
                   ),
-                  const SizedBox(width: 16),
+                  SizedBox(width: 16.w),
                   Expanded(
                     flex: 2,
                     child: SizedBox(
-                      height: 50,
+                      height: 50.h,
                       child: GradientElevatedButton(
                         style: ButtonStyle(
                           padding: MaterialStateProperty.all(

@@ -1,5 +1,6 @@
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:get/get.dart';
 import 'package:zest_mobile/app/core/models/model/user_mini_model.dart';
@@ -32,7 +33,7 @@ class SocialYourPageFollowersView extends GetView<SocialFollowersController> {
             ),
           ),
         ),
-        const SizedBox(height: 16),
+        SizedBox(height: 16.h),
         Row(
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
           children: [
@@ -54,11 +55,11 @@ class SocialYourPageFollowersView extends GetView<SocialFollowersController> {
             ),
           ],
         ),
-        const SizedBox(height: 16),
+        SizedBox(height: 16.h),
         Obx(() {
           if (controller.resultSearchEmpty.value) {
             return Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 16),
+              padding: EdgeInsets.symmetric(horizontal: 16.h),
               child: Text(
                 'No result for “${controller.search.value}”',
                 style: Theme.of(context).textTheme.bodyMedium?.copyWith(
@@ -71,7 +72,7 @@ class SocialYourPageFollowersView extends GetView<SocialFollowersController> {
           if (controller.isLoading.value && controller.pageFriend == 1) {
             return Center(
               child: Container(
-                margin: const EdgeInsets.symmetric(vertical: 10),
+                margin: EdgeInsets.symmetric(vertical: 10.h),
                 child: const CircularProgressIndicator(),
               ),
             );
@@ -94,7 +95,7 @@ class SocialYourPageFollowersView extends GetView<SocialFollowersController> {
               if (index == controller.friends.length) {
                 return Center(
                   child: Container(
-                    margin: const EdgeInsets.symmetric(vertical: 10),
+                    margin: EdgeInsets.symmetric(vertical: 10.h),
                     child: const CircularProgressIndicator(),
                   ),
                 );
@@ -104,7 +105,7 @@ class SocialYourPageFollowersView extends GetView<SocialFollowersController> {
               return Column(
                 children: [
                   _buildFollowersListItem(context, user),
-                  const SizedBox(height: 15),
+                  SizedBox(height: 15.h),
                 ],
               );
             },
@@ -121,13 +122,14 @@ class SocialYourPageFollowersView extends GetView<SocialFollowersController> {
       leading: ClipOval(
         child: CachedNetworkImage(
           imageUrl: user.imageUrl ?? '',
-          width: 37,
-          height: 37,
+          width: 37.r,
+          height: 37.r,
           fit: BoxFit.cover,
-          placeholder: (context, url) => const ShimmerLoadingCircle(size: 37),
-          errorWidget: (context, url, error) => const CircleAvatar(
-            radius: 37,
-            backgroundImage: AssetImage('assets/images/empty_profile.png'),
+          placeholder: (context, url) => ShimmerLoadingCircle(size: 37.r),
+          errorWidget: (context, url, error) => CircleAvatar(
+            radius: 37.r,
+            backgroundImage:
+                const AssetImage('assets/images/empty_profile.png'),
           ),
         ),
       ),
@@ -169,7 +171,7 @@ class SocialYourPageFollowersView extends GetView<SocialFollowersController> {
             visible: user.isFollowing == 1,
             child: Row(
               children: [
-                const SizedBox(width: 16),
+                SizedBox(width: 16.w),
                 PopupMenuButton<String>(
                   onSelected: (value) async {
                     // Handle the selection
@@ -205,7 +207,7 @@ class SocialYourPageFollowersView extends GetView<SocialFollowersController> {
                   },
                   child: Icon(
                     Icons.more_vert,
-                    size: 22,
+                    size: 22.r,
                     color: Theme.of(context).colorScheme.onBackground,
                   ),
                 ),

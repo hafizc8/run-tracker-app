@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_screenutil/flutter_screenutil.dart';
 
 import 'package:get/get.dart';
 
@@ -11,7 +12,7 @@ class RegisterVerifyEmailView extends GetView<RegisterVerifyEmailController> {
     return Scaffold(
       body: Center(
         child: Padding(
-          padding: const EdgeInsets.symmetric(horizontal: 16),
+          padding: EdgeInsets.symmetric(horizontal: 16.w),
           child: Column(
             mainAxisAlignment: MainAxisAlignment.center,
             crossAxisAlignment: CrossAxisAlignment.start,
@@ -20,7 +21,7 @@ class RegisterVerifyEmailView extends GetView<RegisterVerifyEmailController> {
                 'Verify your email address',
                 style: Theme.of(context).textTheme.headlineMedium,
               ),
-              const SizedBox(height: 12),
+              SizedBox(height: 12.h),
               RichText(
                 text: TextSpan(
                   text: 'We have sent a verification link to ',
@@ -36,12 +37,12 @@ class RegisterVerifyEmailView extends GetView<RegisterVerifyEmailController> {
                   ],
                 ),
               ),
-              const SizedBox(height: 24),
+              SizedBox(height: 24.h),
               Text(
                 'Click on the link to complete the verification process. You might need to check your spam folder.',
                 style: Theme.of(context).textTheme.bodyMedium,
               ),
-              const SizedBox(height: 12),
+              SizedBox(height: 12.h),
               Obx(
                 () => ElevatedButton(
                   onPressed: controller.canResend.value
@@ -57,7 +58,10 @@ class RegisterVerifyEmailView extends GetView<RegisterVerifyEmailController> {
                       replacement: Text(
                         'Resend Email in ${controller.resendCooldown.value}s',
                       ),
-                      child: const Text('Resend Email'),
+                      child: Text(
+                        'Resend Email',
+                        style: Theme.of(context).textTheme.bodyMedium,
+                      ),
                     ),
                   ),
                 ),

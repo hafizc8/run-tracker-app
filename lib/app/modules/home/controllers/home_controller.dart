@@ -3,7 +3,6 @@ import 'dart:math';
 import 'package:collection/collection.dart';
 import 'package:firebase_crashlytics/firebase_crashlytics.dart';
 import 'package:flutter/foundation.dart';
-import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:get_storage/get_storage.dart';
 import 'package:intl/intl.dart';
@@ -54,7 +53,7 @@ class HomeController extends GetxController {
     // 2. Inisialisasi sensor
     _initPedometerAndValidator();
     // 3. Muat data pengguna
-    _waitForUser();
+    await _loadMe();
     // 4. Atur listener untuk menyimpan data secara otomatis setiap kali ada perubahan
     ever(_validatedSteps, (_) => _saveDataToStorage());
   }
@@ -209,75 +208,19 @@ class HomeController extends GetxController {
 
   double get progressValue => (validatedSteps / (user?.userPreference?.dailyStepGoals ?? 0)).clamp(0.0, 1.0);
 
-  void _waitForUser() async {
-    await Future.delayed(const Duration(seconds: 1));
+  Future<void> _loadMe() async {
+    isLoadingGetUserData.value = true;
 
-    // Check immediately when the controller starts.
-    if (_authService.user != null) {
+    try {
+      final user = await sl<AuthService>().me();
+    } catch (e) {
+      rethrow;
+    } finally {
       isLoadingGetUserData.value = false;
-      print("User found immediately in storage.");
-    } else {
-      print("User not found. Waiting for other services to load...");
-
-      await Future.delayed(const Duration(milliseconds: 500));
-      
-      // After the delay, check one more time.
-      if (_authService.user != null) {
-        isLoadingGetUserData.value = false;
-        print("User found after delay.");
-      } else {
-        isLoadingGetUserData.value = false;
-        _error.value = "User session could not be loaded.";
-        print("User still not found. Stopping loading state.");
-      }
-      
-      // Manually trigger a UI update to be safe.
-      update();
     }
   }
 
-
-
-
-
-
-  // For icon streak
-  final iconPosition = const Offset(20, 100).obs;
-
-  final double iconSize = 26.0;
-  final double margin = 18.0;
-
-  // Method untuk memperbarui posisi ikon saat digeser
-  void updateIconPosition(DragUpdateDetails details, BuildContext context) {
-    final screenSize = MediaQuery.of(context).size;
-    final safeArea = MediaQuery.of(context).padding;
-
-    double newDx = iconPosition.value.dx + details.delta.dx;
-    double newDy = iconPosition.value.dy + details.delta.dy;
-
-    // Batasi gerakan agar tidak keluar dari layar (Clamping)
-    newDx = newDx.clamp(margin, screenSize.width - iconSize - margin);
-    newDy = newDy.clamp(
-      safeArea.top + margin, // Mulai dari bawah AppBar/Notch
-      screenSize.height - iconSize - margin - safeArea.bottom,
-    );
-    
-    // Perbarui nilai .value dari Rx<Offset>
-    iconPosition.value = Offset(newDx, newDy);
-  }
-
-  // Method untuk menempelkan ikon ke tepi saat geseran selesai
-  void snapIconToEdge(BuildContext context) {
-    final screenSize = MediaQuery.of(context).size;
-    double currentDx = iconPosition.value.dx;
-    double currentDy = iconPosition.value.dy;
-
-    if (currentDx < (screenSize.width - iconSize) / 2) {
-      // Jika lebih dekat ke kiri, tempelkan ke kiri
-      iconPosition.value = Offset(margin, currentDy);
-    } else {
-      // Jika lebih dekat ke kanan, tempelkan ke kanan
-      iconPosition.value = Offset(screenSize.width - iconSize - margin, currentDy);
-    }
+  Future<void> refreshData() async {
+    await _loadMe();
   }
 }

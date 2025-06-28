@@ -220,7 +220,7 @@ class RecordActivityController extends GetxController {
       var response = await _recordActivityService.createSession(
         latitude: startPosition.latitude,
         longitude: startPosition.longitude,
-        // stamina: staminaToUse, // TODO: Will be actived when BE is ready
+        stamina: staminaToUse,
       );
       _recordActivityId = response['id'];
     } catch (e, s) {
@@ -425,7 +425,7 @@ class RecordActivityController extends GetxController {
 
     _staminaTimer = Timer.periodic(const Duration(seconds: 1), (timer) {
       // Countdown hanya berjalan jika tracking aktif dan tidak di-pause
-      if (!isTracking.value || isPaused.value) return;
+      if (!isTracking.value) return;
 
       // Selalu kurangi total sisa waktu
       staminaTotalTimeRemainingInSeconds.value--;

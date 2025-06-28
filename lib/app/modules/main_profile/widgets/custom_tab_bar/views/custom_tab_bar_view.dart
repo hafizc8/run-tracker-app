@@ -13,7 +13,7 @@ import 'package:zest_mobile/app/routes/app_routes.dart';
 class CustomTabBar extends GetView<TabBarController> {
   CustomTabBar({super.key});
 
-  final List<String> tabs = ['Overview', 'Challenges', 'Events'];
+  final List<String> tabs = ['Overview', 'Challenge', 'Events'];
 
   final ProfileMainController profileController = Get.find();
   @override
@@ -40,11 +40,14 @@ class CustomTabBar extends GetView<TabBarController> {
                       tabs[index],
                       textAlign: TextAlign.center,
                       style: Theme.of(context).textTheme.bodyMedium?.copyWith(
-                            color: isSelected
-                                ? Theme.of(context).colorScheme.primary
-                                : Theme.of(context).colorScheme.onBackground,
-                            fontWeight: FontWeight.bold,
-                          ),
+                        color: isSelected
+                            ? Theme.of(context).colorScheme.primary
+                            : Theme.of(context).colorScheme.onBackground,
+                        fontWeight: FontWeight.bold,
+                        fontSize: 12.sp
+                      ),
+                      maxLines:1,
+                      overflow: TextOverflow.ellipsis
                     ),
                   ),
                 ),

@@ -554,7 +554,7 @@ class SocialSearchView extends GetView<SocialSearchController> {
                       );
                     }
                     return SizedBox(
-                      height: 210.h,
+                      height: 190.w,
                       child: ListView.separated(
                         scrollDirection: Axis.horizontal,
                         itemCount: controller.clubMayYouKnow.length,
@@ -592,6 +592,9 @@ class SocialSearchView extends GetView<SocialSearchController> {
                     ),
                   ),
                   Obx(() {
+                    final double cardWidth = 177.w;
+                    final double cardHeight = 240.w;
+
                     return GridView.builder(
                       padding: EdgeInsets.only(
                         bottom: 16.h,
@@ -600,24 +603,26 @@ class SocialSearchView extends GetView<SocialSearchController> {
                       ),
                       shrinkWrap: true,
                       physics: const NeverScrollableScrollPhysics(),
-                      gridDelegate:
-                          const SliverGridDelegateWithFixedCrossAxisCount(
-                        crossAxisCount: 2,
-                        mainAxisSpacing: 10,
-                        crossAxisSpacing: 10,
-                        childAspectRatio: 0.80,
+                      gridDelegate: SliverGridDelegateWithMaxCrossAxisExtent(
+                        // Setiap item boleh memiliki lebar maksimal 180.w
+                        // Flutter akan menyesuaikan jumlah kolomnya
+                        maxCrossAxisExtent: 250.w, 
+                        mainAxisSpacing: 15.h,
+                        crossAxisSpacing: 15.w,
+                        // Anda tetap perlu rasio aspek, tapi kini lebih konsisten
+                        // karena lebarnya tidak akan terlalu ekstrem.
+                        childAspectRatio: cardWidth / cardHeight,
                       ),
                       itemCount: controller.clubExplore.length,
                       itemBuilder: (context, index) {
                         ClubModel club = controller.clubExplore[index];
 
                         return InkWell(
-                          onTap: () => Get.toNamed(AppRoutes.previewClub,
-                              arguments: club.id),
+                          onTap: () => Get.toNamed(AppRoutes.previewClub, arguments: club.id),
                           child: SearchClubCard(
                             club: club,
-                            cardWidth: double.infinity,
-                            cardHeight: 200,
+                            cardWidth: cardWidth,
+                            cardHeight: cardHeight,
                             showDescription: true,
                           ),
                         );

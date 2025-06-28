@@ -77,7 +77,8 @@ void onStart(ServiceInstance service) async {
         lastPoint.latitude, lastPoint.longitude,
         newPoint.latitude, newPoint.longitude,
       );
-      if (distance > 0 && distance < 30) {
+      
+      if (distance > 0) {
         currentDistanceInMeters += distance;
       }
     }

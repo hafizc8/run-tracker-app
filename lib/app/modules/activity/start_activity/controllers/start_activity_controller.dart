@@ -16,10 +16,13 @@ class StartActivityController extends GetxController {
   final AuthService _authService = sl<AuthService>();
   UserModel? get user => _authService.user;
 
+  RxBool isLoadingGetUserData = false.obs;
+
   @override
   void onInit() {
     super.onInit();
     setCurrentLocation();
+    _loadMe();
   }
 
   Future<void> setCurrentLocation() async {
@@ -46,5 +49,24 @@ class StartActivityController extends GetxController {
       return false;
     }
     return true;
+  }
+
+  Future<void> _loadMe() async {
+    isLoadingGetUserData.value = true;
+
+    try {
+      final user = await sl<AuthService>().me();
+    } catch (e) {
+      rethrow;
+    } finally {
+      isLoadingGetUserData.value = false;
+    }
+  }
+
+  String get formattedStaminaTime {
+    int staminaTotalTimeRemainingInSeconds = (user?.currentUserStamina?.currentAmount ?? 0) * 3 * 60;
+    final int minutes = staminaTotalTimeRemainingInSeconds ~/ 60;
+    final int seconds = staminaTotalTimeRemainingInSeconds % 60;
+    return "${minutes.toString().padLeft(2, '0')}:${seconds.toString().padLeft(2, '0')}";
   }
 }

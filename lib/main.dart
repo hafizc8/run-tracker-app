@@ -1,3 +1,5 @@
+import 'package:device_preview/device_preview.dart';
+
 import 'app/app.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:firebase_crashlytics/firebase_crashlytics.dart';
@@ -46,7 +48,13 @@ void main() async {
   ]);
 
   // 6. Jalankan Aplikasi
-  runApp(const App());
+  runApp(
+    DevicePreview(
+      enabled: !kReleaseMode, // Hanya aktif saat mode debug
+      builder: (context) => const App(),
+    ),
+    // const App()
+  );
 }
 
 Future<void> initializeService() async {

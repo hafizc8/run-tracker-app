@@ -49,110 +49,129 @@ class StartActivityView extends GetView<StartActivityController> {
           ),
         ),
       ),
-      body: Container(
-        padding: const EdgeInsets.symmetric(horizontal: 26.0, vertical: 16.0),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.center,
-          children: [
-            Row(
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: [
-                Container(
-                  padding:
-                      const EdgeInsets.symmetric(horizontal: 24, vertical: 12),
-                  decoration: BoxDecoration(
-                    color: const Color(0xFF373737),
-                    borderRadius: BorderRadius.circular(8),
-                  ),
-                  child: Row(
+      body: SingleChildScrollView(
+        child: Container(
+          padding: const EdgeInsets.symmetric(horizontal: 26.0, vertical: 16.0),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.center,
+            children: [
+              Obx(
+                () {
+                  if (controller.isLoadingGetUserData.value) {
+                    return const SizedBox();
+                  }
+
+                  return Row(
+                    mainAxisAlignment: MainAxisAlignment.center,
                     children: [
-                      SvgPicture.asset(
-                        'assets/icons/ic_coin.svg',
-                      ),
-                      const SizedBox(width: 8),
-                      Text(
-                        '${controller.user?.currentUserCoin?.currentAmount}',
-                        style: Theme.of(context).textTheme.titleSmall,
-                      ),
-                    ],
-                  ),
-                ),
-                const SizedBox(width: 16),
-                Container(
-                  padding:
-                      const EdgeInsets.symmetric(horizontal: 24, vertical: 12),
-                  decoration: BoxDecoration(
-                    color: const Color(0xFF373737),
-                    borderRadius: BorderRadius.circular(8),
-                  ),
-                  child: Row(
-                    children: [
-                      SvgPicture.asset(
-                        'assets/icons/ic_energy.svg',
-                      ),
-                      const SizedBox(width: 8),
-                      Text(
-                        '${controller.user?.currentUserStamina?.currentAmount}/${controller.user?.currentUserXp?.levelDetail?.staminaIncreaseTotal}',
-                        style: Theme.of(context).textTheme.titleSmall,
-                      ),
-                    ],
-                  ),
-                ),
-              ],
-            ),
-            const SizedBox(height: 24),
-            Obx(() {
-              return SizedBox(
-                  height: MediaQuery.of(context).size.height * 0.5,
-                  child: Visibility(
-                    visible: controller.currentPosition.value != null,
-                    replacement:
-                        const Center(child: CircularProgressIndicator()),
-                    child: GoogleMap(
-                      initialCameraPosition: CameraPosition(
-                        target: controller.currentPosition.value ??
-                            const LatLng(-6.2615, 106.8106),
-                        zoom: 16,
-                      ),
-                      markers: {
-                        Marker(
-                          markerId: const MarkerId('currentLocation'),
-                          position: controller.currentPosition.value ??
-                              const LatLng(-6.2615, 106.8106),
-                          icon: BitmapDescriptor.defaultMarker,
+                      Container(
+                        padding:
+                            const EdgeInsets.symmetric(horizontal: 24, vertical: 12),
+                        decoration: BoxDecoration(
+                          color: const Color(0xFF373737),
+                          borderRadius: BorderRadius.circular(8),
                         ),
-                      },
-                      myLocationEnabled: false,
-                      myLocationButtonEnabled: false,
-                      zoomControlsEnabled: false,
-                      minMaxZoomPreference: const MinMaxZoomPreference(5, 20),
-                    ),
-                  ));
-            }),
-            const SizedBox(height: 48),
-            Obx(
-              () {
-                return Visibility(
-                  visible: controller.currentPosition.value != null,
-                  child: Center(
-                    child: SlideToAction(
-                      onSubmit: () {
-                        Get.offAndToNamed(AppRoutes.activityRecord);
-                      },
-                      sliderIcon: FaIcon(
-                        FontAwesomeIcons.anglesRight,
-                        color: darkColorScheme.onPrimary,
-                        size: 32,
+                        child: Row(
+                          children: [
+                            SvgPicture.asset(
+                              'assets/icons/ic_coin.svg',
+                            ),
+                            const SizedBox(width: 8),
+                            Text(
+                              '${controller.user?.currentUserCoin?.currentAmount}',
+                              style: Theme.of(context).textTheme.titleSmall,
+                            ),
+                          ],
+                        ),
                       ),
-                      textStyle: Theme.of(context).textTheme.headlineSmall?.copyWith(
-                        color: const Color(0xFF6C6C6C),
-                      )
+                      const SizedBox(width: 16),
+                      Container(
+                        padding:
+                            const EdgeInsets.symmetric(horizontal: 24, vertical: 12),
+                        decoration: BoxDecoration(
+                          color: const Color(0xFF373737),
+                          borderRadius: BorderRadius.circular(8),
+                        ),
+                        child: Row(
+                          children: [
+                            SvgPicture.asset(
+                              'assets/icons/ic_energy.svg',
+                            ),
+                            const SizedBox(width: 8),
+                            Text(
+                              '${controller.user?.currentUserStamina?.currentAmount}/${controller.user?.currentUserXp?.levelDetail?.staminaIncreaseTotal}',
+                              style: Theme.of(context).textTheme.titleSmall,
+                            ),
+                            const SizedBox(width: 8),
+                            Text(
+                              controller.formattedStaminaTime,
+                              style: Theme.of(context).textTheme.titleSmall?.copyWith(
+                                color: const Color(0xFF7B7B7B),
+                                fontSize: 13,
+                                fontWeight: FontWeight.w400,
+                              ),
+                            ),
+                          ],
+                        ),
+                      ),
+                    ],
+                  );
+                }
+              ),
+              const SizedBox(height: 24),
+              Obx(() {
+                return SizedBox(
+                    height: MediaQuery.of(context).size.height * 0.5,
+                    child: Visibility(
+                      visible: controller.currentPosition.value != null,
+                      replacement:
+                          const Center(child: CircularProgressIndicator()),
+                      child: GoogleMap(
+                        initialCameraPosition: CameraPosition(
+                          target: controller.currentPosition.value ??
+                              const LatLng(-6.2615, 106.8106),
+                          zoom: 16,
+                        ),
+                        markers: {
+                          Marker(
+                            markerId: const MarkerId('currentLocation'),
+                            position: controller.currentPosition.value ??
+                                const LatLng(-6.2615, 106.8106),
+                            icon: BitmapDescriptor.defaultMarker,
+                          ),
+                        },
+                        myLocationEnabled: false,
+                        myLocationButtonEnabled: false,
+                        zoomControlsEnabled: false,
+                        minMaxZoomPreference: const MinMaxZoomPreference(5, 20),
+                      ),
+                    ));
+              }),
+              const SizedBox(height: 48),
+              Obx(
+                () {
+                  return Visibility(
+                    visible: controller.currentPosition.value != null,
+                    child: Center(
+                      child: SlideToAction(
+                        onSubmit: () {
+                          Get.offAndToNamed(AppRoutes.activityRecord);
+                        },
+                        sliderIcon: FaIcon(
+                          FontAwesomeIcons.anglesRight,
+                          color: darkColorScheme.onPrimary,
+                          size: 32,
+                        ),
+                        textStyle: Theme.of(context).textTheme.headlineSmall?.copyWith(
+                          color: const Color(0xFF6C6C6C),
+                        )
+                      ),
                     ),
-                  ),
-                );
-              }
-            ),
-          ],
+                  );
+                }
+              ),
+            ],
+          ),
         ),
       ),
     );

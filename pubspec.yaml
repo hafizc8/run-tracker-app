@@ -43,7 +43,7 @@ dependencies:
   get_it: ^8.0.3
   equatable: ^2.0.7
   app_links: ^6.4.0
-  intl: ^0.19.0
+  intl: ^0.18.1
   google_maps_flutter: ^2.6.1
   geolocator: ^12.0.0
   permission_handler: ^11.3.1
@@ -72,6 +72,7 @@ dependencies:
   collection: ^1.18.0
   flutter_screenutil: ^5.9.3
   package_info_plus: ^8.0.2
+  device_preview: ^1.1.0
 
 dependency_overrides:
   pedometer: 4.0.2

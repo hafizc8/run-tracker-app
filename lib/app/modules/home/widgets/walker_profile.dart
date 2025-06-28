@@ -1,13 +1,14 @@
 // Letakkan widget ini di file yang sama atau file terpisah
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:zest_mobile/app/core/shared/widgets/shimmer_loading_circle.dart';
 
 class WalkerProfile extends StatelessWidget {
   final String rank;
   final String imageUrl;
   final String name;
-  final Color? backgroundColor; // Opsional untuk latar belakang khusus
+  final Color? backgroundColor;
 
   const WalkerProfile({
     super.key, 
@@ -27,12 +28,12 @@ class WalkerProfile extends StatelessWidget {
       decoration: backgroundColor != null
           ? BoxDecoration(
               color: backgroundColor,
-              borderRadius: BorderRadius.circular(12),
+              borderRadius: BorderRadius.circular(12.r),
             )
           : null,
       padding: EdgeInsets.symmetric(
-        vertical: 16, 
-        horizontal: backgroundColor != null ? 24 : 20,
+        vertical: 16.h, 
+        horizontal: backgroundColor != null ? 16.w : 15.w,
       ),
       child: Column(
         mainAxisSize: MainAxisSize.min, // Agar Column tidak memakan ruang berlebih
@@ -41,29 +42,29 @@ class WalkerProfile extends StatelessWidget {
             rank,
             style: Theme.of(context).textTheme.titleSmall?.copyWith(
                   color: darkColorScheme.primary,
-                  fontSize: 17,
+                  fontSize: 17.sp,
                 ),
           ),
           const SizedBox(height: 8),
           ClipOval(
             child: CachedNetworkImage(
               imageUrl: imageUrl,
-              width: 44,
-              height: 44,
+              width: 44.w,
+              height: 44.h,
               fit: BoxFit.cover,
-              placeholder: (context, url) => const ShimmerLoadingCircle(size: 44),
-              errorWidget: (context, url, error) => const CircleAvatar(
-                radius: 22, // Setengah dari width/height
-                backgroundImage: AssetImage('assets/images/empty_profile.png'),
+              placeholder: (context, url) => ShimmerLoadingCircle(size: 44.w),
+              errorWidget: (context, url, error) => CircleAvatar(
+                radius: 22.r, // Setengah dari width/height
+                backgroundImage: const AssetImage('assets/images/empty_profile.png'),
               ),
             ),
           ),
-          const SizedBox(height: 8),
+          SizedBox(height: 8.h),
           Text(
             name,
             style: Theme.of(context).textTheme.titleSmall?.copyWith(
                   color: darkColorScheme.primary,
-                  fontSize: 12,
+                  fontSize: 12.sp,
                 ),
           ),
         ],

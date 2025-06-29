@@ -1,4 +1,5 @@
-import 'package:device_preview/device_preview.dart';
+// import 'package:device_preview/device_preview.dart';
+import 'package:zest_mobile/app/core/services/log_service.dart';
 
 import 'app/app.dart';
 import 'package:firebase_core/firebase_core.dart';
@@ -31,6 +32,7 @@ void main() async {
 
   // 4. Inisialisasi Dependency Injection dan Background Service
   setupServiceLocator();
+  await sl.allReady();
   await initializeService(); // Sekarang hanya mengkonfigurasi service
 
   // 5. Konfigurasi Crashlytics dan Orientasi Layar
@@ -49,16 +51,17 @@ void main() async {
 
   // 6. Jalankan Aplikasi
   runApp(
-    DevicePreview(
-      enabled: !kReleaseMode, // Hanya aktif saat mode debug
-      builder: (context) => const App(),
-    ),
-    // const App()
+    // DevicePreview(
+    //   enabled: !kReleaseMode, // Hanya aktif saat mode debug
+    //   builder: (context) => const App(),
+    // ),
+    const App(),
   );
 }
 
 Future<void> initializeService() async {
   final service = FlutterBackgroundService();
+  final logService = sl<LogService>();
 
   const String notificationChannelId = 'zest_channel';
   const String notificationChannelName = 'Zest Background Service';
@@ -93,6 +96,12 @@ Future<void> initializeService() async {
       ],
     ),
   );
+
+  service.on('log').listen((data) {
+    if (data != null) {
+      logService.logFromBackground(data);
+    }
+  });
 
   service.on('update_notification').listen((data) {
     if (data == null) return;

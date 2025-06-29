@@ -73,11 +73,11 @@ class HomeView extends GetView<HomeController> {
                                 color: Color(0xFF494949),
                                 shape: BoxShape.circle,
                               ),
-                              padding: EdgeInsets.all(12.w),
-                              child: const FaIcon(
+                              padding: EdgeInsets.all(13.w),
+                              child: FaIcon(
                                 FontAwesomeIcons.solidBell,
                                 color: Colors.white,
-                                size: 20,
+                                size: 18.sp,
                               ),
                             ),
                           ),
@@ -98,7 +98,7 @@ class HomeView extends GetView<HomeController> {
                               child: FaIcon(
                                 FontAwesomeIcons.solidEnvelope,
                                 color: Colors.white,
-                                size: 20.sp,
+                                size: 18.sp,
                               ),
                             ),
                           ),
@@ -187,12 +187,11 @@ class HomeView extends GetView<HomeController> {
               
                     // Widget Step Tracker
                     Container(
-                      margin: EdgeInsets.symmetric(horizontal: 16.w),
+                      margin: EdgeInsets.symmetric(horizontal: 32.w),
                       child: StepsTrackerWidget(
                         progressValue: controller.progressValue,
                         currentSteps: controller.validatedSteps,
-                        maxSteps:
-                            controller.user?.userPreference?.dailyStepGoals ?? 0,
+                        maxSteps: controller.user?.userPreference?.dailyStepGoals ?? 0,
                       ),
                     ),
                     // Error message when step sensor not found

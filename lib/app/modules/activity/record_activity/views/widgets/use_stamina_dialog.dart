@@ -1,5 +1,8 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:flutter_svg/flutter_svg.dart';
 import 'package:get/get.dart';
+import 'package:google_fonts/google_fonts.dart';
 import 'package:zest_mobile/app/core/shared/widgets/gradient_elevated_button.dart';
 import 'package:zest_mobile/app/core/shared/widgets/gradient_outlined_button.dart';
 
@@ -89,7 +92,7 @@ class _UseStaminaDialogState
           margin: const EdgeInsets.all(2),
           padding: const EdgeInsets.symmetric(
             horizontal: 24,
-            vertical: 12,
+            vertical: 24,
           ),
           width: double.infinity,
           decoration: BoxDecoration(
@@ -132,18 +135,22 @@ class _UseStaminaDialogState
                 children: [
                   Expanded(
                     child: SizedBox(
-                      height: 45,
+                      height: 38.h,
                       child: GradientOutlinedButton(
+                        contentPadding: const EdgeInsets.all(0),
                         style: ButtonStyle(
                           shape: MaterialStateProperty.all(
                             RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
                           ),
                         ),
+                        onPressed: widget.onCancel ?? () => Get.back(),
                         child: Text(
                           widget.labelCancel ?? 'Back',
-                          style: Theme.of(context).textTheme.labelSmall?.copyWith(fontSize: 10),
+                          style: Theme.of(context).textTheme.labelSmall?.copyWith(
+                            fontSize: 12,
+                            fontWeight: FontWeight.w700,
+                          ),
                         ),
-                        onPressed: widget.onCancel ?? () => Get.back(),
                       ),
                     ),
                   ),
@@ -151,10 +158,10 @@ class _UseStaminaDialogState
                   Expanded(
                     flex: 3,
                     child: SizedBox(
-                      height: 45,
+                      height: 38.h,
                       child: GradientElevatedButton(
+                        contentPadding: const EdgeInsets.all(0),
                         style: ButtonStyle(
-                          padding: MaterialStateProperty.all(EdgeInsets.zero),
                           shape: MaterialStateProperty.all(
                             RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
                           ),
@@ -181,40 +188,73 @@ class _UseStaminaDialogState
       mainAxisAlignment: MainAxisAlignment.center,
       children: [
         // Tombol Decrement
-        _buildStaminaButton(icon: Icons.remove, onPressed: _decrement),
-        const SizedBox(width: 24),
-        // Tampilan Nilai Stamina
-        Row(
-          children: [
-            const Icon(Icons.flash_on, color: Color(0xFFA2FF00), size: 24),
-            const SizedBox(width: 8),
-            Text(
-              '$_currentValue',
-              style: const TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
-            ),
-          ],
+        _buildStaminaButton(
+          icon: SvgPicture.asset(
+            'assets/icons/ic_min.svg',
+            width: 15.w,
+          ), 
+          onPressed: _decrement,
         ),
-        const SizedBox(width: 24),
+        SizedBox(width: 18.w),
+        // Tampilan Nilai Stamina
+        Container(
+          padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 8),
+          decoration: BoxDecoration(
+            borderRadius: BorderRadius.circular(9),
+            border: Border.all(
+              color: const Color(0xFFA2FF00), 
+              width: 1,
+            ),
+          ),
+          child: Row(
+            children: [
+              SvgPicture.asset(
+                'assets/icons/ic_energy_2.svg',
+                width: 12.w,
+                height: 18.w,
+              ),
+              SizedBox(width: 16.w),
+              Text(
+                '$_currentValue',
+                style: GoogleFonts.poppins(
+                  fontSize: 17,
+                  fontWeight: FontWeight.w700,
+                  color: const Color(0xFFFFFFFF),
+                ),
+              ),
+            ],
+          ),
+        ),
+        SizedBox(width: 18.w),
         // Tombol Increment
-        _buildStaminaButton(icon: Icons.add, onPressed: _increment),
+        _buildStaminaButton(
+          icon: SvgPicture.asset(
+            'assets/icons/ic_add.svg',
+            width: 15.w,
+          ),
+          onPressed: _increment,
+        ),
       ],
     );
   }
 
   // Helper untuk membuat tombol increment/decrement
-  Widget _buildStaminaButton({required IconData icon, required VoidCallback onPressed}) {
-    return Container(
-      decoration: BoxDecoration(
-        shape: BoxShape.circle,
-        gradient: const LinearGradient(
-          colors: [Color(0xFFA2FF00), Color(0xFF00FF7F)],
-          begin: Alignment.centerLeft,
-          end: Alignment.centerRight,
+  Widget _buildStaminaButton({required Widget icon, required VoidCallback onPressed}) {
+    return InkWell(
+      onTap: onPressed,
+      child: Container(
+        width: 32.w,
+        height: 32.w,
+        padding: const EdgeInsets.all(10),
+        decoration: const BoxDecoration(
+          shape: BoxShape.circle,
+          gradient: LinearGradient(
+            colors: [Color(0xFFA2FF00), Color(0xFF00FF7F)],
+            begin: Alignment.centerLeft,
+            end: Alignment.centerRight,
+          ),
         ),
-      ),
-      child: IconButton(
-        icon: Icon(icon, color: Colors.black),
-        onPressed: onPressed,
+        child: icon,
       ),
     );
   }

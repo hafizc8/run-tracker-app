@@ -55,7 +55,7 @@ class EditActivityView extends GetView<EditActivityController> {
                 ),
                 const SizedBox(height: 12),
                 TextFormField(
-                  cursorColor: Colors.black,
+                  cursorColor: Colors.white,
                   initialValue: form.title,
                   onChanged: (value) {
                     controller.editActivityForm.value = form.copyWith(
@@ -70,7 +70,7 @@ class EditActivityView extends GetView<EditActivityController> {
                 ),
                 const SizedBox(height: 12),
                 TextFormField(
-                  cursorColor: Colors.black,
+                  cursorColor: Colors.white,
                   initialValue: form.content,
                   onChanged: (value) {
                     controller.editActivityForm.value = form.copyWith(

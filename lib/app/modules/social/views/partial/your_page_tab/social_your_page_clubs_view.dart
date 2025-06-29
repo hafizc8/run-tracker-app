@@ -108,10 +108,11 @@ class SocialYourPageClubsView extends GetView<SocialClubSearchController> {
             padding: EdgeInsets.only(bottom: 16.h),
             shrinkWrap: true,
             physics: const NeverScrollableScrollPhysics(),
-            gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
+            gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
               crossAxisCount: 3,
-              mainAxisSpacing: 10,
-              crossAxisSpacing: 3,
+              mainAxisSpacing: 5.h,
+              crossAxisSpacing: 3.w,
+              childAspectRatio: 0.90.w / 1.h,
             ),
             itemCount: controller.clubs.length +
                 (controller.hasReacheMax.value ? 0 : 1),

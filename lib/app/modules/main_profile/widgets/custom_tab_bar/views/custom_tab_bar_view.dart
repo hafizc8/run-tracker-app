@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
 import 'package:zest_mobile/app/core/models/model/event_model.dart';
-import 'package:zest_mobile/app/core/shared/widgets/card_activity.dart';
+import 'package:zest_mobile/app/modules/main_profile/widgets/card_activity/card_activity.dart';
 import 'package:zest_mobile/app/core/shared/widgets/card_challenge.dart';
 import 'package:zest_mobile/app/modules/main_profile/controllers/main_profile_controller.dart';
 import 'package:zest_mobile/app/modules/main_profile/widgets/card_event/card_event_profile.dart';
@@ -59,25 +59,59 @@ class CustomTabBar extends GetView<TabBarController> {
         Obx(() {
           switch (controller.selectedIndex.value) {
             case 0:
+              // return Column(
+              //   crossAxisAlignment: CrossAxisAlignment.start,
+              //   children: [
+              //     const CardActivity(),
+              //     SizedBox(height: 8.h),
+              //     Center(
+              //       child: TextButton(
+              //         onPressed: () => Get.toNamed(AppRoutes.activity),
+              //         child: Text(
+              //           'See All',
+              //           style: Theme.of(context).textTheme.bodyLarge?.copyWith(
+              //                 color: Theme.of(context).colorScheme.primary,
+              //                 decoration: TextDecoration.underline,
+              //                 decorationColor:
+              //                     Theme.of(context).colorScheme.primary,
+              //               ),
+              //         ),
+              //       ),
+              //     ),
+              //   ],
+              // );
               return Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  const CardActivity(),
-                  SizedBox(height: 8.h),
-                  Center(
-                    child: TextButton(
-                      onPressed: () => Get.toNamed(AppRoutes.activity),
-                      child: Text(
-                        'See All',
-                        style: Theme.of(context).textTheme.bodyLarge?.copyWith(
-                              color: Theme.of(context).colorScheme.primary,
-                              decoration: TextDecoration.underline,
-                              decorationColor:
-                                  Theme.of(context).colorScheme.primary,
-                            ),
+                  Obx(() {
+                    return ListView.separated(
+                      shrinkWrap: true,
+                      physics: const NeverScrollableScrollPhysics(),
+                      itemBuilder: (context, index) {
+                        if (index == profileController.posts.length) {
+                          return const Center(
+                            child: CircularProgressIndicator(),
+                          );
+                        }
+                        final postActivity = profileController.posts[index];
+                        return ActivityCard(
+                          postData: postActivity,
+                          // TODO
+                          // onTap: () => Get.toNamed(
+                          //   AppRoutes.postDetail,
+                          //   arguments: postActivity,
+                          // ),
+                          onTap: () {
+                            Get.snackbar('Under development', 'This feature is under development');
+                          },
+                        );
+                      },
+                      separatorBuilder: (context, index) => SizedBox(
+                        height: 0.h,
                       ),
-                    ),
-                  ),
+                      itemCount: profileController.posts.length + (profileController.hasReacheMaxPostActivity.value ? 0 : 1),
+                    );
+                  })
                 ],
               );
             case 1:

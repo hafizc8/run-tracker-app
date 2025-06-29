@@ -13,7 +13,10 @@ class PostService {
   PostService(this._apiService);
 
   Future<PaginatedDataResponse<PostModel>> getAll({
-    required int page
+    required int page,
+    int? limit,
+    String? user,
+    bool? recordActivityOnly,
   }) async {
     try {
       final response = await _apiService.request(
@@ -21,6 +24,9 @@ class PostService {
         method: HttpMethod.get,
         queryParams: {
           'page': page.toString(),
+          if (limit != null) 'limit': limit.toString(),
+          if (user != null) 'user': user,
+          if (recordActivityOnly != null) 'record_activity_only': (recordActivityOnly ? 1 : 0).toString(),
         },
       );
 

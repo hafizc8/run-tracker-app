@@ -18,6 +18,9 @@ class MainProfileView extends GetView<ProfileMainController> {
         ScrollController scrollController = ScrollController();
         switch (controller.tabBarController.selectedIndex.value) {
           case 1:
+            scrollController = controller.postActivityController;
+            break;
+          case 1:
             scrollController = controller.challengeController;
             break;
           case 2:
@@ -29,6 +32,9 @@ class MainProfileView extends GetView<ProfileMainController> {
           onRefresh: () async {
             controller.getDetailUser();
             switch (controller.tabBarController.selectedIndex.value) {
+              case 0:
+                controller.getPostActivity(refresh: true);
+                break;
               case 1:
                 controller.getChallenges(refresh: true);
                 break;

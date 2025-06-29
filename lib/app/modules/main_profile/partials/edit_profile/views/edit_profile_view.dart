@@ -79,7 +79,7 @@ class EditProfileView extends GetView<EditProfileController> {
                     ),
                     const SizedBox(height: 12),
                     TextFormField(
-                      cursorColor: Colors.black,
+                      cursorColor: Colors.white,
                       initialValue: form.name,
                       onChanged: (value) {
                         controller.form.value = form.copyWith(
@@ -104,7 +104,7 @@ class EditProfileView extends GetView<EditProfileController> {
                     ),
                     const SizedBox(height: 12),
                     TextFormField(
-                      cursorColor: Colors.black,
+                      cursorColor: Colors.white,
                       readOnly: true,
                       initialValue: form.email,
                       decoration: InputDecoration(
@@ -135,7 +135,7 @@ class EditProfileView extends GetView<EditProfileController> {
                     ),
                     const SizedBox(height: 12),
                     TextFormField(
-                      cursorColor: Colors.black,
+                      cursorColor: Colors.white,
                       readOnly: true,
                       controller: controller.dateController,
                       onTap: () => controller.setDate(context),
@@ -157,7 +157,7 @@ class EditProfileView extends GetView<EditProfileController> {
                     ),
                     const SizedBox(height: 12),
                     TextFormField(
-                      cursorColor: Colors.black,
+                      cursorColor: Colors.white,
                       readOnly: true,
                       initialValue: form.gender,
                       decoration: InputDecoration(
@@ -189,7 +189,7 @@ class EditProfileView extends GetView<EditProfileController> {
                     const SizedBox(height: 12),
                     TextFormField(
                       controller: controller.addressController,
-                      cursorColor: Colors.black,
+                      cursorColor: Colors.white,
                       readOnly: true,
                       onTap: () async {
                         final res = await Get.toNamed(AppRoutes.chooseLocation,
@@ -230,7 +230,7 @@ class EditProfileView extends GetView<EditProfileController> {
                     ),
                     const SizedBox(height: 12),
                     TextFormField(
-                      cursorColor: Colors.black,
+                      cursorColor: Colors.white,
                       initialValue: form.bio,
                       maxLines: 3,
                       onChanged: (value) {

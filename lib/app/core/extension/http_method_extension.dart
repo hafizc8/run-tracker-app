@@ -9,6 +9,8 @@ extension HttpMethodExtension on HttpMethod {
         return 'PUT';
       case HttpMethod.delete:
         return 'DELETE';
+      case HttpMethod.patch:
+        return 'PATCH';
       case HttpMethod.get:
       default:
         return 'GET';

@@ -3,6 +3,7 @@ import 'package:firebase_crashlytics/firebase_crashlytics.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_background_service/flutter_background_service.dart';
 import 'package:get/get.dart';
+import 'package:google_fonts/google_fonts.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:permission_handler/permission_handler.dart';
 import 'package:zest_mobile/app/core/di/service_locator.dart';
@@ -12,6 +13,7 @@ import 'package:zest_mobile/app/core/models/model/user_model.dart';
 import 'package:zest_mobile/app/core/services/auth_service.dart';
 import 'package:zest_mobile/app/core/services/local_activity_service.dart';
 import 'package:zest_mobile/app/core/services/location_service.dart';
+import 'package:zest_mobile/app/core/services/log_service.dart';
 import 'package:zest_mobile/app/core/services/record_activity_service.dart';
 import 'package:zest_mobile/app/core/shared/theme/color_schemes.dart';
 import 'package:zest_mobile/app/core/shared/widgets/custom_dialog_confirmation.dart';
@@ -48,6 +50,8 @@ class RecordActivityController extends GetxController {
   // --- Session State ---
   String? _recordActivityId;
 
+  final _logService = sl<LogService>();
+
   @override
   void onInit() {
     super.onInit();
@@ -57,6 +61,7 @@ class RecordActivityController extends GetxController {
 
   @override
   void onClose() {
+    _logService.log.i("RecordActivityController closed.");
     _staminaTimer?.cancel();
     _saveStateToLocalDb();
     super.onClose();
@@ -73,9 +78,10 @@ class RecordActivityController extends GetxController {
       if (data['location'] != null) {
         final loc = data['location'];
         final newPoint = LocationPoint(
-            latitude: loc['latitude'],
-            longitude: loc['longitude'],
-            timestamp: DateTime.parse(loc['timestamp']));
+          latitude: loc['latitude'],
+          longitude: loc['longitude'],
+          timestamp: DateTime.parse(loc['timestamp']),
+        );
         currentPath.add(newPoint);
 
         _saveDataPointToLocalDb(loc, newPoint.timestamp);
@@ -114,6 +120,7 @@ class RecordActivityController extends GetxController {
   }
 
   void _resumeActivityFromLocal(Map<String, dynamic> sessionData, List<ActivityDataPoint> points) {
+    _logService.log.i("Resuming activity from local storage. Session ID: ${sessionData['id']}");
     _recordActivityId = sessionData['id'];
     elapsedTimeInSeconds.value = sessionData['elapsedTime'];
     currentDistanceInMeters.value = sessionData['distance'];
@@ -135,12 +142,14 @@ class RecordActivityController extends GetxController {
   }
 
   Future<void> _discardAndStartNew() async {
+    _logService.log.w("Discarding unsynced session and starting new.");
     await _localDb.clearAllUnsyncedData();
     await chooseStamina();
   }
 
   void togglePauseResume() {
     if (!isTracking.value) return;
+    _logService.log.i("Activity ${isPaused.value ? 'paused' : 'resumed'}.");
     isPaused.value = !isPaused.value;
     _service.invoke(isPaused.value ? 'pause' : 'resume');
     Get.snackbar(
@@ -164,6 +173,8 @@ class RecordActivityController extends GetxController {
   }
 
   Future<void> chooseStamina() async {
+    _logService.log.i("Showing choose stamina dialog.");
+
     if (user?.currentUserStamina?.currentAmount == 0) {
       startActivity();
       return;
@@ -185,13 +196,18 @@ class RecordActivityController extends GetxController {
           final int totalMinutes = staminaValue * 3;
           return Text(
             'Running Sessions: $totalMinutes mins',
-            style: Get.textTheme.labelSmall?.copyWith(fontSize: 10, fontWeight: FontWeight.w700),
+            style: GoogleFonts.poppins(
+              fontSize: 12, 
+              fontWeight: FontWeight.w700,
+              color: const Color(0xFF292929),
+            ),
           );
         },
 
         // Tangani nilai stamina yang dikembalikan saat dikonfirmasi
         onConfirm: (int finalStaminaValue) {
-          print('User confirmed to use $finalStaminaValue stamina.');
+          // print('User confirmed to use $finalStaminaValue stamina.');
+          _logService.log.i("User confirmed to use $finalStaminaValue stamina.");
           // Tutup dialog
           Get.back();
           // Lanjutkan logika Anda dengan nilai stamina ini...
@@ -200,13 +216,18 @@ class RecordActivityController extends GetxController {
 
         // Anda tetap bisa menggunakan onCancel jika perlu
         labelCancel: 'Back',
+
+        onCancel: () {
+          Get.back(closeOverlays: true);
+        },
       ),
       barrierDismissible: false, // User harus memilih
     );
   }
 
   Future<void> startActivity({int staminaToUse = 0}) async {
-    print('Starting activity...');
+    // print('Starting activity...');
+    _logService.log.i("Attempting to start activity with $staminaToUse stamina.");
 
     if (isTracking.value) return;
     if (!(await _requestPermissions())) return;
@@ -283,6 +304,8 @@ class RecordActivityController extends GetxController {
   }
 
   void stopActivity() async {
+    _logService.log.i("Attempting to stop and sync activity.");
+
     if (!isTracking.value) return;
 
     isLoadingSaveRecordActivity.value = true;
@@ -413,6 +436,8 @@ class RecordActivityController extends GetxController {
   }
 
   void _startStaminaCountdown({required int staminaToUse}) {
+    _logService.log.i("Starting stamina countdown. Total: $staminaToUse stamina.");
+
     _staminaTimer?.cancel(); // Batalkan timer lama jika ada
 
     if (staminaToUse <= 0) return;

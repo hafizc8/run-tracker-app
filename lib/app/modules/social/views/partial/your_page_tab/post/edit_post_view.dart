@@ -51,7 +51,7 @@ class EditPostView extends GetView<PostController> {
                 ),
                 SizedBox(height: 12.h),
                 TextFormField(
-                  cursorColor: Colors.black,
+                  cursorColor: Colors.white,
                   initialValue: form.title,
                   onChanged: (value) {
                     controller.updatePostForm.value = form.copyWith(
@@ -66,7 +66,7 @@ class EditPostView extends GetView<PostController> {
                 ),
                 SizedBox(height: 12.h),
                 TextFormField(
-                  cursorColor: Colors.black,
+                  cursorColor: Colors.white,
                   initialValue: form.content,
                   onChanged: (value) {
                     controller.updatePostForm.value = form.copyWith(

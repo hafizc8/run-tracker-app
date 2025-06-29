@@ -106,4 +106,29 @@ class UserService {
       rethrow;
     }
   }
+
+  Future<bool> updateUserPreference({
+    int? unit, // 0 km, 1 miles
+    bool? allowNotification,
+    bool? allowEmailNotification,
+    int? dailyStepGoals,
+  }) async {
+    try {
+      final response = await _apiService.request(
+        path: AppConstants.updateUserPreference,
+        method: HttpMethod.patch,
+        data: {
+          '_method': 'patch',
+          if (unit != null) 'unit': unit,
+          if (allowNotification != null) 'allow_notification': allowNotification,
+          if (allowEmailNotification != null) 'allow_email_notification': allowEmailNotification,
+          if (dailyStepGoals != null) 'daily_step_goals': dailyStepGoals
+        }
+      );
+
+      return response.data['success'];
+    } catch (e) {
+      rethrow;
+    }
+  }
 }

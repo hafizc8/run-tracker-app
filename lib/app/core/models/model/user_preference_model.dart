@@ -17,8 +17,8 @@ class UserPreferenceModel {
     return UserPreferenceModel(
       unit: json["unit"],
       unitText: json["unit_text"],
-      allowNotification: json["allow_notification"],
-      allowEmailNotification: json["allow_email_notification"],
+      allowNotification: json["allow_notification"] == 1,
+      allowEmailNotification: json["allow_email_notification"] == 1,
       dailyStepGoals: json["daily_step_goals"],
     );
   }

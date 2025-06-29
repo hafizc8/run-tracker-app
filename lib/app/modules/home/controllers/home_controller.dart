@@ -2,7 +2,6 @@ import 'dart:async';
 import 'dart:math';
 import 'package:collection/collection.dart';
 import 'package:firebase_crashlytics/firebase_crashlytics.dart';
-import 'package:flutter/foundation.dart';
 import 'package:get/get.dart';
 import 'package:get_storage/get_storage.dart';
 import 'package:intl/intl.dart';
@@ -11,6 +10,10 @@ import 'package:sensors_plus/sensors_plus.dart';
 import 'package:zest_mobile/app/core/di/service_locator.dart';
 import 'package:zest_mobile/app/core/models/model/user_model.dart';
 import 'package:zest_mobile/app/core/services/auth_service.dart';
+import 'package:zest_mobile/app/core/services/log_service.dart';
+import 'package:zest_mobile/app/core/services/record_activity_service.dart';
+import 'package:zest_mobile/app/core/services/user_service.dart';
+import 'package:zest_mobile/app/modules/home/widgets/set_daily_goals_dialog.dart';
 
 class HomeController extends GetxController {
   // --- STATE ---
@@ -23,7 +26,10 @@ class HomeController extends GetxController {
   final RxString _error = ''.obs;
   String get error => _error.value;
 
-  final AuthService _authService = sl<AuthService>();
+  final _authService = sl<AuthService>();
+  final _userService = sl<UserService>();
+  final _recordActivityService = sl<RecordActivityService>();
+  final _logService = sl<LogService>();
   UserModel? get user => _authService.user;
 
   RxBool isLoadingGetUserData = true.obs;
@@ -34,12 +40,17 @@ class HomeController extends GetxController {
   final List<double> _accelerationMagnitudes = [];
   int _lastPedometerSteps = 0;
 
+  // ✨ --- PERIODIC SYNC LOGIC --- ✨
+  Timer? _syncTimer;
+  int _lastSyncedSteps = 0; // Melacak jumlah langkah yang terakhir kali berhasil disinkronkan
+  static const _syncInterval = Duration(minutes: 3); // Atur interval sinkronisasi (contoh: 3 menit)
+
   // --- PERSISTENT STORAGE (GetStorage) ---
   final _storage = GetStorage();
   static const String _validatedStepsKey = 'validated_steps';
   static const String _lastSavedDateKey = 'last_saved_date';
   static const String _lastPedometerValueKey = 'last_pedometer_value';
-
+  final _storageKey = 'lastGoalSetDate';
 
   // --- KONFIGURASI VALIDASI ---
   final int _bufferSize = 50;
@@ -54,8 +65,12 @@ class HomeController extends GetxController {
     _initPedometerAndValidator();
     // 3. Muat data pengguna
     await _loadMe();
-    // 4. Atur listener untuk menyimpan data secara otomatis setiap kali ada perubahan
+    // 4. Tampilkan dialog set daily goal
+    await _checkAndShowDailyGoalDialog();
+    // 5. Atur listener untuk menyimpan data secara otomatis setiap kali ada perubahan
     ever(_validatedSteps, (_) => _saveDataToStorage());
+
+    _startPeriodicSync();
   }
 
   @override
@@ -74,12 +89,10 @@ class HomeController extends GetxController {
       // Jika masih di hari yang sama, muat progres sebelumnya
       _validatedSteps.value = _storage.read(_validatedStepsKey) ?? 0;
       _lastPedometerSteps = _storage.read(_lastPedometerValueKey) ?? 0;
-      if (kDebugMode) {
-        print('Memuat data dari hari yang sama. Langkah tervalidasi: ${_validatedSteps.value}');
-      }
+      _logService.log.i('Memuat data dari hari yang sama. Langkah tervalidasi: ${_validatedSteps.value}');
     } else {
       // Jika ini hari baru, reset semua data
-      if (kDebugMode) print('Hari baru terdeteksi. Mereset data langkah.');
+      _logService.log.i('Hari baru terdeteksi. Mereset data langkah.');
       _validatedSteps.value = 0;
       _lastPedometerSteps = 0;
       // Hapus data lama dari storage
@@ -107,7 +120,7 @@ class HomeController extends GetxController {
         _addMagnitudeToBuffer(magnitude);
       },
       onError: (e) {
-        if (kDebugMode) print("Accelerometer Error: $e");
+        _logService.log.i("Accelerometer Error: $e");
       },
       cancelOnError: true,
     );
@@ -117,13 +130,13 @@ class HomeController extends GetxController {
         _onStepCount,
         onError: (error) {
           _error.value = 'Sensor langkah tidak tersedia atau izin ditolak.';
-          if (kDebugMode) print('Pedometer Error: $error');
+          _logService.log.i("Pedometer Error: $error");
         },
         cancelOnError: true,
       );
     } catch (e, stack) {
       _error.value = 'Gagal menginisialisasi pedometer.';
-      if (kDebugMode) print('Error initializing pedometer: $e');
+      _logService.log.i("Error initializing pedometer: $e");
       FirebaseCrashlytics.instance.recordError(e, stack);
     }
   }
@@ -140,7 +153,7 @@ class HomeController extends GetxController {
 
     // Tetapkan basis awal jika ini event pertama di sesi ini
     if (_lastPedometerSteps == 0 && event.steps > 0) {
-      if (kDebugMode) print('Menetapkan basis awal pedometer: ${event.steps}');
+      _logService.log.i("Menetapkan basis awal pedometer: ${event.steps}");
       _lastPedometerSteps = event.steps;
     }
     
@@ -162,9 +175,9 @@ class HomeController extends GetxController {
       
       if (_isMovingSignificantly()) {
         _validatedSteps.value += newStepsDetected;
-        if (kDebugMode) print('Langkah tervalidasi: +$newStepsDetected. Total: ${_validatedSteps.value}');
+        _logService.log.i("Langkah tervalidasi: +$newStepsDetected. Total: ${_validatedSteps.value}");
       } else {
-        if (kDebugMode) print('Langkah terdeteksi tapi diabaikan (tidak cukup gerakan signifikan).');
+        _logService.log.i("Langkah terdeteksi tapi diabaikan (tidak cukup gerakan signifikan).");
       }
     }
 
@@ -222,5 +235,82 @@ class HomeController extends GetxController {
 
   Future<void> refreshData() async {
     await _loadMe();
+  }
+
+  // ✨ KUNCI: Fungsi untuk memeriksa dan menampilkan dialog
+  Future<void> _checkAndShowDailyGoalDialog() async {
+    // Jangan tampilkan dialog jika data user belum ada
+    if (user == null) return;
+
+    final lastSetDateString = _storage.read<String>(_storageKey);
+    final todayString = DateFormat('yyyy-MM-dd').format(DateTime.now());
+
+    // Jika tanggal terakhir disimpan tidak sama dengan hari ini, tampilkan dialog
+    if (lastSetDateString != todayString) {
+      Get.dialog(
+        SetDailyGoalDialog(
+          onSave: (selectedGoal) async {
+            print('Goal to save: $selectedGoal');
+            try {
+              // Di sini Anda panggil API untuk menyimpan goal
+              var response = await _userService.updateUserPreference(
+                dailyStepGoals: selectedGoal
+              );
+
+              if (response) {
+                // Jika berhasil, simpan tanggal hari ini ke storage
+                await _storage.write(_storageKey, todayString);
+                
+                // Perbarui state user di aplikasi Anda secara lokal
+                // Contoh: user.update((val) { val?.userPreference?.dailyStepGoals = selectedGoal; });
+
+                Get.back(); // Tutup dialog
+                Get.snackbar('Success', 'Your daily goal has been set to $selectedGoal steps!');
+
+                refreshData();
+              }
+
+
+            } catch (e) {
+              print('Failed to save goal: $e');
+              Get.snackbar('Error', 'Failed to save your daily goal.');
+              // Mungkin jangan tutup dialog jika gagal, biarkan user coba lagi
+            }
+          },
+        ),
+        barrierDismissible: false, // User harus mengatur goal
+      );
+    } else {
+      print("Daily goal for today has already been set.");
+    }
+  }
+
+  // ✨ --- FUNGSI BARU UNTUK SINKRONISASI BERKALA --- ✨
+  void _startPeriodicSync() {
+    _logService.log.i("Memulai timer untuk sinkronisasi langkah setiap ${_syncInterval.inMinutes} menit.");
+    // Muat nilai terakhir yang disinkronkan dari storage jika ada
+    _lastSyncedSteps = _storage.read<int>('last_synced_steps') ?? 0;
+
+    _syncTimer = Timer.periodic(_syncInterval, (timer) async {
+      final currentValidatedSteps = _validatedSteps.value;
+
+      // Hanya kirim jika ada langkah baru sejak sinkronisasi terakhir
+      if (currentValidatedSteps > _lastSyncedSteps) {
+        _logService.log.i("SINKRONISASI BERKALA: Terdeteksi langkah baru. Mencoba mengirim $currentValidatedSteps langkah.");
+        try {
+          await _recordActivityService.syncDailyRecord(step: currentValidatedSteps);
+          
+          // Jika berhasil, perbarui nilai terakhir yang disinkronkan
+          _lastSyncedSteps = currentValidatedSteps;
+          await _storage.write('last_synced_steps', _lastSyncedSteps);
+
+          _logService.log.i("SINKRONISASI BERKALA: Berhasil mengirim $currentValidatedSteps langkah.");
+        } catch (e, s) {
+          _logService.log.e("SINKRONISASI BERKALA: Gagal.", error: e, stackTrace: s);
+        }
+      } else {
+        _logService.log.i("SINKRONISASI BERKALA: Tidak ada langkah baru untuk dikirim.");
+      }
+    });
   }
 }

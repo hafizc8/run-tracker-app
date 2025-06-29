@@ -94,7 +94,7 @@ class MainHomeView extends GetView<MainHomeController> {
                   style: GoogleFonts.poppins(
                     fontWeight: FontWeight.w900,
                     fontStyle: FontStyle.italic,
-                    fontSize: 18.sp,
+                    fontSize: 20.sp,
                     color: darkColorScheme.onPrimary,
                   ),
                 ),

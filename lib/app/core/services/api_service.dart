@@ -27,6 +27,7 @@ class ApiService {
           );
 
         case HttpMethod.post:
+        case HttpMethod.patch:
         case HttpMethod.put:
           if (data is FormData) {
             return await _dioClient.dio.request(

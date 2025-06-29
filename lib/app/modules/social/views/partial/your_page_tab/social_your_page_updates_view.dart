@@ -2,10 +2,10 @@ import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
 import 'package:zest_mobile/app/core/shared/theme/elevated_btn_theme.dart';
-import 'package:zest_mobile/app/core/shared/widgets/shimmer_loading_list.dart';
 import 'package:zest_mobile/app/modules/social/controllers/post_controller.dart';
 import 'package:zest_mobile/app/modules/social/controllers/social_controller.dart';
 import 'package:zest_mobile/app/modules/social/widgets/activity_card.dart';
+import 'package:zest_mobile/app/modules/social/widgets/activity_card_shimmer.dart';
 import 'package:zest_mobile/app/modules/social/widgets/loading_create_post.dart';
 
 class SocialYourPageUpdatesView extends GetView<SocialController> {
@@ -28,12 +28,7 @@ class SocialYourPageUpdatesView extends GetView<SocialController> {
         Obx(() {
           if (postController.isLoadingGetAllPost.value &&
               postController.pagePost == 1) {
-            return const ShimmerLoadingList(
-              itemCount: 5,
-              itemHeight: 120,
-              itemSpacing: 15,
-              padding: EdgeInsets.zero,
-            );
+            return const ActivityCardShimmer();
           }
 
           if (postController.posts.isEmpty) {

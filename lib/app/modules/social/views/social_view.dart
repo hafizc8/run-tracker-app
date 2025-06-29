@@ -34,7 +34,12 @@ class SocialView extends GetView<SocialController> {
   PreferredSizeWidget _buildAppBar(BuildContext context) {
     return AppBar(
       title: Padding(
-        padding: EdgeInsets.all(8.0.w),
+        padding: EdgeInsets.only(
+          left: 8.w,
+          right: 8.w,
+          top: 14.w,
+          bottom: 14.w,
+        ),
         child: RichText(
           text: TextSpan(
             children: <TextSpan>[

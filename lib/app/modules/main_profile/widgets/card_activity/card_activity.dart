@@ -9,7 +9,6 @@ import 'package:zest_mobile/app/core/shared/helpers/number_helper.dart';
 import 'package:zest_mobile/app/core/shared/theme/color_schemes.dart';
 import 'package:zest_mobile/app/core/shared/widgets/shimmer_loading_circle.dart';
 import 'package:zest_mobile/app/modules/club/partial/detail_club/partial/tab_bar_club/views/widgets/participants_avatars.dart';
-import 'package:zest_mobile/app/modules/social/controllers/post_controller.dart';
 import 'package:zest_mobile/app/modules/social/widgets/post_media.dart';
 import 'package:zest_mobile/app/modules/social/widgets/social_action_button.dart';
 import 'package:zest_mobile/app/modules/social/widgets/statistic_column.dart';
@@ -27,7 +26,6 @@ class ActivityCard extends StatelessWidget {
 
   void Function()? onTap;
   PostModel postData;
-  final postController = Get.find<PostController>();
 
   @override
   Widget build(BuildContext context) {
@@ -304,11 +302,15 @@ class ActivityCard extends StatelessWidget {
                         elevation: 8.0,
                       ).then((value) async {
                         if (value == 'edit') {
-                          postController.goToEditPost(
-                              postId: postData.id ?? '', isFromDetail: false);
+                          // TODO
+                          // postController.goToEditPost(
+                          //     postId: postData.id ?? '', isFromDetail: false);
+                          Get.snackbar('Under development', 'This feature is under development');
                         } else if (value == 'delete') {
-                          postController.confirmAndDeletePost(
-                              postId: postData.id ?? '');
+                          // TODO
+                          // postController.confirmAndDeletePost(
+                          //     postId: postData.id ?? '');
+                          Get.snackbar('Under development', 'This feature is under development');
                         }
                       });
                     },
@@ -446,10 +448,14 @@ class ActivityCard extends StatelessWidget {
                 ),
               ),
               label: 'Like',
-              onTap: () => postController.likePost(
-                postId: postData.id!,
-                isDislike: postData.isLiked! ? 1 : 0,
-              ),
+              onTap: () {
+                Get.snackbar('Under development', 'This feature is under development');
+              },
+              // TODO
+              // postController.likePost(
+              //   postId: postData.id!,
+              //   isDislike: postData.isLiked! ? 1 : 0,
+              // ),
               selected: postData.isLiked!,
             ),
           ),
@@ -466,8 +472,11 @@ class ActivityCard extends StatelessWidget {
                 color: darkColorScheme.onBackground,
               ),
               label: 'Comment',
-              onTap: () => postController.goToDetail(
-                  postId: postData.id!, isFocusComment: true),
+              onTap: () {
+                Get.snackbar('Under development', 'This feature is under development');
+              },
+              // TODO
+                // postController.goToDetail(postId: postData.id!, isFocusComment: true),
             ),
           ),
         ),

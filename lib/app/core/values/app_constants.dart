@@ -33,6 +33,7 @@ class AppConstants {
   static const String me = "/me";
   static const String userOther = "/user";
   static const String updateProfile = "/user";
+  static const String updateUserPreference = "/user/preference";
   static String badge(String id) => "/user/$id/badge";
   static String user(String id) => "/user/$id";
   static String follow(String id) => "/follow/$id";
@@ -80,4 +81,6 @@ class AppConstants {
   static const String recordActivityCreateSession = "/record-activity/create";
   static String recordActivitySyncRecord(String recordActivityId) => "/record-activity/$recordActivityId/sync";
   static String recordActivityEndSession(String recordActivityId) => "/record-activity/$recordActivityId/end";
+
+  static const String dailyRecordSync = "/record-daily";
 }

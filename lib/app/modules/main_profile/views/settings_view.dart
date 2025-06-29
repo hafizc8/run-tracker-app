@@ -3,10 +3,14 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 
 import 'package:get/get.dart';
+import 'package:zest_mobile/app/modules/debug/controllers/debug_controller.dart';
 import 'package:zest_mobile/app/modules/main_profile/controllers/settings_controller.dart';
 
 class SettingsView extends GetView<SettingsController> {
-  const SettingsView({super.key});
+  SettingsView({super.key});
+
+  final DebugController debugController = Get.put(DebugController());
+  
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -165,13 +169,16 @@ class SettingsView extends GetView<SettingsController> {
           ),
           SizedBox(height: 8.h),
           Obx(
-            () => Text(
-              "Version ${controller.appVersion.value ?? '-'}",
-              textAlign: TextAlign.center,
-              style: Theme.of(context)
-                  .textTheme
-                  .bodySmall
-                  ?.copyWith(color: Theme.of(context).colorScheme.onBackground),
+            () => GestureDetector(
+              onTap: debugController.onVersionTap,
+              child: Text(
+                "Version ${controller.appVersion.value ?? '-'}",
+                textAlign: TextAlign.center,
+                style: Theme.of(context)
+                    .textTheme
+                    .bodySmall
+                    ?.copyWith(color: Theme.of(context).colorScheme.onBackground),
+              ),
             ),
           ),
         ],

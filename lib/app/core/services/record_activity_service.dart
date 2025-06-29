@@ -60,4 +60,26 @@ class RecordActivityService {
       rethrow;
     }
   }
+
+  Future<bool> syncDailyRecord({
+    int? step,
+    int? calorie,
+    int? time,
+  }) async {
+    try {
+      final response = await _apiService.request(
+        path: AppConstants.dailyRecordSync,
+        method: HttpMethod.post,
+        data: {
+          if (step != null) 'step': step,
+          if (calorie != null) 'calorie': calorie,
+          if (time != null) 'time': time
+        }
+      );
+
+      return response.data['success'];
+    } catch (e) {
+      rethrow;
+    }
+  }
 }

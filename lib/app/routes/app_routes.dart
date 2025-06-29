@@ -58,4 +58,7 @@ abstract class AppRoutes {
   static const activityStart = '/activity/start';
   static const activityRecord = '/activity/record';
   static const activityEdit = '/activity/edit';
+
+  static const debug = '/debug';
+  static const logViewer = '/log-viewer';
 }

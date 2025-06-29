@@ -8,10 +8,12 @@ import 'package:zest_mobile/app/core/exception/handler/app_exception_handler_inf
 import 'package:zest_mobile/app/core/models/interface/pagination_response_model.dart';
 import 'package:zest_mobile/app/core/models/model/challenge_model.dart';
 import 'package:zest_mobile/app/core/models/model/event_model.dart';
+import 'package:zest_mobile/app/core/models/model/post_model.dart';
 import 'package:zest_mobile/app/core/models/model/user_detail_model.dart';
 import 'package:zest_mobile/app/core/services/auth_service.dart';
 import 'package:zest_mobile/app/core/services/challenge_service.dart';
 import 'package:zest_mobile/app/core/services/event_service.dart';
+import 'package:zest_mobile/app/core/services/post_service.dart';
 import 'package:zest_mobile/app/core/services/user_service.dart';
 import 'package:zest_mobile/app/modules/main_profile/widgets/custom_tab_bar/controllers/custom_tab_bar_controller.dart';
 import 'package:zest_mobile/app/modules/social/views/partial/for_you_tab/widget/confirmation.dart';
@@ -30,17 +32,25 @@ class ProfileMainController extends GetxController {
   var pageChallenge = 0;
   ScrollController challengeController = ScrollController();
 
+  var isLoadingPostActivity = false.obs;
+  var hasReacheMaxPostActivity = false.obs;
+  var pagePostActivity = 0;
+  ScrollController postActivityController = ScrollController();
+
   final _authService = sl<AuthService>();
   final _userService = sl<UserService>();
   final _eventService = sl<EventService>();
   final _challengeService = sl<ChallengeService>();
+  final _postService = sl<PostService>();
 
   final TabBarController tabBarController = Get.put(TabBarController());
 
   Rx<UserDetailModel?> user = Rx<UserDetailModel?>(null);
+  var posts = <PostModel>[].obs;
   var events = <EventModel>[].obs;
   var upComingEvents = <EventModel>[].obs;
   var challenges = <ChallengeModel>[].obs;
+
 
   @override
   void onInit() {
@@ -306,9 +316,49 @@ class ProfileMainController extends GetxController {
     }
   }
 
+  Future<void> getPostActivity({bool refresh = false}) async {
+    if (refresh) {
+      posts.clear();
+      pagePostActivity = 1;
+      hasReacheMaxPostActivity.value = false;
+    }
+    if (isLoadingPostActivity.value || hasReacheMaxPostActivity.value) return;
+    isLoadingPostActivity.value = true;
+    try {
+      String? userId = _authService.user!.id;
+      PaginatedDataResponse<PostModel> response =
+        await _postService.getAll(
+          page: pagePostActivity,
+          user: userId,
+          limit: 5,
+          recordActivityOnly: true,
+        );
+
+      if ((response.pagination.next == null ||
+              response.pagination.next == '') ||
+          response.pagination.total < 20) hasReacheMaxPostActivity.value = true;
+
+      posts.addAll(
+        response.data.map((e) => e.copyWith(isOwner: e.user?.id == userId)).toList()
+      );
+
+      pagePostActivity++;
+    } catch (e) {
+      Get.snackbar(
+        'Error',
+        e.toString(),
+        backgroundColor: Colors.red,
+        colorText: Colors.white,
+      ); // show error snackbar, toast, etc (e.g.message)
+    } finally {
+      isLoadingPostActivity.value = false;
+    }
+  }
+
   Future<void> init() async {
     Future.wait([
       getDetailUser(),
+      getPostActivity(refresh: true),
       getEvents(refresh: true),
       getChallenges(refresh: true),
     ]);

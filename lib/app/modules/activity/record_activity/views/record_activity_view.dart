@@ -290,6 +290,24 @@ class RecordActivityView extends GetView<RecordActivityController> {
               
                   Obx(
                     () {
+                      if (controller.isStartingActivity.value) {
+                        return Container(
+                          child: const Center(
+                            child: Column(
+                              mainAxisAlignment: MainAxisAlignment.center,
+                              children: [
+                                CircularProgressIndicator(color: Colors.white),
+                                SizedBox(height: 20),
+                                Text(
+                                  'Preparing your activity...',
+                                  style: TextStyle(color: Colors.white, fontSize: 16),
+                                ),
+                              ],
+                            ),
+                          ),
+                        );
+                      }
+
                       if (controller.isLoadingSaveRecordActivity.value && controller.elapsedTimeInSeconds.value == 0) {
                         return const Center(child: CircularProgressIndicator());
                       }

@@ -2,6 +2,7 @@ import 'dart:async';
 import 'package:firebase_crashlytics/firebase_crashlytics.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_background_service/flutter_background_service.dart';
+import 'package:geolocator/geolocator.dart';
 import 'package:get/get.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
@@ -36,6 +37,7 @@ class RecordActivityController extends GetxController {
   var stepsInSession = 0.obs;
   var currentDistanceInMeters = 0.0.obs;
   var currentPath = <LocationPoint>[].obs;
+  var isStartingActivity = false.obs;
   
   // ✨ --- Stamina State --- ✨
   var totalStaminaToUse = 0.obs;
@@ -161,12 +163,21 @@ class RecordActivityController extends GetxController {
     var activityStatus = await Permission.activityRecognition.request();
     if (!activityStatus.isGranted) {
       Get.snackbar("Permission Denied", "Activity sensor permission is required.");
+      _logService.log.w("Activity sensor permission is required.");
       return false;
     }
 
     var locationStatus = await Permission.locationWhenInUse.request();
     if (!locationStatus.isGranted) {
       Get.snackbar("Permission Denied", "Location permission is required.");
+      _logService.log.w("Location permission is required.");
+      return false;
+    }
+
+    var isLocationServiceEnabled = await Geolocator.isLocationServiceEnabled();
+    if (!isLocationServiceEnabled) {
+      Get.snackbar("Location Service Disabled", "Please enable location service.");
+      _logService.log.w("Location service is disabled.");
       return false;
     }
     return true;
@@ -206,7 +217,6 @@ class RecordActivityController extends GetxController {
 
         // Tangani nilai stamina yang dikembalikan saat dikonfirmasi
         onConfirm: (int finalStaminaValue) {
-          // print('User confirmed to use $finalStaminaValue stamina.');
           _logService.log.i("User confirmed to use $finalStaminaValue stamina.");
           // Tutup dialog
           Get.back();
@@ -226,59 +236,74 @@ class RecordActivityController extends GetxController {
   }
 
   Future<void> startActivity({int staminaToUse = 0}) async {
-    // print('Starting activity...');
     _logService.log.i("Attempting to start activity with $staminaToUse stamina.");
 
-    if (isTracking.value) return;
-    if (!(await _requestPermissions())) return;
+    if (isTracking.value || isStartingActivity.value) return;
 
-    _resetUiState();
-
-    print('[2] Starting activity...');
+    isStartingActivity.value = true;
 
     try {
-      LatLng startPosition = await _locationService.getCurrentLocation();
-      var response = await _recordActivityService.createSession(
-        latitude: startPosition.latitude,
-        longitude: startPosition.longitude,
-        stamina: staminaToUse,
-      );
-      _recordActivityId = response['id'];
-    } catch (e, s) {
-      Get.back();
-      Get.snackbar('Error', 'Failed to create activity session.');
-      FirebaseCrashlytics.instance.recordError(e, s, reason: 'Failed to create session');
-      return;
-    }
+      if (!(await _requestPermissions())) return;
+      _resetUiState();
 
-    totalStaminaToUse.value = staminaToUse;
-    _startStaminaCountdown(staminaToUse: staminaToUse);
+      try {
+        LatLng startPosition = await _locationService.getCurrentLocation();
+        var response = await _recordActivityService.createSession(
+          latitude: startPosition.latitude,
+          longitude: startPosition.longitude,
+          stamina: staminaToUse,
+        );
+        _recordActivityId = response['id'];
+      } catch (e, s) {
+        Get.back();
+        Get.snackbar('Error', 'Failed to create activity session.');
+        FirebaseCrashlytics.instance.recordError(e, s, reason: 'Failed to create session');
+        isStartingActivity.value = false;
+        return;
+      }
 
-    void initiateRecording() {
-      _service.invoke('startRecording');
-      isTracking.value = true;
-      Get.snackbar("Activity Started", "Tracking is running in the background.");
-    }
+      totalStaminaToUse.value = staminaToUse;
+      _startStaminaCountdown(staminaToUse: staminaToUse);
 
-    var isRunning = await _service.isRunning();
-    if (isRunning) {
-      // Jika service sudah berjalan (misalnya dari aktivitas sebelumnya yang tidak ditutup),
-      // berarti ia sudah siap. Langsung kirim perintah.
-      print("UI LOG: Service already running. Sending 'startRecording' command.");
-      initiateRecording();
-    } else {
-      // Jika service belum berjalan, kita harus memulainya DAN menunggu sinyal 'service_ready'
-      print("UI LOG: Service not running. Starting service and waiting for 'ready' signal...");
-      
-      // Siapkan listener satu kali untuk menangkap sinyal 'service_ready'
-      // .take(1) memastikan listener ini hanya berjalan sekali lalu otomatis berhenti.
-      _service.on('service_ready').take(1).listen((event) {
-        print("UI LOG: 'service_ready' signal received. Sending 'startRecording' command.");
+      // Fungsi initiateRecording sekarang menjadi Completer untuk ditunggu
+      final completer = Completer<void>();
+
+      void initiateRecording() {
+        _service.invoke('startRecording');
+        isTracking.value = true;
+        Get.snackbar("Activity Started", "Tracking is running in the background.");
+        if (!completer.isCompleted) completer.complete();
+      }
+
+      var isRunning = await _service.isRunning();
+      if (isRunning) {
+        // Jika service sudah berjalan (misalnya dari aktivitas sebelumnya yang tidak ditutup),
+        // berarti ia sudah siap. Langsung kirim perintah.
+        _logService.log.i("Service already running. Sending 'startRecording' command.");
         initiateRecording();
-      });
+      } else {
+        // Jika service belum berjalan, kita harus memulainya DAN menunggu sinyal 'service_ready'
+        _logService.log.i("Service not running. Starting service and waiting for 'ready' signal...");
+        
+        // Siapkan listener satu kali untuk menangkap sinyal 'service_ready'
+        // .take(1) memastikan listener ini hanya berjalan sekali lalu otomatis berhenti.
+        _service.on('service_ready').take(1).listen((event) {
+          _logService.log.i("UI LOG: 'service_ready' signal received. Sending 'startRecording' command.");
+          initiateRecording();
+        });
 
-      // Baru setelah listener siap, kita mulai service-nya.
-      await _service.startService();
+        // Baru setelah listener siap, kita mulai service-nya.
+        await _service.startService();
+      }
+
+      // Tunggu hingga proses initiateRecording selesai
+      await completer.future;
+    } catch (e) {
+      // Tangani error umum jika ada
+      Get.snackbar('Error', 'An unexpected error occurred while starting.');
+      _logService.log.e('An unexpected error occurred while starting.', error: e);
+    } finally {
+      isStartingActivity.value = false;
     }
   }
 
@@ -293,7 +318,8 @@ class RecordActivityController extends GetxController {
           subtitle: 'Your activity has insufficient location data. Do you want to delete the activity?',
           labelConfirm: 'Yes, delete',
           onConfirm: () {
-            stopActivity();
+            deleteActivity();
+            Get.back(closeOverlays: true);
           },
           onCancel: () => Get.back(),
         )
@@ -380,7 +406,7 @@ class RecordActivityController extends GetxController {
 
   void _saveStateToLocalDb() {
     if (!isTracking.value || _recordActivityId == null) return;
-    print('Saving current session state to local DB before closing...');
+    _logService.log.i("Saving current session state to local DB before closing...");
     _localDb.saveUnsyncedSession({
       'id': _recordActivityId,
       'elapsedTime': elapsedTimeInSeconds.value,

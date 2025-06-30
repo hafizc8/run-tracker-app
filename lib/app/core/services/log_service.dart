@@ -10,6 +10,13 @@ import 'package:share_plus/share_plus.dart';
 // Enum untuk level log, agar lebih terstruktur
 enum LogLevel { verbose, debug, info, warning, error }
 
+class ReleaseLogFilter extends LogFilter {
+  @override
+  bool shouldLog(LogEvent event) {
+    return true;
+  }
+}
+
 class LogService extends GetxService {
   late final Logger _logger;
   late final String _logFilePath;
@@ -23,12 +30,13 @@ class LogService extends GetxService {
 
     // ✨ KUNCI PERBAIKAN: Konfigurasi printer agar outputnya bersih ✨
     _logger = Logger(
+      filter: ReleaseLogFilter(),
       printer: PrettyPrinter(
         methodCount: 1,       // Tampilkan 1 method di stack trace
-        dateTimeFormat: DateTimeFormat.onlyTimeAndSinceStart,
+        dateTimeFormat: DateTimeFormat.dateAndTime,
         colors: false,        // PENTING: Matikan warna agar tidak ada ANSI codes
         printEmojis: false,    // Matikan emoji untuk kebersihan
-        lineLength: 120,      // Atur panjang baris
+        lineLength: 60,      // Atur panjang baris
       ),
       output: MultiOutput([
         // Output ini sekarang akan menerima teks yang sudah bersih

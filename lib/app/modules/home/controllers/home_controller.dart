@@ -8,6 +8,7 @@ import 'package:intl/intl.dart';
 import 'package:pedometer/pedometer.dart';
 import 'package:sensors_plus/sensors_plus.dart';
 import 'package:zest_mobile/app/core/di/service_locator.dart';
+import 'package:zest_mobile/app/core/models/model/home_page_data_model.dart';
 import 'package:zest_mobile/app/core/models/model/user_model.dart';
 import 'package:zest_mobile/app/core/services/auth_service.dart';
 import 'package:zest_mobile/app/core/services/log_service.dart';
@@ -33,6 +34,7 @@ class HomeController extends GetxController {
   UserModel? get user => _authService.user;
 
   RxBool isLoadingGetUserData = true.obs;
+  Rx<HomePageDataModel?> homePageData = Rx<HomePageDataModel?>(null);
 
   // --- SENSOR & VALIDATION LOGIC ---
   StreamSubscription<StepCount>? _stepCountSubscription;
@@ -65,6 +67,7 @@ class HomeController extends GetxController {
     _initPedometerAndValidator();
     // 3. Muat data pengguna
     await _loadMe();
+    await _loadHomePageData();
     // 4. Tampilkan dialog set daily goal
     await _checkAndShowDailyGoalDialog();
     // 5. Atur listener untuk menyimpan data secara otomatis setiap kali ada perubahan
@@ -225,7 +228,21 @@ class HomeController extends GetxController {
     isLoadingGetUserData.value = true;
 
     try {
-      final user = await sl<AuthService>().me();
+      final user = await _authService.me();
+    } catch (e) {
+      rethrow;
+    } finally {
+      isLoadingGetUserData.value = false;
+    }
+  }
+
+  Future<void> _loadHomePageData() async {
+    isLoadingGetUserData.value = true;
+
+    try {
+      final response = await _userService.loadHomePageData();
+
+      homePageData.value = response;
     } catch (e) {
       rethrow;
     } finally {
@@ -235,6 +252,7 @@ class HomeController extends GetxController {
 
   Future<void> refreshData() async {
     await _loadMe();
+    await _loadHomePageData();
   }
 
   // ✨ KUNCI: Fungsi untuk memeriksa dan menampilkan dialog

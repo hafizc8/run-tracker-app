@@ -83,4 +83,6 @@ class AppConstants {
   static String recordActivityEndSession(String recordActivityId) => "/record-activity/$recordActivityId/end";
 
   static const String dailyRecordSync = "/record-daily";
+
+  static const String homePageData = "/home";
 }

@@ -280,45 +280,114 @@ class HomeView extends GetView<HomeController> {
                           ),
                         ),
                         SizedBox(height: 12.h),
-                        Container(
-                          width: 398.w,
-                          decoration: BoxDecoration(
-                            color: darkColorScheme.surface,
-                            borderRadius: BorderRadius.circular(12.r),
-                          ),
-                          margin: EdgeInsets.symmetric(horizontal: 16.w),
-                          child: const Row(
-                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                            children: [
-                              WalkerProfile(
-                                rank: '1st',
-                                name: 'James',
-                                imageUrl:
-                                    'https://randomuser.me/api/portraits/men/1.jpg',
-                              ),
-                              WalkerProfile(
-                                rank: '2nd',
-                                name: 'Danny',
-                                imageUrl:
-                                    'https://randomuser.me/api/portraits/men/2.jpg',
-                              ),
-                              WalkerProfile(
-                                rank: '3rd',
-                                name: 'Rico',
-                                imageUrl:
-                                    'https://randomuser.me/api/portraits/men/3.jpg',
-                              ),
-                              // Profil Anda dengan background khusus
-                              WalkerProfile(
-                                rank: '55th',
-                                name: 'Your',
-                                imageUrl:
-                                    'https://randomuser.me/api/portraits/men/4.jpg',
-                                backgroundColor: Color(0xFF393939),
-                              ),
-                            ],
-                          ),
-                        ),
+                        // Container(
+                        //   width: 398.w,
+                        //   decoration: BoxDecoration(
+                        //     color: darkColorScheme.surface,
+                        //     borderRadius: BorderRadius.circular(12.r),
+                        //   ),
+                        //   margin: EdgeInsets.symmetric(horizontal: 16.w),
+                        //   child: const Row(
+                        //     mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                        //     children: [
+                        //       WalkerProfile(
+                        //         rank: '1st',
+                        //         name: 'James',
+                        //         imageUrl:
+                        //             'https://randomuser.me/api/portraits/men/1.jpg',
+                        //       ),
+                        //       WalkerProfile(
+                        //         rank: '2nd',
+                        //         name: 'Danny',
+                        //         imageUrl:
+                        //             'https://randomuser.me/api/portraits/men/2.jpg',
+                        //       ),
+                        //       WalkerProfile(
+                        //         rank: '3rd',
+                        //         name: 'Rico',
+                        //         imageUrl:
+                        //             'https://randomuser.me/api/portraits/men/3.jpg',
+                        //       ),
+                        //       // Profil Anda dengan background khusus
+                        //       WalkerProfile(
+                        //         rank: '55th',
+                        //         name: 'Your',
+                        //         imageUrl:
+                        //             'https://randomuser.me/api/portraits/men/4.jpg',
+                        //         backgroundColor: Color(0xFF393939),
+                        //       ),
+                        //     ],
+                        //   ),
+                        // ),
+                        Obx(() {
+                          // Ambil data leaderboards dari controller
+                          final leaderboards = controller.homePageData.value?.leaderboards;
+                          final currentUser = controller.user;
+
+                          // Tampilkan container kosong jika data belum siap
+                          if (leaderboards == null || leaderboards.isEmpty || currentUser == null) {
+                            // Anda bisa mengganti ini dengan shimmer placeholder jika diinginkan
+                            return const SizedBox(height: 145);
+                          }
+
+                          // ✨ 2. Logika BARU untuk memisahkan user dan menampilkan top 3 lainnya
+                          final currentUserLeaderboardData =
+                              leaderboards.firstWhereOrNull((leader) => leader.id == currentUser.id);
+
+                          // Buat daftar baru yang tidak menyertakan user yang sedang login
+                          final otherWalkers =
+                              leaderboards.where((leader) => leader.id != currentUser.id).toList();
+
+                          // Ambil top 3 dari daftar yang sudah difilter
+                          final top3OtherWalkers = otherWalkers.take(3).toList();
+
+                          // Helper function untuk format rank
+                          String formatRank(int? rank) {
+                            if (rank == null) return '-';
+                            if (rank % 10 == 1 && rank % 100 != 11) return '${rank}st';
+                            if (rank % 10 == 2 && rank % 100 != 12) return '${rank}nd';
+                            if (rank % 10 == 3 && rank % 100 != 13) return '${rank}rd';
+                            return '${rank}th';
+                          }
+
+                          return Container(
+                            width: 398.w,
+                            decoration: BoxDecoration(
+                              color: darkColorScheme.surface,
+                              borderRadius: BorderRadius.circular(12.r),
+                            ),
+                            margin: EdgeInsets.symmetric(horizontal: 16.w),
+                            child: Row(
+                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                              children: [
+                                // ✨ 3. Render Top 3 dari daftar 'otherWalkers'
+                                ...top3OtherWalkers.map((walker) {
+                                  return Expanded(
+                                    child: WalkerProfile(
+                                      rank: formatRank(walker.rank),
+                                      name: walker.name ?? '-',
+                                      imageUrl: walker.imageUrl ?? '',
+                                    ),
+                                  );
+                                }).toList(),
+
+                                // ✨ 4. Render data user yang login di slot terakhir
+                                // Tampilkan hanya jika data user ditemukan di leaderboard
+                                if (currentUserLeaderboardData != null)
+                                  Expanded(
+                                    child: WalkerProfile(
+                                      rank: formatRank(currentUserLeaderboardData.rank),
+                                      name: 'Your', // Label "Your" sesuai desain
+                                      imageUrl: currentUserLeaderboardData.imageUrl ??
+                                          currentUser.imageUrl ??
+                                          '', // Gunakan gambar dari leaderboard, fallback ke gambar profil utama
+                                      backgroundColor: const Color(0xFF393939),
+                                    ),
+                                  ),
+                              ],
+                            ),
+                          );
+                        }),
                       ],
                     ),
               

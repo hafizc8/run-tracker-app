@@ -389,7 +389,6 @@ class DetailClubView extends GetView<DetailClubController> {
       leading: IconButton(
         icon: Icon(
           Icons.chevron_left,
-          size: 35,
           color: Theme.of(context).colorScheme.onBackground,
         ),
         onPressed: () => Get.back(),
@@ -508,15 +507,22 @@ class DetailClubView extends GetView<DetailClubController> {
         height: 38,
         decoration: BoxDecoration(
           border: Border.all(color: Theme.of(context).colorScheme.primary),
-          borderRadius: BorderRadius.circular(16),
+          borderRadius: BorderRadius.circular(11),
           color: Theme.of(context).colorScheme.onPrimary,
         ),
         child: ClipRRect(
-          borderRadius: BorderRadius.circular(15),
+          borderRadius: BorderRadius.circular(10),
           child: TabBar(
             controller: tabBarClubController.tabBarController,
             indicator: BoxDecoration(
-              color: Theme.of(context).colorScheme.primary,
+              gradient: const LinearGradient(
+                begin: Alignment.centerLeft,
+                end: Alignment.centerRight,
+                colors: [
+                  Color(0xFFA2FF00),
+                  Color(0xFF00FF7F),
+                ],
+              ),
               borderRadius: indicatorBorderRadius,
             ),
             automaticIndicatorColorAdjustment: false,
@@ -532,10 +538,37 @@ class DetailClubView extends GetView<DetailClubController> {
                 Theme.of(context).textTheme.bodySmall?.copyWith(
                       fontWeight: FontWeight.w400,
                     ),
-            tabs: const [
-              Tab(text: 'Club Activity'),
-              Tab(text: 'Leaderboards'),
-            ],
+            tabs: controller.tabs.map((element) {
+              bool isSelected = controller.tabs.indexOf(element) == currentTab;
+              if (isSelected) {
+                return Tab(
+                  child: Text(
+                    element,
+                    style: Theme.of(context).textTheme.bodySmall?.copyWith(
+                          color: Theme.of(context).colorScheme.onPrimary,
+                        ),
+                  ),
+                );
+              }
+              return Tab(
+                child: ShaderMask(
+                  shaderCallback: (bounds) => const LinearGradient(
+                    begin: Alignment.centerLeft,
+                    end: Alignment.centerRight,
+                    colors: [
+                      Color(0xFFA2FF00),
+                      Color(0xFF00FF7F),
+                    ],
+                  ).createShader(
+                    Rect.fromLTWH(0, 0, bounds.width, bounds.height),
+                  ),
+                  child: Text(
+                    element,
+                    style: Theme.of(context).textTheme.bodySmall,
+                  ),
+                ),
+              );
+            }).toList(),
           ),
         ),
       );

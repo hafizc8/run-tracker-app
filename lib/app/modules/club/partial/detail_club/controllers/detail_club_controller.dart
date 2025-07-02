@@ -13,6 +13,7 @@ class DetailClubController extends GetxController {
   Rx<ClubModel?> club = Rx<ClubModel?>(null);
   RxBool isLoading = false.obs;
   RxBool isLoadingAction = false.obs;
+  var tabs = ['Club Activity', 'Leaderboards'].obs;
 
   final ClubService _clubService = sl<ClubService>();
 

@@ -51,7 +51,6 @@ class ProfileMainController extends GetxController {
   var upComingEvents = <EventModel>[].obs;
   var challenges = <ChallengeModel>[].obs;
 
-
   @override
   void onInit() {
     init();
@@ -226,7 +225,6 @@ class ProfileMainController extends GetxController {
       PaginatedDataResponse<EventModel> response =
           await _eventService.getEvents(
         page: pageEvent,
-        user: _authService.user!.id,
         order: 'upcoming',
         status: 'joined',
       );
@@ -326,21 +324,20 @@ class ProfileMainController extends GetxController {
     isLoadingPostActivity.value = true;
     try {
       String? userId = _authService.user!.id;
-      PaginatedDataResponse<PostModel> response =
-        await _postService.getAll(
-          page: pagePostActivity,
-          user: userId,
-          limit: 5,
-          recordActivityOnly: true,
-        );
+      PaginatedDataResponse<PostModel> response = await _postService.getAll(
+        page: pagePostActivity,
+        user: userId,
+        limit: 5,
+        recordActivityOnly: true,
+      );
 
       if ((response.pagination.next == null ||
               response.pagination.next == '') ||
           response.pagination.total < 20) hasReacheMaxPostActivity.value = true;
 
-      posts.addAll(
-        response.data.map((e) => e.copyWith(isOwner: e.user?.id == userId)).toList()
-      );
+      posts.addAll(response.data
+          .map((e) => e.copyWith(isOwner: e.user?.id == userId))
+          .toList());
 
       pagePostActivity++;
     } catch (e) {

@@ -33,10 +33,13 @@ class SocialForYouView extends GetView<SocialController> {
               children: [
                 Text(
                   'Upcoming Events Around You',
-                  style: Theme.of(context)
-                      .textTheme
-                      .headlineSmall
-                      ?.copyWith(fontWeight: FontWeight.bold),
+                  maxLines: 1,
+                  overflow: TextOverflow.ellipsis,
+                  style: Theme.of(context).textTheme.headlineSmall?.copyWith(
+                        fontWeight: FontWeight.w400,
+                        fontSize: 15.sp,
+                        color: Color(0xFFA5A5A5),
+                      ),
                   textAlign: TextAlign.start,
                 ),
                 InkWell(

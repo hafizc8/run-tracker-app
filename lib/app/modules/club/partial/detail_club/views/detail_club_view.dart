@@ -1,5 +1,6 @@
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/widgets.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:get/get.dart';
@@ -115,189 +116,222 @@ class DetailClubView extends GetView<DetailClubController> {
       clipBehavior: Clip.antiAlias,
       child: Padding(
         padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 20),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
+        child: Stack(
           children: [
-            Row(
-              children: [
-                ClipOval(
-                  child: CachedNetworkImage(
-                    imageUrl: club?.imageUrl ?? '',
-                    width: 65,
-                    height: 65,
-                    fit: BoxFit.cover,
-                    placeholder: (context, url) =>
-                        const ShimmerLoadingCircle(size: 65),
-                    errorWidget: (context, url, error) => const CircleAvatar(
-                      radius: 65,
-                      backgroundImage:
-                          AssetImage('assets/images/empty_profile.png'),
-                    ),
-                  ),
+            Positioned(
+              top: 0,
+              right: 0,
+              child: InkWell(
+                onTap: () =>
+                    Get.snackbar('Coming soon', 'Feature is coming soon'),
+                child: SvgPicture.asset(
+                  'assets/icons/ic_share-2.svg',
                 ),
-                const SizedBox(width: 16),
-                Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
+              ),
+            ),
+            Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Row(
                   children: [
-                    Row(
-                      mainAxisSize: MainAxisSize.min,
-                      children: [
-                        ConstrainedBox(
-                          constraints: BoxConstraints(
-                              maxWidth:
-                                  MediaQuery.of(context).size.width * 0.5),
-                          child: Text(
-                            club?.name ?? '',
-                            maxLines: 2,
-                            overflow: TextOverflow.ellipsis,
-                            style: Theme.of(context)
-                                .textTheme
-                                .titleSmall
-                                ?.copyWith(
-                                  fontWeight: FontWeight.w700,
-                                ),
-                          ),
+                    ClipOval(
+                      child: CachedNetworkImage(
+                        imageUrl: club?.imageUrl ?? '',
+                        width: 65,
+                        height: 65,
+                        fit: BoxFit.cover,
+                        placeholder: (context, url) =>
+                            const ShimmerLoadingCircle(size: 65),
+                        errorWidget: (context, url, error) =>
+                            const CircleAvatar(
+                          radius: 65,
+                          backgroundImage:
+                              AssetImage('assets/images/empty_profile.png'),
                         ),
-                        const SizedBox(width: 8),
-                        Visibility(
-                          visible: (club?.isOwner ?? false),
-                          child: GestureDetector(
-                            onTap: () => Get.toNamed(AppRoutes.updateClub,
-                                arguments: club?.id),
-                            child: Icon(
-                              Icons.edit,
-                              color: Theme.of(context).colorScheme.onBackground,
-                            ),
-                          ),
-                        ),
-                      ],
+                      ),
                     ),
-                    const SizedBox(height: 5),
-                    Row(
+                    const SizedBox(width: 16),
+                    Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
-                        const Icon(
-                          Icons.date_range,
-                          color: Color(0xFF6C6C6C),
-                          size: 16,
-                        ),
-                        const SizedBox(width: 8),
-                        ConstrainedBox(
-                          constraints: BoxConstraints(
-                              maxWidth:
-                                  MediaQuery.of(context).size.width * 0.56),
-                          child: Text(
-                            '${club?.createdAt?.toDDMMMyyyyString()} - ${club?.province}, ${club?.country}',
-                            style: Theme.of(context)
-                                .textTheme
-                                .bodyMedium
-                                ?.copyWith(
-                                  color: const Color(0xFF6C6C6C),
+                        Row(
+                          mainAxisSize: MainAxisSize.min,
+                          children: [
+                            ConstrainedBox(
+                              constraints: BoxConstraints(
+                                  maxWidth:
+                                      MediaQuery.of(context).size.width * 0.5),
+                              child: Text(
+                                club?.name ?? '',
+                                maxLines: 2,
+                                overflow: TextOverflow.ellipsis,
+                                style: Theme.of(context)
+                                    .textTheme
+                                    .titleSmall
+                                    ?.copyWith(
+                                      fontWeight: FontWeight.w700,
+                                    ),
+                              ),
+                            ),
+                            const SizedBox(width: 8),
+                            Visibility(
+                              visible: (club?.isOwner ?? false),
+                              child: GestureDetector(
+                                onTap: () => Get.toNamed(AppRoutes.updateClub,
+                                    arguments: club?.id),
+                                child: SvgPicture.asset(
+                                  'assets/icons/ic_edit.svg',
                                 ),
-                          ),
+                              ),
+                            ),
+                          ],
+                        ),
+                        const SizedBox(height: 5),
+                        Row(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            SvgPicture.asset(
+                              'assets/icons/ic_calendar_club.svg',
+                            ),
+                            const SizedBox(width: 8),
+                            ConstrainedBox(
+                              constraints: BoxConstraints(
+                                  maxWidth:
+                                      MediaQuery.of(context).size.width * 0.56),
+                              child: Text(
+                                '${club?.createdAt?.toDDMMMyyyyString()} - ${club?.province}, ${club?.country}',
+                                style: Theme.of(context)
+                                    .textTheme
+                                    .bodyMedium
+                                    ?.copyWith(
+                                      color: const Color(0xFF6C6C6C),
+                                    ),
+                              ),
+                            ),
+                          ],
                         ),
                       ],
                     ),
                   ],
                 ),
-              ],
-            ),
-            const SizedBox(height: 16),
-            Obx(
-              () => GestureDetector(
-                onTap: () {
-                  controller.isExpanded.toggle();
-                },
-                child: Text(
-                  club?.description ?? 'No description',
-                  maxLines: controller.isExpanded.value ? null : 1,
-                  overflow: controller.isExpanded.value
-                      ? TextOverflow.visible
-                      : TextOverflow.ellipsis,
-                  style: Theme.of(context).textTheme.bodyMedium?.copyWith(
-                        fontSize: 12,
-                      ),
-                ),
-              ),
-            ),
-            const SizedBox(height: 16),
-            Row(
-              children: [
-                InkWell(
-                  onTap: () => Get.toNamed(AppRoutes.memberListInClub,
-                      arguments: club?.id),
-                  child: Container(
-                    decoration: BoxDecoration(
-                      color: const Color(0xFF404040),
-                      borderRadius: BorderRadius.circular(10),
+                const SizedBox(height: 16),
+                Obx(
+                  () => GestureDetector(
+                    onTap: () {
+                      controller.isExpanded.toggle();
+                    },
+                    child: Text(
+                      club?.description ?? 'No description',
+                      maxLines: controller.isExpanded.value ? null : 1,
+                      overflow: controller.isExpanded.value
+                          ? TextOverflow.visible
+                          : TextOverflow.ellipsis,
+                      style: Theme.of(context).textTheme.bodyMedium?.copyWith(
+                            fontSize: 12,
+                          ),
                     ),
-                    padding:
-                        const EdgeInsets.symmetric(horizontal: 10, vertical: 2),
-                    child: Row(
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      children: [
-                        const Icon(
-                          Icons.groups_outlined,
-                          size: 25,
+                  ),
+                ),
+                const SizedBox(height: 16),
+                Row(
+                  children: [
+                    InkWell(
+                      onTap: () => Get.toNamed(AppRoutes.memberListInClub,
+                          arguments: club?.id),
+                      child: Container(
+                        padding: EdgeInsets.all(1.w), // Lebar border
+                        decoration: BoxDecoration(
+                          gradient: const LinearGradient(
+                            colors: [Color(0xFFA2FF00), Color(0xFF00FF7F)],
+                            begin: Alignment.centerLeft,
+                            end: Alignment.centerRight,
+                          ),
+                          borderRadius: BorderRadius.circular(11.r),
                         ),
-                        const SizedBox(width: 10),
-                        RichText(
-                          text: TextSpan(
-                            style:
-                                Theme.of(context).textTheme.bodySmall?.copyWith(
-                                      fontWeight: FontWeight.w700,
-                                      fontSize: 12,
+                        child: Container(
+                          decoration: BoxDecoration(
+                            color: const Color(0xFF404040),
+                            borderRadius: BorderRadius.circular(10.r),
+                          ),
+                          padding: const EdgeInsets.symmetric(
+                              horizontal: 10, vertical: 2),
+                          child: Row(
+                            mainAxisAlignment: MainAxisAlignment.center,
+                            children: [
+                              const Icon(
+                                Icons.groups_outlined,
+                                size: 25,
+                              ),
+                              const SizedBox(width: 10),
+                              RichText(
+                                text: TextSpan(
+                                  style: Theme.of(context)
+                                      .textTheme
+                                      .bodySmall
+                                      ?.copyWith(
+                                        fontWeight: FontWeight.w700,
+                                        fontSize: 12,
+                                      ),
+                                  children: <TextSpan>[
+                                    TextSpan(
+                                        text:
+                                            '${NumberHelper().formatNumberToK(club?.clubUsersCount ?? 0)} '),
+                                    TextSpan(
+                                      text: 'Members',
+                                      style: Theme.of(context)
+                                          .textTheme
+                                          .bodySmall
+                                          ?.copyWith(
+                                            fontWeight: FontWeight.w400,
+                                            fontSize: 12,
+                                          ),
                                     ),
-                            children: <TextSpan>[
-                              TextSpan(
-                                  text:
-                                      '${NumberHelper().formatNumberToK(club?.clubUsersCount ?? 0)} '),
-                              TextSpan(
-                                text: 'Members',
-                                style: Theme.of(context)
-                                    .textTheme
-                                    .bodySmall
-                                    ?.copyWith(
-                                      fontWeight: FontWeight.w400,
-                                      fontSize: 12,
-                                    ),
+                                  ],
+                                ),
+                              ),
+                              ShaderMask(
+                                shaderCallback: (bounds) =>
+                                    const LinearGradient(
+                                  begin: Alignment.topCenter,
+                                  end: Alignment.bottomCenter,
+                                  colors: [
+                                    Color(0xFFA2FF00),
+                                    Color(0xFF00FF7F),
+                                  ],
+                                ).createShader(
+                                  Rect.fromLTWH(
+                                      0, 0, bounds.width, bounds.height),
+                                ),
+                                child: const Icon(
+                                  Icons.chevron_right_outlined,
+                                  size: 25,
+                                  color: Colors.white,
+                                ),
                               ),
                             ],
                           ),
                         ),
-                        const Icon(
-                          Icons.chevron_right_outlined,
-                          size: 25,
-                        ),
-                      ],
+                      ),
                     ),
-                  ),
-                ),
-                const SizedBox(width: 16),
-                InkWell(
-                  onTap: () =>
-                      Get.snackbar('Coming soon', 'Feature is coming soon'),
-                  child: SvgPicture.asset(
-                    'assets/icons/msg.svg',
-                    color: Theme.of(context).colorScheme.onBackground,
-                  ),
-                ),
-                const SizedBox(width: 12),
-                InkWell(
-                  onTap: () =>
-                      Get.toNamed(AppRoutes.inviteToClub, arguments: club?.id),
-                  child: SvgPicture.asset(
-                    'assets/icons/add_friends.svg',
-                    color: Theme.of(context).colorScheme.onBackground,
-                  ),
-                ),
-                const Spacer(),
-                InkWell(
-                  onTap: () =>
-                      Get.snackbar('Coming soon', 'Feature is coming soon'),
-                  child: SvgPicture.asset(
-                    'assets/icons/ic_share-2.svg',
-                  ),
+                    const SizedBox(width: 16),
+                    InkWell(
+                      onTap: () =>
+                          Get.snackbar('Coming soon', 'Feature is coming soon'),
+                      child: SvgPicture.asset(
+                        'assets/icons/msg.svg',
+                        color: Theme.of(context).colorScheme.onBackground,
+                      ),
+                    ),
+                    const SizedBox(width: 12),
+                    InkWell(
+                      onTap: () => Get.toNamed(AppRoutes.inviteToClub,
+                          arguments: club?.id),
+                      child: SvgPicture.asset(
+                        'assets/icons/add_friends.svg',
+                        color: Theme.of(context).colorScheme.onBackground,
+                      ),
+                    ),
+                  ],
                 ),
               ],
             ),
@@ -311,8 +345,23 @@ class DetailClubView extends GetView<DetailClubController> {
     return Builder(
       builder: (context) => FloatingActionButton(
         shape: const CircleBorder(),
-        backgroundColor: Theme.of(context).colorScheme.primary,
-        child: Icon(Icons.edit, color: Theme.of(context).colorScheme.onPrimary),
+        backgroundColor: Colors.transparent,
+        child: Container(
+          decoration: const BoxDecoration(
+            gradient: LinearGradient(
+              colors: [Color(0xFFA2FF00), Color(0xFF00FF7F)],
+              begin: Alignment.topCenter,
+              end: Alignment.bottomCenter,
+            ),
+            shape: BoxShape.circle,
+          ),
+          child: Padding(
+            padding: EdgeInsets.all(15.0.w),
+            child: SvgPicture.asset(
+              'assets/icons/ic_edit_2.svg',
+            ),
+          ),
+        ),
         onPressed: () async {
           await showMenu(
             context: context,
@@ -505,71 +554,83 @@ class DetailClubView extends GetView<DetailClubController> {
 
       return Container(
         margin: const EdgeInsets.symmetric(horizontal: 16),
-        height: 38.h,
+        padding: EdgeInsets.all(1.w), // Lebar border
         decoration: BoxDecoration(
-          // border: Border.all(color: Theme.of(context).colorScheme.primary),
-          borderRadius: BorderRadius.circular(12),
-          color: Theme.of(context).colorScheme.onPrimary,
+          gradient: const LinearGradient(
+            colors: [Color(0xFFA2FF00), Color(0xFF00FF7F)],
+            begin: Alignment.centerLeft,
+            end: Alignment.centerRight,
+          ),
+          borderRadius: BorderRadius.circular(12.r),
         ),
-        child: ClipRRect(
-          borderRadius: BorderRadius.circular(10),
-          child: TabBar(
-            controller: tabBarClubController.tabBarController,
-            indicator: BoxDecoration(
-              gradient: const LinearGradient(
-                begin: Alignment.centerLeft,
-                end: Alignment.centerRight,
-                colors: [
-                  Color(0xFFA2FF00),
-                  Color(0xFF00FF7F),
-                ],
-              ),
-              borderRadius: indicatorBorderRadius,
-            ),
-            automaticIndicatorColorAdjustment: false,
-            indicatorWeight: 0,
-            indicatorSize: TabBarIndicatorSize.tab,
-            dividerHeight: 0,
-            labelColor: Theme.of(context).colorScheme.onPrimary,
-            unselectedLabelColor: Theme.of(context).colorScheme.primary,
-            labelStyle: Theme.of(context).textTheme.bodySmall?.copyWith(
-                  fontWeight: FontWeight.w400,
+        child: Container(
+          height: 38.h,
+          decoration: BoxDecoration(
+            // border: Border.all(color: Theme.of(context).colorScheme.primary),
+            borderRadius: BorderRadius.circular(12),
+            color: Theme.of(context).colorScheme.onPrimary,
+          ),
+          child: ClipRRect(
+            borderRadius: BorderRadius.circular(10),
+            child: TabBar(
+              controller: tabBarClubController.tabBarController,
+              indicator: BoxDecoration(
+                gradient: const LinearGradient(
+                  begin: Alignment.centerLeft,
+                  end: Alignment.centerRight,
+                  colors: [
+                    Color(0xFFA2FF00),
+                    Color(0xFF00FF7F),
+                  ],
                 ),
-            unselectedLabelStyle:
-                Theme.of(context).textTheme.bodySmall?.copyWith(
-                      fontWeight: FontWeight.w400,
+                borderRadius: indicatorBorderRadius,
+              ),
+              automaticIndicatorColorAdjustment: false,
+              indicatorWeight: 0,
+              indicatorSize: TabBarIndicatorSize.tab,
+              dividerHeight: 0,
+              labelColor: Theme.of(context).colorScheme.onPrimary,
+              unselectedLabelColor: Theme.of(context).colorScheme.primary,
+              labelStyle: Theme.of(context).textTheme.bodySmall?.copyWith(
+                    fontWeight: FontWeight.w400,
+                  ),
+              unselectedLabelStyle:
+                  Theme.of(context).textTheme.bodySmall?.copyWith(
+                        fontWeight: FontWeight.w400,
+                      ),
+              tabs: controller.tabs.map((element) {
+                bool isSelected =
+                    controller.tabs.indexOf(element) == currentTab;
+                if (isSelected) {
+                  return Tab(
+                    child: Text(
+                      element,
+                      style: Theme.of(context).textTheme.bodySmall?.copyWith(
+                            color: Theme.of(context).colorScheme.onPrimary,
+                          ),
                     ),
-            tabs: controller.tabs.map((element) {
-              bool isSelected = controller.tabs.indexOf(element) == currentTab;
-              if (isSelected) {
+                  );
+                }
                 return Tab(
-                  child: Text(
-                    element,
-                    style: Theme.of(context).textTheme.bodySmall?.copyWith(
-                          color: Theme.of(context).colorScheme.onPrimary,
-                        ),
+                  child: ShaderMask(
+                    shaderCallback: (bounds) => const LinearGradient(
+                      begin: Alignment.centerLeft,
+                      end: Alignment.centerRight,
+                      colors: [
+                        Color(0xFFA2FF00),
+                        Color(0xFF00FF7F),
+                      ],
+                    ).createShader(
+                      Rect.fromLTWH(0, 0, bounds.width, bounds.height),
+                    ),
+                    child: Text(
+                      element,
+                      style: Theme.of(context).textTheme.bodySmall,
+                    ),
                   ),
                 );
-              }
-              return Tab(
-                child: ShaderMask(
-                  shaderCallback: (bounds) => const LinearGradient(
-                    begin: Alignment.centerLeft,
-                    end: Alignment.centerRight,
-                    colors: [
-                      Color(0xFFA2FF00),
-                      Color(0xFF00FF7F),
-                    ],
-                  ).createShader(
-                    Rect.fromLTWH(0, 0, bounds.width, bounds.height),
-                  ),
-                  child: Text(
-                    element,
-                    style: Theme.of(context).textTheme.bodySmall,
-                  ),
-                ),
-              );
-            }).toList(),
+              }).toList(),
+            ),
           ),
         ),
       );

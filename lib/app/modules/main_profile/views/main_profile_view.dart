@@ -484,7 +484,7 @@ class MainProfileView extends GetView<ProfileMainController> {
                     borderRadius: BorderRadius.circular(12.r),
                   ),
                   child: Container(
-                    height: 48.h,
+                    height: 39.h,
                     padding: EdgeInsets.symmetric(horizontal: 8.w),
                     decoration: BoxDecoration(
                       color: Theme.of(context).colorScheme.background,

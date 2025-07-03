@@ -39,7 +39,7 @@ class CustomTabBar extends GetView<TabBarController> {
                               end: Alignment.centerRight,
                             )
                           : null,
-                      borderRadius: BorderRadius.circular(12.r),
+                      borderRadius: BorderRadius.circular(11.r),
                     ),
                     child: Container(
                       padding:

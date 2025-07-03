@@ -1,5 +1,6 @@
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/widgets.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:get/get.dart';
@@ -80,14 +81,17 @@ class EventCard extends StatelessWidget {
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
                 Container(
-                  padding: EdgeInsets.all(2.w), // Lebar border
+                  padding: EdgeInsets.all(1.w), // Lebar border
                   decoration: BoxDecoration(
                     gradient: const LinearGradient(
-                      colors: [Color(0xFFA2FF00), Color(0xFF00FF7F)],
+                      colors: [
+                        Color(0xFFA2FF00),
+                        Color(0xFF00FF7F),
+                      ],
                       begin: Alignment.centerLeft,
                       end: Alignment.centerRight,
                     ),
-                    borderRadius: BorderRadius.circular(12.r),
+                    borderRadius: BorderRadius.circular(11.r),
                   ),
                   child: Container(
                     padding: EdgeInsets.symmetric(
@@ -130,13 +134,11 @@ class EventCard extends StatelessWidget {
                   children: [
                     GestureDetector(
                       child: SvgPicture.asset(
-                        'assets/icons/share.svg',
-                        color: Theme.of(context).colorScheme.primary,
+                        'assets/icons/ic_share-2.svg',
                         height: 22.h,
                         width: 27.w,
                       ),
                     ),
-                    SizedBox(width: 16.w),
                     Visibility(
                       visible: eventModel?.isOwner == 1 &&
                           (eventModel?.datetime ?? DateTime.now())
@@ -193,10 +195,11 @@ class EventCard extends StatelessWidget {
                             ),
                           ];
                         },
-                        child: Icon(
-                          Icons.more_vert,
-                          size: 27.r,
-                          color: Theme.of(context).colorScheme.primary,
+                        child: Padding(
+                          padding: const EdgeInsets.only(left: 16),
+                          child: SvgPicture.asset(
+                            'assets/icons/ic_more_vert.svg',
+                          ),
                         ),
                       ),
                     )
@@ -206,13 +209,25 @@ class EventCard extends StatelessWidget {
             ),
             SizedBox(height: 16.h),
             // title text
-            Text(
-              eventModel?.title ?? '-',
-              style: Theme.of(context).textTheme.bodyMedium?.copyWith(
-                    fontWeight: FontWeight.w600,
-                    fontSize: 17.sp,
-                    color: Theme.of(context).colorScheme.primary,
-                  ),
+            ShaderMask(
+              shaderCallback: (bounds) => const LinearGradient(
+                begin: Alignment.centerLeft,
+                end: Alignment.centerRight,
+                colors: [
+                  Color(0xFFA2FF00),
+                  Color(0xFF00FF7F),
+                ],
+              ).createShader(
+                Rect.fromLTWH(0, 0, bounds.width, bounds.height),
+              ),
+              child: Text(
+                eventModel?.title ?? '-',
+                style: Theme.of(context).textTheme.bodyMedium?.copyWith(
+                      fontWeight: FontWeight.w600,
+                      fontSize: 17.sp,
+                      color: Colors.white,
+                    ),
+              ),
             ),
             SizedBox(height: 16.h),
 

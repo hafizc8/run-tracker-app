@@ -6,14 +6,17 @@ import 'package:zest_mobile/app/modules/social/controllers/social_club_search_co
 import 'package:zest_mobile/app/modules/social/controllers/social_followers_controller.dart';
 import 'package:zest_mobile/app/modules/social/controllers/social_following_controller.dart';
 
-class SocialController extends GetxController with GetSingleTickerProviderStateMixin {
+class SocialController extends GetxController
+    with GetSingleTickerProviderStateMixin {
   Rx<YourPageChip> selectedChip = YourPageChip.updates.obs;
   ScrollController yourPageScrollController = ScrollController();
   final postController = Get.find<PostController>();
   final followingController = Get.find<SocialFollowingController>();
   final followersController = Get.find<SocialFollowersController>();
   final clubSearchController = Get.find<SocialClubSearchController>();
-  
+
+  var tabs = ['Your Page', 'For You'].obs;
+
   late var tabBarController;
 
   final RxInt selectedIndex = 0.obs;

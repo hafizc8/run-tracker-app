@@ -124,7 +124,7 @@ class ActivityDetailCard extends StatelessWidget {
             visible: postData?.recordActivity != null &&
                 (postData?.galleries ?? []).isNotEmpty,
             child: Container(
-              margin: EdgeInsets.only(top: 10.h, bottom: 10.h),
+              margin: EdgeInsets.only(top: 16.h, bottom: 10.h),
               child: ClipRRect(
                 borderRadius: BorderRadius.circular(10.r),
                 child: _buildStatisticsSection(
@@ -134,10 +134,87 @@ class ActivityDetailCard extends StatelessWidget {
               ),
             ),
           ),
+          Container(
+            height: 41.h,
+            padding: EdgeInsets.symmetric(horizontal: 16.w),
+            margin: postData?.recordActivity != null &&
+                    (postData?.galleries ?? []).isNotEmpty
+                ? const EdgeInsets.only(top: 8)
+                : const EdgeInsets.only(top: 16),
+            decoration: BoxDecoration(
+              border: Border.all(color: const Color(0xFFA5A5A5)),
+              color: Theme.of(context).colorScheme.background,
+              borderRadius: BorderRadius.circular(11.r),
+            ),
+            child: Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: [
+                Row(children: [
+                  ShaderMask(
+                    shaderCallback: (bounds) => const LinearGradient(
+                      begin: Alignment.topCenter,
+                      end: Alignment.bottomCenter,
+                      colors: [
+                        Color(0xFFA2FF00),
+                        Color(0xFF00FF7F),
+                      ],
+                    ).createShader(
+                      Rect.fromLTWH(0, 0, bounds.width, bounds.height),
+                    ),
+                    child: SvgPicture.asset(
+                      'assets/icons/ic_coin.svg',
+                      color: Colors.white,
+                      height: 16.h,
+                      width: 46.w,
+                    ),
+                  ),
+                  SizedBox(width: 8.w),
+                  ShaderMask(
+                    shaderCallback: (bounds) => const LinearGradient(
+                      begin: Alignment.centerLeft,
+                      end: Alignment.centerRight,
+                      colors: [
+                        Color(0xFFA2FF00),
+                        Color(0xFF00FF7F),
+                      ],
+                    ).createShader(
+                      Rect.fromLTWH(0, 0, bounds.width, bounds.height),
+                    ),
+                    child: Text(
+                      'Earned',
+                      style: Theme.of(context).textTheme.bodyMedium?.copyWith(
+                            fontWeight: FontWeight.w400,
+                            fontSize: 15.sp,
+                          ),
+                    ),
+                  ),
+                ]),
+                ShaderMask(
+                  shaderCallback: (bounds) => const LinearGradient(
+                    begin: Alignment.topCenter,
+                    end: Alignment.bottomCenter,
+                    colors: [
+                      Color(0xFFA2FF00),
+                      Color(0xFF00FF7F),
+                    ],
+                  ).createShader(
+                    Rect.fromLTWH(0, 0, bounds.width, bounds.height),
+                  ),
+                  child: Text(
+                    '5.2',
+                    style: Theme.of(context).textTheme.bodyMedium?.copyWith(
+                          fontWeight: FontWeight.w700,
+                          fontSize: 15.sp,
+                        ),
+                  ),
+                ),
+              ],
+            ),
+          ),
           Visibility(
             visible: (postData?.likesCount ?? 0) > 0,
             child: Container(
-              margin: const EdgeInsets.only(top: 10),
+              margin: const EdgeInsets.only(top: 16),
               child: Row(
                 children: [
                   ParticipantsAvatars(
@@ -171,7 +248,7 @@ class ActivityDetailCard extends StatelessWidget {
               ),
             ),
           ),
-          SizedBox(height: 15.h),
+          SizedBox(height: 16.h),
           _buildSocialActions(postData: postData),
           SizedBox(height: 15.h),
           _buildCommentSection(
@@ -312,7 +389,16 @@ class ActivityDetailCard extends StatelessWidget {
   }) {
     return Container(
       padding: EdgeInsets.symmetric(horizontal: 10.w, vertical: 10.h),
-      color: Theme.of(context).colorScheme.primary,
+      decoration: const BoxDecoration(
+        gradient: LinearGradient(
+          begin: Alignment.topLeft,
+          end: Alignment.bottomRight,
+          colors: [
+            Color(0xFFA2FF00),
+            Color(0xFF00FF7F),
+          ],
+        ),
+      ),
       child: Row(
         mainAxisAlignment: MainAxisAlignment.spaceAround,
         children: [
@@ -417,12 +503,23 @@ class ActivityDetailCard extends StatelessWidget {
         Divider(
             color: Theme.of(context).colorScheme.onTertiary, thickness: 0.3),
         SizedBox(height: 15.h),
-        Text(
-          'Comments',
-          style: Theme.of(context)
-              .textTheme
-              .labelMedium
-              ?.copyWith(color: Theme.of(context).colorScheme.primary),
+        ShaderMask(
+          shaderCallback: (bounds) => const LinearGradient(
+            begin: Alignment.centerLeft,
+            end: Alignment.centerRight,
+            colors: [
+              Color(0xFFA2FF00),
+              Color(0xFF00FF7F),
+            ],
+          ).createShader(
+            Rect.fromLTWH(0, 0, bounds.width, bounds.height),
+          ),
+          child: Text(
+            'Comments',
+            style: Theme.of(context).textTheme.labelMedium?.copyWith(
+                  color: Colors.white,
+                ),
+          ),
         ),
         SizedBox(height: 15.h),
         (comments ?? []).isNotEmpty

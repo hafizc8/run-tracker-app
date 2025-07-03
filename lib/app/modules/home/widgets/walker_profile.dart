@@ -11,7 +11,7 @@ class WalkerProfile extends StatelessWidget {
   final Color? backgroundColor;
 
   const WalkerProfile({
-    super.key, 
+    super.key,
     required this.rank,
     required this.imageUrl,
     required this.name,
@@ -32,11 +32,12 @@ class WalkerProfile extends StatelessWidget {
             )
           : null,
       padding: EdgeInsets.symmetric(
-        vertical: 16.h, 
+        vertical: 16.h,
         horizontal: backgroundColor != null ? 16.w : 15.w,
       ),
       child: Column(
-        mainAxisSize: MainAxisSize.min, // Agar Column tidak memakan ruang berlebih
+        mainAxisSize:
+            MainAxisSize.min, // Agar Column tidak memakan ruang berlebih
         children: [
           Text(
             rank,
@@ -49,13 +50,14 @@ class WalkerProfile extends StatelessWidget {
           ClipOval(
             child: CachedNetworkImage(
               imageUrl: imageUrl,
-              width: 44.w,
-              height: 44.h,
+              width: 44.r,
+              height: 44.r,
               fit: BoxFit.cover,
               placeholder: (context, url) => ShimmerLoadingCircle(size: 44.w),
               errorWidget: (context, url, error) => CircleAvatar(
                 radius: 22.r, // Setengah dari width/height
-                backgroundImage: const AssetImage('assets/images/empty_profile.png'),
+                backgroundImage:
+                    const AssetImage('assets/images/empty_profile.png'),
               ),
             ),
           ),

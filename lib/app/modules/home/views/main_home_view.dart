@@ -41,7 +41,7 @@ class MainHomeView extends GetView<MainHomeController> {
         child: SvgPicture.asset(
           svgPath,
           colorFilter: const ColorFilter.mode(Colors.white, BlendMode.srcIn),
-          height: 33.w,
+          height: 33.h,
         ),
       );
     } else {
@@ -51,7 +51,7 @@ class MainHomeView extends GetView<MainHomeController> {
           inactiveColor,
           BlendMode.srcIn,
         ),
-        height: 33.w,
+        height: 33.h,
       );
     }
 
@@ -108,7 +108,7 @@ class MainHomeView extends GetView<MainHomeController> {
 
   @override
   Widget build(BuildContext context) {
-    final double bottomBarHeight = 73.w;
+    final double bottomBarHeight = 73.h;
     // Menggunakan _startButtonDiameter yang sudah didefinisikan di atas
     // untuk konsistensi pada spacer dan kalkulasi posisi.
 

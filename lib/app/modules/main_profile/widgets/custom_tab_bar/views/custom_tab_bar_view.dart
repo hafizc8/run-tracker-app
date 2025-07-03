@@ -13,7 +13,7 @@ import 'package:zest_mobile/app/routes/app_routes.dart';
 class CustomTabBar extends GetView<TabBarController> {
   CustomTabBar({super.key});
 
-  final List<String> tabs = ['Overview', 'Challenge', 'Events'];
+  final List<String> tabs = ['Overview', 'Challenges', 'Events'];
 
   final ProfileMainController profileController = Get.find();
   @override
@@ -29,25 +29,64 @@ class CustomTabBar extends GetView<TabBarController> {
                 child: GestureDetector(
                   onTap: () => controller.changeTabIndex(index),
                   child: Container(
-                    margin: EdgeInsets.symmetric(horizontal: 5.w),
-                    padding:
-                        EdgeInsets.symmetric(vertical: 8.h, horizontal: 16.w),
+                    padding: EdgeInsets.all(1.w), // Lebar border
+                    margin: EdgeInsets.symmetric(horizontal: 2.w),
                     decoration: BoxDecoration(
-                      color: Color(0xFF393939),
-                      borderRadius: BorderRadius.circular(10.r),
+                      gradient: isSelected
+                          ? const LinearGradient(
+                              colors: [Color(0xFFA2FF00), Color(0xFF00FF7F)],
+                              begin: Alignment.centerLeft,
+                              end: Alignment.centerRight,
+                            )
+                          : null,
+                      borderRadius: BorderRadius.circular(12.r),
                     ),
-                    child: Text(
-                      tabs[index],
-                      textAlign: TextAlign.center,
-                      style: Theme.of(context).textTheme.bodyMedium?.copyWith(
-                        color: isSelected
-                            ? Theme.of(context).colorScheme.primary
-                            : Theme.of(context).colorScheme.onBackground,
-                        fontWeight: FontWeight.bold,
-                        fontSize: 12.sp
+                    child: Container(
+                      padding:
+                          EdgeInsets.symmetric(vertical: 8.h, horizontal: 16.w),
+                      decoration: BoxDecoration(
+                        color: Color(0xFF393939),
+                        borderRadius: BorderRadius.circular(10.r),
                       ),
-                      maxLines:1,
-                      overflow: TextOverflow.ellipsis
+                      child: isSelected
+                          ? ShaderMask(
+                              shaderCallback: (bounds) => const LinearGradient(
+                                begin: Alignment.topCenter,
+                                end: Alignment.bottomCenter,
+                                colors: [
+                                  Color(0xFFA2FF00),
+                                  Color(0xFF00FF7F),
+                                ],
+                              ).createShader(
+                                Rect.fromLTWH(
+                                    0, 0, bounds.width, bounds.height),
+                              ),
+                              child: Text(tabs[index],
+                                  textAlign: TextAlign.center,
+                                  style: Theme.of(context)
+                                      .textTheme
+                                      .bodyMedium
+                                      ?.copyWith(
+                                        fontWeight: FontWeight.w400,
+                                        fontSize: 12.sp,
+                                      ),
+                                  maxLines: 1,
+                                  overflow: TextOverflow.ellipsis),
+                            )
+                          : Text(
+                              tabs[index],
+                              textAlign: TextAlign.center,
+                              style: Theme.of(context)
+                                  .textTheme
+                                  .bodyMedium
+                                  ?.copyWith(
+                                    color: Color(0xFFA5A5A5),
+                                    fontWeight: FontWeight.w400,
+                                    fontSize: 12.sp,
+                                  ),
+                              maxLines: 1,
+                              overflow: TextOverflow.ellipsis,
+                            ),
                     ),
                   ),
                 ),
@@ -102,14 +141,18 @@ class CustomTabBar extends GetView<TabBarController> {
                           //   arguments: postActivity,
                           // ),
                           onTap: () {
-                            Get.snackbar('Under development', 'This feature is under development');
+                            Get.snackbar('Under development',
+                                'This feature is under development');
                           },
                         );
                       },
                       separatorBuilder: (context, index) => SizedBox(
                         height: 0.h,
                       ),
-                      itemCount: profileController.posts.length + (profileController.hasReacheMaxPostActivity.value ? 0 : 1),
+                      itemCount: profileController.posts.length +
+                          (profileController.hasReacheMaxPostActivity.value
+                              ? 0
+                              : 1),
                     );
                   })
                 ],

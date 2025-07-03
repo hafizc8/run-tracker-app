@@ -1,5 +1,6 @@
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:get/get.dart';
 import 'package:zest_mobile/app/core/models/model/club_mini_model.dart';
@@ -504,10 +505,10 @@ class DetailClubView extends GetView<DetailClubController> {
 
       return Container(
         margin: const EdgeInsets.symmetric(horizontal: 16),
-        height: 38,
+        height: 38.h,
         decoration: BoxDecoration(
-          border: Border.all(color: Theme.of(context).colorScheme.primary),
-          borderRadius: BorderRadius.circular(11),
+          // border: Border.all(color: Theme.of(context).colorScheme.primary),
+          borderRadius: BorderRadius.circular(12),
           color: Theme.of(context).colorScheme.onPrimary,
         ),
         child: ClipRRect(

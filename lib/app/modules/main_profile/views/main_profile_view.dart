@@ -1,5 +1,7 @@
 import 'package:cached_network_image/cached_network_image.dart';
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/widgets.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:get/get.dart';
@@ -17,7 +19,7 @@ class MainProfileView extends GetView<ProfileMainController> {
       body: Obx(() {
         ScrollController scrollController = ScrollController();
         switch (controller.tabBarController.selectedIndex.value) {
-          case 1:
+          case 0:
             scrollController = controller.postActivityController;
             break;
           case 1:
@@ -188,9 +190,7 @@ class MainProfileView extends GetView<ProfileMainController> {
                               children: [
                                 GestureDetector(
                                   child: SvgPicture.asset(
-                                    'assets/icons/share.svg',
-                                    color:
-                                        Theme.of(context).colorScheme.primary,
+                                    'assets/icons/ic_share-2.svg',
                                     height: 22.h,
                                     width: 27.w,
                                   ),
@@ -199,6 +199,9 @@ class MainProfileView extends GetView<ProfileMainController> {
                                 IconButton(
                                   icon: const Icon(Icons.settings_outlined),
                                   iconSize: 22.h,
+                                  color: Theme.of(context)
+                                      .colorScheme
+                                      .onBackground,
                                   onPressed: () =>
                                       Get.toNamed(AppRoutes.settings),
                                 ),
@@ -212,7 +215,7 @@ class MainProfileView extends GetView<ProfileMainController> {
                         left: 0,
                         right: 0,
                         child: Container(
-                          height: 57.h,
+                          padding: EdgeInsets.symmetric(vertical: 8.h),
                           decoration: BoxDecoration(
                             color: Color(0xFF404040),
                             borderRadius: BorderRadius.circular(8),
@@ -230,20 +233,37 @@ class MainProfileView extends GetView<ProfileMainController> {
                                         'Following',
                                         style: Theme.of(context)
                                             .textTheme
-                                            .bodyMedium,
-                                      ),
-                                      Text(
-                                        '${controller.user.value?.followingCount ?? 0}',
-                                        maxLines: 1,
-                                        overflow: TextOverflow.ellipsis,
-                                        style: Theme.of(context)
-                                            .textTheme
-                                            .bodyLarge
+                                            .bodyMedium
                                             ?.copyWith(
-                                              fontWeight: FontWeight.bold,
-                                              color: Theme.of(context)
-                                                  .primaryColor,
+                                              fontWeight: FontWeight.w700,
+                                              fontSize: 12.sp,
                                             ),
+                                      ),
+                                      ShaderMask(
+                                        shaderCallback: (bounds) =>
+                                            const LinearGradient(
+                                          begin: Alignment.topCenter,
+                                          end: Alignment.bottomCenter,
+                                          colors: [
+                                            Color(0xFFA2FF00),
+                                            Color(0xFF00FF7F),
+                                          ],
+                                        ).createShader(
+                                          Rect.fromLTWH(0, 0, bounds.width,
+                                              bounds.height),
+                                        ),
+                                        child: Text(
+                                          '${controller.user.value?.followingCount ?? 0}',
+                                          maxLines: 1,
+                                          overflow: TextOverflow.ellipsis,
+                                          style: Theme.of(context)
+                                              .textTheme
+                                              .bodyLarge
+                                              ?.copyWith(
+                                                fontWeight: FontWeight.w700,
+                                                fontSize: 20.sp,
+                                              ),
+                                        ),
                                       ),
                                     ],
                                   ),
@@ -253,20 +273,37 @@ class MainProfileView extends GetView<ProfileMainController> {
                                         'Followers',
                                         style: Theme.of(context)
                                             .textTheme
-                                            .bodyMedium,
-                                      ),
-                                      Text(
-                                        '${controller.user.value?.followersCount ?? 0}',
-                                        maxLines: 1,
-                                        overflow: TextOverflow.ellipsis,
-                                        style: Theme.of(context)
-                                            .textTheme
-                                            .bodyLarge
+                                            .bodyMedium
                                             ?.copyWith(
-                                              fontWeight: FontWeight.bold,
-                                              color: Theme.of(context)
-                                                  .primaryColor,
+                                              fontWeight: FontWeight.w700,
+                                              fontSize: 12.sp,
                                             ),
+                                      ),
+                                      ShaderMask(
+                                        shaderCallback: (bounds) =>
+                                            const LinearGradient(
+                                          begin: Alignment.topCenter,
+                                          end: Alignment.bottomCenter,
+                                          colors: [
+                                            Color(0xFFA2FF00),
+                                            Color(0xFF00FF7F),
+                                          ],
+                                        ).createShader(
+                                          Rect.fromLTWH(0, 0, bounds.width,
+                                              bounds.height),
+                                        ),
+                                        child: Text(
+                                          '${controller.user.value?.followersCount ?? 0}',
+                                          maxLines: 1,
+                                          overflow: TextOverflow.ellipsis,
+                                          style: Theme.of(context)
+                                              .textTheme
+                                              .bodyLarge
+                                              ?.copyWith(
+                                                fontWeight: FontWeight.w700,
+                                                fontSize: 20.sp,
+                                              ),
+                                        ),
                                       ),
                                     ],
                                   ),
@@ -276,20 +313,37 @@ class MainProfileView extends GetView<ProfileMainController> {
                                         'Clubs',
                                         style: Theme.of(context)
                                             .textTheme
-                                            .bodyMedium,
-                                      ),
-                                      Text(
-                                        '${controller.user.value?.clubsCount ?? 0}',
-                                        maxLines: 1,
-                                        overflow: TextOverflow.ellipsis,
-                                        style: Theme.of(context)
-                                            .textTheme
-                                            .bodyLarge
+                                            .bodyMedium
                                             ?.copyWith(
-                                              fontWeight: FontWeight.bold,
-                                              color: Theme.of(context)
-                                                  .primaryColor,
+                                              fontWeight: FontWeight.w700,
+                                              fontSize: 12.sp,
                                             ),
+                                      ),
+                                      ShaderMask(
+                                        shaderCallback: (bounds) =>
+                                            const LinearGradient(
+                                          begin: Alignment.topCenter,
+                                          end: Alignment.bottomCenter,
+                                          colors: [
+                                            Color(0xFFA2FF00),
+                                            Color(0xFF00FF7F),
+                                          ],
+                                        ).createShader(
+                                          Rect.fromLTWH(0, 0, bounds.width,
+                                              bounds.height),
+                                        ),
+                                        child: Text(
+                                          '${controller.user.value?.clubsCount ?? 0}',
+                                          maxLines: 1,
+                                          overflow: TextOverflow.ellipsis,
+                                          style: Theme.of(context)
+                                              .textTheme
+                                              .bodyLarge
+                                              ?.copyWith(
+                                                fontWeight: FontWeight.w700,
+                                                fontSize: 20.sp,
+                                              ),
+                                        ),
                                       ),
                                     ],
                                   ),
@@ -308,8 +362,9 @@ class MainProfileView extends GetView<ProfileMainController> {
                   children: [
                     Text(
                       'Badges',
-                      style: Theme.of(context).textTheme.labelLarge?.copyWith(
-                            color: Color(0xFFA5A5A5),
+                      style: Theme.of(context).textTheme.bodyMedium?.copyWith(
+                            fontSize: 15.sp,
+                            fontWeight: FontWeight.w400,
                           ),
                     ),
                     GestureDetector(
@@ -317,20 +372,45 @@ class MainProfileView extends GetView<ProfileMainController> {
                       child: Row(
                         children: [
                           Obx(
-                            () => Text(
-                              '${controller.user.value?.badgesCount ?? 0}',
-                              style: Theme.of(context)
-                                  .textTheme
-                                  .labelLarge
-                                  ?.copyWith(
-                                    color: Color(0xFFA5A5A5),
-                                  ),
+                            () => ShaderMask(
+                              shaderCallback: (bounds) => const LinearGradient(
+                                begin: Alignment.topCenter,
+                                end: Alignment.bottomCenter,
+                                colors: [
+                                  Color(0xFFA2FF00),
+                                  Color(0xFF00FF7F),
+                                ],
+                              ).createShader(
+                                Rect.fromLTWH(
+                                    0, 0, bounds.width, bounds.height),
+                              ),
+                              child: Text(
+                                '${controller.user.value?.badgesCount ?? 0}',
+                                style: Theme.of(context)
+                                    .textTheme
+                                    .bodyMedium
+                                    ?.copyWith(
+                                      fontSize: 15.sp,
+                                      fontWeight: FontWeight.w400,
+                                    ),
+                              ),
                             ),
                           ),
-                          Icon(
-                            Icons.chevron_right,
-                            color: Color(0xFFA5A5A5),
-                            size: 22.h,
+                          ShaderMask(
+                            shaderCallback: (bounds) => const LinearGradient(
+                              begin: Alignment.topCenter,
+                              end: Alignment.bottomCenter,
+                              colors: [
+                                Color(0xFFA2FF00),
+                                Color(0xFF00FF7F),
+                              ],
+                            ).createShader(
+                              Rect.fromLTWH(0, 0, bounds.width, bounds.height),
+                            ),
+                            child: Icon(
+                              Icons.chevron_right,
+                              size: 25.h,
+                            ),
                           ),
                         ],
                       ),
@@ -394,38 +474,92 @@ class MainProfileView extends GetView<ProfileMainController> {
                 ),
                 SizedBox(height: 16.h),
                 Container(
-                  height: 48.h,
-                  padding: EdgeInsets.symmetric(horizontal: 8.w),
+                  padding: EdgeInsets.all(1.w), // Lebar border
                   decoration: BoxDecoration(
-                    border: Border.all(
-                        color: Theme.of(context).colorScheme.primary),
-                    borderRadius: BorderRadius.circular(12),
+                    gradient: const LinearGradient(
+                      colors: [Color(0xFFA2FF00), Color(0xFF00FF7F)],
+                      begin: Alignment.centerLeft,
+                      end: Alignment.centerRight,
+                    ),
+                    borderRadius: BorderRadius.circular(12.r),
                   ),
-                  child: Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                    children: [
-                      Row(children: [
-                        SvgPicture.asset('assets/icons/overall_mileage.svg'),
-                        SizedBox(width: 8.w),
-                        Text(
-                          'Overall Mileage',
-                          style: Theme.of(context)
-                              .textTheme
-                              .bodyMedium
-                              ?.copyWith(
-                                color: Theme.of(context).colorScheme.primary,
-                                fontWeight: FontWeight.bold,
-                              ),
-                        ),
-                      ]),
-                      Text(
-                        '${controller.user.value?.overallMileage ?? 0} km',
-                        style: Theme.of(context).textTheme.bodyMedium?.copyWith(
-                              color: Theme.of(context).colorScheme.primary,
-                              fontWeight: FontWeight.bold,
+                  child: Container(
+                    height: 48.h,
+                    padding: EdgeInsets.symmetric(horizontal: 8.w),
+                    decoration: BoxDecoration(
+                      color: Theme.of(context).colorScheme.background,
+                      borderRadius: BorderRadius.circular(11.r),
+                    ),
+                    child: Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      children: [
+                        Row(children: [
+                          ShaderMask(
+                            shaderCallback: (bounds) => const LinearGradient(
+                              begin: Alignment.topCenter,
+                              end: Alignment.bottomCenter,
+                              colors: [
+                                Color(0xFFA2FF00),
+                                Color(0xFF00FF7F),
+                              ],
+                            ).createShader(
+                              Rect.fromLTWH(0, 0, bounds.width, bounds.height),
                             ),
-                      ),
-                    ],
+                            child: SvgPicture.asset(
+                              'assets/icons/overall_mileage.svg',
+                              color: Colors.white,
+                              height: 16.h,
+                              width: 46.w,
+                            ),
+                          ),
+                          SizedBox(width: 8.w),
+                          ShaderMask(
+                            shaderCallback: (bounds) => const LinearGradient(
+                              begin: Alignment.centerLeft,
+                              end: Alignment.centerRight,
+                              colors: [
+                                Color(0xFFA2FF00),
+                                Color(0xFF00FF7F),
+                              ],
+                            ).createShader(
+                              Rect.fromLTWH(0, 0, bounds.width, bounds.height),
+                            ),
+                            child: Text(
+                              'Overall Mileage',
+                              style: Theme.of(context)
+                                  .textTheme
+                                  .bodyMedium
+                                  ?.copyWith(
+                                    fontWeight: FontWeight.w400,
+                                    fontSize: 15.sp,
+                                  ),
+                            ),
+                          ),
+                        ]),
+                        ShaderMask(
+                          shaderCallback: (bounds) => const LinearGradient(
+                            begin: Alignment.topCenter,
+                            end: Alignment.bottomCenter,
+                            colors: [
+                              Color(0xFFA2FF00),
+                              Color(0xFF00FF7F),
+                            ],
+                          ).createShader(
+                            Rect.fromLTWH(0, 0, bounds.width, bounds.height),
+                          ),
+                          child: Text(
+                            '${controller.user.value?.overallMileage ?? 0} km',
+                            style: Theme.of(context)
+                                .textTheme
+                                .bodyMedium
+                                ?.copyWith(
+                                  fontWeight: FontWeight.w700,
+                                  fontSize: 15.sp,
+                                ),
+                          ),
+                        ),
+                      ],
+                    ),
                   ),
                 ),
                 SizedBox(height: 16.h),

@@ -80,13 +80,10 @@ class SocialYourPageActivityDetailView extends GetView<PostController> {
                             focusNode: controller.commentFocusNode,
                             controller: controller.commentTextController,
                             hintText: 'Enter your comment',
-                            suffixIcon: Padding(
-                              padding: EdgeInsets.all(10.0.w),
-                              child: InkWell(
-                                onTap: () => controller.commentPost(),
-                                child: SvgPicture.asset(
-                                  'assets/icons/ic_send.svg',
-                                ),
+                            suffixIcon: InkWell(
+                              onTap: () => controller.commentPost(),
+                              child: SvgPicture.asset(
+                                'assets/icons/ic_send.svg',
                               ),
                             ),
                             onSubmitted: (value) => controller.commentPost(),

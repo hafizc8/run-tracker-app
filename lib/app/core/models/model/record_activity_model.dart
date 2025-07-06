@@ -15,6 +15,7 @@ class RecordActivityModel extends Model {
     required this.subdistrict,
     required this.village,
     required this.postcode,
+    this.coin,
     required this.createdAt,
     required this.recordActivityLogs,
     this.recordActivityLogsAvgPace,
@@ -36,6 +37,7 @@ class RecordActivityModel extends Model {
   final String? subdistrict;
   final String? village;
   final String? postcode;
+  final String? coin;
   final DateTime? createdAt;
   final List<RecordActivityLogModel> recordActivityLogs;
   double? recordActivityLogsAvgPace;
@@ -57,6 +59,7 @@ class RecordActivityModel extends Model {
     String? subdistrict,
     String? village,
     String? postcode,
+    String? coin,
     DateTime? createdAt,
     List<RecordActivityLogModel>? recordActivityLogs,
     double? recordActivityLogsAvgPace,
@@ -78,13 +81,19 @@ class RecordActivityModel extends Model {
       subdistrict: subdistrict ?? this.subdistrict,
       village: village ?? this.village,
       postcode: postcode ?? this.postcode,
+      coin: coin ?? this.coin,
       createdAt: createdAt ?? this.createdAt,
       recordActivityLogs: recordActivityLogs ?? this.recordActivityLogs,
-      recordActivityLogsAvgPace: recordActivityLogsAvgPace ?? this.recordActivityLogsAvgPace,
-      recordActivityLogsSumDistance: recordActivityLogsSumDistance ?? this.recordActivityLogsSumDistance,
-      recordActivityLogsSumTime: recordActivityLogsSumTime ?? this.recordActivityLogsSumTime,
-      recordActivityLogsSumStep: recordActivityLogsSumStep ?? this.recordActivityLogsSumStep,
-      lastRecordActivityLog: lastRecordActivityLog ?? this.lastRecordActivityLog,
+      recordActivityLogsAvgPace:
+          recordActivityLogsAvgPace ?? this.recordActivityLogsAvgPace,
+      recordActivityLogsSumDistance:
+          recordActivityLogsSumDistance ?? this.recordActivityLogsSumDistance,
+      recordActivityLogsSumTime:
+          recordActivityLogsSumTime ?? this.recordActivityLogsSumTime,
+      recordActivityLogsSumStep:
+          recordActivityLogsSumStep ?? this.recordActivityLogsSumStep,
+      lastRecordActivityLog:
+          lastRecordActivityLog ?? this.lastRecordActivityLog,
     );
   }
 
@@ -102,23 +111,40 @@ class RecordActivityModel extends Model {
       subdistrict: json["subdistrict"],
       village: json["village"],
       postcode: json["postcode"],
+      coin: json["coin"],
       createdAt: DateTime.tryParse(json["created_at"] ?? ""),
       recordActivityLogs: json["record_activity_logs"] == null
           ? []
-          : List<RecordActivityLogModel>.from(json["record_activity_logs"]!.map((x) => RecordActivityLogModel.fromJson(x))),
-      recordActivityLogsAvgPace: json["record_activity_logs_avg_pace"] == null ? null : double.parse(json["record_activity_logs_avg_pace"]),
-      recordActivityLogsSumDistance: json["record_activity_logs_sum_distance"] == null ? null : double.parse(json["record_activity_logs_sum_distance"]),
-      recordActivityLogsSumTime: json["record_activity_logs_sum_time"] == null ? null : int.parse(json["record_activity_logs_sum_time"]),
-      recordActivityLogsSumStep: json["record_activity_logs_sum_step"] == null ? null : int.parse(json["record_activity_logs_sum_step"]),
-      lastRecordActivityLog: json["last_record_activity_log"] == null ? null : RecordActivityLogModel.fromJson(json["last_record_activity_log"]),
+          : List<RecordActivityLogModel>.from(json["record_activity_logs"]!
+              .map((x) => RecordActivityLogModel.fromJson(x))),
+      recordActivityLogsAvgPace: json["record_activity_logs_avg_pace"] == null
+          ? null
+          : double.parse(json["record_activity_logs_avg_pace"]),
+      recordActivityLogsSumDistance:
+          json["record_activity_logs_sum_distance"] == null
+              ? null
+              : double.parse(json["record_activity_logs_sum_distance"]),
+      recordActivityLogsSumTime: json["record_activity_logs_sum_time"] == null
+          ? null
+          : int.parse(json["record_activity_logs_sum_time"]),
+      recordActivityLogsSumStep: json["record_activity_logs_sum_step"] == null
+          ? null
+          : int.parse(json["record_activity_logs_sum_step"]),
+      lastRecordActivityLog: json["last_record_activity_log"] == null
+          ? null
+          : RecordActivityLogModel.fromJson(json["last_record_activity_log"]),
     );
   }
 
   Map<String, dynamic> toJson() => {
         "id": id,
         "user_id": userId,
-        "start_datetime": startDatetime != null ? DateFormat('yyyy-MM-dd HH:mm:ss').format(startDatetime!) : null,
-        "end_datetime": endDatetime != null ? DateFormat('yyyy-MM-dd HH:mm:ss').format(endDatetime!) : null,
+        "start_datetime": startDatetime != null
+            ? DateFormat('yyyy-MM-dd HH:mm:ss').format(startDatetime!)
+            : null,
+        "end_datetime": endDatetime != null
+            ? DateFormat('yyyy-MM-dd HH:mm:ss').format(endDatetime!)
+            : null,
         "latitude": latitude?.toString(),
         "longitude": longitude?.toString(),
         "country": country,
@@ -127,8 +153,10 @@ class RecordActivityModel extends Model {
         "subdistrict": subdistrict,
         "village": village,
         "postcode": postcode,
+        "coin": coin,
         "created_at": createdAt?.toIso8601String(),
-        "record_activity_logs": recordActivityLogs.map((x) => x.toJson()).toList(),
+        "record_activity_logs":
+            recordActivityLogs.map((x) => x.toJson()).toList(),
         "last_record_activity_log": lastRecordActivityLog?.toJson(),
       };
 
@@ -146,6 +174,7 @@ class RecordActivityModel extends Model {
         subdistrict,
         village,
         postcode,
+        coin,
         createdAt,
         recordActivityLogs,
         recordActivityLogsAvgPace,
@@ -215,7 +244,9 @@ class RecordActivityLogModel extends Model {
   Map<String, dynamic> toJson() => {
         "id": id,
         "record_activity_id": recordActivityId,
-        "timestamp": timestamp != null ? DateFormat('yyyy-MM-dd HH:mm:ss').format(timestamp!) : null,
+        "timestamp": timestamp != null
+            ? DateFormat('yyyy-MM-dd HH:mm:ss').format(timestamp!)
+            : null,
         "latitude": latitude?.toString(),
         "longitude": longitude?.toString(),
         "pace": pace?.toStringAsFixed(2),

@@ -134,22 +134,63 @@ class ActivityDetailCard extends StatelessWidget {
               ),
             ),
           ),
-          Container(
-            height: 41.h,
-            padding: EdgeInsets.symmetric(horizontal: 16.w),
-            margin: postData?.recordActivity != null &&
-                    (postData?.galleries ?? []).isNotEmpty
-                ? const EdgeInsets.only(top: 8)
-                : const EdgeInsets.only(top: 16),
-            decoration: BoxDecoration(
-              border: Border.all(color: const Color(0xFFA5A5A5)),
-              color: Theme.of(context).colorScheme.background,
-              borderRadius: BorderRadius.circular(11.r),
-            ),
-            child: Row(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              children: [
-                Row(children: [
+          Visibility(
+            visible: postData?.recordActivity != null,
+            child: Container(
+              height: 41.h,
+              padding: EdgeInsets.symmetric(horizontal: 16.w),
+              margin: postData?.recordActivity != null &&
+                      (postData?.galleries ?? []).isNotEmpty
+                  ? const EdgeInsets.only(top: 8)
+                  : const EdgeInsets.only(top: 16),
+              decoration: BoxDecoration(
+                border: Border.all(color: const Color(0xFFA5A5A5)),
+                color: Theme.of(context).colorScheme.background,
+                borderRadius: BorderRadius.circular(11.r),
+              ),
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: [
+                  Row(children: [
+                    ShaderMask(
+                      shaderCallback: (bounds) => const LinearGradient(
+                        begin: Alignment.topCenter,
+                        end: Alignment.bottomCenter,
+                        colors: [
+                          Color(0xFFA2FF00),
+                          Color(0xFF00FF7F),
+                        ],
+                      ).createShader(
+                        Rect.fromLTWH(0, 0, bounds.width, bounds.height),
+                      ),
+                      child: SvgPicture.asset(
+                        'assets/icons/ic_coin.svg',
+                        color: Colors.white,
+                        height: 16.h,
+                        width: 46.w,
+                      ),
+                    ),
+                    SizedBox(width: 8.w),
+                    ShaderMask(
+                      shaderCallback: (bounds) => const LinearGradient(
+                        begin: Alignment.centerLeft,
+                        end: Alignment.centerRight,
+                        colors: [
+                          Color(0xFFA2FF00),
+                          Color(0xFF00FF7F),
+                        ],
+                      ).createShader(
+                        Rect.fromLTWH(0, 0, bounds.width, bounds.height),
+                      ),
+                      child: Text(
+                        'Earned',
+                        style: Theme.of(context).textTheme.bodyMedium?.copyWith(
+                              fontWeight: FontWeight.w400,
+                              fontSize: 15.sp,
+                            ),
+                      ),
+                    ),
+                  ]),
                   ShaderMask(
                     shaderCallback: (bounds) => const LinearGradient(
                       begin: Alignment.topCenter,
@@ -161,54 +202,16 @@ class ActivityDetailCard extends StatelessWidget {
                     ).createShader(
                       Rect.fromLTWH(0, 0, bounds.width, bounds.height),
                     ),
-                    child: SvgPicture.asset(
-                      'assets/icons/ic_coin.svg',
-                      color: Colors.white,
-                      height: 16.h,
-                      width: 46.w,
-                    ),
-                  ),
-                  SizedBox(width: 8.w),
-                  ShaderMask(
-                    shaderCallback: (bounds) => const LinearGradient(
-                      begin: Alignment.centerLeft,
-                      end: Alignment.centerRight,
-                      colors: [
-                        Color(0xFFA2FF00),
-                        Color(0xFF00FF7F),
-                      ],
-                    ).createShader(
-                      Rect.fromLTWH(0, 0, bounds.width, bounds.height),
-                    ),
                     child: Text(
-                      'Earned',
+                      postData?.recordActivity?.coin ?? '-',
                       style: Theme.of(context).textTheme.bodyMedium?.copyWith(
-                            fontWeight: FontWeight.w400,
+                            fontWeight: FontWeight.w700,
                             fontSize: 15.sp,
                           ),
                     ),
                   ),
-                ]),
-                ShaderMask(
-                  shaderCallback: (bounds) => const LinearGradient(
-                    begin: Alignment.topCenter,
-                    end: Alignment.bottomCenter,
-                    colors: [
-                      Color(0xFFA2FF00),
-                      Color(0xFF00FF7F),
-                    ],
-                  ).createShader(
-                    Rect.fromLTWH(0, 0, bounds.width, bounds.height),
-                  ),
-                  child: Text(
-                    '5.2',
-                    style: Theme.of(context).textTheme.bodyMedium?.copyWith(
-                          fontWeight: FontWeight.w700,
-                          fontSize: 15.sp,
-                        ),
-                  ),
-                ),
-              ],
+                ],
+              ),
             ),
           ),
           Visibility(
@@ -596,7 +599,7 @@ class ActivityDetailCard extends StatelessWidget {
     List<Widget>? replies = const [],
   }) {
     return Padding(
-      padding: EdgeInsets.symmetric(vertical: 8.h),
+      padding: const EdgeInsets.symmetric(vertical: 8),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
@@ -640,10 +643,10 @@ class ActivityDetailCard extends StatelessWidget {
               ),
             ],
           ),
-          SizedBox(height: 8.h),
+
           // Isi Komentar
           Padding(
-            padding: EdgeInsets.only(left: 35.w),
+            padding: const EdgeInsets.only(left: 35),
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
@@ -656,7 +659,7 @@ class ActivityDetailCard extends StatelessWidget {
                         height: 1.8,
                       ),
                 ),
-                SizedBox(height: 6.h),
+                const SizedBox(height: 6),
                 isCommentReply
                     ? const SizedBox()
                     : TextButton(
@@ -678,7 +681,7 @@ class ActivityDetailCard extends StatelessWidget {
                               ),
                         ),
                       ),
-                SizedBox(height: 10.h),
+                const SizedBox(height: 10),
                 // Kalau ada balasan (nested replies)
                 if (replies != null) ...replies,
               ],

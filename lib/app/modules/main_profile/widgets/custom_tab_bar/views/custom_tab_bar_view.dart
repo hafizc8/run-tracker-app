@@ -42,8 +42,8 @@ class CustomTabBar extends GetView<TabBarController> {
                       borderRadius: BorderRadius.circular(11.r),
                     ),
                     child: Container(
-                      padding:
-                          EdgeInsets.symmetric(vertical: 8.h, horizontal: 16.w),
+                      padding: EdgeInsets.symmetric(
+                          vertical: isSelected ? 7.h : 8.h, horizontal: 16.w),
                       decoration: BoxDecoration(
                         color: Color(0xFF393939),
                         borderRadius: BorderRadius.circular(10.r),

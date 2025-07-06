@@ -8,6 +8,7 @@ import 'package:intl/intl.dart';
 import 'package:zest_mobile/app/core/extension/date_extension.dart';
 import 'package:zest_mobile/app/core/extension/event_extension.dart';
 import 'package:zest_mobile/app/core/models/model/event_model.dart';
+import 'package:zest_mobile/app/core/shared/helpers/number_helper.dart';
 import 'package:zest_mobile/app/core/shared/widgets/gradient_elevated_button.dart';
 import 'package:zest_mobile/app/core/shared/widgets/shimmer_loading_circle.dart';
 import 'package:zest_mobile/app/modules/club/partial/detail_club/partial/tab_bar_club/views/widgets/participants_avatars.dart';
@@ -232,12 +233,13 @@ class EventCard extends StatelessWidget {
             SizedBox(height: 16.h),
 
             ParticipantsAvatars(
+              totalUsers: eventModel?.userOnEventsCount ?? 0,
               imageUrls: eventModel?.userOnEvents
-                      ?.map((e) => e.user?.imageUrl ?? '')
+                      ?.map((e) => e.user?.imageUrl ?? 'null')
                       .toList() ??
                   [],
               avatarSize: 29,
-              overlapOffset: 32,
+              overlapOffset: 38,
               maxVisible: 3,
             ),
             SizedBox(height: 8.h),
@@ -289,7 +291,9 @@ class EventCard extends StatelessWidget {
                   ),
                   title: 'Fee',
                   subtitle:
-                      "${(eventModel?.price == null || eventModel?.price == 0) ? 'Free' : eventModel?.price}",
+                      (eventModel?.price == null || eventModel?.price == 0)
+                          ? 'Free'
+                          : NumberHelper().formatCurrency(eventModel!.price!),
                 ),
               ],
             ),

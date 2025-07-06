@@ -79,6 +79,8 @@ class UserService {
     int random = 1,
     String search = '',
     String? followStatus,
+    String? followingBy,
+    String? followersBy,
     String? checkClub,
   }) async {
     try {
@@ -89,6 +91,8 @@ class UserService {
           'page': page.toString(),
           'random': random.toString(),
           'search': search,
+          if (followingBy != null) 'following_by': followingBy,
+          if (followersBy != null) 'follower_by': followersBy,
           if (followStatus != null) 'follow_status': followStatus,
           if (checkClub != null) 'check_club': checkClub,
         },
@@ -115,16 +119,17 @@ class UserService {
   }) async {
     try {
       final response = await _apiService.request(
-        path: AppConstants.updateUserPreference,
-        method: HttpMethod.patch,
-        data: {
-          '_method': 'patch',
-          if (unit != null) 'unit': unit,
-          if (allowNotification != null) 'allow_notification': allowNotification,
-          if (allowEmailNotification != null) 'allow_email_notification': allowEmailNotification,
-          if (dailyStepGoals != null) 'daily_step_goals': dailyStepGoals
-        }
-      );
+          path: AppConstants.updateUserPreference,
+          method: HttpMethod.patch,
+          data: {
+            '_method': 'patch',
+            if (unit != null) 'unit': unit,
+            if (allowNotification != null)
+              'allow_notification': allowNotification,
+            if (allowEmailNotification != null)
+              'allow_email_notification': allowEmailNotification,
+            if (dailyStepGoals != null) 'daily_step_goals': dailyStepGoals
+          });
 
       return response.data['success'];
     } catch (e) {

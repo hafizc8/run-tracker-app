@@ -74,6 +74,7 @@ dependencies:
   package_info_plus: ^8.0.2
   logger: ^2.6.0
   share_plus: ^10.0.0
+  currency_text_input_formatter: ^2.2.9
   # device_preview: ^1.1.0
 
 dependency_overrides:

@@ -316,7 +316,7 @@ class FilterDialog extends GetView<EventController> {
                   children: [
                     Expanded(
                       child: SizedBox(
-                        height: 50.h,
+                        height: 43.h,
                         child: GradientOutlinedButton(
                             style: ButtonStyle(
                               shape: MaterialStateProperty.all(
@@ -336,7 +336,7 @@ class FilterDialog extends GetView<EventController> {
                     Expanded(
                       flex: 2,
                       child: SizedBox(
-                        height: 50.h,
+                        height: 43.h,
                         child: GradientElevatedButton(
                           style: ButtonStyle(
                             padding: MaterialStateProperty.all(

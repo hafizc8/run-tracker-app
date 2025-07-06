@@ -60,7 +60,7 @@ class EditPostView extends GetView<PostController> {
                     );
                   },
                   decoration: InputDecoration(
-                    hintText: 'Enter title',
+                    hintText: 'Enter Title',
                     errorText: form.errors?['title'],
                   ),
                 ),
@@ -77,7 +77,7 @@ class EditPostView extends GetView<PostController> {
                   maxLines: 3,
                   minLines: 3,
                   decoration: InputDecoration(
-                    hintText: 'Enter content',
+                    hintText: 'Enter Content',
                     errorText: form.errors?['content'],
                   ),
                 ),

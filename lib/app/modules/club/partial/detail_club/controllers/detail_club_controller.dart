@@ -66,6 +66,7 @@ class DetailClubController extends GetxController {
           await _clubService.accOrJoinOrLeave(clubId: clubId.value, leave: 1);
       if (resp) {
         Get.back();
+        Get.back();
         Get.snackbar("Success", "Successfully leave club");
 
         // refresh SocialClubSearchController

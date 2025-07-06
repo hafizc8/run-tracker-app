@@ -349,7 +349,10 @@ class DetailClubView extends GetView<DetailClubController> {
         child: Container(
           decoration: const BoxDecoration(
             gradient: LinearGradient(
-              colors: [Color(0xFFA2FF00), Color(0xFF00FF7F)],
+              colors: [
+                Color(0xFFA2FF00),
+                Color(0xFF00FF7F),
+              ],
               begin: Alignment.topCenter,
               end: Alignment.bottomCenter,
             ),

@@ -64,7 +64,7 @@ class EditActivityView extends GetView<EditActivityController> {
                     );
                   },
                   decoration: InputDecoration(
-                    hintText: 'Enter title',
+                    hintText: 'Enter Title',
                     errorText: form.errors?['title'],
                   ),
                 ),
@@ -81,29 +81,26 @@ class EditActivityView extends GetView<EditActivityController> {
                   maxLines: 3,
                   minLines: 3,
                   decoration: InputDecoration(
-                    hintText: 'Enter content',
+                    hintText: 'Enter Content',
                     errorText: form.errors?['content'],
                   ),
                 ),
-
                 const SizedBox(height: 12),
-
-                (form.newGalleries ?? []).isNotEmpty 
-                ? MediaPreviewEdit(
-                  currentGalleries: form.currentGalleries ?? [],
-                  newGalleries: form.newGalleries ?? [],
-                  onRemove: (int index, bool isFromServer, Gallery? gallery, File? file) {
-                    controller.removeMedia(
-                      isFromServer: isFromServer,
-                      gallery: gallery,
-                      file: file,
-                    );
-                  },
-                )
-                : const SizedBox(),
-
+                (form.newGalleries ?? []).isNotEmpty
+                    ? MediaPreviewEdit(
+                        currentGalleries: form.currentGalleries ?? [],
+                        newGalleries: form.newGalleries ?? [],
+                        onRemove: (int index, bool isFromServer,
+                            Gallery? gallery, File? file) {
+                          controller.removeMedia(
+                            isFromServer: isFromServer,
+                            gallery: gallery,
+                            file: file,
+                          );
+                        },
+                      )
+                    : const SizedBox(),
                 const SizedBox(height: 12),
-
                 InkWell(
                   onTap: () {
                     controller.pickMultipleMedia();
@@ -125,15 +122,16 @@ class EditActivityView extends GetView<EditActivityController> {
                         const SizedBox(width: 8),
                         Text(
                           'Upload Image',
-                          style: Theme.of(context).textTheme.bodyMedium?.copyWith(fontWeight: FontWeight.bold),
+                          style: Theme.of(context)
+                              .textTheme
+                              .bodyMedium
+                              ?.copyWith(fontWeight: FontWeight.bold),
                         )
                       ],
                     ),
                   ),
                 ),
-
                 const SizedBox(height: 12),
-
                 Container(
                   height: 310,
                   margin: const EdgeInsets.symmetric(horizontal: 16),
@@ -146,50 +144,47 @@ class EditActivityView extends GetView<EditActivityController> {
                     myLocationButtonEnabled: false,
                     zoomControlsEnabled: false,
                     minMaxZoomPreference: const MinMaxZoomPreference(5, 20),
-                    polylines: controller.activityPolylines, 
+                    polylines: controller.activityPolylines,
                     onMapCreated: controller.onMapCreated,
                   ),
                 ),
-
                 const SizedBox(height: 24),
-
-                Obx(
-                  () {
-                    if (controller.isLoadingSaveRecordActivity.value) {
-                      return const SizedBox();
-                    }
-                    return Container(
-                      margin: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
-                      height: 55,
-                      child: GradientOutlinedButton(
-                        onPressed: () {
-                          Get.offAllNamed(AppRoutes.mainHome);
-                          Get.snackbar('Success', 'Successfully delete activity');
-                        },
-                        child: const Text('Delete'),
-                      ),
-                    );
+                Obx(() {
+                  if (controller.isLoadingSaveRecordActivity.value) {
+                    return const SizedBox();
+                  }
+                  return Container(
+                    margin:
+                        const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+                    height: 55,
+                    child: GradientOutlinedButton(
+                      onPressed: () {
+                        Get.offAllNamed(AppRoutes.mainHome);
+                        Get.snackbar('Success', 'Successfully delete activity');
+                      },
+                      child: const Text('Delete'),
+                    ),
+                  );
                 }),
-                Obx(
-                  () {
-                    return Container(
-                      margin: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
-                      height: 55,
-                      child: GradientElevatedButton(
-                        onPressed: controller.isLoadingSaveRecordActivity.value
+                Obx(() {
+                  return Container(
+                    margin:
+                        const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+                    height: 55,
+                    child: GradientElevatedButton(
+                      onPressed: controller.isLoadingSaveRecordActivity.value
                           ? null
                           : () {
                               controller.saveActivity();
                             },
-                        child: Visibility(
-                          visible: controller.isLoadingSaveRecordActivity.value,
-                          replacement: const Text('Share Activity'),
-                          child: CustomCircularProgressIndicator(),
-                        ),
+                      child: Visibility(
+                        visible: controller.isLoadingSaveRecordActivity.value,
+                        replacement: const Text('Share Activity'),
+                        child: CustomCircularProgressIndicator(),
                       ),
-                    );
-                  }
-                ),
+                    ),
+                  );
+                }),
               ],
             );
           },

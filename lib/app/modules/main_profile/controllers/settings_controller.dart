@@ -116,7 +116,7 @@ class SettingsController extends GetxController {
                     children: [
                       Expanded(
                         child: SizedBox(
-                          height: 50.h,
+                          height: 43.h,
                           child: GradientOutlinedButton(
                             style: ButtonStyle(
                               shape: MaterialStateProperty.all(
@@ -143,7 +143,7 @@ class SettingsController extends GetxController {
                       Expanded(
                         flex: 2,
                         child: SizedBox(
-                          height: 50.h,
+                          height: 43.h,
                           child: GradientElevatedButton(
                             style: ButtonStyle(
                               padding: MaterialStateProperty.all(
@@ -243,7 +243,7 @@ class SettingsController extends GetxController {
                 Flexible(
                   flex: 1,
                   child: SizedBox(
-                    height: 55.h,
+                    height: 43.h,
                     child: GradientOutlinedButton(
                       style: ButtonStyle(
                         shape: MaterialStateProperty.all(
@@ -267,7 +267,7 @@ class SettingsController extends GetxController {
                 Flexible(
                   flex: 2,
                   child: SizedBox(
-                    height: 55.h,
+                    height: 43.h,
                     child: GradientElevatedButton(
                       onPressed: () {
                         Get.back();

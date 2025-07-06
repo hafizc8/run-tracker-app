@@ -1,3 +1,5 @@
+import 'dart:math';
+
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
@@ -9,6 +11,7 @@ import 'package:intl/intl.dart';
 import 'package:zest_mobile/app/core/extension/date_extension.dart';
 import 'package:zest_mobile/app/core/extension/event_extension.dart';
 import 'package:zest_mobile/app/core/models/model/event_model.dart';
+import 'package:zest_mobile/app/core/shared/helpers/number_helper.dart';
 import 'package:zest_mobile/app/core/shared/widgets/gradient_elevated_button.dart';
 import 'package:zest_mobile/app/core/shared/widgets/shimmer_loading_circle.dart';
 import 'package:zest_mobile/app/modules/club/partial/detail_club/partial/tab_bar_club/views/widgets/participants_avatars.dart';
@@ -239,12 +242,13 @@ class EventCard extends StatelessWidget {
             ),
             SizedBox(height: 16.h),
             ParticipantsAvatars(
+              totalUsers: eventModel?.userOnEventsCount ?? 0,
               imageUrls: eventModel?.userOnEvents
-                      ?.map((e) => e.user?.imageUrl ?? '')
+                      ?.map((e) => e.user?.imageUrl ?? 'null')
                       .toList() ??
                   [],
               avatarSize: 29,
-              overlapOffset: 50,
+              overlapOffset: 38,
               maxVisible: 3,
             ),
             SizedBox(height: 8.h),
@@ -296,18 +300,23 @@ class EventCard extends StatelessWidget {
                   ),
                   title: 'Fee',
                   subtitle:
-                      "${(eventModel?.price == null || eventModel?.price == 0) ? 'Free' : eventModel?.price}",
+                      (eventModel?.price == null || eventModel?.price == 0)
+                          ? 'Free'
+                          : NumberHelper().formatCurrency(eventModel!.price!),
                 ),
               ],
             ),
             SizedBox(height: 15.h),
 
             if (eventModel?.cancelledAt != null) ...[
-              GradientElevatedButton(
-                onPressed: null,
-                child: Text(
-                  'Cancelled',
-                  style: Theme.of(context).textTheme.labelSmall,
+              SizedBox(
+                height: 43.h,
+                child: GradientElevatedButton(
+                  onPressed: null,
+                  child: Text(
+                    'Cancelled',
+                    style: Theme.of(context).textTheme.labelSmall,
+                  ),
                 ),
               ),
             ],
@@ -317,19 +326,22 @@ class EventCard extends StatelessWidget {
                     eventModel?.startTime ?? TimeOfDay.now()) &&
                 eventModel?.isPublic == 1 &&
                 eventModel?.isOwner == 0) ...[
-              GradientElevatedButton(
-                onPressed: eventModel?.isJoined == 0
-                    ? () {
-                        eventController
-                            .confirmAccLeaveJoinEvent(eventModel?.id ?? '');
-                      }
-                    : null,
-                child: Text(
-                  (eventModel?.isJoined ?? 0).toEventStatus,
-                  style: Theme.of(context).textTheme.labelMedium?.copyWith(
-                        fontSize: 13.sp,
-                        fontWeight: FontWeight.bold,
-                      ),
+              SizedBox(
+                height: 43.h,
+                child: GradientElevatedButton(
+                  onPressed: eventModel?.isJoined == 0
+                      ? () {
+                          eventController
+                              .confirmAccLeaveJoinEvent(eventModel?.id ?? '');
+                        }
+                      : null,
+                  child: Text(
+                    (eventModel?.isJoined ?? 0).toEventStatus,
+                    style: Theme.of(context).textTheme.labelMedium?.copyWith(
+                          fontSize: 13.sp,
+                          fontWeight: FontWeight.bold,
+                        ),
+                  ),
                 ),
               ),
             ]

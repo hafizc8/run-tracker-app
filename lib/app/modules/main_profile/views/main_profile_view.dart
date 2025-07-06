@@ -134,11 +134,9 @@ class MainProfileView extends GetView<ProfileMainController> {
                                                     controller.user.value = res;
                                                   }
                                                 },
-                                                child: Icon(
-                                                  Icons.edit,
-                                                  color: Theme.of(context)
-                                                      .colorScheme
-                                                      .onBackground,
+                                                child: SvgPicture.asset(
+                                                  'assets/icons/ic_edit.svg',
+                                                  width: 16.w,
                                                 ),
                                               ),
                                             ],
@@ -227,125 +225,156 @@ class MainProfileView extends GetView<ProfileMainController> {
                                 mainAxisAlignment:
                                     MainAxisAlignment.spaceEvenly,
                                 children: [
-                                  Column(
-                                    children: [
-                                      Text(
-                                        'Following',
-                                        style: Theme.of(context)
-                                            .textTheme
-                                            .bodyMedium
-                                            ?.copyWith(
-                                              fontWeight: FontWeight.w700,
-                                              fontSize: 12.sp,
-                                            ),
-                                      ),
-                                      ShaderMask(
-                                        shaderCallback: (bounds) =>
-                                            const LinearGradient(
-                                          begin: Alignment.topCenter,
-                                          end: Alignment.bottomCenter,
-                                          colors: [
-                                            Color(0xFFA2FF00),
-                                            Color(0xFF00FF7F),
-                                          ],
-                                        ).createShader(
-                                          Rect.fromLTWH(0, 0, bounds.width,
-                                              bounds.height),
-                                        ),
-                                        child: Text(
-                                          '${controller.user.value?.followingCount ?? 0}',
-                                          maxLines: 1,
-                                          overflow: TextOverflow.ellipsis,
+                                  GestureDetector(
+                                    onTap: () => Get.toNamed(
+                                      AppRoutes.profileSocialInfo,
+                                      arguments: {
+                                        'name': controller.user.value?.name,
+                                        'id': controller.user.value?.id,
+                                        'page': 0
+                                      },
+                                      preventDuplicates: false,
+                                    ),
+                                    child: Column(
+                                      children: [
+                                        Text(
+                                          'Following',
                                           style: Theme.of(context)
                                               .textTheme
-                                              .bodyLarge
+                                              .bodyMedium
                                               ?.copyWith(
                                                 fontWeight: FontWeight.w700,
-                                                fontSize: 20.sp,
+                                                fontSize: 12.sp,
                                               ),
                                         ),
-                                      ),
-                                    ],
+                                        ShaderMask(
+                                          shaderCallback: (bounds) =>
+                                              const LinearGradient(
+                                            begin: Alignment.topCenter,
+                                            end: Alignment.bottomCenter,
+                                            colors: [
+                                              Color(0xFFA2FF00),
+                                              Color(0xFF00FF7F),
+                                            ],
+                                          ).createShader(
+                                            Rect.fromLTWH(0, 0, bounds.width,
+                                                bounds.height),
+                                          ),
+                                          child: Text(
+                                            '${controller.user.value?.followingCount ?? 0}',
+                                            maxLines: 1,
+                                            overflow: TextOverflow.ellipsis,
+                                            style: Theme.of(context)
+                                                .textTheme
+                                                .bodyLarge
+                                                ?.copyWith(
+                                                  fontWeight: FontWeight.w700,
+                                                  fontSize: 20.sp,
+                                                ),
+                                          ),
+                                        ),
+                                      ],
+                                    ),
                                   ),
-                                  Column(
-                                    children: [
-                                      Text(
-                                        'Followers',
-                                        style: Theme.of(context)
-                                            .textTheme
-                                            .bodyMedium
-                                            ?.copyWith(
-                                              fontWeight: FontWeight.w700,
-                                              fontSize: 12.sp,
-                                            ),
-                                      ),
-                                      ShaderMask(
-                                        shaderCallback: (bounds) =>
-                                            const LinearGradient(
-                                          begin: Alignment.topCenter,
-                                          end: Alignment.bottomCenter,
-                                          colors: [
-                                            Color(0xFFA2FF00),
-                                            Color(0xFF00FF7F),
-                                          ],
-                                        ).createShader(
-                                          Rect.fromLTWH(0, 0, bounds.width,
-                                              bounds.height),
-                                        ),
-                                        child: Text(
-                                          '${controller.user.value?.followersCount ?? 0}',
-                                          maxLines: 1,
-                                          overflow: TextOverflow.ellipsis,
+                                  GestureDetector(
+                                    onTap: () => Get.toNamed(
+                                      AppRoutes.profileSocialInfo,
+                                      arguments: {
+                                        'name': controller.user.value?.name,
+                                        'id': controller.user.value?.id,
+                                        'page': 1,
+                                      },
+                                    ),
+                                    child: Column(
+                                      children: [
+                                        Text(
+                                          'Followers',
                                           style: Theme.of(context)
                                               .textTheme
-                                              .bodyLarge
+                                              .bodyMedium
                                               ?.copyWith(
                                                 fontWeight: FontWeight.w700,
-                                                fontSize: 20.sp,
+                                                fontSize: 12.sp,
                                               ),
                                         ),
-                                      ),
-                                    ],
+                                        ShaderMask(
+                                          shaderCallback: (bounds) =>
+                                              const LinearGradient(
+                                            begin: Alignment.topCenter,
+                                            end: Alignment.bottomCenter,
+                                            colors: [
+                                              Color(0xFFA2FF00),
+                                              Color(0xFF00FF7F),
+                                            ],
+                                          ).createShader(
+                                            Rect.fromLTWH(0, 0, bounds.width,
+                                                bounds.height),
+                                          ),
+                                          child: Text(
+                                            '${controller.user.value?.followersCount ?? 0}',
+                                            maxLines: 1,
+                                            overflow: TextOverflow.ellipsis,
+                                            style: Theme.of(context)
+                                                .textTheme
+                                                .bodyLarge
+                                                ?.copyWith(
+                                                  fontWeight: FontWeight.w700,
+                                                  fontSize: 20.sp,
+                                                ),
+                                          ),
+                                        ),
+                                      ],
+                                    ),
                                   ),
-                                  Column(
-                                    children: [
-                                      Text(
-                                        'Clubs',
-                                        style: Theme.of(context)
-                                            .textTheme
-                                            .bodyMedium
-                                            ?.copyWith(
-                                              fontWeight: FontWeight.w700,
-                                              fontSize: 12.sp,
-                                            ),
-                                      ),
-                                      ShaderMask(
-                                        shaderCallback: (bounds) =>
-                                            const LinearGradient(
-                                          begin: Alignment.topCenter,
-                                          end: Alignment.bottomCenter,
-                                          colors: [
-                                            Color(0xFFA2FF00),
-                                            Color(0xFF00FF7F),
-                                          ],
-                                        ).createShader(
-                                          Rect.fromLTWH(0, 0, bounds.width,
-                                              bounds.height),
-                                        ),
-                                        child: Text(
-                                          '${controller.user.value?.clubsCount ?? 0}',
-                                          maxLines: 1,
-                                          overflow: TextOverflow.ellipsis,
+                                  GestureDetector(
+                                    onTap: () => Get.toNamed(
+                                      AppRoutes.profileSocialInfo,
+                                      arguments: {
+                                        'name': controller.user.value?.name,
+                                        'id': controller.user.value?.id,
+                                        'page': 2
+                                      },
+                                    ),
+                                    child: Column(
+                                      children: [
+                                        Text(
+                                          'Clubs',
                                           style: Theme.of(context)
                                               .textTheme
-                                              .bodyLarge
+                                              .bodyMedium
                                               ?.copyWith(
                                                 fontWeight: FontWeight.w700,
-                                                fontSize: 20.sp,
+                                                fontSize: 12.sp,
                                               ),
                                         ),
-                                      ),
-                                    ],
+                                        ShaderMask(
+                                          shaderCallback: (bounds) =>
+                                              const LinearGradient(
+                                            begin: Alignment.topCenter,
+                                            end: Alignment.bottomCenter,
+                                            colors: [
+                                              Color(0xFFA2FF00),
+                                              Color(0xFF00FF7F),
+                                            ],
+                                          ).createShader(
+                                            Rect.fromLTWH(0, 0, bounds.width,
+                                                bounds.height),
+                                          ),
+                                          child: Text(
+                                            '${controller.user.value?.clubsCount ?? 0}',
+                                            maxLines: 1,
+                                            overflow: TextOverflow.ellipsis,
+                                            style: Theme.of(context)
+                                                .textTheme
+                                                .bodyLarge
+                                                ?.copyWith(
+                                                  fontWeight: FontWeight.w700,
+                                                  fontSize: 20.sp,
+                                                ),
+                                          ),
+                                        ),
+                                      ],
+                                    ),
                                   ),
                                 ],
                               ),

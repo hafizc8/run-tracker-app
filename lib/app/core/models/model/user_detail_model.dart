@@ -1,5 +1,6 @@
 import 'package:zest_mobile/app/core/models/interface/model_interface.dart';
 import 'package:zest_mobile/app/core/models/model/badge_model.dart';
+import 'package:zest_mobile/app/core/models/model/user_current_xp_model.dart';
 
 class UserDetailModel extends Model {
   UserDetailModel({
@@ -25,6 +26,7 @@ class UserDetailModel extends Model {
     required this.badgesCount,
     required this.badges,
     required this.overallMileage,
+    this.currentUserXp,
   });
 
   final dynamic id;
@@ -49,6 +51,7 @@ class UserDetailModel extends Model {
   final int? badgesCount;
   final List<BadgeModel> badges;
   final int? overallMileage;
+  final CurrentUserXpModel? currentUserXp;
 
   @override
   UserDetailModel copyWith({
@@ -74,6 +77,7 @@ class UserDetailModel extends Model {
     int? badgesCount,
     List<BadgeModel>? badges,
     int? overallMileage,
+    CurrentUserXpModel? currentUserXp,
   }) {
     return UserDetailModel(
       id: id ?? this.id,
@@ -98,6 +102,7 @@ class UserDetailModel extends Model {
       badgesCount: badgesCount ?? this.badgesCount,
       badges: badges ?? this.badges,
       overallMileage: overallMileage ?? this.overallMileage,
+      currentUserXp: currentUserXp ?? this.currentUserXp,
     );
   }
 
@@ -128,6 +133,9 @@ class UserDetailModel extends Model {
           : List<BadgeModel>.from(
               json["badges"]!.map((x) => BadgeModel.fromJson(x))),
       overallMileage: json["overall_mileage"],
+      currentUserXp: json["current_user_xp"] == null
+          ? null
+          : CurrentUserXpModel.fromJson(json["current_user_xp"]),
     );
   }
 
@@ -181,5 +189,6 @@ class UserDetailModel extends Model {
         badgesCount,
         badges,
         overallMileage,
+        currentUserXp,
       ];
 }

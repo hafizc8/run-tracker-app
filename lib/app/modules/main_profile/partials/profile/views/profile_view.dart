@@ -6,6 +6,7 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:get/get.dart';
+import 'package:google_fonts/google_fonts.dart';
 import 'package:zest_mobile/app/core/shared/theme/color_schemes.dart';
 import 'package:zest_mobile/app/modules/main_profile/partials/social_info/controllers/social_info_clubs.dart';
 import 'package:zest_mobile/app/modules/main_profile/partials/social_info/controllers/social_info_controller.dart';
@@ -280,6 +281,42 @@ class ProfileView extends GetView<ProfileController> {
                           child: SvgPicture.asset(
                             'assets/icons/ic_share-2.svg',
                             width: 26.w,
+                          ),
+                        ),
+                      ),
+                      Positioned(
+                        bottom: 45.h,
+                        right: 0,
+                        child: IgnorePointer(
+                          child: CachedNetworkImage(
+                            width: 200.w,
+                            imageUrl: controller.user.value?.currentUserXp?.levelDetail?.imageUrl ?? '',
+                            errorWidget: (context, url, error) => const SizedBox(),
+                          ),
+                        ),
+                      ),
+                      Positioned(
+                        bottom: 62.h,
+                        right: 31.w,
+                        child: IgnorePointer(
+                          child: RichText(
+                            text: TextSpan(
+                              style: Theme.of(context).textTheme.bodySmall?.copyWith(
+                                color: Theme.of(context).colorScheme.background,
+                                fontWeight: FontWeight.w400,
+                              ),
+                              children: <TextSpan>[
+                                TextSpan(text: 'Level ${controller.user.value?.currentUserXp?.levelDetail?.level}  '),
+                                TextSpan(
+                                  text: controller.user.value?.currentUserXp?.levelDetail?.animal ?? '',
+                                  style: GoogleFonts.poppins(
+                                    fontWeight: FontWeight.w700,
+                                    color: Theme.of(context).colorScheme.background,
+                                    fontSize: 12.sp
+                                  ),
+                                ),
+                              ],
+                            ),
                           ),
                         ),
                       ),

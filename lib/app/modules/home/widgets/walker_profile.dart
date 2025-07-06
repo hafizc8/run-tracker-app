@@ -1,4 +1,3 @@
-// Letakkan widget ini di file yang sama atau file terpisah
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
@@ -20,11 +19,11 @@ class WalkerProfile extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    // Menggunakan ColorScheme dari tema saat ini
     final darkColorScheme = Theme.of(context).colorScheme;
 
+    // ✨ 1. Hapus SizedBox dengan lebar tetap.
+    // Lebar sekarang akan dikontrol oleh widget Expanded di parent-nya.
     return Container(
-      // Dekorasi hanya diterapkan jika backgroundColor tidak null
       decoration: backgroundColor != null
           ? BoxDecoration(
               color: backgroundColor,
@@ -32,12 +31,11 @@ class WalkerProfile extends StatelessWidget {
             )
           : null,
       padding: EdgeInsets.symmetric(
-        vertical: 16.h,
-        horizontal: backgroundColor != null ? 16.w : 15.w,
+        vertical: 16.h, 
+        horizontal: 8.w, // Beri sedikit padding horizontal
       ),
       child: Column(
-        mainAxisSize:
-            MainAxisSize.min, // Agar Column tidak memakan ruang berlebih
+        mainAxisSize: MainAxisSize.min,
         children: [
           Text(
             rank,
@@ -46,7 +44,7 @@ class WalkerProfile extends StatelessWidget {
                   fontSize: 17.sp,
                 ),
           ),
-          const SizedBox(height: 8),
+          SizedBox(height: 8.h),
           ClipOval(
             child: CachedNetworkImage(
               imageUrl: imageUrl,
@@ -55,19 +53,25 @@ class WalkerProfile extends StatelessWidget {
               fit: BoxFit.cover,
               placeholder: (context, url) => ShimmerLoadingCircle(size: 44.w),
               errorWidget: (context, url, error) => CircleAvatar(
-                radius: 22.r, // Setengah dari width/height
-                backgroundImage:
-                    const AssetImage('assets/images/empty_profile.png'),
+                radius: 22.r,
+                backgroundImage: const AssetImage('assets/images/empty_profile.png'),
               ),
             ),
           ),
           SizedBox(height: 8.h),
-          Text(
-            name,
-            style: Theme.of(context).textTheme.titleSmall?.copyWith(
-                  color: darkColorScheme.primary,
-                  fontSize: 12.sp,
-                ),
+          
+          // ✨ 2. Bungkus Text dengan Flexible agar tidak menyebabkan overflow di dalam Column
+          Flexible(
+            child: Text(
+              name,
+              maxLines: 1,
+              overflow: TextOverflow.ellipsis,
+              textAlign: TextAlign.center,
+              style: Theme.of(context).textTheme.titleSmall?.copyWith(
+                    color: darkColorScheme.primary,
+                    fontSize: 12.sp,
+                  ),
+            ),
           ),
         ],
       ),

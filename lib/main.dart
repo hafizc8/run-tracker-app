@@ -31,7 +31,7 @@ void main() async {
   Hive.registerAdapter(ActivityDataPointAdapter());
 
   // 4. Inisialisasi Dependency Injection dan Background Service
-  setupServiceLocator();
+  await setupServiceLocator(); 
   await sl.allReady();
   await initializeService(); // Sekarang hanya mengkonfigurasi service
 
@@ -78,16 +78,16 @@ Future<void> initializeService() async {
 
   await service.configure(
     iosConfiguration: IosConfiguration(
-      autoStart: false,
+      autoStart: true,
       onForeground: bg.onStart,
       onBackground: bg.onIosBackground,
     ),
     androidConfiguration: AndroidConfiguration(
       onStart: bg.onStart,
       isForegroundMode: true,
-      autoStart: false,
+      autoStart: true,
       notificationChannelId: notificationChannelId,
-      initialNotificationTitle: 'Zest Menunggu',
+      initialNotificationTitle: 'Zest+',
       initialNotificationContent: 'Aktivitas siap dimulai.',
       foregroundServiceNotificationId: 888,
       foregroundServiceTypes: [

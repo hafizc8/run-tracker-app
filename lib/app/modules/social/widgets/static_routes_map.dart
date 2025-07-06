@@ -1,7 +1,9 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:zest_mobile/app/core/models/model/record_activity_model.dart';
 import 'package:zest_mobile/app/core/shared/theme/color_schemes.dart';
+import 'dart:ui' as ui;
 
 class StaticRouteMap extends StatefulWidget {
   final List<RecordActivityLogModel> activityLogs;
@@ -20,7 +22,14 @@ class StaticRouteMap extends StatefulWidget {
 class _StaticRouteMapState extends State<StaticRouteMap> with AutomaticKeepAliveClientMixin<StaticRouteMap> {
   GoogleMapController? _mapController;
   final Set<Polyline> _polylines = {};
-  late LatLngBounds _routeBounds;
+  final Set<Marker> _markers = {};
+
+  late LatLngBounds _routeBounds = LatLngBounds(
+    southwest: const LatLng(0, 0),
+    northeast: const LatLng(0, 0),
+  );
+
+  bool _isMapInitialized = false;
 
   @override
   bool get wantKeepAlive => true;
@@ -28,38 +37,79 @@ class _StaticRouteMapState extends State<StaticRouteMap> with AutomaticKeepAlive
   @override
   void initState() {
     super.initState();
-    // Hanya proses jika data log tidak kosong
-    if (widget.activityLogs.isNotEmpty) {
-      _preparePolylineAndBounds();
+  }
+
+  @override
+  void didChangeDependencies() {
+    super.didChangeDependencies();
+    // Cek dengan flag agar tidak berjalan berulang kali
+    if (!_isMapInitialized && widget.activityLogs.isNotEmpty) {
+      _setupMapData();
+      _isMapInitialized = true;
     }
   }
 
-  /// Mempersiapkan data Polyline dan menghitung bounds untuk kamera
-  void _preparePolylineAndBounds() {
-    // 1. Konversi data log Anda menjadi List<LatLng>
-    final List<LatLng> routePoints = widget.activityLogs
-        .map((log) => LatLng(log.latitude ?? 0, log.longitude ?? 0))
-        .toList();
-
-    if (routePoints.isEmpty) return;
-
-    // 2. Buat objek Polyline
-    final Polyline routePolyline = Polyline(
-      polylineId: const PolylineId('activity_route'),
-      color: darkColorScheme.primary, // Ganti warna sesuai tema
-      width: 5,
-      points: routePoints,
-      startCap: Cap.roundCap,
-      endCap: Cap.roundCap,
+  Future<BitmapDescriptor> _getMarkerIconFromAsset(String path, {int width = 100}) async {
+    final ByteData data = await rootBundle.load(path);
+    final ui.Codec codec = await ui.instantiateImageCodec(
+      data.buffer.asUint8List(),
+      targetWidth: width,
     );
+    final ui.FrameInfo fi = await codec.getNextFrame();
+    final ByteData? byteData = await fi.image.toByteData(format: ui.ImageByteFormat.png);
+    final Uint8List resizedBytes = byteData!.buffer.asUint8List();
+    return BitmapDescriptor.fromBytes(resizedBytes);
+  }
 
-    // 3. Hitung bounds dari semua titik untuk memposisikan kamera
-    _routeBounds = _boundsFromLatLngList(routePoints);
+  Future<void> _setupMapData() async {
+    try {
+      // 1. Muat ikon menggunakan fungsi helper yang baru
+      final startIcon = await _getMarkerIconFromAsset('assets/icons/start_flag.png', width: 60);
+      final endIcon = await _getMarkerIconFromAsset('assets/icons/stop_sign.png', width: 60);
 
-    // 4. Update state dengan polyline yang baru dibuat
-    setState(() {
-      _polylines.add(routePolyline);
-    });
+      // 2. Siapkan semua elemen peta
+      final List<LatLng> routePoints = widget.activityLogs
+          .map((log) => LatLng(log.latitude ?? 0, log.longitude ?? 0))
+          .where((point) => point.latitude != 0 && point.longitude != 0)
+          .toList();
+
+      if (routePoints.isEmpty || !mounted) return;
+
+      final routePolyline = Polyline(
+        polylineId: const PolylineId('activity_route'),
+        color: darkColorScheme.primary,
+        width: 3,
+        points: routePoints,
+        startCap: Cap.roundCap,
+        endCap: Cap.roundCap,
+      );
+
+      final startMarker = Marker(
+        markerId: const MarkerId('start_point'),
+        position: routePoints.first,
+        icon: startIcon,
+        anchor: const Offset(0.2, 1.0),
+      );
+
+      final markers = {startMarker};
+      if (routePoints.length > 1) {
+        markers.add(Marker(
+          markerId: const MarkerId('end_point'),
+          position: routePoints.last,
+          icon: endIcon,
+        ));
+      }
+
+      // 3. Panggil setState SATU KALI dengan semua data yang sudah siap
+      setState(() {
+        _polylines.add(routePolyline);
+        _markers.addAll(markers);
+        _routeBounds = _boundsFromLatLngList(routePoints);
+      });
+
+    } catch (e) {
+      print('Error setting up map elements: $e');
+    }
   }
 
   /// Fungsi helper untuk mendapatkan LatLngBounds dari daftar titik
@@ -92,7 +142,7 @@ class _StaticRouteMapState extends State<StaticRouteMap> with AutomaticKeepAlive
       // Beri sedikit jeda agar perpindahan kamera lebih mulus
       Future.delayed(const Duration(milliseconds: 100), () {
         _mapController?.animateCamera(
-          CameraUpdate.newLatLngBounds(_routeBounds, 50.0), // 50.0 adalah padding
+          CameraUpdate.newLatLngBounds(_routeBounds, 55.0),
         );
       });
     }
@@ -120,6 +170,7 @@ class _StaticRouteMapState extends State<StaticRouteMap> with AutomaticKeepAlive
       child: ClipRRect( 
         borderRadius: BorderRadius.circular(0),
         child: GoogleMap(
+          mapType: MapType.terrain,
           // --- 2. Membuat Peta Statis (Tidak Interaktif) ---
           myLocationEnabled: false,
           myLocationButtonEnabled: false,
@@ -131,6 +182,7 @@ class _StaticRouteMapState extends State<StaticRouteMap> with AutomaticKeepAlive
           
           // --- 1. Menampilkan Polyline ---
           polylines: _polylines,
+          markers: _markers,
           
           // --- 3. Memposisikan Kamera ---
           initialCameraPosition: const CameraPosition(

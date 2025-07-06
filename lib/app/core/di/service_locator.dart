@@ -1,4 +1,5 @@
 import 'package:get_it/get_it.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 import 'package:zest_mobile/app/core/dio/dio_client.dart';
 import 'package:zest_mobile/app/core/services/api_service.dart';
 import 'package:zest_mobile/app/core/services/auth_service.dart';
@@ -15,7 +16,7 @@ import 'package:zest_mobile/app/core/services/user_service.dart';
 
 final sl = GetIt.instance;
 
-void setupServiceLocator() {
+Future<void> setupServiceLocator() async {
   sl.registerLazySingleton(() => StorageService());
   sl.registerLazySingleton(() => DioClient());
   sl.registerLazySingleton(() => ApiService(sl<DioClient>()));
@@ -28,5 +29,9 @@ void setupServiceLocator() {
   sl.registerLazySingleton(() => BadgeService(sl<ApiService>()));
   sl.registerLazySingleton(() => ChallengeService(sl<ApiService>()));
   sl.registerLazySingleton(() => RecordActivityService(sl<ApiService>()));
+  sl.registerSingletonAsync<SharedPreferences>(() async {
+    return await SharedPreferences.getInstance();
+  });
   sl.registerSingletonAsync<LogService>(() => LogService().init());
+
 }

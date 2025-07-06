@@ -36,12 +36,10 @@ class LogService extends GetxService {
         dateTimeFormat: DateTimeFormat.dateAndTime,
         colors: false,        // PENTING: Matikan warna agar tidak ada ANSI codes
         printEmojis: false,    // Matikan emoji untuk kebersihan
-        lineLength: 60,      // Atur panjang baris
+        lineLength: 50,      // Atur panjang baris
       ),
       output: MultiOutput([
-        // Output ini sekarang akan menerima teks yang sudah bersih
-        FileOutput(file: logFile, overrideExisting: true),
-        // ConsoleOutput juga akan menampilkan log tanpa warna, tapi tetap rapi
+        FileOutput(file: logFile, overrideExisting: false),
         if (kDebugMode) ConsoleOutput(),
       ]),
     );

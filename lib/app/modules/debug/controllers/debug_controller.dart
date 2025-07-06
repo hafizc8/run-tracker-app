@@ -60,8 +60,7 @@ class DebugController extends GetxController {
     _tapCount++;
     print("Debug tap count: $_tapCount");
 
-    // Jika di-tap 7 kali, buka halaman log
-    if (_tapCount >= 7) {
+    if (_tapCount >= 3) {
       _tapCount = 0;
       _tapTimer?.cancel();
       Get.toNamed(AppRoutes.logViewer); // Gunakan nama route yang akan kita buat

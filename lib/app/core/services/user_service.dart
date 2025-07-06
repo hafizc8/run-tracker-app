@@ -5,6 +5,7 @@ import 'package:zest_mobile/app/core/models/enums/http_method_enum.dart';
 import 'package:zest_mobile/app/core/models/forms/update_user_form.dart';
 import 'package:zest_mobile/app/core/models/interface/pagination_response_model.dart';
 import 'package:zest_mobile/app/core/models/model/home_page_data_model.dart';
+import 'package:zest_mobile/app/core/models/model/stamina_requirement_model.dart';
 import 'package:zest_mobile/app/core/models/model/user_detail_model.dart';
 import 'package:zest_mobile/app/core/models/model/user_mini_model.dart';
 import 'package:zest_mobile/app/core/models/model/user_model.dart';
@@ -141,6 +142,19 @@ class UserService {
       );
 
       return HomePageDataModel.fromJson(response.data['data']);
+    } catch (e) {
+      rethrow;
+    }
+  }
+
+  Future<StaminaRequirementModel> loadStaminaRequirement() async {
+    try {
+      final response = await _apiService.request(
+        path: AppConstants.staminaRequirement,
+        method: HttpMethod.get,
+      );
+
+      return StaminaRequirementModel.fromJson(response.data['data']);
     } catch (e) {
       rethrow;
     }

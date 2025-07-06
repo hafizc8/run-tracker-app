@@ -214,7 +214,7 @@ class HomeView extends GetView<HomeController> {
                       );
                     }),
                     Text(
-                      'Just ${NumberHelper().formatNumberToKWithComma(controller.user?.userPreference?.dailyStepGoals ?? 0)} steps left to crush your goal!',
+                      'Just ${NumberHelper().formatNumberToKWithComma((controller.user?.userPreference?.dailyStepGoals ?? 0) - controller.validatedSteps)} steps left to crush your goal!',
                       style: Theme.of(context).textTheme.titleSmall,
                     ),
                     SizedBox(height: 18.h),
@@ -228,14 +228,18 @@ class HomeView extends GetView<HomeController> {
                               width: 15.w,
                             ),
                             SizedBox(width: 8.w),
-                            Text(
-                              '0 Mins',
-                              style: Theme.of(context)
-                                  .textTheme
-                                  .titleSmall
-                                  ?.copyWith(
-                                    fontSize: 12.5.sp,
-                                  ),
+                            Obx(
+                              () {
+                                return Text(
+                                  '${NumberHelper().secondsToMinutes(controller.totalActiveTimeInSeconds)} Mins',
+                                  style: Theme.of(context)
+                                      .textTheme
+                                      .titleSmall
+                                      ?.copyWith(
+                                        fontSize: 12.5.sp,
+                                      ),
+                                );
+                              }
                             ),
                           ],
                         ),

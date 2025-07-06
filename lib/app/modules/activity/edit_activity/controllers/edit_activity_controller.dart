@@ -1,6 +1,7 @@
 import 'dart:io';
 
 import 'package:file_picker/file_picker.dart';
+import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:zest_mobile/app/core/di/service_locator.dart';
@@ -29,11 +30,31 @@ class EditActivityController extends GetxController {
 
   final PostService _postService = sl<PostService>();
 
+  BitmapDescriptor startIcon = BitmapDescriptor.defaultMarker;
+  BitmapDescriptor endIcon = BitmapDescriptor.defaultMarker;
+
   @override
   void onInit() {
     super.onInit();
-
+    loadMarkerIcons();
     loadActivityData();
+  }
+
+  Future<void> loadMarkerIcons() async {
+    // Muat ikon start (bendera)
+    startIcon = await BitmapDescriptor.asset(
+      const ImageConfiguration(size: Size(48, 48)), // Anda bisa sesuaikan ukuran ikon
+      'assets/icons/start_flag.png', // Ganti dengan path ikon Anda
+    );
+    
+    // Muat ikon end (stop)
+    endIcon = await BitmapDescriptor.asset(
+      const ImageConfiguration(size: Size(48, 48)), // Anda bisa sesuaikan ukuran ikon
+      'assets/icons/stop_sign.png', // Ganti dengan path ikon Anda
+    );
+    
+    // Perbarui UI jika perlu (biasanya tidak perlu jika peta di-build setelah ini)
+    update(); 
   }
 
   dynamic loadActivityData() {

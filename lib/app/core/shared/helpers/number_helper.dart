@@ -30,6 +30,11 @@ class NumberHelper {
     }
   }
 
+  String secondsToMinutes(int seconds) {
+    final int minutes = seconds ~/ 60;
+    return '${minutes.toString().padLeft(2, '0')} Mins';
+  }
+
   String formatDistanceMeterToKm(double distanceInMeters) {
     if (distanceInMeters < 1000) {
       return "${distanceInMeters.toStringAsFixed(0)} m";

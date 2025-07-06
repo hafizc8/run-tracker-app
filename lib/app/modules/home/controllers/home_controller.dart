@@ -1,5 +1,6 @@
 import 'dart:async';
 import 'package:flutter_background_service/flutter_background_service.dart';
+import 'package:geolocator/geolocator.dart';
 import 'package:get/get.dart';
 import 'package:intl/intl.dart';
 import 'package:permission_handler/permission_handler.dart';
@@ -90,6 +91,20 @@ class HomeController extends GetxController {
     if (!activityStatus.isGranted) {
       Get.snackbar("Permission Denied", "Activity sensor permission is required.");
       _logService.log.w("Activity sensor permission is required.");
+      return false;
+    }
+
+    var locationStatus = await Permission.locationWhenInUse.request();
+    if (!locationStatus.isGranted) {
+      Get.snackbar("Permission Denied", "Location permission is required.");
+      _logService.log.w("Location permission is required.");
+      return false;
+    }
+
+    var isLocationServiceEnabled = await Geolocator.isLocationServiceEnabled();
+    if (!isLocationServiceEnabled) {
+      Get.snackbar("Location Service Disabled", "Please enable location service.");
+      _logService.log.w("Location service is disabled.");
       return false;
     }
 

@@ -146,10 +146,9 @@ class EditActivityView extends GetView<EditActivityController> {
                     minMaxZoomPreference: const MinMaxZoomPreference(5, 20),
                     polylines: controller.activityPolylines,
                     onMapCreated: controller.onMapCreated,
+                    mapType: MapType.terrain,
                     markers: {
-                      // Tampilkan marker hanya jika ada rute yang sudah digambar
                       if (controller.currentPath.isNotEmpty) ...[
-                        // Marker untuk Titik Start
                         Marker(
                           markerId: const MarkerId('start_point'),
                           position: LatLng(
@@ -157,10 +156,9 @@ class EditActivityView extends GetView<EditActivityController> {
                             controller.currentPath.first.longitude,
                           ),
                           icon: controller.startIcon,
-                          anchor: const Offset(0.2, 1.0), // Sesuaikan posisi anchor agar bendera pas di garis
+                          // ✨ Sesuaikan anchor agar ujung pin pas di garis ✨
+                          anchor: const Offset(0.5, 1.0), 
                         ),
-                        
-                        // Marker untuk Titik End (tampilkan hanya jika ada lebih dari 1 titik)
                         if (controller.currentPath.length > 1)
                           Marker(
                             markerId: const MarkerId('end_point'),
@@ -169,10 +167,11 @@ class EditActivityView extends GetView<EditActivityController> {
                               controller.currentPath.last.longitude,
                             ),
                             icon: controller.endIcon,
-                            anchor: const Offset(0.5, 0.5), // Anchor di tengah untuk ikon stop
+                            // ✨ Sesuaikan anchor agar ujung pin pas di garis ✨
+                            anchor: const Offset(0.5, 1.0),
                           ),
                       ]
-                    },
+                    }
                   ),
                 ),
                 const SizedBox(height: 24),

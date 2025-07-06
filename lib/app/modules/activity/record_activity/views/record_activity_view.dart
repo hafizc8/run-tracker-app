@@ -53,7 +53,7 @@ class RecordActivityView extends GetView<RecordActivityController> {
                 labelConfirm: 'Yes',
                 onConfirm: () {
                   controller.deleteActivity();
-                  Get.offAllNamed(AppRoutes.mainHome);
+                  Get.back(closeOverlays: true);
                 },
               )
             );
@@ -247,19 +247,34 @@ class RecordActivityView extends GetView<RecordActivityController> {
                                   ),
                                 ],
                               ),
-                          
-                              Obx(
-                                () {
-                                  return Text(
-                                    controller.formattedPace,
+
+                              Obx(() {
+                                return AnimatedSwitcher(
+                                  duration: const Duration(milliseconds: 400), // Atur durasi animasi
+                                  transitionBuilder: (Widget child, Animation<double> animation) {
+                                    // Membuat efek transisi slide dari bawah ke atas dan fade in
+                                    return FadeTransition(
+                                      opacity: animation,
+                                      child: SlideTransition(
+                                        position: Tween<Offset>(
+                                          begin: const Offset(0.0, 0.3), // Mulai dari sedikit di bawah
+                                          end: Offset.zero,
+                                        ).animate(animation),
+                                        child: child,
+                                      ),
+                                    );
+                                  },
+                                  child: Text(
+                                    controller.formattedPace.value,
+                                    key: ValueKey<String>(controller.formattedPace.value), 
                                     style: Theme.of(context).textTheme.titleSmall?.copyWith(
-                                      color: const Color(0xFFDCDCDC),
-                                      fontSize: 100,
-                                      fontWeight: FontWeight.w700,
-                                    ),
-                                  );
-                                }
-                              ),
+                                          color: const Color(0xFFDCDCDC),
+                                          fontSize: 100,
+                                          fontWeight: FontWeight.w700,
+                                        ),
+                                  ),
+                                );
+                              }),
                           
                               Row(
                                 mainAxisAlignment: MainAxisAlignment.center,

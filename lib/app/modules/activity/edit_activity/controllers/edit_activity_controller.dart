@@ -1,7 +1,6 @@
 import 'dart:io';
-
 import 'package:file_picker/file_picker.dart';
-import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:get/get.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:zest_mobile/app/core/di/service_locator.dart';
@@ -15,6 +14,7 @@ import 'package:zest_mobile/app/core/models/model/record_activity_model.dart';
 import 'package:zest_mobile/app/core/services/post_service.dart';
 import 'package:zest_mobile/app/core/shared/theme/color_schemes.dart';
 import 'package:zest_mobile/app/routes/app_routes.dart';
+import 'dart:ui' as ui;
 
 class EditActivityController extends GetxController {
   final RecordActivityModel recordActivityData;
@@ -36,24 +36,19 @@ class EditActivityController extends GetxController {
   @override
   void onInit() {
     super.onInit();
-    loadMarkerIcons();
+    loadMarkerIcons(); 
     loadActivityData();
   }
 
-  Future<void> loadMarkerIcons() async {
-    // Muat ikon start (bendera)
-    startIcon = await BitmapDescriptor.asset(
-      const ImageConfiguration(size: Size(48, 48)), // Anda bisa sesuaikan ukuran ikon
-      'assets/icons/start_flag.png', // Ganti dengan path ikon Anda
-    );
+  void loadMarkerIcons() {
+    // Buat pin merah untuk titik start
+    startIcon = BitmapDescriptor.defaultMarkerWithHue(BitmapDescriptor.hueRed);
     
-    // Muat ikon end (stop)
-    endIcon = await BitmapDescriptor.asset(
-      const ImageConfiguration(size: Size(48, 48)), // Anda bisa sesuaikan ukuran ikon
-      'assets/icons/stop_sign.png', // Ganti dengan path ikon Anda
-    );
+    // Buat pin hijau untuk titik finish
+    endIcon = BitmapDescriptor.defaultMarkerWithHue(BitmapDescriptor.hueGreen);
     
-    // Perbarui UI jika perlu (biasanya tidak perlu jika peta di-build setelah ini)
+    // Panggil update() untuk memberitahu GetX agar membangun ulang UI
+    // yang bergantung pada ikon ini (misalnya, GoogleMap).
     update(); 
   }
 
@@ -69,6 +64,18 @@ class EditActivityController extends GetxController {
         timestamp: e.timestamp ?? DateTime.now(),
       );
     }).toList();
+  }
+
+  Future<BitmapDescriptor> _getMarkerIconFromAsset(String path, {int width = 60}) async {
+    final ByteData data = await rootBundle.load(path);
+    final ui.Codec codec = await ui.instantiateImageCodec(
+      data.buffer.asUint8List(),
+      targetWidth: width,
+    );
+    final ui.FrameInfo fi = await codec.getNextFrame();
+    final ByteData? byteData = await fi.image.toByteData(format: ui.ImageByteFormat.png);
+    final Uint8List resizedBytes = byteData!.buffer.asUint8List();
+    return BitmapDescriptor.fromBytes(resizedBytes);
   }
 
   void onMapCreated(GoogleMapController controller) {
@@ -198,22 +205,15 @@ class EditActivityController extends GetxController {
   }
 
   Set<Polyline> get activityPolylines {
-    // Jika path masih kosong, kembalikan set kosong
-    if (currentPath.isEmpty) {
-      return <Polyline>{};
-    }
-
-    // Buat satu Polyline dengan ID unik
+    if (currentPath.isEmpty) return <Polyline>{};
     return {
       Polyline(
         polylineId: const PolylineId('activity_path'),
-        color: darkColorScheme.primary, // Anda bisa sesuaikan warnanya
-        width: 5, // Anda bisa sesuaikan ketebalan garis
+        color: darkColorScheme.primary,
+        width: 5,
         startCap: Cap.buttCap,
         endCap: Cap.buttCap,
-        points: currentPath
-            .map((point) => LatLng(point.latitude, point.longitude))
-            .toList(), // Konversi List<LocationPoint> menjadi List<LatLng>
+        points: currentPath.map((point) => LatLng(point.latitude, point.longitude)).toList(),
       ),
     };
   }

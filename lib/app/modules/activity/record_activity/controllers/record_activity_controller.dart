@@ -26,6 +26,7 @@ class RecordActivityController extends GetxController {
   final _localDb = LocalActivityService();
   final _recordActivityService = sl<RecordActivityService>();
   final _locationService = sl<LocationService>();
+  final _logService = sl<LogService>();
   final AuthService _authService = sl<AuthService>();
   UserModel? get user => _authService.user;
   
@@ -52,20 +53,25 @@ class RecordActivityController extends GetxController {
   // --- Session State ---
   String? _recordActivityId;
 
-  final _logService = sl<LogService>();
+  var formattedPace = "00:00".obs;
+  Timer? _paceUpdateTimer;
+
 
   @override
   void onInit() {
     super.onInit();
     _listenToBackgroundService();
-    _initializeSession();
+
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      chooseStamina();
+    });
   }
 
   @override
   void onClose() {
     _logService.log.i("RecordActivityController closed.");
     _staminaTimer?.cancel();
-    _saveStateToLocalDb();
+    _paceUpdateTimer?.cancel();
     super.onClose();
   }
 
@@ -90,63 +96,6 @@ class RecordActivityController extends GetxController {
         _updateCameraForRoute();
       }
     });
-  }
-
-  Future<void> _initializeSession() async {
-    final unsyncedSession = await _localDb.getUnsyncedSession();
-    if (unsyncedSession != null) {
-      final unsyncedPoints = await _localDb.getAllDataPoints();
-      _showResumeOrDiscardDialog(unsyncedSession, unsyncedPoints);
-    } else {
-      await chooseStamina();
-    }
-  }
-
-  void _showResumeOrDiscardDialog(Map<String, dynamic> sessionData, List<ActivityDataPoint> points) {
-    Get.dialog(
-      CustomDialogConfirmation(
-        title: 'Unfinished Activity Found',
-        subtitle: 'You have an unsynced activity. Would you like to resume it or discard it and start a new one?',
-        labelConfirm: 'Resume',
-        onConfirm: () {
-          Get.back();
-          _resumeActivityFromLocal(sessionData, points);
-        },
-        labelCancel: 'Discard',
-        onCancel: () {
-          Get.back();
-          _discardAndStartNew();
-        },
-      )
-    );
-  }
-
-  void _resumeActivityFromLocal(Map<String, dynamic> sessionData, List<ActivityDataPoint> points) {
-    _logService.log.i("Resuming activity from local storage. Session ID: ${sessionData['id']}");
-    _recordActivityId = sessionData['id'];
-    elapsedTimeInSeconds.value = sessionData['elapsedTime'];
-    currentDistanceInMeters.value = sessionData['distance'];
-    currentPath.assignAll(points.map((p) => LocationPoint(
-          latitude: p.latitude, longitude: p.longitude, timestamp: p.timestamp))
-        .toList());
-
-    // Beritahu service untuk mulai merekam dengan state yang sudah dipulihkan
-    _service.invoke('startRecording', {
-      'elapsedTime': elapsedTimeInSeconds.value,
-      'distance': currentDistanceInMeters.value,
-      'isPaused': true, // Mulai dalam keadaan pause
-    });
-
-    isTracking.value = true;
-    isPaused.value = true; // Set UI ke mode pause
-    Get.snackbar("Activity Resumed", "Press resume to continue tracking.");
-    WidgetsBinding.instance.addPostFrameCallback((_) => _updateCameraForRoute());
-  }
-
-  Future<void> _discardAndStartNew() async {
-    _logService.log.w("Discarding unsynced session and starting new.");
-    await _localDb.clearAllUnsyncedData();
-    await chooseStamina();
   }
 
   void togglePauseResume() {
@@ -186,8 +135,10 @@ class RecordActivityController extends GetxController {
   Future<void> chooseStamina() async {
     _logService.log.i("Showing choose stamina dialog.");
 
-    if (user?.currentUserStamina?.currentAmount == 0) {
-      startActivity();
+    if (user != null && (user?.currentUserStamina?.currentAmount ?? 0) == 0) {
+      _logService.log.i("User has 0 stamina. Starting activity directly.");
+      // Langsung mulai aktivitas dengan 0 stamina
+      startActivity(staminaToUse: 0);
       return;
     }
 
@@ -271,6 +222,7 @@ class RecordActivityController extends GetxController {
       void initiateRecording() {
         _service.invoke('startRecording');
         isTracking.value = true;
+        _startPaceUpdater();
         Get.snackbar("Activity Started", "Tracking is running in the background.");
         if (!completer.isCompleted) completer.complete();
       }
@@ -338,6 +290,7 @@ class RecordActivityController extends GetxController {
     isTracking.value = false;
 
     _staminaTimer?.cancel();
+    _paceUpdateTimer?.cancel();
 
     Get.snackbar("Syncing", "Finalizing your activity...");
 
@@ -357,19 +310,10 @@ class RecordActivityController extends GetxController {
         if (recordActivityData.id?.isNotEmpty ?? false) {
           await _localDb.clearAllUnsyncedData();
           Get.offAndToNamed(AppRoutes.activityEdit, arguments: recordActivityData);
-        } else {
-          // Gagal mengakhiri sesi di server, simpan lagi datanya
-          _saveStateToLocalDb();
-          Get.snackbar("Failed", "Failed to end activity session. Your progress is saved locally.");
         }
-      } else {
-        // Gagal sinkronisasi, simpan lagi datanya
-        _saveStateToLocalDb();
-        Get.snackbar("Sync Failed", "Could not sync data. Your progress is saved locally for next time.");
       }
     } catch (e, s) {
       FirebaseCrashlytics.instance.recordError(e, s, reason: 'Failed to sync/end session');
-      _saveStateToLocalDb();
       Get.snackbar("Error", "An error occurred. Your progress is saved locally.");
     } finally {
       isLoadingSaveRecordActivity.value = false;
@@ -378,7 +322,7 @@ class RecordActivityController extends GetxController {
 
   void deleteActivity() async {
     final service = FlutterBackgroundService();
-    service.invoke("stopService");
+    service.invoke("stopRecording");
     await _localDb.clearAllUnsyncedData();
   }
 
@@ -388,6 +332,7 @@ class RecordActivityController extends GetxController {
     currentDistanceInMeters.value = 0.0;
     currentPath.clear();
     isPaused.value = false;
+    formattedPace.value = "00:00";
     _recordActivityId = null;
   }
 
@@ -402,17 +347,6 @@ class RecordActivityController extends GetxController {
         pace: paceInSecondsPerKm, time: elapsedTimeInSeconds.value,
         timestamp: timestamp);
     _localDb.addDataPoint(dataPoint);
-  }
-
-  void _saveStateToLocalDb() {
-    if (!isTracking.value || _recordActivityId == null) return;
-    _logService.log.i("Saving current session state to local DB before closing...");
-    _localDb.saveUnsyncedSession({
-      'id': _recordActivityId,
-      'elapsedTime': elapsedTimeInSeconds.value,
-      'distance': currentDistanceInMeters.value,
-      'steps': stepsInSession.value,
-    });
   }
 
   void onMapCreated(GoogleMapController controller) {
@@ -505,16 +439,6 @@ class RecordActivityController extends GetxController {
     return "${minutes.toString().padLeft(2, '0')}:${seconds.toString().padLeft(2, '0')}";
   }
 
-  // Helper untuk format jarak (bisa dipindah ke file util terpisah)
-  String formatDistance(double distanceInMeters) {
-    if (distanceInMeters < 1000) {
-      return "${distanceInMeters.toStringAsFixed(0)} m";
-    } else {
-      double distanceInKm = distanceInMeters / 1000;
-      return "${distanceInKm.toStringAsFixed(2)} km";
-    }
-  }
-
   String get formattedElapsedTime {
     final int hours = elapsedTimeInSeconds.value ~/ 3600;
     final int minutes = (elapsedTimeInSeconds.value % 3600) ~/ 60;
@@ -529,33 +453,34 @@ class RecordActivityController extends GetxController {
     }
   }
 
-  String get formattedPace {
+  void _startPaceUpdater() {
+    // Batalkan timer lama jika ada untuk menghindari duplikasi
+    _paceUpdateTimer?.cancel();
+    
+    // Buat timer baru yang berjalan setiap 5 detik
+    _paceUpdateTimer = Timer.periodic(const Duration(seconds: 5), (timer) {
+      // Setiap 5 detik, perbarui state 'formattedPace' 
+      // dengan nilai dari kalkulasi saat ini.
+      formattedPace.value = _calculateCurrentPace();
+    });
+  }
+
+  // ✨ Getter yang lama diubah menjadi fungsi kalkulasi privat
+  String _calculateCurrentPace() {
     if (currentDistanceInMeters.value < 10 || elapsedTimeInSeconds.value == 0) {
-      // Jika jarak terlalu pendek atau waktu masih nol, pace belum bisa dihitung
       return "00:00"; 
     }
-
-    // 1. Ubah jarak ke kilometer
     double distanceInKm = currentDistanceInMeters.value / 1000;
-    // 2. Ubah waktu ke menit (dalam bentuk desimal)
     double timeInMinutes = elapsedTimeInSeconds.value / 60;
-    // 3. Hitung pace (menit per km)
     double paceInMinutesPerKm = timeInMinutes / distanceInKm;
-
-    // 4. Pisahkan bagian menit dan detik dari pace
     final int paceMinutes = paceInMinutesPerKm.truncate();
     final int paceSeconds = ((paceInMinutesPerKm - paceMinutes) * 60).round();
-
     return "${paceMinutes.toString().padLeft(2, '0')}:${paceSeconds.toString().padLeft(2, '0')}";
   }
 
   String get distance {
-    if (currentDistanceInMeters.value < 1000) {
-      return "${currentDistanceInMeters.value.toStringAsFixed(0)} m";
-    } else {
-      double distanceInKm = currentDistanceInMeters.value / 1000;
-      return "${distanceInKm.toStringAsFixed(2)} km";
-    }
+    double distanceInKm = currentDistanceInMeters.value / 1000;
+    return "${distanceInKm.toStringAsFixed(2)} km";
   }
 
   Set<Polyline> get activityPolylines {

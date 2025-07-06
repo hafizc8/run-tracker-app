@@ -155,7 +155,7 @@ class StartActivityView extends GetView<StartActivityController> {
                     child: Center(
                       child: SlideToAction(
                         onSubmit: () {
-                          Get.offAndToNamed(AppRoutes.activityRecord);
+                          Get.toNamed(AppRoutes.activityRecord);
                         },
                         sliderIcon: FaIcon(
                           FontAwesomeIcons.anglesRight,

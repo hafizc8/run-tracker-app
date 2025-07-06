@@ -181,46 +181,45 @@ void onStart(ServiceInstance service) async {
     }).onError((error) {
       log(service, LogLevel.error, "Passive Accelerometer Error", error);
     });
-  });
 
-  // --- Listener Geolocator (Selalu Aktif) ---
-  final positionStream = Geolocator.getPositionStream(
-    locationSettings: const LocationSettings(
-      accuracy: LocationAccuracy.bestForNavigation,
-      distanceFilter: 2, // Filter jarak 2 meter untuk efisiensi baterai
-    ),
-  );
-  positionStream.listen((Position position) {
-    if (!isRecording || isPaused) return; // Abaikan jika tidak merekam atau sedang pause
+    final positionStream = Geolocator.getPositionStream(
+      locationSettings: const LocationSettings(
+        accuracy: LocationAccuracy.bestForNavigation,
+        distanceFilter: 2,
+      ),
+    );
+    positionStream.listen((Position position) {
+      if (!isRecording || isPaused) return;
 
-
-    final newPoint = LocationPoint(
+      final newPoint = LocationPoint(
         latitude: position.latitude,
         longitude: position.longitude,
-        timestamp: position.timestamp);
-
-    if (currentPath.isNotEmpty) {
-      final lastPoint = currentPath.last;
-      double distance = Geolocator.distanceBetween(
-        lastPoint.latitude, lastPoint.longitude,
-        newPoint.latitude, newPoint.longitude,
+        timestamp: position.timestamp
       );
 
-      log(service, LogLevel.verbose, "Geolocator new position: lat=${position.latitude}, lon=${position.longitude}, distance=$distance meters.");
-      
-      if (distance > 0) {
-        currentDistanceInMeters += distance;
-      }
-    }
-    currentPath.add(newPoint);
+      if (currentPath.isNotEmpty) {
+        final lastPoint = currentPath.last;
+        double distance = Geolocator.distanceBetween(
+          lastPoint.latitude, lastPoint.longitude,
+          newPoint.latitude, newPoint.longitude,
+        );
 
-    latestLocation = {
-      "latitude": newPoint.latitude,
-      "longitude": newPoint.longitude,
-      "timestamp": newPoint.timestamp.toIso8601String(),
-    };
-  }).onError((error) {
-    log(service, LogLevel.error, "Geolocator Stream Error", error);
+        log(service, LogLevel.verbose, "Geolocator new position: lat=${position.latitude}, lon=${position.longitude}, distance=$distance meters.");
+        
+        if (distance > 0 && distance < 30) {
+          currentDistanceInMeters += distance;
+        }
+      }
+      currentPath.add(newPoint);
+
+      latestLocation = {
+        "latitude": newPoint.latitude,
+        "longitude": newPoint.longitude,
+        "timestamp": newPoint.timestamp.toIso8601String(),
+      };
+    }).onError((error) {
+      log(service, LogLevel.error, "Geolocator Stream Error", error);
+    });
   });
 
   // =========================================================================

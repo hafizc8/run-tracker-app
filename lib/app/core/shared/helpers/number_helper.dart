@@ -32,16 +32,12 @@ class NumberHelper {
 
   String secondsToMinutes(int seconds) {
     final int minutes = seconds ~/ 60;
-    return '${minutes.toString().padLeft(2, '0')} Mins';
+    return minutes.toString();
   }
 
   String formatDistanceMeterToKm(double distanceInMeters) {
-    if (distanceInMeters < 1000) {
-      return "${distanceInMeters.toStringAsFixed(0)} m";
-    } else {
-      double distanceInKm = distanceInMeters / 1000;
-      return "${distanceInKm.toStringAsFixed(2)} km";
-    }
+    double distanceInKm = distanceInMeters / 1000;
+    return "${distanceInKm.toStringAsFixed(2)} km";
   }
 
   // format number from 10000 to 10.000

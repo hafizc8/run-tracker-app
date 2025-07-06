@@ -131,30 +131,66 @@ class SocialYourPageView extends GetView<SocialController> {
 
   Widget _buildFilterChip(
       BuildContext context, String label, YourPageChip chipType) {
+    bool isSelected = controller.selectedChip.value == chipType;
     return InkWell(
       onTap: () {
         controller.selectChip(chipType);
       },
       borderRadius: BorderRadius.circular(10.r),
-      child: Chip(
-        label: Text(label),
-        backgroundColor: const Color(0xFF393939),
-        labelStyle: Theme.of(context).textTheme.headlineSmall?.copyWith(
-              fontSize: 12.sp,
-              color: (controller.selectedChip.value == chipType)
-                  ? darkColorScheme.primary
-                  : const Color(0xFFA5A5A5),
+      child: isSelected
+          ? Container(
+              padding: EdgeInsets.all(1.w), // Lebar border
+              decoration: BoxDecoration(
+                gradient: const LinearGradient(
+                  colors: [
+                    Color(0xFFA2FF00),
+                    Color(0xFF00FF7F),
+                  ],
+                  begin: Alignment.centerLeft,
+                  end: Alignment.centerRight,
+                ),
+                borderRadius: BorderRadius.circular(11.r),
+              ),
+              child: Container(
+                padding: EdgeInsets.symmetric(horizontal: 12.w, vertical: 6.h),
+                decoration: BoxDecoration(
+                  color: const Color(0xFF393939),
+                  borderRadius: BorderRadius.circular(10.r),
+                ),
+                child: ShaderMask(
+                  shaderCallback: (bounds) => const LinearGradient(
+                    begin: Alignment.centerLeft,
+                    end: Alignment.centerRight,
+                    colors: [
+                      Color(0xFFA2FF00),
+                      Color(0xFF00FF7F),
+                    ],
+                  ).createShader(
+                    Rect.fromLTWH(0, 0, bounds.width, bounds.height),
+                  ),
+                  child: Text(
+                    label,
+                    style: TextStyle(
+                      fontSize: 12.sp,
+                    ),
+                  ),
+                ),
+              ),
+            )
+          : Container(
+              padding: EdgeInsets.symmetric(horizontal: 12.w, vertical: 7.h),
+              decoration: BoxDecoration(
+                color: const Color(0xFF393939),
+                borderRadius: BorderRadius.circular(10.r),
+              ),
+              child: Text(
+                label,
+                style: TextStyle(
+                  fontSize: 12.sp,
+                  color: const Color(0xFFA5A5A5),
+                ),
+              ),
             ),
-        shape: RoundedRectangleBorder(
-          borderRadius: BorderRadius.circular(10.r),
-          side: BorderSide(
-            color: (controller.selectedChip.value == chipType)
-                ? darkColorScheme.primary
-                : Colors.transparent,
-            width: 1,
-          ),
-        ),
-      ),
     );
   }
 }

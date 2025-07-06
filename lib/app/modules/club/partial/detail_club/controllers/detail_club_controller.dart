@@ -13,6 +13,7 @@ class DetailClubController extends GetxController {
   Rx<ClubModel?> club = Rx<ClubModel?>(null);
   RxBool isLoading = false.obs;
   RxBool isLoadingAction = false.obs;
+  var tabs = ['Club Activity', 'Leaderboards'].obs;
 
   final ClubService _clubService = sl<ClubService>();
 
@@ -64,6 +65,7 @@ class DetailClubController extends GetxController {
       bool resp =
           await _clubService.accOrJoinOrLeave(clubId: clubId.value, leave: 1);
       if (resp) {
+        Get.back();
         Get.back();
         Get.snackbar("Success", "Successfully leave club");
 

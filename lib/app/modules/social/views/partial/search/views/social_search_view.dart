@@ -22,6 +22,7 @@ class SocialSearchView extends GetView<SocialSearchController> {
     return DefaultTabController(
       length: 2,
       child: Scaffold(
+        resizeToAvoidBottomInset: false,
         appBar: _buildAppBar(context),
         body: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
@@ -50,7 +51,6 @@ class SocialSearchView extends GetView<SocialSearchController> {
         'Search',
         style: Theme.of(context).textTheme.headlineMedium?.copyWith(
               fontWeight: FontWeight.w300,
-              color: Theme.of(context).colorScheme.onBackground,
             ),
       ),
       centerTitle: true,
@@ -287,8 +287,11 @@ class SocialSearchView extends GetView<SocialSearchController> {
                                   Flexible(
                                     child: Obx(
                                       () => SizedBox(
-                                        height: 38.h,
+                                        height: 26.h,
                                         child: GradientOutlinedButton(
+                                          contentPadding: EdgeInsets.symmetric(
+                                            vertical: 5.h,
+                                          ),
                                           onPressed: () {
                                             if (user.isFollowing == 1 &&
                                                 user.isFollower == 1) {
@@ -606,7 +609,7 @@ class SocialSearchView extends GetView<SocialSearchController> {
                       gridDelegate: SliverGridDelegateWithMaxCrossAxisExtent(
                         // Setiap item boleh memiliki lebar maksimal 180.w
                         // Flutter akan menyesuaikan jumlah kolomnya
-                        maxCrossAxisExtent: 250.w, 
+                        maxCrossAxisExtent: 250.w,
                         mainAxisSpacing: 15.h,
                         crossAxisSpacing: 15.w,
                         // Anda tetap perlu rasio aspek, tapi kini lebih konsisten
@@ -618,7 +621,8 @@ class SocialSearchView extends GetView<SocialSearchController> {
                         ClubModel club = controller.clubExplore[index];
 
                         return InkWell(
-                          onTap: () => Get.toNamed(AppRoutes.previewClub, arguments: club.id),
+                          onTap: () => Get.toNamed(AppRoutes.previewClub,
+                              arguments: club.id),
                           child: SearchClubCard(
                             club: club,
                             cardWidth: cardWidth,

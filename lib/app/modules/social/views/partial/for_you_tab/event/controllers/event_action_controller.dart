@@ -1,6 +1,6 @@
 import 'dart:io';
-import 'dart:math';
 
+import 'package:currency_text_input_formatter/currency_text_input_formatter.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_cache_manager/flutter_cache_manager.dart';
 import 'package:geolocator/geolocator.dart';
@@ -21,10 +21,10 @@ import 'package:zest_mobile/app/core/models/model/event_model.dart';
 import 'package:zest_mobile/app/core/services/event_service.dart';
 import 'package:zest_mobile/app/modules/social/views/partial/for_you_tab/event/controllers/event_controller.dart';
 import 'package:zest_mobile/app/modules/social/views/partial/for_you_tab/event/views/add_clubs_view.dart';
-import 'package:zest_mobile/app/routes/app_routes.dart';
 
 class EventActionController extends GetxController {
   var dateController = TextEditingController();
+  var feeController = TextEditingController();
   var addressController = TextEditingController();
   var placeNameController = TextEditingController();
   var imageController = TextEditingController();
@@ -35,6 +35,12 @@ class EventActionController extends GetxController {
   Rx<EventModel?> event = Rx(null);
 
   final eventController = Get.find<EventController>();
+
+  final currencyFormatter = CurrencyTextInputFormatter.currency(
+    locale: "id_ID",
+    symbol: 'Rp ',
+    decimalDigits: 0,
+  );
 
   /// Ini untuk digunakan di dalam dialog (sementara)
   var tempSelectedIds = <ClubMiniModel>[].obs;
@@ -503,6 +509,12 @@ class EventActionController extends GetxController {
     addressController.text = event.address;
     placeNameController.text = event.placeName ?? event.address;
     dateController.text = result;
+    feeController.text = currencyFormatter
+        .formatEditUpdate(
+          const TextEditingValue(text: '0'),
+          TextEditingValue(text: (event.price ?? 0).toString()),
+        )
+        .text;
 
     getCachedImageFile(event.imageUrl ?? '').then((value) {
       form.value = form.value.copyWith(image: value);

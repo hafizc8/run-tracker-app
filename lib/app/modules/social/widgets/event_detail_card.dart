@@ -7,6 +7,7 @@ import 'package:intl/intl.dart';
 import 'package:shimmer/shimmer.dart';
 import 'package:zest_mobile/app/core/extension/date_extension.dart';
 import 'package:zest_mobile/app/core/models/model/event_model.dart';
+import 'package:zest_mobile/app/core/shared/helpers/number_helper.dart';
 import 'package:zest_mobile/app/core/shared/widgets/shimmer_loading_circle.dart';
 import 'package:zest_mobile/app/modules/social/views/partial/for_you_tab/event/controllers/event_action_controller.dart';
 import 'package:zest_mobile/app/modules/social/views/partial/for_you_tab/event/controllers/event_controller.dart';
@@ -84,7 +85,7 @@ class EventDetailCard extends GetView<EventDetailController> {
                   child: Row(
                     children: [
                       CachedNetworkImage(
-                        imageUrl: event?.activity ?? '',
+                        imageUrl: event?.activityImageUrl ?? '',
                         width: 13.r,
                         height: 13.r,
                         fit: BoxFit.cover,
@@ -109,8 +110,7 @@ class EventDetailCard extends GetView<EventDetailController> {
               Row(
                 children: [
                   SvgPicture.asset(
-                    'assets/icons/share.svg',
-                    color: Theme.of(context).colorScheme.primary,
+                    'assets/icons/ic_share-2.svg',
                     height: 22.h,
                     width: 27.w,
                   ),
@@ -168,10 +168,8 @@ class EventDetailCard extends GetView<EventDetailController> {
                           ),
                         ];
                       },
-                      child: Icon(
-                        Icons.more_vert,
-                        size: 27.r,
-                        color: Theme.of(context).colorScheme.primary,
+                      child: SvgPicture.asset(
+                        'assets/icons/ic_more_vert.svg',
                       ),
                     ),
                   )
@@ -181,13 +179,25 @@ class EventDetailCard extends GetView<EventDetailController> {
           ),
           SizedBox(height: 16.h),
           // title text
-          Text(
-            event?.title ?? '-',
-            style: Theme.of(context).textTheme.bodyMedium?.copyWith(
-                  fontWeight: FontWeight.w600,
-                  fontSize: 17.sp,
-                  color: Theme.of(context).colorScheme.primary,
-                ),
+          ShaderMask(
+            shaderCallback: (bounds) => const LinearGradient(
+              begin: Alignment.centerLeft,
+              end: Alignment.centerRight,
+              colors: [
+                Color(0xFFA2FF00),
+                Color(0xFF00FF7F),
+              ],
+            ).createShader(
+              Rect.fromLTWH(0, 0, bounds.width, bounds.height),
+            ),
+            child: Text(
+              event?.title ?? '-',
+              style: Theme.of(context).textTheme.bodyMedium?.copyWith(
+                    fontWeight: FontWeight.w600,
+                    fontSize: 17.sp,
+                    color: Colors.white,
+                  ),
+            ),
           ),
           SizedBox(height: 16.h),
           Column(
@@ -293,8 +303,9 @@ class EventDetailCard extends GetView<EventDetailController> {
                   width: 27.w,
                 ),
                 title: 'Fee',
-                subtitle:
-                    "${(event?.price == null || event?.price == 0) ? 'Free' : event?.price}",
+                subtitle: (event?.price == null || event?.price == 0)
+                    ? 'Free'
+                    : NumberHelper().formatCurrency(event!.price!),
               ),
             ],
           ),
@@ -377,7 +388,9 @@ class EventDetailCard extends GetView<EventDetailController> {
             children: [
               Text(
                 '$title ($itemCount)',
-                style: Theme.of(context).textTheme.headlineSmall,
+                style: Theme.of(context).textTheme.headlineSmall?.copyWith(
+                      color: Color(0xFFA5A5A5),
+                    ),
               ),
               if (seeAll) ...[
                 GestureDetector(
@@ -385,15 +398,44 @@ class EventDetailCard extends GetView<EventDetailController> {
                       arguments: {'eventId': event?.id}),
                   child: Row(
                     children: [
-                      Text(
-                        'See all',
-                        style: Theme.of(context).textTheme.headlineSmall,
+                      ShaderMask(
+                        shaderCallback: (bounds) => const LinearGradient(
+                          begin: Alignment.centerLeft,
+                          end: Alignment.centerRight,
+                          colors: [
+                            Color(0xFFA2FF00),
+                            Color(0xFF00FF7F),
+                          ],
+                        ).createShader(
+                          Rect.fromLTWH(0, 0, bounds.width, bounds.height),
+                        ),
+                        child: Text(
+                          'See all',
+                          style: Theme.of(context)
+                              .textTheme
+                              .headlineSmall
+                              ?.copyWith(
+                                color: Colors.white,
+                              ),
+                        ),
                       ),
                       SizedBox(width: 5.w),
-                      Icon(
-                        Icons.arrow_forward_ios,
-                        size: 16.r,
-                        color: Theme.of(context).colorScheme.primary,
+                      ShaderMask(
+                        shaderCallback: (bounds) => const LinearGradient(
+                          begin: Alignment.topCenter,
+                          end: Alignment.bottomCenter,
+                          colors: [
+                            Color(0xFFA2FF00),
+                            Color(0xFF00FF7F),
+                          ],
+                        ).createShader(
+                          Rect.fromLTWH(0, 0, bounds.width, bounds.height),
+                        ),
+                        child: Icon(
+                          Icons.arrow_forward_ios,
+                          size: 16.r,
+                          color: Colors.white,
+                        ),
                       ),
                     ],
                   ),
@@ -410,6 +452,7 @@ class EventDetailCard extends GetView<EventDetailController> {
               crossAxisCount: 3,
               mainAxisSpacing: 12,
               crossAxisSpacing: 12,
+              childAspectRatio: 88 / 115,
             ),
             itemCount: itemCount,
             itemBuilder: itemBuilder,
@@ -462,6 +505,8 @@ class EventDetailCard extends GetView<EventDetailController> {
 
   Widget _buildPersonList(BuildContext context, [EventUserModel? user]) {
     return Container(
+      height: 115.h,
+      width: 88.w,
       padding: EdgeInsets.only(top: 8.h),
       decoration: BoxDecoration(
         borderRadius: BorderRadius.circular(16.r),
@@ -474,8 +519,8 @@ class EventDetailCard extends GetView<EventDetailController> {
           ClipOval(
             child: CachedNetworkImage(
               imageUrl: user?.user?.imageUrl ?? '',
-              width: 50.r,
-              height: 50.r,
+              width: 35.r,
+              height: 35.r,
               fit: BoxFit.cover,
               placeholder: (context, url) => ShimmerLoadingCircle(size: 50.r),
               errorWidget: (context, url, error) => CircleAvatar(
@@ -486,20 +531,23 @@ class EventDetailCard extends GetView<EventDetailController> {
             ),
           ),
           SizedBox(height: 8.h),
-          Text(
-            user?.user?.name ?? '',
-            maxLines: 1,
-            overflow: TextOverflow.ellipsis,
-            style: Theme.of(context)
-                .textTheme
-                .bodyMedium
-                ?.copyWith(fontWeight: FontWeight.w600),
+          Padding(
+            padding: EdgeInsets.symmetric(horizontal: 8.0.w),
+            child: Text(
+              user?.user?.name ?? '',
+              maxLines: 1,
+              overflow: TextOverflow.ellipsis,
+              style: Theme.of(context)
+                  .textTheme
+                  .bodyMedium
+                  ?.copyWith(fontWeight: FontWeight.w600),
+            ),
           ),
           const Spacer(),
           if (user?.status == 3) ...[
             Container(
               width: double.infinity,
-              height: 25,
+              height: 25.h,
               alignment: Alignment.center,
               decoration: const BoxDecoration(
                 borderRadius:

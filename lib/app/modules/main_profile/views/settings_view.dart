@@ -10,7 +10,7 @@ class SettingsView extends GetView<SettingsController> {
   SettingsView({super.key});
 
   final DebugController debugController = Get.put(DebugController());
-  
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -36,7 +36,7 @@ class SettingsView extends GetView<SettingsController> {
         ),
       ),
       body: ListView(
-        padding: EdgeInsets.symmetric(horizontal: 16.w, vertical: 16.h),
+        padding: EdgeInsets.symmetric(horizontal: 16.w),
         children: [
           ListTile(
             contentPadding: EdgeInsets.zero,
@@ -163,7 +163,7 @@ class SettingsView extends GetView<SettingsController> {
               ],
             ),
           ),
-          SizedBox(height: 37.h),
+          SizedBox(height: 16.h),
           const Divider(
             color: Color(0xFF4A4A4A),
           ),
@@ -174,10 +174,8 @@ class SettingsView extends GetView<SettingsController> {
               child: Text(
                 "Version ${controller.appVersion.value ?? '-'}",
                 textAlign: TextAlign.center,
-                style: Theme.of(context)
-                    .textTheme
-                    .bodySmall
-                    ?.copyWith(color: Theme.of(context).colorScheme.onBackground),
+                style: Theme.of(context).textTheme.bodySmall?.copyWith(
+                    color: Theme.of(context).colorScheme.onBackground),
               ),
             ),
           ),

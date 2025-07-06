@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:get/get.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:zest_mobile/app/core/models/forms/store_event_form.dart';
@@ -271,19 +272,25 @@ class EventCreateView extends GetView<EventActionController> {
                     TextFormField(
                       cursorColor: Colors.white,
                       keyboardType: TextInputType.number,
-                      initialValue: (form.price == null || form.price == 0)
-                          ? ''
-                          : form.price.toString(),
+                      controller: controller.feeController,
                       onChanged: (value) {
+                        final clean =
+                            controller.currencyFormatter.getUnformattedValue();
                         controller.form.value = form.copyWith(
-                          price: int.parse(value),
+                          price: int.parse(clean.toString()),
                           errors: form.errors,
                           field: 'price',
                         );
                       },
+                      inputFormatters: [
+                        FilteringTextInputFormatter.allow(RegExp(r'[0-9]')),
+                        FilteringTextInputFormatter.deny(RegExp(r'^0+')),
+                        controller.currencyFormatter,
+                      ],
                       decoration: InputDecoration(
                         hintText: 'Enter Fee',
                         errorText: form.errors?['price'],
+                        // prefix: const Text('Rp '),
                       ),
                       textInputAction: TextInputAction.next,
                     ),

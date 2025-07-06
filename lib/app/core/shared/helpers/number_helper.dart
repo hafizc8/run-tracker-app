@@ -47,4 +47,13 @@ class NumberHelper {
     final formatter = NumberFormat("#,###", "id_ID");
     return formatter.format(number);
   }
+
+  String formatCurrency(int amount) {
+    final formatter = NumberFormat.currency(
+      locale: 'id_ID',
+      symbol: 'Rp ',
+      decimalDigits: 0,
+    );
+    return formatter.format(amount); // contoh: Rp 10.000
+  }
 }

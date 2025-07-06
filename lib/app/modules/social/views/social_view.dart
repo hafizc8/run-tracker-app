@@ -175,37 +175,85 @@ class SocialView extends GetView<SocialController> {
 
       return Container(
         margin: EdgeInsets.symmetric(horizontal: 16.w),
-        height: 38.h,
+        padding: EdgeInsets.all(1.w), // Lebar border
         decoration: BoxDecoration(
-          border: Border.all(color: Theme.of(context).colorScheme.primary),
-          borderRadius: BorderRadius.circular(11),
-          color: Theme.of(context).colorScheme.onPrimary,
-        ),
-        child: ClipRRect(
-          borderRadius: BorderRadius.circular(10),
-          child: TabBar(
-            controller: controller.tabBarController,
-            indicator: BoxDecoration(
-              color: Theme.of(context).colorScheme.primary,
-              borderRadius: indicatorBorderRadius,
-            ),
-            automaticIndicatorColorAdjustment: false,
-            indicatorWeight: 0,
-            indicatorSize: TabBarIndicatorSize.tab,
-            dividerHeight: 0,
-            labelColor: Theme.of(context).colorScheme.onPrimary,
-            unselectedLabelColor: Theme.of(context).colorScheme.primary,
-            labelStyle: Theme.of(context).textTheme.bodySmall?.copyWith(
-                  fontWeight: FontWeight.w400,
-                ),
-            unselectedLabelStyle:
-                Theme.of(context).textTheme.bodySmall?.copyWith(
-                      fontWeight: FontWeight.w400,
-                    ),
-            tabs: const [
-              Tab(text: 'Your Page'),
-              Tab(text: 'For You'),
+          gradient: const LinearGradient(
+            colors: [
+              Color(0xFF00FF7F),
+              Color(0xFFA2FF00),
             ],
+            begin: Alignment.centerLeft,
+            end: Alignment.centerRight,
+          ),
+          borderRadius: BorderRadius.circular(11.r),
+        ),
+        child: Container(
+          height: 38.h,
+          decoration: BoxDecoration(
+            borderRadius: BorderRadius.circular(10),
+            color: Theme.of(context).colorScheme.onPrimary,
+          ),
+          child: ClipRRect(
+            borderRadius: BorderRadius.circular(10),
+            child: TabBar(
+              controller: controller.tabBarController,
+              indicator: BoxDecoration(
+                gradient: const LinearGradient(
+                  begin: Alignment.centerLeft,
+                  end: Alignment.centerRight,
+                  colors: [
+                    Color(0xFFA2FF00),
+                    Color(0xFF00FF7F),
+                  ],
+                ),
+                borderRadius: indicatorBorderRadius,
+              ),
+              automaticIndicatorColorAdjustment: false,
+              indicatorWeight: 0,
+              indicatorSize: TabBarIndicatorSize.tab,
+              dividerHeight: 0,
+              labelColor: Theme.of(context).colorScheme.onPrimary,
+              unselectedLabelColor: Theme.of(context).colorScheme.primary,
+              labelStyle: Theme.of(context).textTheme.bodySmall?.copyWith(
+                    fontWeight: FontWeight.w400,
+                  ),
+              unselectedLabelStyle:
+                  Theme.of(context).textTheme.bodySmall?.copyWith(
+                        fontWeight: FontWeight.w400,
+                      ),
+              tabs: controller.tabs.map((element) {
+                bool isSelected =
+                    controller.tabs.indexOf(element) == currentTab;
+                if (isSelected) {
+                  return Tab(
+                    child: Text(
+                      element,
+                      style: Theme.of(context).textTheme.bodySmall?.copyWith(
+                            color: Theme.of(context).colorScheme.onPrimary,
+                          ),
+                    ),
+                  );
+                }
+                return Tab(
+                  child: ShaderMask(
+                    shaderCallback: (bounds) => const LinearGradient(
+                      begin: Alignment.centerLeft,
+                      end: Alignment.centerRight,
+                      colors: [
+                        Color(0xFFA2FF00),
+                        Color(0xFF00FF7F),
+                      ],
+                    ).createShader(
+                      Rect.fromLTWH(0, 0, bounds.width, bounds.height),
+                    ),
+                    child: Text(
+                      element,
+                      style: Theme.of(context).textTheme.bodySmall,
+                    ),
+                  ),
+                );
+              }).toList(),
+            ),
           ),
         ),
       );

@@ -41,6 +41,7 @@ abstract class AppRoutes {
   static const settings = '/settings';
   static const activity = '/activity';
   static const badges = '/badges';
+  static const profileSocialInfo = '/profile/social-info';
 
   // Event
   static const eventCreate = '/event/create';

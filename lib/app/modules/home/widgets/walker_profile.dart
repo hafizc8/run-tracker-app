@@ -10,7 +10,7 @@ class WalkerProfile extends StatelessWidget {
   final Color? backgroundColor;
 
   const WalkerProfile({
-    super.key, 
+    super.key,
     required this.rank,
     required this.imageUrl,
     required this.name,
@@ -48,8 +48,8 @@ class WalkerProfile extends StatelessWidget {
           ClipOval(
             child: CachedNetworkImage(
               imageUrl: imageUrl,
-              width: 44.w,
-              height: 44.h,
+              width: 44.r,
+              height: 44.r,
               fit: BoxFit.cover,
               placeholder: (context, url) => ShimmerLoadingCircle(size: 44.w),
               errorWidget: (context, url, error) => CircleAvatar(

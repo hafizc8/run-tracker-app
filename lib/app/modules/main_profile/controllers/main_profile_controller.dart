@@ -51,7 +51,6 @@ class ProfileMainController extends GetxController {
   var upComingEvents = <EventModel>[].obs;
   var challenges = <ChallengeModel>[].obs;
 
-
   @override
   void onInit() {
     init();
@@ -174,8 +173,9 @@ class ProfileMainController extends GetxController {
 
         events[index] = event.copyWith(
           isJoined: res != null ? 1 : 0,
-          userOnEventsCount:
-              res != null ? (events[index].userOnEventsCount ?? 0) + 1 : null,
+          userOnEventsCount: res != null && (res.status == 1 || res.status == 3)
+              ? (events[index].userOnEventsCount ?? 0) + 1
+              : null,
         );
       }
     } on AppException catch (e) {
@@ -226,7 +226,6 @@ class ProfileMainController extends GetxController {
       PaginatedDataResponse<EventModel> response =
           await _eventService.getEvents(
         page: pageEvent,
-        user: _authService.user!.id,
         order: 'upcoming',
         status: 'joined',
       );
@@ -247,37 +246,6 @@ class ProfileMainController extends GetxController {
       ); // show error snackbar, toast, etc (e.g.message)
     } finally {
       isLoadingEvent.value = false;
-    }
-  }
-
-  Future<void> getUpComingEvents() async {
-    isLoadingUpComingEvent.value = true;
-    try {
-      PaginatedDataResponse<EventModel> response =
-          await _eventService.getEvents(
-        page: pageEvent,
-        user: _authService.user!.id,
-        startDate: DateFormat('yyyy-MM-dd').format(
-          DateTime.now().add(
-            const Duration(days: 1),
-          ),
-        ),
-        limit: 3,
-        order: 'upcoming',
-      );
-
-      upComingEvents.value = response.data;
-
-      pageEvent++;
-    } catch (e) {
-      Get.snackbar(
-        'Error',
-        e.toString(),
-        backgroundColor: Colors.red,
-        colorText: Colors.white,
-      ); // show error snackbar, toast, etc (e.g.message)
-    } finally {
-      isLoadingUpComingEvent.value = false;
     }
   }
 
@@ -326,21 +294,20 @@ class ProfileMainController extends GetxController {
     isLoadingPostActivity.value = true;
     try {
       String? userId = _authService.user!.id;
-      PaginatedDataResponse<PostModel> response =
-        await _postService.getAll(
-          page: pagePostActivity,
-          user: userId,
-          limit: 5,
-          recordActivityOnly: true,
-        );
+      PaginatedDataResponse<PostModel> response = await _postService.getAll(
+        page: pagePostActivity,
+        user: userId,
+        limit: 5,
+        recordActivityOnly: true,
+      );
 
       if ((response.pagination.next == null ||
               response.pagination.next == '') ||
           response.pagination.total < 20) hasReacheMaxPostActivity.value = true;
 
-      posts.addAll(
-        response.data.map((e) => e.copyWith(isOwner: e.user?.id == userId)).toList()
-      );
+      posts.addAll(response.data
+          .map((e) => e.copyWith(isOwner: e.user?.id == userId))
+          .toList());
 
       pagePostActivity++;
     } catch (e) {

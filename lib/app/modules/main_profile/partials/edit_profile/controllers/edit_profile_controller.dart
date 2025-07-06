@@ -24,6 +24,8 @@ class EditProfileController extends GetxController {
   var form = UpdateUserFormModel().obs;
   var dateController = TextEditingController();
   var addressController = TextEditingController();
+  var bioController = TextEditingController();
+  var nameController = TextEditingController();
   var isLoading = false.obs;
   var originalForm = UpdateUserFormModel().obs;
   final _authService = sl<AuthService>();
@@ -68,6 +70,8 @@ class EditProfileController extends GetxController {
 
       dateController.text = user.birthday?.toYyyyMmDdString() ?? '';
       addressController.text = user.address;
+      bioController.text = user.bio ?? '';
+      nameController.text = user.name ?? '';
       originalForm.value = form.value;
     }
   }

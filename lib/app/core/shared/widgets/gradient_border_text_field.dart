@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:zest_mobile/app/core/shared/theme/color_schemes.dart'; // Sesuaikan path
-import 'package:zest_mobile/app/core/shared/theme/text_theme.dart';    // Sesuaikan path
+import 'package:zest_mobile/app/core/shared/theme/text_theme.dart'; // Sesuaikan path
 
 const List<Color> kDefaultGradientBorderColors = [
   Color(0xFFA2FF00),
@@ -20,6 +21,7 @@ class GradientBorderTextField extends StatefulWidget {
   final String? errorText;
   final ValueChanged<String>? onChanged;
   final ValueChanged<String>? onSubmitted; // ✨ BARU: onSubmitted
+  final Function? onTap; // ✨ BARU: onTap
   final FormFieldValidator<String>? validator;
   final bool obscureText;
   final TextInputType? keyboardType;
@@ -29,6 +31,7 @@ class GradientBorderTextField extends StatefulWidget {
   final Color? cursorColor;
   final int? maxLines;
   final int? minLines;
+  final bool? readOnly;
 
   const GradientBorderTextField({
     super.key,
@@ -39,6 +42,7 @@ class GradientBorderTextField extends StatefulWidget {
     this.errorText,
     this.onChanged,
     this.onSubmitted, // ✨ BARU
+    this.onTap, // ✨ BARU
     this.validator,
     this.obscureText = false,
     this.keyboardType,
@@ -48,10 +52,12 @@ class GradientBorderTextField extends StatefulWidget {
     this.cursorColor,
     this.maxLines = 1,
     this.minLines = 1,
+    this.readOnly = false,
   });
 
   @override
-  State<GradientBorderTextField> createState() => _GradientBorderTextFieldState();
+  State<GradientBorderTextField> createState() =>
+      _GradientBorderTextFieldState();
 }
 
 class _GradientBorderTextFieldState extends State<GradientBorderTextField> {
@@ -64,7 +70,9 @@ class _GradientBorderTextFieldState extends State<GradientBorderTextField> {
     super.initState();
     _focusNode = widget.focusNode ?? FocusNode();
     _focusNode.addListener(_onFocusChange);
-    if (widget.validator != null && widget.controller != null && widget.controller!.text.isNotEmpty) {
+    if (widget.validator != null &&
+        widget.controller != null &&
+        widget.controller!.text.isNotEmpty) {
       _internalErrorText = widget.validator!(widget.controller!.text);
     }
   }
@@ -140,6 +148,7 @@ class _GradientBorderTextFieldState extends State<GradientBorderTextField> {
         child: TextField(
           controller: widget.controller,
           focusNode: _focusNode,
+          onTap: widget.onTap != null ? () => widget.onTap!() : null, // ✨ BARU
           onChanged: (value) {
             widget.onChanged?.call(value);
             if (widget.validator != null) {
@@ -148,6 +157,7 @@ class _GradientBorderTextFieldState extends State<GradientBorderTextField> {
           },
           onSubmitted: widget.onSubmitted, // ✨ BARU: Meneruskan onSubmitted
           cursorColor: widget.cursorColor ?? darkColorScheme.primary,
+          readOnly: widget.readOnly ?? false,
           decoration: InputDecoration(
             hintText: widget.hintText,
             labelText: widget.labelText,
@@ -158,7 +168,10 @@ class _GradientBorderTextFieldState extends State<GradientBorderTextField> {
             focusedBorder: InputBorder.none,
             errorBorder: InputBorder.none,
             focusedErrorBorder: InputBorder.none,
-            contentPadding: inputTheme.contentPadding,
+            contentPadding: EdgeInsets.symmetric(
+              vertical: 14.h,
+              horizontal: 12.w,
+            ),
             hintStyle: inputTheme.hintStyle,
             labelStyle: inputTheme.labelStyle,
             floatingLabelStyle: inputTheme.floatingLabelStyle,
@@ -169,14 +182,26 @@ class _GradientBorderTextFieldState extends State<GradientBorderTextField> {
                     widget.prefixIcon,
                     color: _isFocused
                         ? darkColorScheme.primary
-                        : (displayErrorText != null && displayErrorText.isNotEmpty
+                        : (displayErrorText != null &&
+                                displayErrorText.isNotEmpty
                             ? darkColorScheme.error
                             : darkColorScheme.onSurfaceVariant),
                   )
                 : null,
-            suffixIcon: widget.suffixIcon,
+            suffixIcon: widget.suffixIcon != null
+                ? Padding(
+                    padding: EdgeInsets.only(right: 12.w),
+                    child: widget.suffixIcon,
+                  )
+                : null,
+            suffixIconConstraints: BoxConstraints(
+              minHeight: 24.h,
+              minWidth: 24.w,
+            ),
           ),
-          style: TTextTheme.darkTextTheme.bodyMedium?.copyWith(color: darkColorScheme.onSurface),
+
+          style: TTextTheme.darkTextTheme.bodyMedium
+              ?.copyWith(color: darkColorScheme.onSurface),
           obscureText: widget.obscureText,
           keyboardType: widget.keyboardType,
           textInputAction: widget.textInputAction,
@@ -193,11 +218,16 @@ class _GradientBorderTextFieldState extends State<GradientBorderTextField> {
         autovalidateMode: AutovalidateMode.onUserInteraction,
         builder: (FormFieldState<String> field) {
           WidgetsBinding.instance.addPostFrameCallback((_) {
-            if (mounted && field.hasError && (widget.errorText == null && _internalErrorText != field.errorText)) {
+            if (mounted &&
+                field.hasError &&
+                (widget.errorText == null &&
+                    _internalErrorText != field.errorText)) {
               setState(() {
                 _internalErrorText = field.errorText;
               });
-            } else if (mounted && !field.hasError && (widget.errorText == null && _internalErrorText != null)) {
+            } else if (mounted &&
+                !field.hasError &&
+                (widget.errorText == null && _internalErrorText != null)) {
               setState(() {
                 _internalErrorText = null;
               });
@@ -214,7 +244,11 @@ class _GradientBorderTextFieldState extends State<GradientBorderTextField> {
                   padding: const EdgeInsets.only(top: 6.0, left: 12.0),
                   child: Text(
                     displayErrorText,
-                    style: inputTheme.errorStyle ?? TextStyle(color: darkColorScheme.error, fontSize: 12),
+                    style: inputTheme.errorStyle ??
+                        TextStyle(
+                          color: darkColorScheme.error,
+                          fontSize: 12.sp,
+                        ),
                     overflow: TextOverflow.ellipsis,
                     maxLines: inputTheme.errorMaxLines ?? 2,
                   ),
@@ -234,7 +268,8 @@ class _GradientBorderTextFieldState extends State<GradientBorderTextField> {
               padding: const EdgeInsets.only(top: 6.0, left: 12.0),
               child: Text(
                 widget.errorText!,
-                style: inputTheme.errorStyle ?? TextStyle(color: darkColorScheme.error, fontSize: 12),
+                style: inputTheme.errorStyle ??
+                    TextStyle(color: darkColorScheme.error, fontSize: 12),
                 overflow: TextOverflow.ellipsis,
                 maxLines: inputTheme.errorMaxLines ?? 2,
               ),

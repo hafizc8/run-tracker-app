@@ -99,7 +99,7 @@ class SocialForYouEventDetailView extends GetView<EventDetailController> {
         }
         if (controller.event.value?.cancelledAt != null) {
           return SizedBox(
-            height: 55.h,
+            height: 43.h,
             child: GradientOutlinedButton(
               onPressed: null,
               child: Text(
@@ -118,7 +118,7 @@ class SocialForYouEventDetailView extends GetView<EventDetailController> {
                   child: Visibility(
                     visible: controller.event.value?.isOwner == 0,
                     replacement: SizedBox(
-                      height: 55.h,
+                      height: 43.h,
                       child: GradientOutlinedButton(
                         style: ButtonStyle(
                           shape: MaterialStateProperty.all(
@@ -148,7 +148,7 @@ class SocialForYouEventDetailView extends GetView<EventDetailController> {
                       ),
                     ),
                     child: SizedBox(
-                      height: 55.h,
+                      height: 43.h,
                       child: GradientOutlinedButton(
                         style: ButtonStyle(
                           shape: MaterialStateProperty.all(
@@ -179,7 +179,7 @@ class SocialForYouEventDetailView extends GetView<EventDetailController> {
                 Expanded(
                   flex: 2,
                   child: SizedBox(
-                    height: 55.h,
+                    height: 43.h,
                     child: GradientElevatedButton(
                       onPressed: () async {
                         var res = await Get.toNamed(
@@ -216,7 +216,7 @@ class SocialForYouEventDetailView extends GetView<EventDetailController> {
         if (controller.event.value?.isJoined == 0 &&
             controller.event.value?.isPublic == 1) {
           return SizedBox(
-            height: 55.h,
+            height: 43.h,
             child: GradientElevatedButton(
               onPressed: () {
                 controller

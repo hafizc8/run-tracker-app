@@ -25,6 +25,7 @@ class EventController extends GetxController {
   final _eventService = sl<EventService>();
 
   var events = <EventModel>[].obs;
+
   Rx<EventModel?> event = Rx(null);
   var eventLocations = <EventLocationModel>[].obs;
   var friends = <UserMiniModel>[].obs;
@@ -297,9 +298,14 @@ class EventController extends GetxController {
         }
         events[index] = event.copyWith(
           isJoined: res != null ? 1 : 0,
-          userOnEventsCount:
-              res != null ? (events[index].userOnEventsCount ?? 0) + 1 : null,
-          userOnEvents: res != null ? [res, ...event.userOnEvents ?? []] : null,
+          userOnEventsCount: res != null && (res.status == 1 || res.status == 3)
+              ? (events[index].userOnEventsCount ?? 0) + 1
+              : null,
+          userOnEvents: res != null &&
+                  res.status == 1 &&
+                  (event.userOnEventsCount ?? 0) < 3
+              ? [res, ...event.userOnEvents ?? []]
+              : null,
         );
       }
     } on AppException catch (e) {

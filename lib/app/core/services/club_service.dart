@@ -28,15 +28,15 @@ class ClubService {
     }
   }
 
-  Future<PaginatedDataResponse<ClubModel>> getAll({
-    required int page,
-    String search = '',
-    int joined = 0,
-    int random = 1,
-    String joinStatus = '',
-    String? order,
-    int? limit
-  }) async {
+  Future<PaginatedDataResponse<ClubModel>> getAll(
+      {required int page,
+      String search = '',
+      int joined = 0,
+      int random = 1,
+      String joinStatus = '',
+      String? joinedBy,
+      String? order,
+      int? limit}) async {
     try {
       final response = await _apiService.request(
         path: AppConstants.clubGetAll,
@@ -47,6 +47,7 @@ class ClubService {
           'joined': joined.toString(),
           'random': random.toString(),
           'join_status': joinStatus,
+          if (joinedBy != null) 'joined_by': joinedBy,
           if (order != null) 'order': order,
           if (limit != null) 'limit': limit.toString(),
         },
@@ -103,11 +104,8 @@ class ClubService {
     }
   }
 
-  Future<PaginatedDataResponse<ClubMemberModel>> getAllMembers({
-    required String clubId,
-    required int page,
-    int? limit
-  }) async {
+  Future<PaginatedDataResponse<ClubMemberModel>> getAllMembers(
+      {required String clubId, required int page, int? limit}) async {
     try {
       final response = await _apiService.request(
         path: AppConstants.clubGetAllMember(clubId),
@@ -131,10 +129,8 @@ class ClubService {
     }
   }
 
-  Future<bool> inviteToClub({
-    required String clubId,
-    required List<String> userIds
-  }) async {
+  Future<bool> inviteToClub(
+      {required String clubId, required List<String> userIds}) async {
     try {
       final response = await _apiService.request(
         path: AppConstants.clubInviteFollowersToClub(clubId),
@@ -148,10 +144,8 @@ class ClubService {
     }
   }
 
-  Future<bool> update({
-    required String clubId,
-    required UpdateClubFormModel form
-  }) async {
+  Future<bool> update(
+      {required String clubId, required UpdateClubFormModel form}) async {
     try {
       final response = await _apiService.request<FormData>(
         path: AppConstants.clubUpdate(clubId),
@@ -166,19 +160,15 @@ class ClubService {
     }
   }
 
-  Future<bool> addOrRemoveAsAdmin({
-    required String clubId,
-    required String clubUserId,
-    int? remove
-  }) async {
+  Future<bool> addOrRemoveAsAdmin(
+      {required String clubId, required String clubUserId, int? remove}) async {
     try {
       final response = await _apiService.request<FormData>(
-        path: AppConstants.clubAddOrRemoveAsAdmin(clubId, clubUserId),
-        method: HttpMethod.post,
-        queryParams: {
-          if (remove != null) 'remove': remove.toString(),
-        }
-      );
+          path: AppConstants.clubAddOrRemoveAsAdmin(clubId, clubUserId),
+          method: HttpMethod.post,
+          queryParams: {
+            if (remove != null) 'remove': remove.toString(),
+          });
 
       return response.data['success'];
     } catch (e) {
@@ -186,15 +176,12 @@ class ClubService {
     }
   }
 
-  Future<bool> removeUserInClub({
-    required String clubId,
-    required String clubUserId
-  }) async {
+  Future<bool> removeUserInClub(
+      {required String clubId, required String clubUserId}) async {
     try {
       final response = await _apiService.request<FormData>(
-        path: AppConstants.clubRemoveUserInClub(clubId, clubUserId),
-        method: HttpMethod.delete
-      );
+          path: AppConstants.clubRemoveUserInClub(clubId, clubUserId),
+          method: HttpMethod.delete);
 
       return response.data['success'];
     } catch (e) {

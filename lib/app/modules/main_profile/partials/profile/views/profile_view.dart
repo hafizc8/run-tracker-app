@@ -1,11 +1,17 @@
 import 'package:cached_network_image/cached_network_image.dart';
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/widgets.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:get/get.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:zest_mobile/app/core/shared/theme/color_schemes.dart';
+import 'package:zest_mobile/app/modules/main_profile/partials/social_info/controllers/social_info_clubs.dart';
+import 'package:zest_mobile/app/modules/main_profile/partials/social_info/controllers/social_info_controller.dart';
+import 'package:zest_mobile/app/modules/main_profile/partials/social_info/controllers/social_info_followers.dart';
+import 'package:zest_mobile/app/modules/main_profile/partials/social_info/controllers/social_info_following.dart';
 import 'package:zest_mobile/app/modules/main_profile/widgets/card_activity/card_activity.dart';
 import 'package:zest_mobile/app/core/shared/widgets/gradient_outlined_button.dart';
 import 'package:zest_mobile/app/core/shared/widgets/shimmer_loading_circle.dart';
@@ -33,7 +39,6 @@ class ProfileView extends GetView<ProfileController> {
           icon: Icon(
             Icons.chevron_left,
             color: Theme.of(context).colorScheme.onBackground,
-            size: 35,
           ),
           onPressed: () => Get.back(),
         ),
@@ -41,15 +46,16 @@ class ProfileView extends GetView<ProfileController> {
       body: RefreshIndicator(
         onRefresh: () => controller.refreshData(),
         child: SingleChildScrollView(
+          padding: EdgeInsets.symmetric(
+            horizontal: 16.w,
+          ),
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               Obx(
                 () => Container(
                   padding: const EdgeInsets.only(
-                    left: 16,
                     bottom: 16,
-                    right: 16,
                   ),
                   width: double.infinity,
                   decoration: BoxDecoration(
@@ -62,7 +68,7 @@ class ProfileView extends GetView<ProfileController> {
                           left: 16,
                         ),
                         width: double.infinity,
-                        height: 256,
+                        height: 256.h,
                         decoration: BoxDecoration(
                           color: Theme.of(context).colorScheme.surface,
                           borderRadius: BorderRadius.circular(8),
@@ -116,7 +122,8 @@ class ProfileView extends GetView<ProfileController> {
                                                   controller.user.value?.name ??
                                                       '-',
                                                   maxLines: 2,
-                                                  overflow: TextOverflow.ellipsis,
+                                                  overflow:
+                                                      TextOverflow.ellipsis,
                                                   style: Theme.of(context)
                                                       .textTheme
                                                       .headlineMedium
@@ -137,7 +144,8 @@ class ProfileView extends GetView<ProfileController> {
                                                 child: Text(
                                                   '${controller.user.value?.province ?? '-'}, ${controller.user.value?.country ?? '-'}',
                                                   maxLines: 2,
-                                                  overflow: TextOverflow.ellipsis,
+                                                  overflow:
+                                                      TextOverflow.ellipsis,
                                                   style: Theme.of(context)
                                                       .textTheme
                                                       .titleSmall
@@ -177,17 +185,19 @@ class ProfileView extends GetView<ProfileController> {
                                           controller.currentUser?.id,
                                       child: ConstrainedBox(
                                         constraints: BoxConstraints(
-                                          maxWidth:
-                                              MediaQuery.of(context).size.width *
-                                                  0.58,
+                                          maxWidth: MediaQuery.of(context)
+                                                  .size
+                                                  .width *
+                                              0.58,
                                         ),
                                         child: Row(
                                           children: [
                                             Visibility(
-                                              visible: controller
-                                                      .user.value?.isFollowing ==
+                                              visible: controller.user.value
+                                                      ?.isFollowing ==
                                                   0,
-                                              replacement: GradientOutlinedButton(
+                                              replacement:
+                                                  GradientOutlinedButton(
                                                 onPressed: () {
                                                   controller.unfollow();
                                                 },
@@ -208,8 +218,9 @@ class ProfileView extends GetView<ProfileController> {
                                                             fontSize: 12,
                                                             fontWeight:
                                                                 FontWeight.w700,
-                                                            color: darkColorScheme
-                                                                .background),
+                                                            color:
+                                                                darkColorScheme
+                                                                    .background),
                                                   ),
                                                 ]),
                                               ),
@@ -265,11 +276,11 @@ class ProfileView extends GetView<ProfileController> {
                         top: 20,
                         right: 20,
                         child: InkWell(
-                          onTap: () =>
-                              Get.snackbar('Coming Soon', 'Feature coming soon'),
+                          onTap: () => Get.snackbar(
+                              'Coming Soon', 'Feature coming soon'),
                           child: SvgPicture.asset(
                             'assets/icons/ic_share-2.svg',
-                            width: 26,
+                            width: 26.w,
                           ),
                         ),
                       ),
@@ -314,7 +325,7 @@ class ProfileView extends GetView<ProfileController> {
                         left: 0,
                         right: 0,
                         child: Container(
-                          height: 57,
+                          padding: EdgeInsets.symmetric(vertical: 8.h),
                           decoration: BoxDecoration(
                             color: Color(0xFF404040),
                             borderRadius: BorderRadius.circular(8),
@@ -323,61 +334,185 @@ class ProfileView extends GetView<ProfileController> {
                             mainAxisAlignment: MainAxisAlignment.center,
                             children: [
                               Row(
-                                mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                                mainAxisAlignment:
+                                    MainAxisAlignment.spaceEvenly,
                                 children: [
-                                  Column(
-                                    children: [
-                                      Text('Following'),
-                                      Text(
-                                        '${controller.user.value?.followingCount ?? 0}',
-                                        maxLines: 1,
-                                        overflow: TextOverflow.ellipsis,
-                                        style: Theme.of(context)
-                                            .textTheme
-                                            .bodyLarge
-                                            ?.copyWith(
-                                              fontWeight: FontWeight.bold,
-                                              color:
-                                                  Theme.of(context).primaryColor,
-                                            ),
-                                      ),
-                                    ],
+                                  GestureDetector(
+                                    onTap: () {
+                                      Get.delete<SocialInfoController>();
+                                      Get.delete<
+                                          SocialInfoFollowingController>();
+                                      Get.delete<
+                                          SocialInfoFollowersController>();
+                                      Get.delete<SocialInfoClubsController>();
+                                      Get.toNamed(
+                                        AppRoutes.profileSocialInfo,
+                                        arguments: {
+                                          'name': controller.user.value?.name,
+                                          'id': controller.user.value?.id,
+                                          'page': 0
+                                        },
+                                        preventDuplicates: false,
+                                      );
+                                    },
+                                    child: Column(
+                                      children: [
+                                        Text(
+                                          'Following',
+                                          style: Theme.of(context)
+                                              .textTheme
+                                              .bodyMedium
+                                              ?.copyWith(
+                                                fontWeight: FontWeight.w700,
+                                                fontSize: 12.sp,
+                                              ),
+                                        ),
+                                        ShaderMask(
+                                          shaderCallback: (bounds) =>
+                                              const LinearGradient(
+                                            begin: Alignment.topCenter,
+                                            end: Alignment.bottomCenter,
+                                            colors: [
+                                              Color(0xFFA2FF00),
+                                              Color(0xFF00FF7F),
+                                            ],
+                                          ).createShader(
+                                            Rect.fromLTWH(0, 0, bounds.width,
+                                                bounds.height),
+                                          ),
+                                          child: Text(
+                                            '${controller.user.value?.followingCount ?? 0}',
+                                            maxLines: 1,
+                                            overflow: TextOverflow.ellipsis,
+                                            style: Theme.of(context)
+                                                .textTheme
+                                                .bodyLarge
+                                                ?.copyWith(
+                                                  fontWeight: FontWeight.w700,
+                                                  fontSize: 20.sp,
+                                                ),
+                                          ),
+                                        ),
+                                      ],
+                                    ),
                                   ),
-                                  Column(
-                                    children: [
-                                      Text('Followers'),
-                                      Text(
-                                        '${controller.user.value?.followersCount ?? 0}',
-                                        maxLines: 1,
-                                        overflow: TextOverflow.ellipsis,
-                                        style: Theme.of(context)
-                                            .textTheme
-                                            .bodyLarge
-                                            ?.copyWith(
-                                              fontWeight: FontWeight.bold,
-                                              color:
-                                                  Theme.of(context).primaryColor,
-                                            ),
-                                      ),
-                                    ],
+                                  GestureDetector(
+                                    onTap: () {
+                                      Get.delete<SocialInfoController>();
+                                      Get.delete<
+                                          SocialInfoFollowingController>();
+                                      Get.delete<
+                                          SocialInfoFollowersController>();
+                                      Get.delete<SocialInfoClubsController>();
+                                      Get.toNamed(
+                                        AppRoutes.profileSocialInfo,
+                                        arguments: {
+                                          'name': controller.user.value?.name,
+                                          'id': controller.user.value?.id,
+                                          'page': 1,
+                                        },
+                                        preventDuplicates: false,
+                                      );
+                                    },
+                                    child: Column(
+                                      children: [
+                                        Text(
+                                          'Followers',
+                                          style: Theme.of(context)
+                                              .textTheme
+                                              .bodyMedium
+                                              ?.copyWith(
+                                                fontWeight: FontWeight.w700,
+                                                fontSize: 12.sp,
+                                              ),
+                                        ),
+                                        ShaderMask(
+                                          shaderCallback: (bounds) =>
+                                              const LinearGradient(
+                                            begin: Alignment.topCenter,
+                                            end: Alignment.bottomCenter,
+                                            colors: [
+                                              Color(0xFFA2FF00),
+                                              Color(0xFF00FF7F),
+                                            ],
+                                          ).createShader(
+                                            Rect.fromLTWH(0, 0, bounds.width,
+                                                bounds.height),
+                                          ),
+                                          child: Text(
+                                            '${controller.user.value?.followersCount ?? 0}',
+                                            maxLines: 1,
+                                            overflow: TextOverflow.ellipsis,
+                                            style: Theme.of(context)
+                                                .textTheme
+                                                .bodyLarge
+                                                ?.copyWith(
+                                                  fontWeight: FontWeight.w700,
+                                                  fontSize: 20.sp,
+                                                ),
+                                          ),
+                                        ),
+                                      ],
+                                    ),
                                   ),
-                                  Column(
-                                    children: [
-                                      Text('Clubs'),
-                                      Text(
-                                        '${controller.user.value?.clubsCount ?? 0}',
-                                        maxLines: 1,
-                                        overflow: TextOverflow.ellipsis,
-                                        style: Theme.of(context)
-                                            .textTheme
-                                            .bodyLarge
-                                            ?.copyWith(
-                                              fontWeight: FontWeight.bold,
-                                              color:
-                                                  Theme.of(context).primaryColor,
-                                            ),
-                                      ),
-                                    ],
+                                  GestureDetector(
+                                    onTap: () {
+                                      Get.delete<SocialInfoController>();
+                                      Get.delete<
+                                          SocialInfoFollowingController>();
+                                      Get.delete<
+                                          SocialInfoFollowersController>();
+                                      Get.delete<SocialInfoClubsController>();
+                                      Get.toNamed(
+                                        AppRoutes.profileSocialInfo,
+                                        arguments: {
+                                          'name': controller.user.value?.name,
+                                          'id': controller.user.value?.id,
+                                          'page': 2,
+                                        },
+                                        preventDuplicates: false,
+                                      );
+                                    },
+                                    child: Column(
+                                      children: [
+                                        Text(
+                                          'Clubs',
+                                          style: Theme.of(context)
+                                              .textTheme
+                                              .bodyMedium
+                                              ?.copyWith(
+                                                fontWeight: FontWeight.w700,
+                                                fontSize: 12.sp,
+                                              ),
+                                        ),
+                                        ShaderMask(
+                                          shaderCallback: (bounds) =>
+                                              const LinearGradient(
+                                            begin: Alignment.topCenter,
+                                            end: Alignment.bottomCenter,
+                                            colors: [
+                                              Color(0xFFA2FF00),
+                                              Color(0xFF00FF7F),
+                                            ],
+                                          ).createShader(
+                                            Rect.fromLTWH(0, 0, bounds.width,
+                                                bounds.height),
+                                          ),
+                                          child: Text(
+                                            '${controller.user.value?.clubsCount ?? 0}',
+                                            maxLines: 1,
+                                            overflow: TextOverflow.ellipsis,
+                                            style: Theme.of(context)
+                                                .textTheme
+                                                .bodyLarge
+                                                ?.copyWith(
+                                                  fontWeight: FontWeight.w700,
+                                                  fontSize: 20.sp,
+                                                ),
+                                          ),
+                                        ),
+                                      ],
+                                    ),
                                   ),
                                 ],
                               ),
@@ -390,14 +525,15 @@ class ProfileView extends GetView<ProfileController> {
                 ),
               ),
               Padding(
-                padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+                padding: EdgeInsets.symmetric(vertical: 8.h),
                 child: Row(
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
                     Text(
                       'Badges',
-                      style: Theme.of(context).textTheme.labelLarge?.copyWith(
-                            color: Color(0xFFA5A5A5),
+                      style: Theme.of(context).textTheme.bodyMedium?.copyWith(
+                            fontSize: 15.sp,
+                            fontWeight: FontWeight.w400,
                           ),
                     ),
                     GestureDetector(
@@ -405,19 +541,45 @@ class ProfileView extends GetView<ProfileController> {
                       child: Row(
                         children: [
                           Obx(
-                            () => Text(
-                              '${controller.user.value?.badgesCount ?? 0}',
-                              style: Theme.of(context)
-                                  .textTheme
-                                  .labelLarge
-                                  ?.copyWith(
-                                    color: Color(0xFFA5A5A5),
-                                  ),
+                            () => ShaderMask(
+                              shaderCallback: (bounds) => const LinearGradient(
+                                begin: Alignment.topCenter,
+                                end: Alignment.bottomCenter,
+                                colors: [
+                                  Color(0xFFA2FF00),
+                                  Color(0xFF00FF7F),
+                                ],
+                              ).createShader(
+                                Rect.fromLTWH(
+                                    0, 0, bounds.width, bounds.height),
+                              ),
+                              child: Text(
+                                '${controller.user.value?.badgesCount ?? 0}',
+                                style: Theme.of(context)
+                                    .textTheme
+                                    .bodyMedium
+                                    ?.copyWith(
+                                      fontSize: 15.sp,
+                                      fontWeight: FontWeight.w400,
+                                    ),
+                              ),
                             ),
                           ),
-                          const Icon(
-                            Icons.chevron_right,
-                            color: Color(0xFFA5A5A5),
+                          ShaderMask(
+                            shaderCallback: (bounds) => const LinearGradient(
+                              begin: Alignment.topCenter,
+                              end: Alignment.bottomCenter,
+                              colors: [
+                                Color(0xFFA2FF00),
+                                Color(0xFF00FF7F),
+                              ],
+                            ).createShader(
+                              Rect.fromLTWH(0, 0, bounds.width, bounds.height),
+                            ),
+                            child: Icon(
+                              Icons.chevron_right,
+                              size: 25.h,
+                            ),
                           ),
                         ],
                       ),
@@ -436,7 +598,8 @@ class ProfileView extends GetView<ProfileController> {
                             padding: const EdgeInsets.only(
                                 left: 12, right: 12, bottom: 12),
                             decoration: const BoxDecoration(
-                              borderRadius: BorderRadius.all(Radius.circular(10)),
+                              borderRadius:
+                                  BorderRadius.all(Radius.circular(10)),
                               color: Color(0xFF2E2E2E),
                             ),
                             child: Column(
@@ -475,97 +638,152 @@ class ProfileView extends GetView<ProfileController> {
               ),
               const SizedBox(height: 16),
               Container(
-                height: 48,
-                margin: const EdgeInsets.symmetric(horizontal: 16),
-                padding: const EdgeInsets.symmetric(horizontal: 8),
+                padding: EdgeInsets.all(1.w), // Lebar border
                 decoration: BoxDecoration(
-                  border:
-                      Border.all(color: Theme.of(context).colorScheme.primary),
-                  borderRadius: BorderRadius.circular(12),
+                  gradient: const LinearGradient(
+                    colors: [Color(0xFFA2FF00), Color(0xFF00FF7F)],
+                    begin: Alignment.centerLeft,
+                    end: Alignment.centerRight,
+                  ),
+                  borderRadius: BorderRadius.circular(12.r),
                 ),
-                child: Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                  children: [
-                    Row(children: [
-                      SvgPicture.asset('assets/icons/overall_mileage.svg'),
-                      const SizedBox(width: 8),
-                      Text(
-                        'Overall Mileage',
-                        style: Theme.of(context).textTheme.bodyMedium?.copyWith(
-                              color: Theme.of(context).colorScheme.primary,
-                              fontWeight: FontWeight.bold,
-                            ),
-                      ),
-                    ]),
-                    Text(
-                      '${controller.user.value?.overallMileage ?? 0} km',
-                      style: Theme.of(context).textTheme.bodyMedium?.copyWith(
-                            color: Theme.of(context).colorScheme.primary,
-                            fontWeight: FontWeight.bold,
+                child: Container(
+                  height: 39.h,
+                  padding: EdgeInsets.symmetric(horizontal: 8.w),
+                  decoration: BoxDecoration(
+                    color: Theme.of(context).colorScheme.background,
+                    borderRadius: BorderRadius.circular(11.r),
+                  ),
+                  child: Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    children: [
+                      Row(children: [
+                        ShaderMask(
+                          shaderCallback: (bounds) => const LinearGradient(
+                            begin: Alignment.topCenter,
+                            end: Alignment.bottomCenter,
+                            colors: [
+                              Color(0xFFA2FF00),
+                              Color(0xFF00FF7F),
+                            ],
+                          ).createShader(
+                            Rect.fromLTWH(0, 0, bounds.width, bounds.height),
                           ),
-                    ),
-                  ],
+                          child: SvgPicture.asset(
+                            'assets/icons/overall_mileage.svg',
+                            color: Colors.white,
+                            height: 16.h,
+                            width: 46.w,
+                          ),
+                        ),
+                        SizedBox(width: 8.w),
+                        ShaderMask(
+                          shaderCallback: (bounds) => const LinearGradient(
+                            begin: Alignment.centerLeft,
+                            end: Alignment.centerRight,
+                            colors: [
+                              Color(0xFFA2FF00),
+                              Color(0xFF00FF7F),
+                            ],
+                          ).createShader(
+                            Rect.fromLTWH(0, 0, bounds.width, bounds.height),
+                          ),
+                          child: Text(
+                            'Overall Mileage',
+                            style: Theme.of(context)
+                                .textTheme
+                                .bodyMedium
+                                ?.copyWith(
+                                  fontWeight: FontWeight.w400,
+                                  fontSize: 15.sp,
+                                ),
+                          ),
+                        ),
+                      ]),
+                      ShaderMask(
+                        shaderCallback: (bounds) => const LinearGradient(
+                          begin: Alignment.topCenter,
+                          end: Alignment.bottomCenter,
+                          colors: [
+                            Color(0xFFA2FF00),
+                            Color(0xFF00FF7F),
+                          ],
+                        ).createShader(
+                          Rect.fromLTWH(0, 0, bounds.width, bounds.height),
+                        ),
+                        child: Text(
+                          '${controller.user.value?.overallMileage ?? 0} km',
+                          style:
+                              Theme.of(context).textTheme.bodyMedium?.copyWith(
+                                    fontWeight: FontWeight.w700,
+                                    fontSize: 15.sp,
+                                  ),
+                        ),
+                      ),
+                    ],
+                  ),
                 ),
               ),
               const SizedBox(height: 16),
-              Padding(
-                padding: const EdgeInsets.symmetric(horizontal: 16.0),
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Text(
-                      'Latest Activity',
-                      style: Theme.of(context).textTheme.headlineSmall,
-                    ),
-                    const SizedBox(height: 8),
-                    // const CardActivity(),
-                    // const SizedBox(height: 8),
-                    // Center(
-                    //   child: TextButton(
-                    //     onPressed: () => Get.toNamed(AppRoutes.activity),
-                    //     child: Text(
-                    //       'See All',
-                    //       style: Theme.of(context).textTheme.bodyLarge?.copyWith(
-                    //             color: Theme.of(context).colorScheme.primary,
-                    //             decoration: TextDecoration.underline,
-                    //             decorationColor:
-                    //                 Theme.of(context).colorScheme.primary,
-                    //           ),
-                    //     ),
-                    //   ),
-                    // ),
-                    Obx(() {
-                      return ListView.separated(
-                        shrinkWrap: true,
-                        physics: const NeverScrollableScrollPhysics(),
-                        itemBuilder: (context, index) {
-                          if (index == controller.posts.length) {
-                            return const Center(
-                              child: CircularProgressIndicator(),
-                            );
-                          }
-                          final postActivity = controller.posts[index];
-                          return ActivityCard(
-                            postData: postActivity,
-                            // TODO
-                            // onTap: () => Get.toNamed(
-                            //   AppRoutes.postDetail,
-                            //   arguments: postActivity,
-                            // ),
-                            onTap: () {
-                              Get.snackbar('Under development', 'This feature is under development');
-                            },
-                          );
-                        },
-                        separatorBuilder: (context, index) => const SizedBox(
-                          height: 0,
+              Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text(
+                    'Latest Activity',
+                    style: Theme.of(context).textTheme.headlineSmall?.copyWith(
+                          color: Color(0xFFA5A5A5),
                         ),
-                        itemCount: controller.posts.length + (controller.hasReacheMaxPostActivity.value ? 0 : 1),
-                      );
-                    }),
-                    // TODO: Show button show all
-                  ],
-                ),
+                  ),
+                  const SizedBox(height: 8),
+                  // const CardActivity(),
+                  // const SizedBox(height: 8),
+                  // Center(
+                  //   child: TextButton(
+                  //     onPressed: () => Get.toNamed(AppRoutes.activity),
+                  //     child: Text(
+                  //       'See All',
+                  //       style: Theme.of(context).textTheme.bodyLarge?.copyWith(
+                  //             color: Theme.of(context).colorScheme.primary,
+                  //             decoration: TextDecoration.underline,
+                  //             decorationColor:
+                  //                 Theme.of(context).colorScheme.primary,
+                  //           ),
+                  //     ),
+                  //   ),
+                  // ),
+                  Obx(() {
+                    return ListView.separated(
+                      shrinkWrap: true,
+                      physics: const NeverScrollableScrollPhysics(),
+                      itemBuilder: (context, index) {
+                        if (index == controller.posts.length) {
+                          return const Center(
+                            child: CircularProgressIndicator(),
+                          );
+                        }
+                        final postActivity = controller.posts[index];
+                        return ActivityCard(
+                          postData: postActivity,
+                          // TODO
+                          // onTap: () => Get.toNamed(
+                          //   AppRoutes.postDetail,
+                          //   arguments: postActivity,
+                          // ),
+                          onTap: () {
+                            Get.snackbar('Under development',
+                                'This feature is under development');
+                          },
+                        );
+                      },
+                      separatorBuilder: (context, index) => const SizedBox(
+                        height: 0,
+                      ),
+                      itemCount: controller.posts.length +
+                          (controller.hasReacheMaxPostActivity.value ? 0 : 1),
+                    );
+                  }),
+                  // TODO: Show button show all
+                ],
               ),
               const SizedBox(height: 32),
             ],

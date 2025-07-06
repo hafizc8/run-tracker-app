@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:flutter_svg/flutter_svg.dart';
 import 'package:get/get.dart';
 import 'package:zest_mobile/app/core/shared/widgets/gradient_border_text_field.dart';
 import 'package:zest_mobile/app/core/shared/widgets/shimmer_loading_event.dart';
@@ -79,12 +80,11 @@ class SocialYourPageActivityDetailView extends GetView<PostController> {
                             focusNode: controller.commentFocusNode,
                             controller: controller.commentTextController,
                             hintText: 'Enter your comment',
-                            suffixIcon: IconButton(
-                              icon: Icon(
-                                Icons.send,
-                                color: Theme.of(context).colorScheme.primary,
+                            suffixIcon: InkWell(
+                              onTap: () => controller.commentPost(),
+                              child: SvgPicture.asset(
+                                'assets/icons/ic_send.svg',
                               ),
-                              onPressed: () => controller.commentPost(),
                             ),
                             onSubmitted: (value) => controller.commentPost(),
                           ),

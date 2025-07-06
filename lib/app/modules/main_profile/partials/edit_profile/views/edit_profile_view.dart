@@ -1,9 +1,14 @@
 import 'dart:io';
 
 import 'package:flutter/material.dart';
+import 'package:flutter/widgets.dart';
+import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:flutter_svg/flutter_svg.dart';
 import 'package:get/get.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:zest_mobile/app/core/models/forms/update_user_form.dart';
+import 'package:zest_mobile/app/core/shared/widgets/gradient_border_text_field.dart';
+import 'package:zest_mobile/app/core/shared/widgets/gradient_elevated_button.dart';
 import 'package:zest_mobile/app/modules/main_profile/partials/edit_profile/controllers/edit_profile_controller.dart';
 import 'package:zest_mobile/app/routes/app_routes.dart';
 
@@ -14,13 +19,20 @@ class EditProfileView extends GetView<EditProfileController> {
     return Scaffold(
       appBar: AppBar(
         backgroundColor: Theme.of(context).colorScheme.background,
-        title: const Text('Edit Profile'),
+        title: Text(
+          'Edit Profile',
+          style: Theme.of(context).textTheme.headlineSmall?.copyWith(
+                color: Color(0xFFA5A5A5),
+              ),
+        ),
         automaticallyImplyLeading: false,
+        centerTitle: true,
         elevation: 1,
         leading: GestureDetector(
           onTap: () => Get.back(),
           child: const Icon(
             Icons.chevron_left,
+            color: Color(0xFFA5A5A5),
           ),
         ),
       ),
@@ -32,41 +44,48 @@ class EditProfileView extends GetView<EditProfileController> {
             return Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                SizedBox(
-                  height: 398,
-                  width: double.infinity,
-                  child: Stack(
-                    children: [
-                      Positioned.fill(
-                        child: Visibility(
-                          visible: form.image != null,
-                          replacement:
-                              Image.asset('assets/images/empty_profile.png'),
-                          child: Image.file(form.image ?? File('')),
-                        ),
-                      ),
-                      Align(
-                        alignment: Alignment.bottomRight,
-                        child: Padding(
-                          padding: const EdgeInsets.symmetric(
-                            vertical: 16,
-                            horizontal: 8,
-                          ),
-                          child: CircleAvatar(
-                            backgroundColor:
-                                Theme.of(context).colorScheme.background,
-                            child: IconButton(
-                              icon: Icon(
-                                Icons.edit_outlined,
-                                color:
-                                    Theme.of(context).colorScheme.onBackground,
+                Center(
+                  child: SizedBox(
+                    height: 110.h,
+                    width: 110.w,
+                    child: Stack(
+                      clipBehavior: Clip.none,
+                      children: [
+                        Positioned.fill(
+                          child: Visibility(
+                            visible: form.image != null,
+                            replacement:
+                                Image.asset('assets/images/empty_profile.png'),
+                            child: ClipRRect(
+                              borderRadius: BorderRadius.circular(12),
+                              child: Image.file(
+                                form.image ?? File(''),
+                                fit: BoxFit.cover,
                               ),
-                              onPressed: () => controller.imagePicker(context),
                             ),
                           ),
                         ),
-                      ),
-                    ],
+                        Positioned(
+                          bottom: 0,
+                          right: -15,
+                          child: GestureDetector(
+                            onTap: () => controller.imagePicker(context),
+                            child: Container(
+                              width: 29.w,
+                              height: 29.h,
+                              padding: const EdgeInsets.all(8),
+                              decoration: BoxDecoration(
+                                borderRadius: BorderRadius.circular(5),
+                                color: Theme.of(context).colorScheme.primary,
+                              ),
+                              child: SvgPicture.asset(
+                                'assets/icons/ic_edit_2.svg',
+                              ),
+                            ),
+                          ),
+                        ),
+                      ],
+                    ),
                   ),
                 ),
                 const SizedBox(height: 16),
@@ -78,19 +97,17 @@ class EditProfileView extends GetView<EditProfileController> {
                       style: Theme.of(context).textTheme.titleSmall,
                     ),
                     const SizedBox(height: 12),
-                    TextFormField(
+                    GradientBorderTextField(
                       cursorColor: Colors.white,
-                      initialValue: form.name,
+                      controller: controller.nameController,
                       onChanged: (value) {
                         controller.form.value = form.copyWith(
                           name: value,
                           field: 'name',
                         );
                       },
-                      decoration: InputDecoration(
-                        hintText: 'Enter your name',
-                        errorText: form.errors?['name'],
-                      ),
+                      hintText: 'Enter your name',
+                      errorText: form.errors?['name'],
                     ),
                   ],
                 ),
@@ -134,16 +151,14 @@ class EditProfileView extends GetView<EditProfileController> {
                       style: Theme.of(context).textTheme.titleSmall,
                     ),
                     const SizedBox(height: 12),
-                    TextFormField(
+                    GradientBorderTextField(
                       cursorColor: Colors.white,
                       readOnly: true,
                       controller: controller.dateController,
                       onTap: () => controller.setDate(context),
-                      decoration: InputDecoration(
-                        hintText: 'Enter your birthday',
-                        suffixIcon: const Icon(Icons.calendar_today),
-                        errorText: form.errors?['birthday'],
-                      ),
+                      hintText: 'Enter your birthday',
+                      suffixIcon: const Icon(Icons.calendar_today),
+                      errorText: form.errors?['birthday'],
                     ),
                   ],
                 ),
@@ -187,7 +202,7 @@ class EditProfileView extends GetView<EditProfileController> {
                       style: Theme.of(context).textTheme.titleSmall,
                     ),
                     const SizedBox(height: 12),
-                    TextFormField(
+                    GradientBorderTextField(
                       controller: controller.addressController,
                       cursorColor: Colors.white,
                       readOnly: true,
@@ -213,10 +228,8 @@ class EditProfileView extends GetView<EditProfileController> {
                           }
                         }
                       },
-                      decoration: const InputDecoration(
-                        hintText: 'Choose your location',
-                        suffixIcon: Icon(Icons.location_on),
-                      ),
+                      hintText: 'Choose your location',
+                      suffixIcon: const Icon(Icons.location_on),
                     ),
                   ],
                 ),
@@ -229,20 +242,19 @@ class EditProfileView extends GetView<EditProfileController> {
                       style: Theme.of(context).textTheme.titleSmall,
                     ),
                     const SizedBox(height: 12),
-                    TextFormField(
+                    GradientBorderTextField(
                       cursorColor: Colors.white,
-                      initialValue: form.bio,
+                      controller: controller.bioController,
                       maxLines: 3,
+                      minLines: 3,
                       onChanged: (value) {
                         controller.form.value = form.copyWith(
                           bio: value,
                           field: 'bio',
                         );
                       },
-                      decoration: InputDecoration(
-                        hintText: 'Enter your bio',
-                        errorText: form.errors?['bio'],
-                      ),
+                      hintText: 'Enter your bio',
+                      errorText: form.errors?['bio'],
                     ),
                   ],
                 ),
@@ -254,18 +266,28 @@ class EditProfileView extends GetView<EditProfileController> {
       bottomNavigationBar: Padding(
         padding: const EdgeInsets.all(16.0),
         child: Obx(
-          () => ElevatedButton(
-            onPressed: !controller.isValidToUpdate
-                ? null
-                : controller.isLoading.value
-                    ? null
-                    : () {
-                        controller.updateProfile(context);
-                      },
-            child: Visibility(
-              visible: controller.isLoading.value,
-              replacement: const Text('Continue'),
-              child: const CircularProgressIndicator(),
+          () => SizedBox(
+            height: 43.h,
+            child: GradientElevatedButton(
+              contentPadding: EdgeInsets.symmetric(vertical: 5.w),
+              onPressed: !controller.isValidToUpdate
+                  ? null
+                  : controller.isLoading.value
+                      ? null
+                      : () {
+                          controller.updateProfile(context);
+                        },
+              child: Visibility(
+                visible: controller.isLoading.value,
+                replacement: Text(
+                  'Update',
+                  style: Theme.of(context).textTheme.labelLarge?.copyWith(
+                        fontSize: 15.sp,
+                        fontWeight: FontWeight.w700,
+                      ),
+                ),
+                child: const CircularProgressIndicator(),
+              ),
             ),
           ),
         ),

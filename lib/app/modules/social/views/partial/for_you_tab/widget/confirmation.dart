@@ -81,6 +81,7 @@ class ConfirmationDialog extends GetView<EventController> {
                 textAlign: TextAlign.center,
                 style: Theme.of(context).textTheme.bodySmall?.copyWith(
                       fontWeight: FontWeight.w400,
+                      fontSize: 12.sp,
                     ),
               ),
               SizedBox(height: 30.h),
@@ -90,7 +91,7 @@ class ConfirmationDialog extends GetView<EventController> {
                 children: [
                   Expanded(
                     child: SizedBox(
-                      height: 50.h,
+                      height: 43.h,
                       child: GradientOutlinedButton(
                         style: ButtonStyle(
                           shape: MaterialStateProperty.all(
@@ -111,7 +112,7 @@ class ConfirmationDialog extends GetView<EventController> {
                   Expanded(
                     flex: 2,
                     child: SizedBox(
-                      height: 50.h,
+                      height: 43.h,
                       child: GradientElevatedButton(
                         style: ButtonStyle(
                           padding: MaterialStateProperty.all(

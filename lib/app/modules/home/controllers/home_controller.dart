@@ -2,7 +2,6 @@ import 'dart:async';
 import 'package:flutter_background_service/flutter_background_service.dart';
 import 'package:geolocator/geolocator.dart';
 import 'package:get/get.dart';
-import 'package:intl/intl.dart';
 import 'package:permission_handler/permission_handler.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:zest_mobile/app/core/di/service_locator.dart';
@@ -23,7 +22,7 @@ class HomeController extends GetxController {
   final _service = FlutterBackgroundService();
   final _recordActivityService = sl<RecordActivityService>();
   final _prefs = sl<SharedPreferences>();
-  final _storageKey = 'lastGoalSetDate';
+  final _initialGoalSetKey = 'initial_goal_has_been_set';
 
   // --- UI STATE ---
   final RxInt _validatedSteps = 0.obs;
@@ -239,11 +238,10 @@ class HomeController extends GetxController {
     // Jangan tampilkan dialog jika data user belum ada
     if (user == null) return;
 
-    final lastSetDateString = _prefs.getString(_storageKey);
-    final todayString = DateFormat('yyyy-MM-dd').format(DateTime.now());
+    final bool hasAlreadySetGoal = _prefs.getBool(_initialGoalSetKey) ?? false;
 
     // Jika tanggal terakhir disimpan tidak sama dengan hari ini, tampilkan dialog
-    if (lastSetDateString != todayString) {
+    if (!hasAlreadySetGoal) {
       Get.dialog(
         SetDailyGoalDialog(
           onSave: (selectedGoal) async {
@@ -255,8 +253,7 @@ class HomeController extends GetxController {
               );
 
               if (response) {
-                // Jika berhasil, simpan tanggal hari ini ke storage
-                await _prefs.setString(_storageKey, todayString);
+                await _prefs.setBool(_initialGoalSetKey, true);
                 
                 // Perbarui state user di aplikasi Anda secara lokal
                 // Contoh: user.update((val) { val?.userPreference?.dailyStepGoals = selectedGoal; });

@@ -17,6 +17,46 @@ class WalkerProfile extends StatelessWidget {
     this.backgroundColor,
   });
 
+  Widget _buildRankWidget(BuildContext context, String rankString) {
+    String numberPart = '';
+    String suffixPart = '';
+
+    // Memisahkan angka dari sufiks (st, nd, rd, th)
+    final match = RegExp(r'(\d+)(st|nd|rd|th)?').firstMatch(rankString);
+    if (match != null) {
+      numberPart = match.group(1) ?? rankString;
+      suffixPart = match.group(2) ?? '';
+    } else {
+      numberPart = rankString;
+    }
+
+    final baseStyle = Theme.of(context).textTheme.titleSmall?.copyWith(
+          color: Theme.of(context).colorScheme.primary,
+          fontSize: 17.sp,
+          height: 1.0, // Mengatur line-height agar lebih pas
+        );
+
+    final suffixStyle = Theme.of(context).textTheme.titleSmall?.copyWith(
+          color: Theme.of(context).colorScheme.primary,
+          fontSize: 10.sp, // Ukuran font lebih kecil untuk sufiks
+          height: 1.0,
+        );
+
+    return Row(
+      mainAxisSize: MainAxisSize.min,
+      crossAxisAlignment: CrossAxisAlignment.start, // Align to the top
+      children: [
+        Text(numberPart, style: baseStyle),
+        // Beri sedikit padding agar tidak terlalu menempel
+        if (suffixPart.isNotEmpty)
+          Padding(
+            padding: EdgeInsets.only(left: 1.w),
+            child: Text(suffixPart, style: suffixStyle),
+          ),
+      ],
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     final darkColorScheme = Theme.of(context).colorScheme;
@@ -37,13 +77,7 @@ class WalkerProfile extends StatelessWidget {
       child: Column(
         mainAxisSize: MainAxisSize.min,
         children: [
-          Text(
-            rank,
-            style: Theme.of(context).textTheme.titleSmall?.copyWith(
-                  color: darkColorScheme.primary,
-                  fontSize: 17.sp,
-                ),
-          ),
+          _buildRankWidget(context, rank),
           SizedBox(height: 8.h),
           ClipOval(
             child: CachedNetworkImage(
@@ -53,7 +87,7 @@ class WalkerProfile extends StatelessWidget {
               fit: BoxFit.cover,
               placeholder: (context, url) => ShimmerLoadingCircle(size: 44.w),
               errorWidget: (context, url, error) => CircleAvatar(
-                radius: 22.r,
+                radius: 44.r,
                 backgroundImage: const AssetImage('assets/images/empty_profile.png'),
               ),
             ),

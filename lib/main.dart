@@ -51,11 +51,11 @@ void main() async {
 
   // 6. Jalankan Aplikasi
   runApp(
-    DevicePreview(
-      enabled: !kReleaseMode, // Hanya aktif saat mode debug
-      builder: (context) => const App(),
-    ),
-    // const App(),
+    // DevicePreview(
+    //   enabled: !kReleaseMode, // Hanya aktif saat mode debug
+    //   builder: (context) => const App(),
+    // ),
+    const App(),
   );
 }
 

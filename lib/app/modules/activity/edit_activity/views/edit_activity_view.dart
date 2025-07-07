@@ -146,7 +146,7 @@ class EditActivityView extends GetView<EditActivityController> {
                     minMaxZoomPreference: const MinMaxZoomPreference(5, 20),
                     polylines: controller.activityPolylines,
                     onMapCreated: controller.onMapCreated,
-                    mapType: MapType.terrain,
+                    mapType: MapType.normal,
                     markers: {
                       if (controller.currentPath.isNotEmpty) ...[
                         Marker(

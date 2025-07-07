@@ -184,7 +184,7 @@ class _StaticRouteMapState extends State<StaticRouteMap> with AutomaticKeepAlive
         zoom: 15, // Zoom awal yang wajar
       ),
       onMapCreated: _onMapCreated,
-      mapType: MapType.terrain,
+      mapType: MapType.normal,
     );
   }
 }

@@ -56,6 +56,16 @@ class RecordActivityController extends GetxController {
   var formattedPace = "00:00".obs;
   Timer? _paceUpdateTimer;
 
+  // ✨ --- State Baru untuk Periodic Sync & Coin --- ✨
+  var _nextSyncDistanceInKm = 1.0; // Target sync pertama adalah 1 km
+  RxDouble coinsEarned = 0.0.obs;
+  RxBool isSyncing = false.obs;
+  RxDouble userCoin = 0.0.obs;
+
+  // ✨ --- State Baru untuk Animasi Koin --- ✨
+  var showCoinAnimation = false.obs;
+  Timer? _coinAnimationTimer;
+
 
   @override
   void onInit() {
@@ -65,6 +75,8 @@ class RecordActivityController extends GetxController {
     WidgetsBinding.instance.addPostFrameCallback((_) {
       chooseStamina();
     });
+
+    userCoin.value = user?.currentUserCoin?.currentAmount ?? 0;
   }
 
   @override
@@ -72,6 +84,7 @@ class RecordActivityController extends GetxController {
     _logService.log.i("RecordActivityController closed.");
     _staminaTimer?.cancel();
     _paceUpdateTimer?.cancel();
+    _coinAnimationTimer?.cancel();
     super.onClose();
   }
 
@@ -79,9 +92,9 @@ class RecordActivityController extends GetxController {
     _service.on('update').listen((data) {
       if (data == null || !isTracking.value) return;
 
-      elapsedTimeInSeconds.value = data['elapsedTime'];
-      stepsInSession.value = data['steps'];
-      currentDistanceInMeters.value = (data['distance'] as num).toDouble();
+      if (data['elapsedTime'] != null) elapsedTimeInSeconds.value = data['elapsedTime'];
+      if (data['steps'] != null) stepsInSession.value = data['steps'];
+      if (data['distance'] != null) currentDistanceInMeters.value = (data['distance'] as num).toDouble();
 
       if (data['location'] != null) {
         final loc = data['location'];
@@ -96,6 +109,69 @@ class RecordActivityController extends GetxController {
         _updateCameraForRoute();
       }
     });
+  }
+
+  // ✨ --- FUNGSI BARU UNTUK SINKRONISASI PER KM --- ✨
+  Future<void> _checkDistanceForPeriodicSync() async {
+    double currentDistanceInKm = currentDistanceInMeters.value / 1000.0;
+    
+    // Cek apakah jarak saat ini sudah mencapai atau melebihi target sync berikutnya
+    if (currentDistanceInKm >= _nextSyncDistanceInKm) {
+      _logService.log.i("Reached sync milestone: ${_nextSyncDistanceInKm}km. Syncing data...");
+
+      final dataPoints = await _localDb.getAllDataPoints();
+      if ((dataPoints.last.distance / 1000) >= _nextSyncDistanceInKm) {
+        // Lakukan sinkronisasi
+        await _syncActivityData();
+
+        // Setelah berhasil, naikkan target sync berikutnya
+        _nextSyncDistanceInKm += 1.0;
+        _logService.log.i("Next sync milestone set to: ${_nextSyncDistanceInKm}km.");
+      }
+      
+    }
+  }
+
+  /// Fungsi terpusat untuk melakukan sinkronisasi data.
+  Future<void> _syncActivityData() async {
+    if (_recordActivityId == null) return;
+    
+    final dataPoints = await _localDb.getAllDataPoints();
+    if (dataPoints.isEmpty) {
+      _logService.log.w("Sync triggered, but no data points in local DB.");
+      return;
+    }
+
+    isSyncing.value = true;
+    
+    try {
+      final jsonData = dataPoints.map((p) => p.toJson()).toList();
+      // Asumsi service Anda mengembalikan data coin
+      final syncResponse = await _recordActivityService.syncRecordActivity(
+        recordActivityId: _recordActivityId!,
+        data: jsonData,
+      );
+
+      // ✨ KUNCI #2: Ambil dan akumulasi koin dari response
+      if (syncResponse.coin != null) {
+        coinsEarned.value = double.tryParse(syncResponse.coin ?? "0") ?? 0.0;
+
+        if (coinsEarned.value > 0) {
+          userCoin.value += coinsEarned.value;
+          _triggerCoinAnimation();
+        }
+        _logService.log.i("Sync successful. Gained ${syncResponse.coin} coins.");
+        Get.snackbar("Coins Earned!", "+${syncResponse.coin} coins for reaching a new milestone!", snackPosition: SnackPosition.TOP);
+      }
+      
+      // Hapus data point yang sudah disinkronisasi untuk efisiensi
+      await _localDb.clearDataPoints();
+
+    } catch (e, s) {
+      _logService.log.e("Periodic sync failed.", error: e, stackTrace: s);
+    } finally {
+      isSyncing.value = false;
+    }
   }
 
   void togglePauseResume() {
@@ -149,7 +225,7 @@ class RecordActivityController extends GetxController {
         
         // Berikan nilai awal, minimum, dan maksimum untuk stamina
         initialValue: 1,
-        minValue: 1,
+        minValue: 0,
         maxValue: user?.currentUserStamina?.currentAmount ?? 0,
         
         // Bangun label tombol konfirmasi secara dinamis
@@ -262,8 +338,7 @@ class RecordActivityController extends GetxController {
   void checkBeforeStopActivity() async {
     if (!isPaused.value) togglePauseResume();
 
-    final dataPoints = await _localDb.getAllDataPoints();
-    if (dataPoints.isEmpty || dataPoints.length < 2) {
+    if (currentPath.isEmpty || currentPath.length < 2) {
       return Get.dialog(
         CustomDialogConfirmation(
           title: 'Insufficient Location Data',
@@ -297,20 +372,12 @@ class RecordActivityController extends GetxController {
     _service.invoke("stopRecording");
 
     try {
-      final dataPoints = await _localDb.getAllDataPoints();
-      
-      final jsonData = dataPoints.map((p) => p.toJson()).toList();
-      bool syncSuccess = await _recordActivityService.syncRecordActivity(
-        recordActivityId: _recordActivityId!,
-        data: jsonData,
-      );
+      await _syncActivityData();
 
-      if (syncSuccess) {
-        final recordActivityData = await _recordActivityService.endSession(recordActivityId: _recordActivityId!);
-        if (recordActivityData.id?.isNotEmpty ?? false) {
-          await _localDb.clearAllUnsyncedData();
-          Get.offAndToNamed(AppRoutes.activityEdit, arguments: recordActivityData);
-        }
+      final recordActivityData = await _recordActivityService.endSession(recordActivityId: _recordActivityId!);
+      if (recordActivityData.id?.isNotEmpty ?? false) {
+        await _localDb.clearAllUnsyncedData();
+        Get.offAndToNamed(AppRoutes.activityEdit, arguments: recordActivityData);
       }
     } catch (e, s) {
       FirebaseCrashlytics.instance.recordError(e, s, reason: 'Failed to sync/end session');
@@ -336,17 +403,26 @@ class RecordActivityController extends GetxController {
     _recordActivityId = null;
   }
 
-  void _saveDataPointToLocalDb(Map<String, dynamic> loc, DateTime timestamp) {
+  Future<void> _saveDataPointToLocalDb(Map<String, dynamic> loc, DateTime timestamp) async {
     double paceInSecondsPerKm = 0;
     if (elapsedTimeInSeconds.value > 0 && currentDistanceInMeters.value > 0) {
       paceInSecondsPerKm = (elapsedTimeInSeconds.value / currentDistanceInMeters.value) * 1000;
     }
     final dataPoint = ActivityDataPoint(
-        latitude: loc['latitude'], longitude: loc['longitude'],
-        step: stepsInSession.value, distance: currentDistanceInMeters.value,
-        pace: paceInSecondsPerKm, time: elapsedTimeInSeconds.value,
-        timestamp: timestamp);
-    _localDb.addDataPoint(dataPoint);
+      latitude: loc['latitude'],
+      longitude: loc['longitude'],
+      step: stepsInSession.value,
+      distance: currentDistanceInMeters.value,
+      pace: paceInSecondsPerKm,
+      time: elapsedTimeInSeconds.value,
+      timestamp: timestamp,
+    );
+
+    await _localDb.addDataPoint(dataPoint);
+
+    if ((currentDistanceInMeters.value / 1000) >= _nextSyncDistanceInKm && !isSyncing.value) {
+      await _checkDistanceForPeriodicSync();
+    }
   }
 
   void onMapCreated(GoogleMapController controller) {
@@ -457,11 +533,23 @@ class RecordActivityController extends GetxController {
     // Batalkan timer lama jika ada untuk menghindari duplikasi
     _paceUpdateTimer?.cancel();
     
-    // Buat timer baru yang berjalan setiap 5 detik
-    _paceUpdateTimer = Timer.periodic(const Duration(seconds: 5), (timer) {
-      // Setiap 5 detik, perbarui state 'formattedPace' 
+    _paceUpdateTimer = Timer.periodic(const Duration(seconds: 3), (timer) {
+      // Setiap 3 detik, perbarui state 'formattedPace' 
       // dengan nilai dari kalkulasi saat ini.
       formattedPace.value = _calculateCurrentPace();
+    });
+  }
+
+  void _triggerCoinAnimation() {
+    // 1. Batalkan timer lama jika masih berjalan, agar timer di-reset
+    _coinAnimationTimer?.cancel();
+    
+    // 2. Tampilkan widget animasi
+    showCoinAnimation.value = true;
+    
+    // 3. Mulai timer baru selama 5 detik untuk menyembunyikannya kembali
+    _coinAnimationTimer = Timer(const Duration(seconds: 5), () {
+      showCoinAnimation.value = false;
     });
   }
 
@@ -493,13 +581,13 @@ class RecordActivityController extends GetxController {
     return {
       Polyline(
         polylineId: const PolylineId('activity_path'),
-        color: darkColorScheme.primary, // Anda bisa sesuaikan warnanya
-        width: 5, // Anda bisa sesuaikan ketebalan garis
+        color: darkColorScheme.primary,
+        width: 4,
         startCap: Cap.buttCap,
         endCap: Cap.buttCap,
         points: currentPath
             .map((point) => LatLng(point.latitude, point.longitude))
-            .toList(), // Konversi List<LocationPoint> menjadi List<LatLng>
+            .toList(),
       ),
     };
   }

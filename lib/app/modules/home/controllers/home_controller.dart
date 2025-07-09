@@ -1,5 +1,4 @@
 import 'dart:async';
-import 'package:flutter_background_service/flutter_background_service.dart';
 import 'package:geolocator/geolocator.dart';
 import 'package:get/get.dart';
 import 'package:permission_handler/permission_handler.dart';
@@ -13,13 +12,14 @@ import 'package:zest_mobile/app/core/services/record_activity_service.dart';
 import 'package:zest_mobile/app/core/services/user_service.dart';
 import 'package:zest_mobile/app/modules/home/widgets/set_daily_goals_dialog.dart';
 import 'dart:math';
+import 'package:pedometer_2/pedometer_2.dart';
+import 'package:intl/intl.dart';
 
 class HomeController extends GetxController {
   // --- DEPENDENCIES ---
   final _authService = sl<AuthService>();
   final _userService = sl<UserService>();
   final _logService = sl<LogService>();
-  final _service = FlutterBackgroundService();
   final _recordActivityService = sl<RecordActivityService>();
   final _prefs = sl<SharedPreferences>();
   final _initialGoalSetKey = 'initial_goal_has_been_set';
@@ -40,11 +40,9 @@ class HomeController extends GetxController {
   Rx<HomePageDataModel?> homePageData = Rx<HomePageDataModel?>(null);
 
   Timer? _syncTimer;
-  int _lastSyncedSteps = 0;
-  int _lastSyncedTime = 0;
   static const _syncInterval = Duration(minutes: 2);
-
-  // --- Hapus semua state & logika sensor dari sini ---
+  final _lastSyncedStepsKey = 'last_synced_steps';
+  final _lastSavedDateKey = 'last_saved_date';
 
   @override
   void onInit() async {
@@ -56,15 +54,14 @@ class HomeController extends GetxController {
     try {
       // 1. Minta izin terlebih dahulu
       await _requestPermissions();
-      
+
       // 2. Ambil data dari backend sebagai sumber kebenaran utama
       await refreshData();
       
-      // 3. Lakukan rekonsiliasi dengan data lokal
-      await _reconcileStepData();
+      // 3. Lakukan rekonsiliasi dengan data lokal, reset jika hari baru, dan sync
+      await _reconcileAndSyncInitialData();
 
-      // 4. Setelah data sinkron, baru mulai semua proses latar belakang
-      _listenToBackgroundService();
+      // 4. Setelah data sinkron, mulai sinkronisasi berkala
       _startPeriodicSync();
       
       // 5. Tampilkan dialog jika perlu
@@ -85,82 +82,98 @@ class HomeController extends GetxController {
     super.onClose();
   }
 
-  Future<bool> _requestPermissions() async {
+  Future<void> _requestPermissions() async {
+    // Minta Izin Activity Recognition
     var activityStatus = await Permission.activityRecognition.request();
     if (!activityStatus.isGranted) {
       Get.snackbar("Permission Denied", "Activity sensor permission is required.");
-      _logService.log.w("Activity sensor permission is required.");
-      return false;
+      _logService.log.w("Activity Recognition permission denied.");
+      return;
     }
-
-    var locationStatus = await Permission.locationWhenInUse.request();
-    if (!locationStatus.isGranted) {
-      Get.snackbar("Permission Denied", "Location permission is required.");
-      _logService.log.w("Location permission is required.");
-      return false;
-    }
-
-    var isLocationServiceEnabled = await Geolocator.isLocationServiceEnabled();
-    if (!isLocationServiceEnabled) {
-      Get.snackbar("Location Service Disabled", "Please enable location service.");
-      _logService.log.w("Location service is disabled.");
-      return false;
-    }
-
-    _logService.log.i("All necessary permissions granted. Sending 'start_sensors' command to background service.");
-    _service.invoke('start_sensors');
-
-    return true;
-  }
-
-  void _listenToBackgroundService() {
-    _service.on('passive_step_update').listen((data) {
-      if (data != null) {
-        if (data['steps'] is int) _validatedSteps.value = data['steps'];
-        if (data['time'] is int) _totalActiveTimeInSeconds.value = data['time'];
-        
-        _logService.log.d("HomeController: Received update from background: Steps=${data['steps']}, Time=${data['time']}");
-      }
-    });
   }
 
   double get progressValue => (validatedSteps / (user?.userPreference?.dailyStepGoals ?? 0)).clamp(0.0, 1.0);
 
-  void _startPeriodicSync() {
-    try {
-      _logService.log.i("Memulai timer untuk sinkronisasi langkah setiap ${_syncInterval.inMinutes} menit.");
-      _lastSyncedSteps = _prefs.getInt('last_synced_steps') ?? 0;
-      _lastSyncedTime = _prefs.getInt('last_synced_time') ?? 0;
+  Future<void> _reconcileAndSyncInitialData() async {
+    _logService.log.i("Reconciling step data...");
+    final todayString = DateFormat('yyyy-MM-dd').format(DateTime.now());
+    final lastSavedDate = _prefs.getString(_lastSavedDateKey);
 
-      _syncTimer = Timer.periodic(_syncInterval, (timer) async {
-        final currentSteps = _validatedSteps.value;
-        final currentTime = _totalActiveTimeInSeconds.value;
-
-        if (currentSteps > _lastSyncedSteps || currentTime > _lastSyncedTime) {
-          _logService.log.i("SINKRONISASI: Mencoba mengirim (Langkah: $currentSteps, Waktu: $currentTime)");
-          try {
-            await _recordActivityService.syncDailyRecord(
-              step: currentSteps,
-              time: currentTime,
-              calorie: 0,
-            );
-            
-            _lastSyncedSteps = currentSteps;
-            _lastSyncedTime = currentTime;
-            await _prefs.setInt('last_synced_steps', _lastSyncedSteps);
-            await _prefs.setInt('last_synced_time', _lastSyncedTime);
-
-            _logService.log.i("SINKRONISASI: Berhasil.");
-          } catch (e, s) {
-            _logService.log.e("SINKRONISASI: Gagal.", error: e, stackTrace: s);
-          }
-        } else {
-          _logService.log.i("SINKRONISASI: Tidak ada progres baru untuk dikirim.");
-        }
-      });
-    } catch (e) {
-      _logService.log.e("Gagal memulai timer sinkronisasi.", error: e);
+    // 1. Reset 'last_synced_steps' jika ini hari baru
+    if (lastSavedDate != todayString) {
+      _logService.log.w("New day detected. Resetting last synced steps to 0.");
+      await _prefs.setInt(_lastSyncedStepsKey, 0);
+      await _prefs.setString(_lastSavedDateKey, todayString);
     }
+
+    // 2. Ambil data dari Pedometer
+    final now = DateTime.now();
+    final startTime = DateTime(now.year, now.month, now.day);
+    int pedometerSteps = 0;
+    try {
+      pedometerSteps = await Pedometer().getStepCount(from: startTime, to: now);
+    } catch (e) {
+      _logService.log.e("Failed to get initial step count from Pedometer.", error: e);
+    }
+    
+    // 3. Ambil data dari backend (sudah di-fetch oleh refreshData)
+    final backendSteps = homePageData.value?.recordDaily?.step ?? 0;
+
+    // 4. Tentukan nilai yang "benar" dengan mengambil yang terbesar
+    final authoritativeSteps = max(backendSteps, pedometerSteps);
+    
+    _logService.log.i("Reconciliation: Backend ($backendSteps) vs Pedometer ($pedometerSteps). Authoritative: $authoritativeSteps steps.");
+
+    // 5. Atur state UI dengan nilai yang paling benar
+    _validatedSteps.value = authoritativeSteps;
+
+    // 6. ✨ PENTING: Lakukan sinkronisasi pertama kali secara langsung
+    await syncDailyRecord();
+  }
+
+  Future<void> syncDailyRecord() async {
+    // Selalu ambil data terbaru dari Pedometer sebelum sync
+    final now = DateTime.now();
+    final startTime = DateTime(now.year, now.month, now.day);
+    int currentPedometerSteps = 0;
+    try {
+      currentPedometerSteps = await Pedometer().getStepCount(from: startTime, to: now);
+    } catch (e) {
+      _logService.log.e("Failed to get step count during sync.", error: e);
+      return; // Hentikan jika gagal mengambil data
+    }
+    
+    // Perbarui UI dengan data terbaru
+    _validatedSteps.value = currentPedometerSteps;
+
+    final lastSyncedSteps = _prefs.getInt(_lastSyncedStepsKey) ?? 0;
+
+    // Hanya kirim jika ada progres baru
+    if (currentPedometerSteps > lastSyncedSteps) {
+      _logService.log.i("SYNC: Attempting to sync (Steps: $currentPedometerSteps)");
+      try {
+        await _recordActivityService.syncDailyRecord(
+          step: currentPedometerSteps,
+          time: 0, // Anda bisa menambahkan logika waktu jika perlu
+          calorie: 0,
+        );
+        
+        // Jika berhasil, perbarui nilai terakhir yang disinkronkan
+        await _prefs.setInt(_lastSyncedStepsKey, currentPedometerSteps);
+        _logService.log.i("SYNC: Success.");
+      } catch (e, s) {
+        _logService.log.e("SYNC: Failed.", error: e, stackTrace: s);
+      }
+    } else {
+      _logService.log.i("SYNC: No new progress to sync.");
+    }
+  }
+
+  void _startPeriodicSync() {
+    _logService.log.i("Starting periodic sync timer every ${_syncInterval.inMinutes} mins.");
+    _syncTimer = Timer.periodic(_syncInterval, (timer) async {
+      await syncDailyRecord();
+    });
   }
 
   Future<void> _loadMe() async {
@@ -200,37 +213,6 @@ class HomeController extends GetxController {
     } finally {
       isLoadingGetUserData.value = false;
     }
-  }
-
-  // ✨ --- FUNGSI BARU UNTUK REKONSILIASI DATA --- ✨
-  Future<void> _reconcileStepData() async {
-    _logService.log.i("Reconciling step and time data...");
-
-    // Ambil data dari backend (sudah di-fetch oleh refreshData)
-    final backendSteps = homePageData.value?.recordDaily?.step ?? 0;
-    final backendTime = homePageData.value?.recordDaily?.time ?? 0;
-
-    // Ambil data dari storage lokal
-    final localSteps = _prefs.getInt('validated_steps') ?? 0;
-    final localTime = _prefs.getInt('active_time') ?? 0;
-
-    _logService.log.i("Data Check -> Backend (Steps: $backendSteps, Time: $backendTime) vs Local (Steps: $localSteps, Time: $localTime)");
-
-    // Tentukan nilai yang "benar" dengan mengambil yang terbesar
-    final authoritativeSteps = max(backendSteps, localSteps);
-    final authoritativeTime = max(backendTime, localTime);
-
-    if (authoritativeSteps > _validatedSteps.value) {
-      _logService.log.w("Updating local state with authoritative data. Steps: $authoritativeSteps, Time: $authoritativeTime");
-    }
-
-    // Atur state UI dengan nilai yang paling benar
-    _validatedSteps.value = authoritativeSteps;
-    _totalActiveTimeInSeconds.value = authoritativeTime;
-
-    // Perbarui storage lokal dengan nilai yang benar untuk konsistensi
-    await _prefs.setInt('validated_steps', authoritativeSteps);
-    await _prefs.setInt('active_time', authoritativeTime);
   }
 
   // ✨ KUNCI: Fungsi untuk memeriksa dan menampilkan dialog

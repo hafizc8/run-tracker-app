@@ -1,6 +1,4 @@
-import 'package:device_preview/device_preview.dart';
 import 'package:zest_mobile/app/core/services/log_service.dart';
-
 import 'app/app.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:firebase_crashlytics/firebase_crashlytics.dart';
@@ -78,14 +76,15 @@ Future<void> initializeService() async {
 
   await service.configure(
     iosConfiguration: IosConfiguration(
-      autoStart: true,
+      autoStart: false,
       onForeground: bg.onStart,
       onBackground: bg.onIosBackground,
     ),
     androidConfiguration: AndroidConfiguration(
       onStart: bg.onStart,
       isForegroundMode: true,
-      autoStart: true,
+      autoStart: false,
+      autoStartOnBoot: false,
       notificationChannelId: notificationChannelId,
       initialNotificationTitle: 'Zest+',
       initialNotificationContent: 'Aktivitas siap dimulai.',

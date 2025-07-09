@@ -1,14 +1,12 @@
 import 'package:flutter/material.dart';
-import 'package:flutter/rendering.dart';
-import 'package:flutter/widgets.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:get/get.dart';
+import 'package:google_fonts/google_fonts.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:zest_mobile/app/core/shared/theme/color_schemes.dart';
 import 'package:zest_mobile/app/core/shared/widgets/custom_dialog_confirmation.dart';
 import 'package:zest_mobile/app/modules/activity/record_activity/controllers/record_activity_controller.dart';
-import 'package:zest_mobile/app/routes/app_routes.dart';
 
 class RecordActivityView extends GetView<RecordActivityController> {
   const RecordActivityView({super.key});
@@ -99,9 +97,13 @@ class RecordActivityView extends GetView<RecordActivityController> {
                               'assets/icons/ic_coin.svg',
                             ),
                             const SizedBox(width: 8),
-                            Text(
-                              '${controller.user?.currentUserCoin?.currentAmount}',
-                              style: Theme.of(context).textTheme.titleSmall,
+                            Obx(
+                              () {
+                                return Text(
+                                  '${controller.userCoin.value.toPrecision(2)}',
+                                  style: Theme.of(context).textTheme.titleSmall,
+                                );
+                              }
                             ),
                           ],
                         ),
@@ -248,52 +250,77 @@ class RecordActivityView extends GetView<RecordActivityController> {
                                 ],
                               ),
 
+                              Obx(
+                                () {
+                                  return Text(
+                                    controller.formattedPace.value,
+                                    style: Theme.of(context).textTheme.titleSmall?.copyWith(
+                                      color: const Color(0xFFDCDCDC),
+                                      fontSize: 100,
+                                      fontWeight: FontWeight.w700,
+                                    ),
+                                  );
+                                }
+                              ),
+
                               Obx(() {
                                 return AnimatedSwitcher(
-                                  duration: const Duration(milliseconds: 400), // Atur durasi animasi
+                                  duration: const Duration(milliseconds: 500),
+                                  switchInCurve: Curves.easeOutCubic,
+                                  switchOutCurve: Curves.easeInCubic,
                                   transitionBuilder: (Widget child, Animation<double> animation) {
-                                    // Membuat efek transisi slide dari bawah ke atas dan fade in
-                                    return FadeTransition(
-                                      opacity: animation,
-                                      child: SlideTransition(
-                                        position: Tween<Offset>(
-                                          begin: const Offset(0.0, 0.3), // Mulai dari sedikit di bawah
-                                          end: Offset.zero,
-                                        ).animate(animation),
+                                    final bool isLeaving = child.key != ValueKey(controller.showCoinAnimation.value);
+
+                                    // Tentukan pergeseran (offset) berdasarkan status masuk atau keluar
+                                    final Tween<Offset> tween = isLeaving
+                                        // Jika keluar, geser dari tengah (0,0) ke atas (0, -0.5)
+                                        ? Tween<Offset>(begin: Offset.zero, end: const Offset(0, -0.1))
+                                        // Jika masuk, geser dari bawah (0, 0.5) ke tengah (0,0)
+                                        : Tween<Offset>(begin: const Offset(0, 0.5), end: Offset.zero);
+
+                                    // Gabungkan animasi slide dan fade
+                                    return SlideTransition(
+                                      position: tween.animate(animation),
+                                      child: FadeTransition(
+                                        opacity: animation,
                                         child: child,
                                       ),
                                     );
                                   },
-                                  child: Text(
-                                    controller.formattedPace.value,
-                                    key: ValueKey<String>(controller.formattedPace.value), 
-                                    style: Theme.of(context).textTheme.titleSmall?.copyWith(
-                                          color: const Color(0xFFDCDCDC),
-                                          fontSize: 100,
-                                          fontWeight: FontWeight.w700,
-                                        ),
-                                  ),
+                                  child: controller.showCoinAnimation.value
+                                      ? Row(
+                                          // Gunakan key yang merefleksikan state saat ini (true)
+                                          key: const ValueKey(true),
+                                          mainAxisAlignment: MainAxisAlignment.center,
+                                          children: [
+                                            SvgPicture.asset(
+                                              'assets/icons/ic_coin.svg',
+                                              width: 27,
+                                            ),
+                                            const SizedBox(width: 8),
+                                            // Tambahkan AnimatedSwitcher di dalam untuk menganimasikan perubahan teks
+                                            AnimatedSwitcher(
+                                              duration: const Duration(milliseconds: 300),
+                                              transitionBuilder: (child, animation) =>
+                                                  FadeTransition(opacity: animation, child: child),
+                                              child: Text(
+                                                // Gunakan key dari nilai koin agar teks beranimasi saat nilainya berubah
+                                                '+${controller.coinsEarned.value}',
+                                                key: ValueKey<int>(controller.coinsEarned.value.toInt()),
+                                                style: GoogleFonts.poppins(
+                                                  color: darkColorScheme.primary,
+                                                  fontSize: 24,
+                                                  fontWeight: FontWeight.w700,
+                                                ),
+                                              ),
+                                            )
+                                          ],
+                                        )
+                                      // Gunakan SizedBox dengan key yang berbeda untuk state kosong
+                                      : const SizedBox.shrink(key: ValueKey(false)),
                                 );
                               }),
-                          
-                              Row(
-                                mainAxisAlignment: MainAxisAlignment.center,
-                                children: [
-                                  SvgPicture.asset(
-                                    'assets/icons/ic_coin.svg',
-                                    width: 27,
-                                  ),
-                                  const SizedBox(width: 8),
-                                  Text(
-                                    '+8.25',
-                                    style: Theme.of(context).textTheme.titleSmall?.copyWith(
-                                      color: darkColorScheme.primary,
-                                      fontSize: 24,
-                                      fontWeight: FontWeight.w700,
-                                    ),
-                                  ),
-                                ],
-                              ),
+
                             ],
                           ),
                         ],

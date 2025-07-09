@@ -29,7 +29,7 @@ class RecordActivityService {
     }
   }
 
-  Future<bool> syncRecordActivity({
+  Future<RecordActivityModel> syncRecordActivity({
     required String recordActivityId,
     required List<Map<String, dynamic>> data,
   }) async {
@@ -40,7 +40,7 @@ class RecordActivityService {
         data: data,
       );
 
-      return response.data['success'];
+      return RecordActivityModel.fromJson(response.data['data']);
     } catch (e) {
       rethrow;
     }

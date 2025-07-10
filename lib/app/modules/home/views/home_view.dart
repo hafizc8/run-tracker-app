@@ -12,6 +12,7 @@ import 'package:zest_mobile/app/core/shared/widgets/step_tracker_widget.dart';
 import 'package:zest_mobile/app/modules/home/views/widget/home_shimmer_layout.dart';
 import 'package:zest_mobile/app/modules/home/widgets/custom_exp_progress_bar.dart';
 import 'package:zest_mobile/app/modules/home/widgets/walker_profile.dart';
+import 'package:zest_mobile/app/routes/app_routes.dart';
 import '../controllers/home_controller.dart';
 
 class HomeView extends GetView<HomeController> {
@@ -344,117 +345,122 @@ class HomeView extends GetView<HomeController> {
                       ),
                     ),
                     SizedBox(height: 12.h),
-                    Obx(() {
-                      // Ambil data leaderboards dari controller
-                      final leaderboards = controller.homePageData.value?.leaderboards;
-                      final currentUser = controller.user;
-
-                      // Tampilkan container kosong jika data belum siap
-                      if (leaderboards == null || leaderboards.isEmpty || currentUser == null) {
-                        return const SizedBox(height: 145);
-                      }
-
-                      // Cari data dan indeks peringkat dari pengguna yang sedang login
-                      final currentUserLeaderboardData =
-                          leaderboards.firstWhereOrNull((leader) => leader.id == currentUser.id);
-                      final currentUserRankIndex =
-                          leaderboards.indexWhere((leader) => leader.id == currentUser.id);
-
-                      // Helper function untuk format rank
-                      String formatRank(int? rank) {
-                        if (rank == null) return '-';
-                        if (rank == 1) return '1st';
-                        if (rank == 2) return '2nd';
-                        if (rank == 3) return '3rd';
-                        if (rank % 10 == 1 && rank % 100 != 11) return '${rank}st';
-                        if (rank % 10 == 2 && rank % 100 != 12) return '${rank}nd';
-                        if (rank % 10 == 3 && rank % 100 != 13) return '${rank}rd';
-                        return '${rank}th';
-                      }
-
-                      /// Widget untuk tombol "See More"
-                      Widget buildSeeMoreButton() {
-                        return GestureDetector(
-                          onTap: () {
-                            Get.snackbar("Coming soon", "Navigate to full leaderboard page.");
-                          },
-                          child: Container(
-                            height: 126.h,
-                            decoration: BoxDecoration(
-                              color: const Color(0xFF393939),
-                              borderRadius: BorderRadius.circular(12.r),
-                            ),
-                            child: Column(
-                              mainAxisAlignment: MainAxisAlignment.center,
-                              children: [
-                                const Icon(Icons.arrow_forward_ios, size: 24),
-                                SizedBox(height: 8.h),
-                                Text(
-                                  "See more",
-                                  style: Theme.of(Get.context!).textTheme.titleSmall?.copyWith(fontSize: 12.sp),
-                                ),
-                              ],
-                            ),
-                          ),
-                        );
-                      }
-
-                      return Container(
-                        width: 398.w,
-                        decoration: BoxDecoration(
-                          color: darkColorScheme.surface,
-                          borderRadius: BorderRadius.circular(12.r),
-                        ),
-                        margin: EdgeInsets.symmetric(horizontal: 16.w),
-                        child: Row(
-                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            // ✨ KUNCI: Gunakan kondisi untuk menentukan widget yang akan di-render ✨
-                            if (currentUserRankIndex != -1 && currentUserRankIndex < 3)
-                              // --- TAMPILAN JIKA USER TOP 3 ---
-                              ...leaderboards.take(3).map((walker) {
-                                final bool isCurrentUser = walker.id == currentUser.id;
-                                return Expanded(
-                                  child: WalkerProfile(
-                                    rank: formatRank(walker.rank),
-                                    name: isCurrentUser ? 'Your' : (walker.name ?? '-'),
-                                    imageUrl: walker.imageUrl ?? '',
-                                  ),
-                                );
-                              }).toList(),
-                            if (currentUserRankIndex != -1 && currentUserRankIndex < 3)
-                              // --- Tombol "See More" ---
-                              Expanded(
-                                child: buildSeeMoreButton(),
+                    InkWell(
+                      onTap: () {
+                        Get.toNamed(AppRoutes.leaderboard);
+                      },
+                      child: Obx(() {
+                        // Ambil data leaderboards dari controller
+                        final leaderboards = controller.homePageData.value?.leaderboards;
+                        final currentUser = controller.user;
+                      
+                        // Tampilkan container kosong jika data belum siap
+                        if (leaderboards == null || leaderboards.isEmpty || currentUser == null) {
+                          return const SizedBox(height: 145);
+                        }
+                      
+                        // Cari data dan indeks peringkat dari pengguna yang sedang login
+                        final currentUserLeaderboardData =
+                            leaderboards.firstWhereOrNull((leader) => leader.id == currentUser.id);
+                        final currentUserRankIndex =
+                            leaderboards.indexWhere((leader) => leader.id == currentUser.id);
+                      
+                        // Helper function untuk format rank
+                        String formatRank(int? rank) {
+                          if (rank == null) return '-';
+                          if (rank == 1) return '1st';
+                          if (rank == 2) return '2nd';
+                          if (rank == 3) return '3rd';
+                          if (rank % 10 == 1 && rank % 100 != 11) return '${rank}st';
+                          if (rank % 10 == 2 && rank % 100 != 12) return '${rank}nd';
+                          if (rank % 10 == 3 && rank % 100 != 13) return '${rank}rd';
+                          return '${rank}th';
+                        }
+                      
+                        /// Widget untuk tombol "See More"
+                        Widget buildSeeMoreButton() {
+                          return GestureDetector(
+                            onTap: () {
+                              Get.snackbar("Coming soon", "Navigate to full leaderboard page.");
+                            },
+                            child: Container(
+                              height: 126.h,
+                              decoration: BoxDecoration(
+                                color: const Color(0xFF393939),
+                                borderRadius: BorderRadius.circular(12.r),
                               ),
-                            
-                            if (currentUserRankIndex == -1 || currentUserRankIndex >= 3)
-                              // --- TAMPILAN JIKA USER BUKAN TOP 3 ---
-                              ...() {
-                                final otherWalkers = leaderboards.where((leader) => leader.id != currentUser.id).toList();
-                                final top3OtherWalkers = otherWalkers.take(3).toList();
-                                final walkersToShow = [...top3OtherWalkers];
-                                if (currentUserLeaderboardData != null) {
-                                  walkersToShow.add(currentUserLeaderboardData);
-                                }
-                                
-                                return walkersToShow.map((walker) {
+                              child: Column(
+                                mainAxisAlignment: MainAxisAlignment.center,
+                                children: [
+                                  const Icon(Icons.arrow_forward_ios, size: 24),
+                                  SizedBox(height: 8.h),
+                                  Text(
+                                    "See more",
+                                    style: Theme.of(Get.context!).textTheme.titleSmall?.copyWith(fontSize: 12.sp),
+                                  ),
+                                ],
+                              ),
+                            ),
+                          );
+                        }
+                      
+                        return Container(
+                          width: 398.w,
+                          decoration: BoxDecoration(
+                            color: darkColorScheme.surface,
+                            borderRadius: BorderRadius.circular(12.r),
+                          ),
+                          margin: EdgeInsets.symmetric(horizontal: 16.w),
+                          child: Row(
+                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              // ✨ KUNCI: Gunakan kondisi untuk menentukan widget yang akan di-render ✨
+                              if (currentUserRankIndex != -1 && currentUserRankIndex < 3)
+                                // --- TAMPILAN JIKA USER TOP 3 ---
+                                ...leaderboards.take(3).map((walker) {
                                   final bool isCurrentUser = walker.id == currentUser.id;
                                   return Expanded(
                                     child: WalkerProfile(
                                       rank: formatRank(walker.rank),
                                       name: isCurrentUser ? 'Your' : (walker.name ?? '-'),
-                                      imageUrl: walker.imageUrl ?? (isCurrentUser ? currentUser.imageUrl ?? '' : ''),
-                                      backgroundColor: isCurrentUser ? const Color(0xFF393939) : null,
+                                      imageUrl: walker.imageUrl ?? '',
                                     ),
                                   );
-                                }).toList();
-                              }(),
-                          ],
-                        ),
-                      );
-                    }),
+                                }).toList(),
+                              if (currentUserRankIndex != -1 && currentUserRankIndex < 3)
+                                // --- Tombol "See More" ---
+                                Expanded(
+                                  child: buildSeeMoreButton(),
+                                ),
+                              
+                              if (currentUserRankIndex == -1 || currentUserRankIndex >= 3)
+                                // --- TAMPILAN JIKA USER BUKAN TOP 3 ---
+                                ...() {
+                                  final otherWalkers = leaderboards.where((leader) => leader.id != currentUser.id).toList();
+                                  final top3OtherWalkers = otherWalkers.take(3).toList();
+                                  final walkersToShow = [...top3OtherWalkers];
+                                  if (currentUserLeaderboardData != null) {
+                                    walkersToShow.add(currentUserLeaderboardData);
+                                  }
+                                  
+                                  return walkersToShow.map((walker) {
+                                    final bool isCurrentUser = walker.id == currentUser.id;
+                                    return Expanded(
+                                      child: WalkerProfile(
+                                        rank: formatRank(walker.rank),
+                                        name: isCurrentUser ? 'Your' : (walker.name ?? '-'),
+                                        imageUrl: walker.imageUrl ?? (isCurrentUser ? currentUser.imageUrl ?? '' : ''),
+                                        backgroundColor: isCurrentUser ? const Color(0xFF393939) : null,
+                                      ),
+                                    );
+                                  }).toList();
+                                }(),
+                            ],
+                          ),
+                        );
+                      }),
+                    ),
                   ],
                 ),
           

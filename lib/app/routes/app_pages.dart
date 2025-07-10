@@ -30,6 +30,8 @@ import 'package:zest_mobile/app/modules/club/partial/preview_club/views/preview_
 import 'package:zest_mobile/app/modules/club/partial/update_club/bindings/update_club_binding.dart';
 import 'package:zest_mobile/app/modules/club/partial/update_club/views/update_club_view.dart';
 import 'package:zest_mobile/app/modules/debug/views/debug_view.dart';
+import 'package:zest_mobile/app/modules/leaderboard/bindings/leaderboard_binding.dart';
+import 'package:zest_mobile/app/modules/leaderboard/views/leaderboard_view.dart';
 import 'package:zest_mobile/app/modules/main_profile/partials/social_info/bindings/social_info_binding.dart';
 import 'package:zest_mobile/app/modules/main_profile/partials/social_info/views/social_info_view.dart';
 import 'package:zest_mobile/app/modules/social/views/partial/for_you_tab/choose_location_event/bindings/choose_location_event_binding.dart';
@@ -276,5 +278,11 @@ class AppPages {
       name: AppRoutes.logViewer,
       page: () => const DebugView(),
     ),
+
+    GetPage(
+      name: AppRoutes.leaderboard,
+      page: () => const LeaderboardView(),
+      binding: LeaderboardBinding(),
+    )
   ];
 }

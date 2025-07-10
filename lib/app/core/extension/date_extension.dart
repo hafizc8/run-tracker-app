@@ -30,7 +30,7 @@ extension DateFormatting on DateTime {
       return 'just now';
     }
     if (difference.inMinutes < 60) {
-      return '${difference.inMinutes} minute${difference.inMinutes == 1 ? '' : 's'} ago';
+      return '${difference.inMinutes} min${difference.inMinutes == 1 ? '' : 's'} ago';
     }
     if (difference.inHours < 24) {
       return '${difference.inHours} hour${difference.inHours == 1 ? '' : 's'} ago';

@@ -1,4 +1,5 @@
 import 'dart:async';
+import 'dart:convert';
 import 'package:firebase_crashlytics/firebase_crashlytics.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_background_service/flutter_background_service.dart';
@@ -7,15 +8,18 @@ import 'package:get/get.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:permission_handler/permission_handler.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 import 'package:zest_mobile/app/core/di/service_locator.dart';
 import 'package:zest_mobile/app/core/models/model/activity_data_point_model.dart';
 import 'package:zest_mobile/app/core/models/model/location_point_model.dart';
+import 'package:zest_mobile/app/core/models/model/stamina_requirement_model.dart';
 import 'package:zest_mobile/app/core/models/model/user_model.dart';
 import 'package:zest_mobile/app/core/services/auth_service.dart';
 import 'package:zest_mobile/app/core/services/local_activity_service.dart';
 import 'package:zest_mobile/app/core/services/location_service.dart';
 import 'package:zest_mobile/app/core/services/log_service.dart';
 import 'package:zest_mobile/app/core/services/record_activity_service.dart';
+import 'package:zest_mobile/app/core/services/user_service.dart';
 import 'package:zest_mobile/app/core/shared/theme/color_schemes.dart';
 import 'package:zest_mobile/app/core/shared/widgets/custom_dialog_confirmation.dart';
 import 'package:zest_mobile/app/modules/activity/record_activity/views/widgets/use_stamina_dialog.dart';
@@ -27,8 +31,10 @@ class RecordActivityController extends GetxController {
   final _recordActivityService = sl<RecordActivityService>();
   final _locationService = sl<LocationService>();
   final _logService = sl<LogService>();
+  final _userService = sl<UserService>();
   final AuthService _authService = sl<AuthService>();
   UserModel? get user => _authService.user;
+  final _prefs = sl<SharedPreferences>();
   
   // --- UI State ---
   var isTracking = false.obs;
@@ -66,6 +72,11 @@ class RecordActivityController extends GetxController {
   var showCoinAnimation = false.obs;
   Timer? _coinAnimationTimer;
 
+  var staminaRequirements = <StaminaRequirementModel>[].obs;
+  // ✨ Kunci baru untuk cache
+  final String _staminaConfigCacheKey = 'stamina_config_cache';
+  final String _staminaConfigTimestampKey = 'stamina_config_timestamp';
+
 
   @override
   void onInit() {
@@ -73,7 +84,7 @@ class RecordActivityController extends GetxController {
     _listenToBackgroundService();
 
     WidgetsBinding.instance.addPostFrameCallback((_) {
-      chooseStamina();
+      _loadStaminaConfigAndShowDialog();
     });
 
     userCoin.value = user?.currentUserCoin?.currentAmount ?? 0;
@@ -208,6 +219,75 @@ class RecordActivityController extends GetxController {
     return true;
   }
 
+  /// Fungsi baru untuk mengambil konfigurasi dari API.
+  Future<void> _loadStaminaConfigAndShowDialog() async {
+    // Tampilkan loading overlay jika diperlukan
+    Get.dialog(const Center(child: CircularProgressIndicator()));
+
+    final lastFetchTimestamp = _prefs.getInt(_staminaConfigTimestampKey);
+    final now = DateTime.now().millisecondsSinceEpoch;
+    
+    // Cek apakah ada cache dan umurnya kurang dari 7 hari
+    if (lastFetchTimestamp != null && (now - lastFetchTimestamp) < const Duration(days: 7).inMilliseconds) {
+      final cachedData = _prefs.getString(_staminaConfigCacheKey);
+      if (cachedData != null) {
+        _logService.log.i("Loading stamina requirements from CACHE.");
+        try {
+          // Decode JSON string dari cache menjadi List<Map>
+          final List<dynamic> decodedList = jsonDecode(cachedData);
+          // Konversi setiap map menjadi objek StaminaRequirementModel
+          final requirements = decodedList.map((item) => StaminaRequirementModel.fromJson(item)).toList();
+          staminaRequirements.assignAll(requirements);
+
+          Get.back(); // Tutup loading overlay
+
+          // Jika berhasil, langsung tampilkan dialog
+          await chooseStamina();
+          return; // Hentikan eksekusi agar tidak memanggil API
+        } catch (e) {
+          _logService.log.e("Failed to parse stamina config from cache. Fetching from API instead.", error: e);
+        }
+      }
+    }
+
+    // Jika cache tidak ada atau sudah kedaluwarsa, panggil API
+    _logService.log.i("Cache invalid or not found. Fetching stamina requirements from API.");
+    try {
+      final requirements = await _userService.loadStaminaRequirement();
+      staminaRequirements.assignAll(requirements);
+      
+      // ✨ Simpan hasil dari API ke cache
+      final List<Map<String, dynamic>> dataToCache = requirements.map((req) => req.toJson()).toList();
+      await _prefs.setString(_staminaConfigCacheKey, jsonEncode(dataToCache));
+      await _prefs.setInt(_staminaConfigTimestampKey, now);
+      _logService.log.i("Stamina requirements loaded from API and cached.");
+
+      Get.back(); // Tutup loading overlay
+      
+      await chooseStamina();
+
+    } catch (e, s) {
+      _logService.log.e("Failed to load stamina requirements.", error: e, stackTrace: s);
+      Get.snackbar("Error", "Could not load stamina settings. Please try again.");
+    }
+  }
+
+  StaminaRequirementModel? _getRequirementForStamina(int staminaValue) {
+    if (staminaRequirements.isEmpty) return null;
+    
+    for (var req in staminaRequirements) {
+      final min = req.staminaUsedMin ?? 0;
+      // Jika max null, anggap tidak ada batas atas
+      final max = req.staminaUsedMax ?? double.infinity.toInt();
+      
+      if (staminaValue >= min && staminaValue <= max) {
+        return req;
+      }
+    }
+    // Fallback ke item terakhir jika tidak ditemukan (untuk kasus 31+)
+    return staminaRequirements.last;
+  }
+
   Future<void> chooseStamina() async {
     _logService.log.i("Showing choose stamina dialog.");
 
@@ -218,10 +298,22 @@ class RecordActivityController extends GetxController {
       return;
     }
 
+    // Jika konfigurasi gagal dimuat, jangan tampilkan dialog
+    if (staminaRequirements.isEmpty) {
+      _logService.log.w("Stamina requirements are empty. Aborting dialog.");
+      return;
+    }
+
     Get.dialog(
       UseStaminaDialog(
         title: 'Stamina',
-        subtitle: 'Stamina will be used continuously until it runs out\nMultiplier bonus: 1x',
+        subtitleBuilder: (int staminaValue) {
+          if (staminaValue == 0) return 'Stamina will not be used';
+
+          final req = _getRequirementForStamina(staminaValue);
+          final multiplier = req?.multiplier ?? 1.0;
+          return 'Stamina will be used continuously until it runs out\nMultiplier bonus: ${multiplier}x';
+        },
         
         // Berikan nilai awal, minimum, dan maksimum untuk stamina
         initialValue: 1,
@@ -230,10 +322,18 @@ class RecordActivityController extends GetxController {
         
         // Bangun label tombol konfirmasi secara dinamis
         labelConfirmBuilder: (int staminaValue) {
-          // Logika: setiap 1 stamina = 3 menit sesi
-          final int totalMinutes = staminaValue * 3;
+          int totalMinutes = 0;
+
+          if (staminaValue > 0) {
+            final req = _getRequirementForStamina(staminaValue);
+            final multiplier = req?.sessionMinuteMultiplier ?? 3;
+            totalMinutes = staminaValue * multiplier;
+          }
+
           return Text(
-            'Running Sessions: $totalMinutes mins',
+            staminaValue == 0
+              ? 'Start without Stamina'
+              : 'Running Sessions: $totalMinutes mins',
             style: GoogleFonts.poppins(
               fontSize: 12, 
               fontWeight: FontWeight.w700,

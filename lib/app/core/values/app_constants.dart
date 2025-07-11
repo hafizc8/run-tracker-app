@@ -85,5 +85,5 @@ class AppConstants {
   static const String dailyRecordSync = "/record-daily";
 
   static const String homePageData = "/home";
-  static const String staminaRequirement = "/record-activity/stamina-requiremente";
+  static const String staminaRequirement = "/record-activity/stamina-requirement";
 }

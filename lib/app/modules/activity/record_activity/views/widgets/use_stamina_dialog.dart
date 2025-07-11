@@ -11,8 +11,7 @@ class UseStaminaDialog extends StatefulWidget {
   const UseStaminaDialog({
     super.key,
     required this.title,
-    required this.subtitle,
-    // ✨ 1. Menerima fungsi yang membangun widget tombol konfirmasi secara dinamis
+    required this.subtitleBuilder,
     required this.labelConfirmBuilder,
     // ✨ 2. onConfirm sekarang menerima nilai integer terakhir
     required this.onConfirm,
@@ -28,7 +27,7 @@ class UseStaminaDialog extends StatefulWidget {
   });
 
   final String title;
-  final String subtitle;
+  final String Function(int currentValue) subtitleBuilder;
   final Widget Function(int currentValue) labelConfirmBuilder;
   final Function(int finalValue) onConfirm;
   final String? labelCancel;
@@ -119,7 +118,7 @@ class _UseStaminaDialogState
               ),
               const SizedBox(height: 10),
               Text(
-                widget.subtitle,
+                widget.subtitleBuilder(_currentValue),
                 textAlign: TextAlign.center,
                 style: Theme.of(context).textTheme.bodySmall?.copyWith(fontWeight: FontWeight.w400),
               ),

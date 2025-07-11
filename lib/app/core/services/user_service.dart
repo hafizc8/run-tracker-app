@@ -152,14 +152,14 @@ class UserService {
     }
   }
 
-  Future<StaminaRequirementModel> loadStaminaRequirement() async {
+  Future<List<StaminaRequirementModel>> loadStaminaRequirement() async {
     try {
       final response = await _apiService.request(
         path: AppConstants.staminaRequirement,
         method: HttpMethod.get,
       );
 
-      return StaminaRequirementModel.fromJson(response.data['data']);
+      return response.data['data'].map<StaminaRequirementModel>((e) => StaminaRequirementModel.fromJson(e)).toList();
     } catch (e) {
       rethrow;
     }

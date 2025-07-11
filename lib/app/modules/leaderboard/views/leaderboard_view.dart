@@ -3,6 +3,7 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:get/get.dart';
 import 'package:zest_mobile/app/modules/leaderboard/controllers/leaderboard_controller.dart';
+import 'package:zest_mobile/app/modules/leaderboard/views/challange/views/leaderboard_challange_view.dart';
 import 'package:zest_mobile/app/modules/leaderboard/views/top_walkers/views/leaderboard_top_walkers_tab_view.dart';
 
 class LeaderboardView extends GetView<LeaderboardController> {
@@ -50,9 +51,7 @@ class LeaderboardView extends GetView<LeaderboardController> {
         controller: controller.tabBarController,
         children: [
           LeaderboardTopWalkersTabView(),
-          const Text(
-            'Leaderboard Challange',
-          ),
+          LeaderboardChallangeView(),
         ],
       ),
     );

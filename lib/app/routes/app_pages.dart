@@ -21,6 +21,8 @@ import 'package:zest_mobile/app/modules/auth/register/views/register_success.dar
 import 'package:zest_mobile/app/modules/auth/register/views/register_verify_email_success.dart';
 import 'package:zest_mobile/app/modules/auth/register/views/register_verify_email_view.dart';
 import 'package:zest_mobile/app/modules/auth/register/views/register_view.dart';
+import 'package:zest_mobile/app/modules/challenge/bindings/create_challenge_binding.dart';
+import 'package:zest_mobile/app/modules/challenge/views/create_challenge_view.dart';
 import 'package:zest_mobile/app/modules/choose_location/bindings/choose_location_binding.dart';
 import 'package:zest_mobile/app/modules/choose_location/views/choose_location_view.dart';
 import 'package:zest_mobile/app/modules/club/partial/invite_to_club/bindings/invite_to_club_binding.dart';
@@ -30,6 +32,7 @@ import 'package:zest_mobile/app/modules/club/partial/preview_club/views/preview_
 import 'package:zest_mobile/app/modules/club/partial/update_club/bindings/update_club_binding.dart';
 import 'package:zest_mobile/app/modules/club/partial/update_club/views/update_club_view.dart';
 import 'package:zest_mobile/app/modules/debug/views/debug_view.dart';
+import 'package:zest_mobile/app/modules/main_profile/partials/challenge/bindings/challenge_binding.dart';
 import 'package:zest_mobile/app/modules/main_profile/partials/social_info/bindings/social_info_binding.dart';
 import 'package:zest_mobile/app/modules/main_profile/partials/social_info/views/social_info_view.dart';
 import 'package:zest_mobile/app/modules/social/views/partial/for_you_tab/choose_location_event/bindings/choose_location_event_binding.dart';
@@ -275,6 +278,12 @@ class AppPages {
     GetPage(
       name: AppRoutes.logViewer,
       page: () => const DebugView(),
+    ),
+
+    GetPage(
+      name: AppRoutes.challengeCreate,
+      page: () => const ChallengeCreateView(),
+      binding: ChallengeCreateBinding(),
     ),
   ];
 }

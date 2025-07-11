@@ -1,6 +1,6 @@
 import 'package:get/get.dart';
 
-class ChallangeController extends GetxController {
+class ChallangeCreateController extends GetxController {
   var isLoading = false.obs;
 
   void storeChallenge() {}

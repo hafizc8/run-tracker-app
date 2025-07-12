@@ -1,6 +1,7 @@
-import 'dart:io';
+import 'package:equatable/equatable.dart';
 import 'package:zest_mobile/app/core/models/interface/form_model_interface.dart';
 import 'package:zest_mobile/app/core/models/interface/mixin/form_model_mixin.dart';
+import 'package:zest_mobile/app/core/models/model/event_model.dart';
 
 class CreateChallengeFormModel extends FormModel<CreateChallengeFormModel>
     with FormModelMixin<CreateChallengeFormModel> {
@@ -8,18 +9,22 @@ class CreateChallengeFormModel extends FormModel<CreateChallengeFormModel>
   final int? type;
   final int? mode;
   final int? target;
-  final List<File>? galleries;
-  final String? recordActivityId;
+  final DateTime? startDate;
+  final DateTime? endDate;
+  final List<Teams>? teams;
+  final String? clubId;
 
   final Map<String, dynamic>? errors;
 
   CreateChallengeFormModel({
     this.title,
-    this.type,
-    this.mode,
+    this.type = 0,
+    this.mode = 0,
     this.target,
-    this.galleries,
-    this.recordActivityId,
+    this.startDate,
+    this.endDate,
+    this.teams,
+    this.clubId,
     this.errors,
   });
 
@@ -34,8 +39,10 @@ class CreateChallengeFormModel extends FormModel<CreateChallengeFormModel>
     int? type,
     int? mode,
     int? target,
-    List<File>? galleries,
-    String? recordActivityId,
+    DateTime? startDate,
+    DateTime? endDate,
+    List<Teams>? teams,
+    String? clubId,
     Map<String, dynamic>? errors,
     String? field,
   }) {
@@ -49,15 +56,17 @@ class CreateChallengeFormModel extends FormModel<CreateChallengeFormModel>
       type: type ?? this.type,
       mode: mode ?? this.mode,
       target: target ?? this.target,
-      galleries: galleries ?? this.galleries,
-      recordActivityId: recordActivityId ?? this.recordActivityId,
+      startDate: startDate ?? this.startDate,
+      endDate: endDate ?? this.endDate,
+      teams: teams ?? this.teams,
+      clubId: clubId ?? this.clubId,
       errors: errors ?? this.errors,
     );
   }
 
   @override
   List<Object?> get props =>
-      [type, mode, target, galleries, errors, recordActivityId, title];
+      [type, mode, target, startDate, endDate, teams, errors, clubId, title];
 
   @override
   CreateChallengeFormModel setErrors(Map<String, List> errorsMap) {
@@ -76,9 +85,11 @@ class CreateChallengeFormModel extends FormModel<CreateChallengeFormModel>
       'title': title,
       'type': type,
       'mode': mode,
-      'target': target,
-      'galleries': galleries,
-      if (recordActivityId != null) 'record_activity_id': recordActivityId,
+      'start_date': startDate,
+      if (mode == 0) 'target': target,
+      if (mode == 1) 'end_date': endDate,
+      'teams': teams,
+      if (clubId != null) 'record_activity_id': clubId,
     };
   }
 
@@ -86,4 +97,18 @@ class CreateChallengeFormModel extends FormModel<CreateChallengeFormModel>
   bool isValidToUpdate(CreateChallengeFormModel formHasEdited) {
     throw UnimplementedError();
   }
+}
+
+class Teams extends Equatable {
+  final String? teamName;
+  final User? user;
+  const Teams({
+    this.teamName,
+    this.user,
+  });
+
+  @override
+  List<Object?> get props => [
+        teamName,
+      ];
 }

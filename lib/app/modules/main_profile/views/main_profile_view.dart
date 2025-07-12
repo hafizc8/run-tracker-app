@@ -6,6 +6,7 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:get/get.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:zest_mobile/app/core/extension/initial_profile_empty.dart';
 import 'package:zest_mobile/app/core/shared/widgets/shimmer_loading_circle.dart';
 import 'package:zest_mobile/app/modules/main_profile/widgets/custom_tab_bar/views/custom_tab_bar_view.dart';
 import 'package:zest_mobile/app/routes/app_routes.dart';
@@ -92,8 +93,13 @@ class MainProfileView extends GetView<ProfileMainController> {
                                           errorWidget: (context, url, error) =>
                                               CircleAvatar(
                                             radius: 32.r,
-                                            backgroundImage: const AssetImage(
-                                              'assets/images/empty_profile.png',
+                                            backgroundColor: Theme.of(context)
+                                                .colorScheme
+                                                .onBackground,
+                                            child: Text(
+                                              (controller.user.value?.name ??
+                                                      '')
+                                                  .toInitials(),
                                             ),
                                           ),
                                         ),
@@ -209,15 +215,17 @@ class MainProfileView extends GetView<ProfileMainController> {
                           ],
                         ),
                       ),
-                      
                       Positioned(
                         bottom: 45.h,
                         right: 0,
                         child: IgnorePointer(
                           child: CachedNetworkImage(
                             width: 200.w,
-                            imageUrl: controller.user.value?.currentUserXp?.levelDetail?.imageUrl ?? '',
-                            errorWidget: (context, url, error) => const SizedBox(),
+                            imageUrl: controller.user.value?.currentUserXp
+                                    ?.levelDetail?.imageUrl ??
+                                '',
+                            errorWidget: (context, url, error) =>
+                                const SizedBox(),
                           ),
                         ),
                       ),
@@ -227,19 +235,29 @@ class MainProfileView extends GetView<ProfileMainController> {
                         child: IgnorePointer(
                           child: RichText(
                             text: TextSpan(
-                              style: Theme.of(context).textTheme.bodySmall?.copyWith(
-                                color: Theme.of(context).colorScheme.background,
-                                fontWeight: FontWeight.w400,
-                              ),
-                              children: <TextSpan>[
-                                TextSpan(text: 'Level ${controller.user.value?.currentUserXp?.levelDetail?.level}  '),
-                                TextSpan(
-                                  text: controller.user.value?.currentUserXp?.levelDetail?.animal ?? '',
-                                  style: GoogleFonts.poppins(
-                                    fontWeight: FontWeight.w700,
-                                    color: Theme.of(context).colorScheme.background,
-                                    fontSize: 12.sp
+                              style: Theme.of(context)
+                                  .textTheme
+                                  .bodySmall
+                                  ?.copyWith(
+                                    color: Theme.of(context)
+                                        .colorScheme
+                                        .background,
+                                    fontWeight: FontWeight.w400,
                                   ),
+                              children: <TextSpan>[
+                                TextSpan(
+                                    text:
+                                        'Level ${controller.user.value?.currentUserXp?.levelDetail?.level}  '),
+                                TextSpan(
+                                  text: controller.user.value?.currentUserXp
+                                          ?.levelDetail?.animal ??
+                                      '',
+                                  style: GoogleFonts.poppins(
+                                      fontWeight: FontWeight.w700,
+                                      color: Theme.of(context)
+                                          .colorScheme
+                                          .background,
+                                      fontSize: 12.sp),
                                 ),
                               ],
                             ),

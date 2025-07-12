@@ -298,7 +298,7 @@ class EventDetailCard extends GetView<EventDetailController> {
               _buildInfoItem(
                 context,
                 icon: SvgPicture.asset(
-                  'assets/icons/dollar.svg',
+                  'assets/icons/ic_fee.svg',
                   height: 22.h,
                   width: 27.w,
                 ),

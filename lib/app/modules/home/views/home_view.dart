@@ -267,11 +267,34 @@ class HomeView extends GetView<HomeController> {
                         flex: 8,
                         child: Column(
                           children: [
-                            Text(
-                              'Just ${NumberHelper().formatNumberToKWithComma((controller.user?.userPreference?.dailyStepGoals ?? 0) - controller.validatedSteps)} steps left to crush your goal!',
-                              style: Theme.of(context).textTheme.titleSmall,
-                              textAlign: TextAlign.center,
-                            ),
+                            Obx(() {
+                              // Ambil nilai dari controller
+                              final goal = controller.user?.userPreference?.dailyStepGoals ?? 0;
+                              final current = controller.validatedSteps;
+
+                              // ✨ KUNCI PERBAIKAN: Logika Kondisional ✨
+                              if (current >= goal) {
+                                // --- TAMPILAN JIKA GOAL TERCAPAI ---
+                                return Text(
+                                  "Goal reached! Awesome job hitting your step target today!",
+                                  style: Theme.of(context).textTheme.titleSmall?.copyWith(
+                                    color: Theme.of(context).colorScheme.primary, // Beri warna berbeda
+                                    fontWeight: FontWeight.w600,
+                                  ),
+                                  textAlign: TextAlign.center,
+                                );
+                              } else {
+                                // --- TAMPILAN JIKA GOAL BELUM TERCAPAI ---
+                                // Hitung sisa langkah
+                                final stepsLeft = goal - current;
+
+                                return Text(
+                                  'Just ${NumberHelper().formatNumberToKWithComma(stepsLeft)} steps left to crush your goal!',
+                                  style: Theme.of(context).textTheme.titleSmall,
+                                  textAlign: TextAlign.center,
+                                );
+                              }
+                            }),
                             SizedBox(height: 18.h),
                             Row(
                               mainAxisAlignment: MainAxisAlignment.center,

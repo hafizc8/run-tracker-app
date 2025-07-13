@@ -1,5 +1,4 @@
 import 'dart:async';
-import 'package:geolocator/geolocator.dart';
 import 'package:get/get.dart';
 import 'package:permission_handler/permission_handler.dart';
 import 'package:shared_preferences/shared_preferences.dart';
@@ -138,6 +137,20 @@ class HomeController extends GetxController {
     int currentPedometerSteps = 0;
     try {
       currentPedometerSteps = await Pedometer().getStepCount(from: startTime, to: now);
+
+      // get step di jam 13:30 sd 13:40
+      final startTimeTest = DateTime(2025, 7, 11, 13, 30);
+      final endTimeTest = DateTime(2025, 7, 11, 13, 40);
+
+      int testGetSteps = await Pedometer().getStepCount(from: startTimeTest, to: endTimeTest);
+      _logService.log.i("TEST: $startTimeTest to $endTimeTest = $testGetSteps steps.");
+
+      // get step di jam 13:35 sd 13:36
+      final startTimeTest2 = DateTime(2025, 7, 11, 13, 35);
+      final endTimeTest2 = DateTime(2025, 7, 11, 13, 36);
+
+      int testGetSteps2 = await Pedometer().getStepCount(from: startTimeTest2, to: endTimeTest2);
+      _logService.log.i("TEST: $startTimeTest2 to $endTimeTest2 = $testGetSteps2 steps.");
     } catch (e) {
       _logService.log.e("Failed to get step count during sync.", error: e);
       return; // Hentikan jika gagal mengambil data

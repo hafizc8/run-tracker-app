@@ -538,7 +538,7 @@ class RecordActivityController extends GetxController {
 
     if (points.length == 1) {
       // ✨ PENYEMPURNAAN 1: Jika hanya ada satu titik, cukup pindahkan kamera ke sana
-      mapController!.animateCamera(CameraUpdate.newLatLngZoom(points.first, 17.0)); // Zoom 17
+      mapController?.animateCamera(CameraUpdate.newLatLngZoom(points.first, 17.0)); // Zoom 17
     } else {
       // Logika bounds Anda yang sudah ada
       double minLat = points.first.latitude,
@@ -556,7 +556,7 @@ class RecordActivityController extends GetxController {
       // ✨ PENYEMPURNAAN 2: Cek jika semua titik terlalu berdekatan (bounds tidak punya area)
       if (minLat == maxLat && minLng == maxLng) {
         // Jika semua titik sama, perlakukan seperti hanya ada satu titik
-        mapController!.animateCamera(CameraUpdate.newLatLngZoom(points.first, 17.0));
+        mapController?.animateCamera(CameraUpdate.newLatLngZoom(points.first, 17.0));
         return;
       }
 
@@ -565,7 +565,7 @@ class RecordActivityController extends GetxController {
         northeast: LatLng(maxLat, maxLng),
       );
 
-      mapController!.animateCamera(
+      mapController?.animateCamera(
         CameraUpdate.newLatLngBounds(bounds, 60.0), // Tambah sedikit padding
       );
     }

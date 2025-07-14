@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:get/get.dart';
+import 'package:zest_mobile/app/core/extension/initial_profile_empty.dart';
 import 'package:zest_mobile/app/core/models/model/user_mini_model.dart';
 import 'package:zest_mobile/app/core/shared/widgets/custom_circular_progress_indicator.dart';
 import 'package:zest_mobile/app/core/shared/widgets/shimmer_loading_circle.dart';
@@ -126,14 +127,18 @@ class SocialYourPageFollowingView extends GetView<SocialFollowingController> {
       leading: ClipOval(
         child: CachedNetworkImage(
           imageUrl: user.imageUrl ?? '',
-          width: 35.r,
-          height: 35.r,
+          width: 50.r,
+          height: 50.r,
           fit: BoxFit.cover,
-          placeholder: (context, url) => ShimmerLoadingCircle(size: 35.r),
+          placeholder: (context, url) => ShimmerLoadingCircle(
+            size: 50.r,
+          ),
           errorWidget: (context, url, error) => CircleAvatar(
-            radius: 35.r,
-            backgroundImage:
-                const AssetImage('assets/images/empty_profile.png'),
+            radius: 32.r,
+            backgroundColor: Theme.of(context).colorScheme.onBackground,
+            child: Text(
+              user.name.toInitials(),
+            ),
           ),
         ),
       ),

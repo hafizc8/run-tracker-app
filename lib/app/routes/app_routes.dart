@@ -68,4 +68,7 @@ abstract class AppRoutes {
 
   // daily streak
   static const dailyStreak = '/daily-streak';
+
+  static const challengeCreate = '/challenge/create';
+  static const challengeCreateTeam = '/challenge/create/team';
 }

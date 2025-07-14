@@ -21,6 +21,9 @@ import 'package:zest_mobile/app/modules/auth/register/views/register_success.dar
 import 'package:zest_mobile/app/modules/auth/register/views/register_verify_email_success.dart';
 import 'package:zest_mobile/app/modules/auth/register/views/register_verify_email_view.dart';
 import 'package:zest_mobile/app/modules/auth/register/views/register_view.dart';
+import 'package:zest_mobile/app/modules/challenge/bindings/create_challenge_binding.dart';
+import 'package:zest_mobile/app/modules/challenge/views/create_challenge_team_view.dart';
+import 'package:zest_mobile/app/modules/challenge/views/create_challenge_view.dart';
 import 'package:zest_mobile/app/modules/choose_location/bindings/choose_location_binding.dart';
 import 'package:zest_mobile/app/modules/choose_location/views/choose_location_view.dart';
 import 'package:zest_mobile/app/modules/club/partial/invite_to_club/bindings/invite_to_club_binding.dart';
@@ -34,6 +37,7 @@ import 'package:zest_mobile/app/modules/daily_streak/views/daily_streak_view.dar
 import 'package:zest_mobile/app/modules/debug/views/debug_view.dart';
 import 'package:zest_mobile/app/modules/leaderboard/bindings/leaderboard_binding.dart';
 import 'package:zest_mobile/app/modules/leaderboard/views/leaderboard_view.dart';
+import 'package:zest_mobile/app/modules/main_profile/partials/challenge/bindings/challenge_binding.dart';
 import 'package:zest_mobile/app/modules/main_profile/partials/social_info/bindings/social_info_binding.dart';
 import 'package:zest_mobile/app/modules/main_profile/partials/social_info/views/social_info_view.dart';
 import 'package:zest_mobile/app/modules/social/views/partial/for_you_tab/choose_location_event/bindings/choose_location_event_binding.dart';
@@ -291,6 +295,18 @@ class AppPages {
       name: AppRoutes.dailyStreak,
       page: () => const DailyStreakView(),
       binding: DailyStreakBinding(),
+    ),
+    
+    GetPage(
+      name: AppRoutes.challengeCreate,
+      page: () => const ChallengeCreateView(),
+      binding: ChallengeCreateBinding(),
+    ),
+    
+    GetPage(
+      name: AppRoutes.challengeCreateTeam,
+      page: () => const ChallengeCreateTeamView(),
+      binding: ChallengeCreateBinding(),
     ),
   ];
 }

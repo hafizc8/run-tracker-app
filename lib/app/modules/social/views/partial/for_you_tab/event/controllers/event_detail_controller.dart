@@ -75,6 +75,7 @@ class EventDetailController extends GetxController {
         );
 
         Get.back();
+        Get.back(result: eventLastUpdated.value);
       }
     } on AppException catch (e) {
       // show error snackbar, toast, etc

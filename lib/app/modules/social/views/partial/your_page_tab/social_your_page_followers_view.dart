@@ -167,53 +167,6 @@ class SocialYourPageFollowersView extends GetView<SocialFollowersController> {
               ),
             ),
           ),
-          Visibility(
-            visible: user.isFollowing == 1,
-            child: Row(
-              children: [
-                SizedBox(width: 16.w),
-                PopupMenuButton<String>(
-                  onSelected: (value) async {
-                    // Handle the selection
-                    if (value == 'un_follow') {
-                      controller.unFollow(user.id);
-                    }
-                  },
-                  surfaceTintColor: Theme.of(context).colorScheme.onPrimary,
-                  itemBuilder: (BuildContext context) {
-                    return [
-                      PopupMenuItem<String>(
-                        value: 'un_follow',
-                        child: Obx(
-                          () => Visibility(
-                            visible: controller.isLoadingFollow.value,
-                            replacement: Text(
-                              'Unfollow',
-                              maxLines: 1,
-                              overflow: TextOverflow.ellipsis,
-                              textAlign: TextAlign.center,
-                              style: Theme.of(context)
-                                  .textTheme
-                                  .bodyMedium
-                                  ?.copyWith(fontWeight: FontWeight.w600),
-                            ),
-                            child: CircularProgressIndicator(
-                              color: Theme.of(context).colorScheme.primary,
-                            ),
-                          ),
-                        ),
-                      ),
-                    ];
-                  },
-                  child: Icon(
-                    Icons.more_vert,
-                    size: 22.r,
-                    color: Theme.of(context).colorScheme.onBackground,
-                  ),
-                ),
-              ],
-            ),
-          ),
         ],
       ),
     );

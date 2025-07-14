@@ -265,6 +265,14 @@ class EventDetailCard extends GetView<EventDetailController> {
             style: Theme.of(context).textTheme.titleSmall,
           ),
           SizedBox(height: 15.h),
+          Text(
+            "${event?.userOnEventsCount ?? 0} / ${event?.quota} are Going",
+            style: Theme.of(context)
+                .textTheme
+                .bodyMedium
+                ?.copyWith(fontWeight: FontWeight.w600),
+          ),
+          SizedBox(height: 15.h),
           Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
@@ -298,7 +306,7 @@ class EventDetailCard extends GetView<EventDetailController> {
               _buildInfoItem(
                 context,
                 icon: SvgPicture.asset(
-                  'assets/icons/dollar.svg',
+                  'assets/icons/ic_fee.svg',
                   height: 22.h,
                   width: 27.w,
                 ),

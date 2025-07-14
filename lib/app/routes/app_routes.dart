@@ -63,6 +63,12 @@ abstract class AppRoutes {
   static const debug = '/debug';
   static const logViewer = '/log-viewer';
 
+  // leaderboard
+  static const leaderboard = '/leaderboard';
+
+  // daily streak
+  static const dailyStreak = '/daily-streak';
+
   static const challengeCreate = '/challenge/create';
   static const challengeCreateTeam = '/challenge/create/team';
 }

@@ -7,6 +7,8 @@ import 'package:zest_mobile/app/core/models/enums/app_exception_enum.dart';
 import 'package:zest_mobile/app/core/services/storage_service.dart';
 import 'package:zest_mobile/app/core/values/storage_keys.dart';
 import 'package:zest_mobile/app/routes/app_routes.dart';
+import 'package:flutter/material.dart';
+import 'package:get/get.dart';
 
 class AppInterceptor extends Interceptor {
   @override
@@ -35,10 +37,12 @@ class AppInterceptor extends Interceptor {
         g.Get.offAllNamed(AppRoutes.registerCreateProfile);
         break;
       case AppExceptionType.serverError:
-        sl<StorageService>().remove(StorageKeys.token);
-        sl<StorageService>().remove(StorageKeys.user);
-        g.Get.offAllNamed(AppRoutes.login);
-        break;
+        Get.snackbar(
+          'Error',
+          appEx.message,
+          backgroundColor: Theme.of(Get.context!).colorScheme.error,
+          colorText: Theme.of(Get.context!).colorScheme.onError,
+        );
       default:
     }
     super.onError(err, handler);

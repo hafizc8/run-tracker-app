@@ -528,7 +528,7 @@ class ActivityDetailCard extends StatelessWidget {
         (comments ?? []).isNotEmpty
             ? Container(
                 decoration: BoxDecoration(
-                  color: Theme.of(context).colorScheme.surface,
+                  color: const Color(0xFF393939),
                   borderRadius: BorderRadius.circular(10.r),
                 ),
                 padding: EdgeInsets.symmetric(horizontal: 16.w, vertical: 16.h),
@@ -599,91 +599,115 @@ class ActivityDetailCard extends StatelessWidget {
     List<Widget>? replies = const [],
   }) {
     return Padding(
-      padding: const EdgeInsets.symmetric(vertical: 8),
-      child: Column(
+      padding: EdgeInsets.only(top: 8.h),
+      child: Row(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          Row(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              // Foto Profil
-              ClipOval(
-                child: CachedNetworkImage(
-                  imageUrl: comment?.user?.imageUrl ?? '',
-                  width: 20.r,
-                  height: 20.r,
-                  fit: BoxFit.cover,
-                  placeholder: (context, url) =>
-                      ShimmerLoadingCircle(size: 20.r),
-                  errorWidget: (context, url, error) => CircleAvatar(
-                    radius: 20.r,
-                    backgroundImage:
-                        const AssetImage('assets/images/empty_profile.png'),
-                  ),
-                ),
+          // Foto Profil
+          ClipOval(
+            child: CachedNetworkImage(
+              imageUrl: comment?.user?.imageUrl ?? '',
+              width: 30.r,
+              height: 30.r,
+              fit: BoxFit.cover,
+              placeholder: (context, url) =>
+                  ShimmerLoadingCircle(size: 30.r),
+              errorWidget: (context, url, error) => CircleAvatar(
+                radius: 30.r,
+                backgroundImage:
+                    const AssetImage('assets/images/empty_profile.png'),
               ),
-              SizedBox(width: 10.w),
-              // Name & Date
-              Text(
-                comment?.user?.name ?? '',
-                style: Theme.of(context).textTheme.labelSmall?.copyWith(
-                      fontWeight: FontWeight.w700,
-                      fontSize: 11.sp,
-                      color: const Color(0xFFA5A5A5),
-                    ),
-              ),
-              SizedBox(width: 10.w),
-              Text(
-                comment?.createdAt?.toHumanPostDate() ?? '',
-                style: Theme.of(context).textTheme.labelMedium?.copyWith(
-                      fontWeight: FontWeight.w400,
-                      fontSize: 11.sp,
-                      color: const Color(0xFFA5A5A5),
-                    ),
-              ),
-            ],
+            ),
           ),
-
-          // Isi Komentar
-          Padding(
-            padding: const EdgeInsets.only(left: 35),
+          SizedBox(width: 10.w),
+          Flexible(
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
+              mainAxisAlignment: MainAxisAlignment.start,
               children: [
-                Text(
-                  comment?.content ?? '',
-                  style: Theme.of(context).textTheme.labelMedium?.copyWith(
-                        fontWeight: FontWeight.w400,
-                        fontSize: 11.sp,
-                        color: const Color(0xFFA5A5A5),
-                        height: 1.8,
-                      ),
-                ),
-                const SizedBox(height: 6),
-                isCommentReply
-                    ? const SizedBox()
-                    : TextButton(
-                        onPressed: () =>
-                            controller.replyToAndFocusComment(replyTo: comment),
-                        style: TextButton.styleFrom(
-                          padding: EdgeInsets.zero,
-                          minimumSize: const Size(0, 0),
-                          tapTargetSize: MaterialTapTargetSize.shrinkWrap,
-                          alignment: Alignment.centerLeft,
+                Row(
+                  crossAxisAlignment: CrossAxisAlignment.end,
+                  mainAxisAlignment: MainAxisAlignment.start,
+                  children: [
+                    // Name & Date
+                    Flexible(
+                      flex: 6,
+                      child: Text(
+                        comment?.user?.name ?? '',
+                        style: Theme.of(context).textTheme.labelSmall?.copyWith(
+                          fontWeight: FontWeight.w700,
+                          fontSize: 11.sp,
+                          color: const Color(0xFFA5A5A5),
                         ),
+                        maxLines: 1,
+                        overflow: TextOverflow.ellipsis,
+                      ),
+                    ),
+                    Flexible(
+                      flex: 4,
+                      child: Container(
+                        margin: EdgeInsets.only(left: 6.w),
                         child: Text(
-                          'Reply',
-                          style: Theme.of(context)
-                              .textTheme
-                              .headlineSmall
-                              ?.copyWith(
-                                fontSize: 12.sp,
-                              ),
+                          comment?.createdAt?.toHumanPostDate() ?? '',
+                          style: Theme.of(context).textTheme.labelMedium?.copyWith(
+                            fontWeight: FontWeight.w400,
+                            fontSize: 10.sp,
+                            color: const Color(0xFF6A6A6A),
+                          ),
+                          maxLines: 1,
+                          overflow: TextOverflow.ellipsis,
                         ),
                       ),
-                const SizedBox(height: 10),
-                // Kalau ada balasan (nested replies)
-                if (replies != null) ...replies,
+                    ),
+                  ],
+                ),
+            
+                // Isi Komentar
+                Padding(
+                  padding: EdgeInsets.only(left: 0.w),
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      const SizedBox(height: 5),
+                      Text(
+                        comment?.content ?? '',
+                        style: Theme.of(context).textTheme.labelMedium?.copyWith(
+                              fontWeight: FontWeight.w400,
+                              fontSize: 11.sp,
+                              color: const Color(0xFFA5A5A5),
+                              height: 1.8,
+                            ),
+                      ),
+                      const SizedBox(height: 6),
+                      isCommentReply
+                          ? const SizedBox()
+                          : Container(
+                            margin: EdgeInsets.only(bottom: 10.h),
+                            child: TextButton(
+                                onPressed: () =>
+                                    controller.replyToAndFocusComment(replyTo: comment),
+                                style: TextButton.styleFrom(
+                                  padding: EdgeInsets.zero,
+                                  minimumSize: const Size(0, 0),
+                                  tapTargetSize: MaterialTapTargetSize.shrinkWrap,
+                                  alignment: Alignment.centerLeft,
+                                ),
+                                child: Text(
+                                  'Reply',
+                                  style: Theme.of(context)
+                                      .textTheme
+                                      .headlineSmall
+                                      ?.copyWith(
+                                        fontSize: 12.sp,
+                                      ),
+                                ),
+                              ),
+                          ),
+                      // Kalau ada balasan (nested replies)
+                      if (replies != null) ...replies,
+                    ],
+                  ),
+                ),
               ],
             ),
           ),

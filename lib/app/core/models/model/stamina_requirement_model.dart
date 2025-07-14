@@ -15,7 +15,7 @@ class StaminaRequirementModel extends Model<StaminaRequirementModel> {
   final int? sessionMinuteMultiplier;
   final int? sessionMinuteMin;
   final int? sessionMinuteMax;
-  final int? multiplier;
+  final double? multiplier;
 
   @override
   StaminaRequirementModel copyWith({
@@ -24,7 +24,7 @@ class StaminaRequirementModel extends Model<StaminaRequirementModel> {
     int? sessionMinuteMultiplier,
     int? sessionMinuteMin,
     int? sessionMinuteMax,
-    int? multiplier,
+    double? multiplier,
   }) {
     return StaminaRequirementModel(
       staminaUsedMin: staminaUsedMin ?? this.staminaUsedMin,
@@ -44,7 +44,7 @@ class StaminaRequirementModel extends Model<StaminaRequirementModel> {
       sessionMinuteMultiplier: json["session_minute_multiplier"],
       sessionMinuteMin: json["session_minute_min"],
       sessionMinuteMax: json["session_minute_max"],
-      multiplier: json["multiplier"],
+      multiplier: double.tryParse(json["multiplier"].toString()) ?? 1.0,
     );
   }
 

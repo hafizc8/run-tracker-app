@@ -76,9 +76,10 @@ dependencies:
   share_plus: ^10.0.0
   currency_text_input_formatter: ^2.2.9
   # device_preview: ^1.1.0
-  # device_preview: ^1.1.0
+  device_preview: ^1.1.0
   shared_preferences: ^2.2.3
-  # pedometer_2: ^5.0.4
+  pedometer_2: ^5.0.4
+  disable_battery_optimization: ^1.1.1
 
 dependency_overrides:
   # pedometer: 4.0.2

@@ -65,4 +65,7 @@ abstract class AppRoutes {
 
   // leaderboard
   static const leaderboard = '/leaderboard';
+
+  // daily streak
+  static const dailyStreak = '/daily-streak';
 }

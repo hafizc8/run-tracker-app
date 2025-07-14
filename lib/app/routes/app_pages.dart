@@ -29,6 +29,8 @@ import 'package:zest_mobile/app/modules/club/partial/preview_club/bindings/previ
 import 'package:zest_mobile/app/modules/club/partial/preview_club/views/preview_club_view.dart';
 import 'package:zest_mobile/app/modules/club/partial/update_club/bindings/update_club_binding.dart';
 import 'package:zest_mobile/app/modules/club/partial/update_club/views/update_club_view.dart';
+import 'package:zest_mobile/app/modules/daily_streak/bindings/daily_streak_binding.dart';
+import 'package:zest_mobile/app/modules/daily_streak/views/daily_streak_view.dart';
 import 'package:zest_mobile/app/modules/debug/views/debug_view.dart';
 import 'package:zest_mobile/app/modules/leaderboard/bindings/leaderboard_binding.dart';
 import 'package:zest_mobile/app/modules/leaderboard/views/leaderboard_view.dart';
@@ -283,6 +285,12 @@ class AppPages {
       name: AppRoutes.leaderboard,
       page: () => const LeaderboardView(),
       binding: LeaderboardBinding(),
-    )
+    ),
+
+    GetPage(
+      name: AppRoutes.dailyStreak,
+      page: () => const DailyStreakView(),
+      binding: DailyStreakBinding(),
+    ),
   ];
 }

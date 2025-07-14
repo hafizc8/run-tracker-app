@@ -30,6 +30,7 @@ class LeaderboardView extends GetView<LeaderboardController> {
               fontSize: 17.sp
             ),
           ),
+          centerTitle: true,
         ),
         backgroundColor: Theme.of(context).colorScheme.background,
         body: Column(

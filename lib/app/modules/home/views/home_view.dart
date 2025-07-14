@@ -223,6 +223,7 @@ class HomeView extends GetView<HomeController> {
                       Flexible(
                         flex: 1,
                         child: GestureDetector(
+                          onTap: () => Get.toNamed(AppRoutes.dailyStreak),
                           // Widget ikon Anda
                           child: SizedBox(
                             width: 21.w + 6,

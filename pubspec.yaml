@@ -80,6 +80,7 @@ dependencies:
   shared_preferences: ^2.2.3
   pedometer_2: ^5.0.4
   disable_battery_optimization: ^1.1.1
+  table_calendar: ^3.0.9
 
 dependency_overrides:
   # pedometer: 4.0.2

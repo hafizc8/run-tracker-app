@@ -1,7 +1,9 @@
 import 'dart:async';
 import 'dart:convert';
+import 'dart:typed_data';
 import 'package:firebase_crashlytics/firebase_crashlytics.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/rendering.dart';
 import 'package:flutter_background_service/flutter_background_service.dart';
 import 'package:geolocator/geolocator.dart';
 import 'package:get/get.dart';
@@ -24,6 +26,7 @@ import 'package:zest_mobile/app/core/shared/theme/color_schemes.dart';
 import 'package:zest_mobile/app/core/shared/widgets/custom_dialog_confirmation.dart';
 import 'package:zest_mobile/app/modules/activity/record_activity/views/widgets/use_stamina_dialog.dart';
 import 'package:zest_mobile/app/routes/app_routes.dart';
+import 'dart:ui' as ui;
 
 class RecordActivityController extends GetxController {
   final _service = FlutterBackgroundService(); // Instance service
@@ -77,6 +80,12 @@ class RecordActivityController extends GetxController {
   final String _staminaConfigCacheKey = 'stamina_config_cache';
   final String _staminaConfigTimestampKey = 'stamina_config_timestamp';
 
+  final GlobalKey startMarkerKey = GlobalKey();
+  final GlobalKey endMarkerKey = GlobalKey();
+
+  BitmapDescriptor startIcon = BitmapDescriptor.defaultMarker;
+  BitmapDescriptor endIcon = BitmapDescriptor.defaultMarker;
+
 
   @override
   void onInit() {
@@ -85,6 +94,7 @@ class RecordActivityController extends GetxController {
 
     WidgetsBinding.instance.addPostFrameCallback((_) {
       _loadStaminaConfigAndShowDialog();
+      loadMarkerIcons();
     });
 
     userCoin.value = user?.currentUserCoin?.currentAmount ?? 0;
@@ -690,5 +700,25 @@ class RecordActivityController extends GetxController {
             .toList(),
       ),
     };
+  }
+
+  Future<BitmapDescriptor> _bitmapDescriptorFromWidget(GlobalKey key) async {
+    // Tunggu frame berikutnya untuk memastikan widget sudah digambar
+    await Future.delayed(const Duration(milliseconds: 50));
+    
+    RenderRepaintBoundary boundary = key.currentContext!.findRenderObject() as RenderRepaintBoundary;
+    ui.Image image = await boundary.toImage(pixelRatio: 2.0); // Tingkatkan pixelRatio untuk kualitas
+    ByteData? byteData = await image.toByteData(format: ui.ImageByteFormat.png);
+    return BitmapDescriptor.fromBytes(byteData!.buffer.asUint8List());
+  }
+
+  // ✨ KUNCI #3: Fungsi untuk memuat ikon setelah widget tersembunyi digambar
+  Future<void> loadMarkerIcons() async {
+    try {
+      startIcon = await _bitmapDescriptorFromWidget(startMarkerKey);
+      endIcon = await _bitmapDescriptorFromWidget(endMarkerKey);
+    } catch (e) {
+      print('Error loading marker icons: $e');
+    }
   }
 }

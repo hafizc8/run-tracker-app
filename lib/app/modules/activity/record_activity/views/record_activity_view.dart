@@ -185,6 +185,33 @@ class RecordActivityView extends GetView<RecordActivityController> {
                                 minMaxZoomPreference: const MinMaxZoomPreference(5, 20),
                                 polylines: controller.activityPolylines, 
                                 onMapCreated: controller.onMapCreated,
+                                markers: {
+                                  // Tampilkan marker hanya jika ada rute yang sudah digambar
+                                  if (controller.currentPath.isNotEmpty) ...[
+                                    // Marker untuk Titik Start
+                                    Marker(
+                                      markerId: const MarkerId('start_point'),
+                                      position: LatLng(
+                                        controller.currentPath.first.latitude,
+                                        controller.currentPath.first.longitude,
+                                      ),
+                                      icon: controller.startIcon,
+                                      anchor: const Offset(0, 1),
+                                    ),
+                                    
+                                    // Marker untuk Titik End3
+                                    if (controller.currentPath.length > 1)
+                                      Marker(
+                                        markerId: const MarkerId('end_point'),
+                                        position: LatLng(
+                                          controller.currentPath.last.latitude,
+                                          controller.currentPath.last.longitude,
+                                        ),
+                                        icon: controller.endIcon, // Gunakan ikon dari controller
+                                        anchor: const Offset(0.5, 0.5),
+                                      ),
+                                  ]
+                                },
                               ),
                             ),
                           ),
@@ -443,6 +470,42 @@ class RecordActivityView extends GetView<RecordActivityController> {
                     }
                   ),
                 ],
+              ),
+            ),
+            Transform.translate(
+              offset: Offset(-MediaQuery.of(context).size.width, 0), // Pindahkan ke luar layar
+              child: RepaintBoundary(
+                key: controller.startMarkerKey,
+                child: const FaIcon(
+                  FontAwesomeIcons.solidFlag,
+                  color: Colors.red,
+                  size: 35,
+                ),
+              ),
+            ),
+            Transform.translate(
+              offset: Offset(-MediaQuery.of(context).size.width, 0),
+              child: RepaintBoundary(
+                key: controller.endMarkerKey,
+                child: Container(
+                  width: 35,
+                  height: 35,
+                  decoration: BoxDecoration(
+                    shape: BoxShape.circle,
+                    color: Colors.blue.withOpacity(0.2), // Splash area
+                  ),
+                  child: Center(
+                    child: Container(
+                      width: 15,
+                      height: 15,
+                      decoration: BoxDecoration(
+                        shape: BoxShape.circle,
+                        color: Colors.blue,
+                        border: Border.all(color: Colors.white, width: 2),
+                      ),
+                    ),
+                  ),
+                ),
               ),
             ),
           ],

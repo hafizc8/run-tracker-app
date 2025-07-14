@@ -22,16 +22,19 @@ class ChallangeCreateController extends GetxController {
             imagePath: _authService.user?.imagePath ?? '',
             imageUrl: _authService.user?.imageUrl ?? '',
           ),
-          User(
-            id: _authService.user?.id ?? '',
-            name: _authService.user?.name ?? '',
-            imagePath: _authService.user?.imagePath ?? '',
-            imageUrl: _authService.user?.imageUrl ?? '',
-          ),
         ]),
         const Teams(name: 'Orange Team', members: []),
       ],
     );
     Get.toNamed(AppRoutes.challengeCreateTeam);
+  }
+
+  void addTeam() {
+    if ((form.value.teams?.length ?? 0) < 4) {
+      form.value = form.value.copyWith(teams: [
+        ...(form.value.teams ?? []),
+        const Teams(name: 'New Team', members: []),
+      ]);
+    }
   }
 }

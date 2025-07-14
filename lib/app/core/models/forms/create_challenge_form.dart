@@ -9,6 +9,7 @@ class CreateChallengeFormModel extends FormModel<CreateChallengeFormModel>
   final int? type;
   final int? mode;
   final int? target;
+  final bool? isEdit;
   final DateTime? startDate;
   final DateTime? endDate;
   final List<Teams>? teams;
@@ -21,6 +22,7 @@ class CreateChallengeFormModel extends FormModel<CreateChallengeFormModel>
     this.type = 0,
     this.mode = 0,
     this.target,
+    this.isEdit,
     this.startDate,
     this.endDate,
     this.teams = const [],
@@ -39,6 +41,7 @@ class CreateChallengeFormModel extends FormModel<CreateChallengeFormModel>
     int? type,
     int? mode,
     int? target,
+    bool? isEdit,
     DateTime? startDate,
     DateTime? endDate,
     List<Teams>? teams,
@@ -56,6 +59,7 @@ class CreateChallengeFormModel extends FormModel<CreateChallengeFormModel>
       type: type ?? this.type,
       mode: mode ?? this.mode,
       target: target ?? this.target,
+      isEdit: isEdit ?? this.isEdit,
       startDate: startDate ?? this.startDate,
       endDate: endDate ?? this.endDate,
       teams: teams ?? this.teams,
@@ -65,8 +69,18 @@ class CreateChallengeFormModel extends FormModel<CreateChallengeFormModel>
   }
 
   @override
-  List<Object?> get props =>
-      [type, mode, target, startDate, endDate, teams, errors, clubId, title];
+  List<Object?> get props => [
+        type,
+        mode,
+        target,
+        startDate,
+        isEdit,
+        endDate,
+        teams,
+        errors,
+        clubId,
+        title
+      ];
 
   @override
   CreateChallengeFormModel setErrors(Map<String, List> errorsMap) {
@@ -101,15 +115,30 @@ class CreateChallengeFormModel extends FormModel<CreateChallengeFormModel>
 
 class Teams extends Equatable {
   final String? name;
+  final bool? isEdit;
   final List<User>? members;
   const Teams({
     this.name,
     this.members,
+    this.isEdit,
   });
+
+  Teams copyWith({
+    String? name,
+    List<User>? members,
+    bool? isEdit,
+  }) {
+    return Teams(
+      name: name ?? this.name,
+      members: members ?? this.members,
+      isEdit: isEdit ?? this.isEdit,
+    );
+  }
 
   @override
   List<Object?> get props => [
         name,
         members,
+        isEdit,
       ];
 }

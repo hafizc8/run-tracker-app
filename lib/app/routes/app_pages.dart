@@ -22,6 +22,7 @@ import 'package:zest_mobile/app/modules/auth/register/views/register_verify_emai
 import 'package:zest_mobile/app/modules/auth/register/views/register_verify_email_view.dart';
 import 'package:zest_mobile/app/modules/auth/register/views/register_view.dart';
 import 'package:zest_mobile/app/modules/challenge/bindings/create_challenge_binding.dart';
+import 'package:zest_mobile/app/modules/challenge/views/create_challenge_team_view.dart';
 import 'package:zest_mobile/app/modules/challenge/views/create_challenge_view.dart';
 import 'package:zest_mobile/app/modules/choose_location/bindings/choose_location_binding.dart';
 import 'package:zest_mobile/app/modules/choose_location/views/choose_location_view.dart';
@@ -283,6 +284,11 @@ class AppPages {
     GetPage(
       name: AppRoutes.challengeCreate,
       page: () => const ChallengeCreateView(),
+      binding: ChallengeCreateBinding(),
+    ),
+    GetPage(
+      name: AppRoutes.challengeCreateTeam,
+      page: () => const ChallengeCreateTeamView(),
       binding: ChallengeCreateBinding(),
     ),
   ];

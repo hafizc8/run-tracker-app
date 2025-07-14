@@ -23,7 +23,7 @@ class CreateChallengeFormModel extends FormModel<CreateChallengeFormModel>
     this.target,
     this.startDate,
     this.endDate,
-    this.teams,
+    this.teams = const [],
     this.clubId,
     this.errors,
   });
@@ -100,15 +100,16 @@ class CreateChallengeFormModel extends FormModel<CreateChallengeFormModel>
 }
 
 class Teams extends Equatable {
-  final String? teamName;
-  final User? user;
+  final String? name;
+  final List<User>? members;
   const Teams({
-    this.teamName,
-    this.user,
+    this.name,
+    this.members,
   });
 
   @override
   List<Object?> get props => [
-        teamName,
+        name,
+        members,
       ];
 }

@@ -265,6 +265,14 @@ class EventDetailCard extends GetView<EventDetailController> {
             style: Theme.of(context).textTheme.titleSmall,
           ),
           SizedBox(height: 15.h),
+          Text(
+            "${event?.userOnEventsCount ?? 0} / ${event?.quota} are Going",
+            style: Theme.of(context)
+                .textTheme
+                .bodyMedium
+                ?.copyWith(fontWeight: FontWeight.w600),
+          ),
+          SizedBox(height: 15.h),
           Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [

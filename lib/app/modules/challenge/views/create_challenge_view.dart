@@ -4,6 +4,7 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
 import 'package:zest_mobile/app/core/shared/widgets/gradient_elevated_button.dart';
 import 'package:zest_mobile/app/modules/challenge/controllers/create_challenge_controller.dart';
+import 'package:zest_mobile/app/routes/app_routes.dart';
 
 class ChallengeCreateView extends GetView<ChallangeCreateController> {
   const ChallengeCreateView({super.key});
@@ -33,7 +34,7 @@ class ChallengeCreateView extends GetView<ChallangeCreateController> {
         ),
       ),
       bottomNavigationBar: Padding(
-        padding: const EdgeInsets.all(16.0),
+        padding: EdgeInsets.all(16.0.w),
         child: Obx(() {
           if (controller.form.value.type == 0) {
             return SizedBox(
@@ -42,11 +43,9 @@ class ChallengeCreateView extends GetView<ChallangeCreateController> {
                 contentPadding: EdgeInsets.symmetric(vertical: 5.w),
                 onPressed: controller.isLoading.value
                     ? null
-                    : controller.isLoading.value
-                        ? null
-                        : () {
-                            controller.storeChallenge();
-                          },
+                    : () {
+                        controller.storeChallenge();
+                      },
                 child: Visibility(
                   visible: controller.isLoading.value,
                   replacement: Text(
@@ -66,13 +65,9 @@ class ChallengeCreateView extends GetView<ChallangeCreateController> {
             height: 43.h,
             child: GradientElevatedButton(
               contentPadding: EdgeInsets.symmetric(vertical: 5.w),
-              onPressed: controller.isLoading.value
-                  ? null
-                  : controller.isLoading.value
-                      ? null
-                      : () {
-                          controller.storeChallenge();
-                        },
+              onPressed: () {
+                controller.toChallengeTeam();
+              },
               child: Visibility(
                 visible: controller.isLoading.value,
                 replacement: Text(

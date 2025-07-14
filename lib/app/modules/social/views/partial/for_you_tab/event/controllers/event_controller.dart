@@ -204,7 +204,6 @@ class EventController extends GetxController {
       }
       if (res != null) {
         Get.back();
-        Get.back();
       }
     } on AppException catch (e) {
       // show error snackbar, toast, etc

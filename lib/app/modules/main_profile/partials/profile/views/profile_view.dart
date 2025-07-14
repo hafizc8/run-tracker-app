@@ -7,6 +7,7 @@ import 'package:flutter_svg/flutter_svg.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:get/get.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:zest_mobile/app/core/extension/initial_profile_empty.dart';
 import 'package:zest_mobile/app/core/shared/theme/color_schemes.dart';
 import 'package:zest_mobile/app/modules/main_profile/partials/social_info/controllers/social_info_clubs.dart';
 import 'package:zest_mobile/app/modules/main_profile/partials/social_info/controllers/social_info_controller.dart';
@@ -91,18 +92,27 @@ class ProfileView extends GetView<ProfileController> {
                                               imageUrl: controller
                                                       .user.value?.imageUrl ??
                                                   '',
-                                              width: 50,
-                                              height: 50,
+                                              width: 50.r,
+                                              height: 50.r,
                                               fit: BoxFit.cover,
                                               placeholder: (context, url) =>
-                                                  const ShimmerLoadingCircle(
-                                                      size: 50),
+                                                  ShimmerLoadingCircle(
+                                                size: 50.r,
+                                              ),
                                               errorWidget:
                                                   (context, url, error) =>
-                                                      const CircleAvatar(
-                                                radius: 32,
-                                                backgroundImage: AssetImage(
-                                                    'assets/images/empty_profile.png'),
+                                                      CircleAvatar(
+                                                radius: 32.r,
+                                                backgroundColor:
+                                                    Theme.of(context)
+                                                        .colorScheme
+                                                        .onBackground,
+                                                child: Text(
+                                                  (controller.user.value
+                                                              ?.name ??
+                                                          '')
+                                                      .toInitials(),
+                                                ),
                                               ),
                                             ),
                                           ),
@@ -290,8 +300,11 @@ class ProfileView extends GetView<ProfileController> {
                         child: IgnorePointer(
                           child: CachedNetworkImage(
                             width: 200.w,
-                            imageUrl: controller.user.value?.currentUserXp?.levelDetail?.imageUrl ?? '',
-                            errorWidget: (context, url, error) => const SizedBox(),
+                            imageUrl: controller.user.value?.currentUserXp
+                                    ?.levelDetail?.imageUrl ??
+                                '',
+                            errorWidget: (context, url, error) =>
+                                const SizedBox(),
                           ),
                         ),
                       ),
@@ -301,19 +314,29 @@ class ProfileView extends GetView<ProfileController> {
                         child: IgnorePointer(
                           child: RichText(
                             text: TextSpan(
-                              style: Theme.of(context).textTheme.bodySmall?.copyWith(
-                                color: Theme.of(context).colorScheme.background,
-                                fontWeight: FontWeight.w400,
-                              ),
-                              children: <TextSpan>[
-                                TextSpan(text: 'Level ${controller.user.value?.currentUserXp?.levelDetail?.level}  '),
-                                TextSpan(
-                                  text: controller.user.value?.currentUserXp?.levelDetail?.animal ?? '',
-                                  style: GoogleFonts.poppins(
-                                    fontWeight: FontWeight.w700,
-                                    color: Theme.of(context).colorScheme.background,
-                                    fontSize: 12.sp
+                              style: Theme.of(context)
+                                  .textTheme
+                                  .bodySmall
+                                  ?.copyWith(
+                                    color: Theme.of(context)
+                                        .colorScheme
+                                        .background,
+                                    fontWeight: FontWeight.w400,
                                   ),
+                              children: <TextSpan>[
+                                TextSpan(
+                                    text:
+                                        'Level ${controller.user.value?.currentUserXp?.levelDetail?.level}  '),
+                                TextSpan(
+                                  text: controller.user.value?.currentUserXp
+                                          ?.levelDetail?.animal ??
+                                      '',
+                                  style: GoogleFonts.poppins(
+                                      fontWeight: FontWeight.w700,
+                                      color: Theme.of(context)
+                                          .colorScheme
+                                          .background,
+                                      fontSize: 12.sp),
                                 ),
                               ],
                             ),

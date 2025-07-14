@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:get/get.dart';
+import 'package:zest_mobile/app/core/extension/initial_profile_empty.dart';
 import 'package:zest_mobile/app/core/models/model/user_mini_model.dart';
 import 'package:zest_mobile/app/core/shared/widgets/shimmer_loading_circle.dart';
 import 'package:zest_mobile/app/modules/main_profile/partials/social_info/controllers/social_info_followers.dart';
@@ -122,14 +123,18 @@ class SocialInfoFollowersView extends GetView<SocialInfoFollowersController> {
       leading: ClipOval(
         child: CachedNetworkImage(
           imageUrl: user.imageUrl ?? '',
-          width: 37.r,
-          height: 37.r,
+          width: 50.r,
+          height: 50.r,
           fit: BoxFit.cover,
-          placeholder: (context, url) => ShimmerLoadingCircle(size: 37.r),
+          placeholder: (context, url) => ShimmerLoadingCircle(
+            size: 50.r,
+          ),
           errorWidget: (context, url, error) => CircleAvatar(
-            radius: 37.r,
-            backgroundImage:
-                const AssetImage('assets/images/empty_profile.png'),
+            radius: 32.r,
+            backgroundColor: Theme.of(context).colorScheme.onBackground,
+            child: Text(
+              user.name.toInitials(),
+            ),
           ),
         ),
       ),
@@ -165,53 +170,6 @@ class SocialInfoFollowersView extends GetView<SocialInfoFollowersController> {
                   child: CircularProgressIndicator(),
                 ),
               ),
-            ),
-          ),
-          Visibility(
-            visible: user.isFollowing == 1,
-            child: Row(
-              children: [
-                SizedBox(width: 16.w),
-                PopupMenuButton<String>(
-                  onSelected: (value) async {
-                    // Handle the selection
-                    if (value == 'un_follow') {
-                      controller.unFollow(user.id);
-                    }
-                  },
-                  surfaceTintColor: Theme.of(context).colorScheme.onPrimary,
-                  itemBuilder: (BuildContext context) {
-                    return [
-                      PopupMenuItem<String>(
-                        value: 'un_follow',
-                        child: Obx(
-                          () => Visibility(
-                            visible: controller.isLoadingFollow.value,
-                            replacement: Text(
-                              'Unfollow',
-                              maxLines: 1,
-                              overflow: TextOverflow.ellipsis,
-                              textAlign: TextAlign.center,
-                              style: Theme.of(context)
-                                  .textTheme
-                                  .bodyMedium
-                                  ?.copyWith(fontWeight: FontWeight.w600),
-                            ),
-                            child: CircularProgressIndicator(
-                              color: Theme.of(context).colorScheme.primary,
-                            ),
-                          ),
-                        ),
-                      ),
-                    ];
-                  },
-                  child: Icon(
-                    Icons.more_vert,
-                    size: 22.r,
-                    color: Theme.of(context).colorScheme.onBackground,
-                  ),
-                ),
-              ],
             ),
           ),
         ],

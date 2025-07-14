@@ -78,7 +78,7 @@ dependencies:
   # device_preview: ^1.1.0
   # device_preview: ^1.1.0
   shared_preferences: ^2.2.3
-  pedometer_2: ^5.0.4
+  # pedometer_2: ^5.0.4
 
 dependency_overrides:
   # pedometer: 4.0.2

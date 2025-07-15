@@ -1,3 +1,4 @@
+import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:zest_mobile/app/core/di/service_locator.dart';
 import 'package:zest_mobile/app/core/models/forms/create_challenge_form.dart';
@@ -12,10 +13,70 @@ class ChallangeCreateController extends GetxController {
 
   void storeChallenge() {}
 
+  // Menyimpan nama sementara ketika diedit
+  final tempEditedNames = <int, String>{}.obs;
+
+  void toggleEditTeam(int index, bool isEdit) {
+    final currentTeams = form.value.teams ?? [];
+    final currentTeam = currentTeams[index];
+
+    // Masukkan nama awal ke temp saat mulai edit
+    if (isEdit) {
+      tempEditedNames[index] = currentTeam.name ?? '';
+    } else {
+      tempEditedNames.remove(index); // bersihkan saat selesai
+    }
+
+    final updatedTeam = currentTeam.copyWith(isEdit: isEdit);
+    final updatedTeams = [...currentTeams]..[index] = updatedTeam;
+    form.value = form.value.copyWith(teams: updatedTeams);
+  }
+
+  void updateTempName(int index, String value) {
+    tempEditedNames[index] = value;
+  }
+
+  void saveEdit(int index) {
+    final name = tempEditedNames[index];
+    if (name == null) return;
+
+    final teams = form.value.teams ?? [];
+    final updatedTeam = teams[index].copyWith(name: name, isEdit: false);
+
+    final updatedTeams = [...teams]..[index] = updatedTeam;
+    form.value = form.value.copyWith(teams: updatedTeams);
+
+    tempEditedNames.remove(index);
+  }
+
+  void cancelEdit(int index) {
+    final teams = form.value.teams ?? [];
+    final oldName = teams[index].name;
+    tempEditedNames[index] = oldName ?? '';
+
+    toggleEditTeam(index, false); // keluar dari mode edit
+  }
+
+  void deleteTeam(int index, bool isOwner) {
+    if (isOwner) {
+      Get.snackbar(
+        'Error',
+        'You cannot delete your team',
+        backgroundColor: Colors.red,
+        colorText: Colors.white,
+      );
+      return;
+    }
+
+    final currentTeams = form.value.teams ?? [];
+    final updatedTeams = [...currentTeams]..removeAt(index);
+    form.value = form.value.copyWith(teams: updatedTeams);
+  }
+
   void toChallengeTeam() {
     form.value = form.value.copyWith(
       teams: [
-        Teams(name: 'Blue Team', members: [
+        Teams(isOwner: true, name: 'Blue Team', members: [
           User(
             id: _authService.user?.id ?? '',
             name: _authService.user?.name ?? '',

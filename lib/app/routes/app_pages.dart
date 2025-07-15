@@ -21,13 +21,21 @@ import 'package:zest_mobile/app/modules/auth/register/views/register_success.dar
 import 'package:zest_mobile/app/modules/auth/register/views/register_verify_email_success.dart';
 import 'package:zest_mobile/app/modules/auth/register/views/register_verify_email_view.dart';
 import 'package:zest_mobile/app/modules/auth/register/views/register_view.dart';
+import 'package:zest_mobile/app/modules/challenge/bindings/challenge_invite_binding.dart';
 import 'package:zest_mobile/app/modules/challenge/bindings/create_challenge_binding.dart';
+import 'package:zest_mobile/app/modules/challenge/views/challenge_invite_view.dart';
 import 'package:zest_mobile/app/modules/challenge/views/create_challenge_team_view.dart';
 import 'package:zest_mobile/app/modules/challenge/views/create_challenge_view.dart';
 import 'package:zest_mobile/app/modules/choose_location/bindings/choose_location_binding.dart';
 import 'package:zest_mobile/app/modules/choose_location/views/choose_location_view.dart';
+import 'package:zest_mobile/app/modules/club/partial/create_club/bindings/create_club_binding.dart';
+import 'package:zest_mobile/app/modules/club/partial/create_club/views/create_club_view.dart';
+import 'package:zest_mobile/app/modules/club/partial/detail_club/bindings/detail_club_binding.dart';
+import 'package:zest_mobile/app/modules/club/partial/detail_club/views/detail_club_view.dart';
 import 'package:zest_mobile/app/modules/club/partial/invite_to_club/bindings/invite_to_club_binding.dart';
 import 'package:zest_mobile/app/modules/club/partial/invite_to_club/views/invite_to_club_view.dart';
+import 'package:zest_mobile/app/modules/club/partial/member_list_club/bindings/member_list_club_binding.dart';
+import 'package:zest_mobile/app/modules/club/partial/member_list_club/views/member_list_club_view.dart';
 import 'package:zest_mobile/app/modules/club/partial/preview_club/bindings/preview_club_binding.dart';
 import 'package:zest_mobile/app/modules/club/partial/preview_club/views/preview_club_view.dart';
 import 'package:zest_mobile/app/modules/club/partial/update_club/bindings/update_club_binding.dart';
@@ -35,28 +43,30 @@ import 'package:zest_mobile/app/modules/club/partial/update_club/views/update_cl
 import 'package:zest_mobile/app/modules/daily_streak/bindings/daily_streak_binding.dart';
 import 'package:zest_mobile/app/modules/daily_streak/views/daily_streak_view.dart';
 import 'package:zest_mobile/app/modules/debug/views/debug_view.dart';
-import 'package:zest_mobile/app/modules/leaderboard/bindings/leaderboard_binding.dart';
-import 'package:zest_mobile/app/modules/leaderboard/views/leaderboard_view.dart';
-import 'package:zest_mobile/app/modules/main_profile/partials/challenge/bindings/challenge_binding.dart';
-import 'package:zest_mobile/app/modules/main_profile/partials/social_info/bindings/social_info_binding.dart';
-import 'package:zest_mobile/app/modules/main_profile/partials/social_info/views/social_info_view.dart';
-import 'package:zest_mobile/app/modules/social/views/partial/for_you_tab/choose_location_event/bindings/choose_location_event_binding.dart';
-import 'package:zest_mobile/app/modules/social/views/partial/for_you_tab/choose_location_event/views/choose_location_event_view.dart';
-import 'package:zest_mobile/app/modules/social/views/partial/for_you_tab/event/bindings/event_invite_binding.dart';
-import 'package:zest_mobile/app/modules/social/views/partial/for_you_tab/event/bindings/event_detail_binding.dart';
-import 'package:zest_mobile/app/modules/social/views/partial/for_you_tab/event/bindings/event_see_all_participant_binding.dart';
-import 'package:zest_mobile/app/modules/social/views/partial/for_you_tab/event/views/create_view.dart';
-import 'package:zest_mobile/app/modules/club/partial/create_club/bindings/create_club_binding.dart';
-import 'package:zest_mobile/app/modules/club/partial/create_club/views/create_club_view.dart';
-import 'package:zest_mobile/app/modules/club/partial/detail_club/bindings/detail_club_binding.dart';
-import 'package:zest_mobile/app/modules/club/partial/detail_club/views/detail_club_view.dart';
-import 'package:zest_mobile/app/modules/club/partial/member_list_club/bindings/member_list_club_binding.dart';
-import 'package:zest_mobile/app/modules/club/partial/member_list_club/views/member_list_club_view.dart';
 import 'package:zest_mobile/app/modules/home/bindings/main_home_binding.dart';
 import 'package:zest_mobile/app/modules/home/views/main_home_view.dart';
+import 'package:zest_mobile/app/modules/leaderboard/bindings/leaderboard_binding.dart';
+import 'package:zest_mobile/app/modules/leaderboard/views/leaderboard_view.dart';
+import 'package:zest_mobile/app/modules/main_profile/bindings/badges_binding.dart';
+import 'package:zest_mobile/app/modules/main_profile/bindings/settings_binding.dart';
+import 'package:zest_mobile/app/modules/main_profile/partials/activity/bindings/activity_binding.dart';
+import 'package:zest_mobile/app/modules/main_profile/partials/activity/views/activity_view.dart';
+import 'package:zest_mobile/app/modules/main_profile/partials/edit_profile/bindings/edit_profile_binding.dart';
+import 'package:zest_mobile/app/modules/main_profile/partials/edit_profile/views/edit_profile_view.dart';
 import 'package:zest_mobile/app/modules/main_profile/partials/profile/bindings/profile_binding.dart';
 import 'package:zest_mobile/app/modules/main_profile/partials/profile/views/profile_view.dart';
+import 'package:zest_mobile/app/modules/main_profile/partials/social_info/bindings/social_info_binding.dart';
+import 'package:zest_mobile/app/modules/main_profile/partials/social_info/views/social_info_view.dart';
+import 'package:zest_mobile/app/modules/main_profile/views/badges_view.dart';
+import 'package:zest_mobile/app/modules/main_profile/views/main_profile_view.dart';
+import 'package:zest_mobile/app/modules/main_profile/views/settings_view.dart';
 import 'package:zest_mobile/app/modules/social/bindings/social_binding.dart';
+import 'package:zest_mobile/app/modules/social/views/partial/for_you_tab/choose_location_event/bindings/choose_location_event_binding.dart';
+import 'package:zest_mobile/app/modules/social/views/partial/for_you_tab/choose_location_event/views/choose_location_event_view.dart';
+import 'package:zest_mobile/app/modules/social/views/partial/for_you_tab/event/bindings/event_detail_binding.dart';
+import 'package:zest_mobile/app/modules/social/views/partial/for_you_tab/event/bindings/event_invite_binding.dart';
+import 'package:zest_mobile/app/modules/social/views/partial/for_you_tab/event/bindings/event_see_all_participant_binding.dart';
+import 'package:zest_mobile/app/modules/social/views/partial/for_you_tab/event/views/create_view.dart';
 import 'package:zest_mobile/app/modules/social/views/partial/for_you_tab/event/views/see_all_participant_view.dart';
 import 'package:zest_mobile/app/modules/social/views/partial/for_you_tab/social_for_you_event_detail_invite_friend_view.dart';
 import 'package:zest_mobile/app/modules/social/views/partial/for_you_tab/social_for_you_event_detail_view.dart';
@@ -65,15 +75,6 @@ import 'package:zest_mobile/app/modules/social/views/partial/search/views/social
 import 'package:zest_mobile/app/modules/social/views/partial/your_page_tab/post/edit_post_view.dart';
 import 'package:zest_mobile/app/modules/social/views/partial/your_page_tab/social_your_page_activity_detail_view.dart';
 import 'package:zest_mobile/app/modules/social/views/social_view.dart';
-import 'package:zest_mobile/app/modules/main_profile/bindings/badges_binding.dart';
-import 'package:zest_mobile/app/modules/main_profile/bindings/settings_binding.dart';
-import 'package:zest_mobile/app/modules/main_profile/partials/activity/bindings/activity_binding.dart';
-import 'package:zest_mobile/app/modules/main_profile/partials/activity/views/activity_view.dart';
-import 'package:zest_mobile/app/modules/main_profile/partials/edit_profile/bindings/edit_profile_binding.dart';
-import 'package:zest_mobile/app/modules/main_profile/partials/edit_profile/views/edit_profile_view.dart';
-import 'package:zest_mobile/app/modules/main_profile/views/badges_view.dart';
-import 'package:zest_mobile/app/modules/main_profile/views/main_profile_view.dart';
-import 'package:zest_mobile/app/modules/main_profile/views/settings_view.dart';
 import 'package:zest_mobile/app/modules/splash/bindings/splash_binding.dart';
 import 'package:zest_mobile/app/modules/splash/views/splash_view.dart';
 
@@ -296,17 +297,27 @@ class AppPages {
       page: () => const DailyStreakView(),
       binding: DailyStreakBinding(),
     ),
-    
+
     GetPage(
       name: AppRoutes.challengeCreate,
       page: () => const ChallengeCreateView(),
       binding: ChallengeCreateBinding(),
     ),
-    
+
     GetPage(
       name: AppRoutes.challengeCreateTeam,
       page: () => const ChallengeCreateTeamView(),
       binding: ChallengeCreateBinding(),
+    ),
+    GetPage(
+      name: AppRoutes.challengeCreateTeam,
+      page: () => const ChallengeCreateTeamView(),
+      binding: ChallengeCreateBinding(),
+    ),
+    GetPage(
+      name: AppRoutes.challengeInviteFriend,
+      page: () => const ChallengeInviteFriendView(),
+      binding: ChallengeInviteBinding(),
     ),
   ];
 }

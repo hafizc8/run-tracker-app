@@ -17,6 +17,7 @@ import 'package:zest_mobile/app/core/services/auth_service.dart';
 import 'package:zest_mobile/app/core/services/location_service.dart';
 import 'package:zest_mobile/app/core/services/post_service.dart';
 import 'package:zest_mobile/app/core/shared/helpers/debouncer.dart';
+import 'package:zest_mobile/app/core/shared/widgets/custom_dialog_confirmation.dart';
 import 'package:zest_mobile/app/modules/social/views/partial/your_page_tab/post/create_post_dialog.dart';
 import 'package:zest_mobile/app/routes/app_routes.dart';
 
@@ -289,24 +290,21 @@ class PostController extends GetxController {
     commentFocusNode.unfocus();
   }
 
-  Future<void> confirmAndDeletePost(
-      {required String postId, bool isPostDetail = false}) async {
-    Get.defaultDialog(
-      title: 'Delete Post',
-      middleText: 'Are you sure to delete this post?',
-      textCancel: 'Back',
-      textConfirm: 'Yes, delete',
-      confirmTextColor: Colors.white,
-      backgroundColor: Colors.white,
-      titlePadding: const EdgeInsets.symmetric(vertical: 10),
-      contentPadding: const EdgeInsets.symmetric(horizontal: 20, vertical: 10),
-      onConfirm: () {
-        if (isPostDetail) {
-          Get.back(closeOverlays: true); // close detail page
-        }
-        Get.back(closeOverlays: true);
-        _deletePost(postId: postId);
-      },
+  Future<void> confirmAndDeletePost({required String postId, bool isPostDetail = false}) async {
+    Get.dialog(
+      CustomDialogConfirmation(
+        title: 'Delete Post',
+        subtitle: 'Are you sure to delete this post?',
+        labelConfirm: 'Yes, delete',
+        onConfirm: () {
+          if (isPostDetail) {
+            Get.back(closeOverlays: true); // close detail page
+          }
+          Get.back(closeOverlays: true);
+          _deletePost(postId: postId);
+        },
+        onCancel: () => Get.back(),
+      )
     );
   }
 

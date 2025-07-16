@@ -86,4 +86,7 @@ class AppConstants {
 
   static const String homePageData = "/home";
   static const String staminaRequirement = "/record-activity/stamina-requirement";
+
+  // leaderboard
+  static const String leaderboard = "/leaderboard";
 }

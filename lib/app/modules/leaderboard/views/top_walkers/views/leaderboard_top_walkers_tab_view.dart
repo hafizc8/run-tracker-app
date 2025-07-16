@@ -1,10 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
+import 'package:visibility_detector/visibility_detector.dart';
 import 'package:zest_mobile/app/core/models/enums/leaderboard_top_walkers_page_enum.dart';
-import 'package:zest_mobile/app/core/models/model/home_page_data_model.dart';
+import 'package:zest_mobile/app/core/models/model/leaderboard_user_model.dart';
 import 'package:zest_mobile/app/core/shared/widgets/custom_toggle_button.dart';
 import 'package:zest_mobile/app/modules/leaderboard/views/top_walkers/controllers/leaderboard_top_walkers_controller.dart';
+import 'package:zest_mobile/app/modules/leaderboard/views/top_walkers/views/widgets/leaderboard_shimmer_layout.dart';
 import 'package:zest_mobile/app/modules/leaderboard/views/top_walkers/views/widgets/others_walkers.dart';
 import 'package:zest_mobile/app/modules/leaderboard/views/top_walkers/views/widgets/top_3_walkers_list.dart';
 
@@ -16,74 +18,37 @@ class LeaderboardTopWalkersTabView extends GetView<LeaderboardTopWalkersControll
 
   @override
   Widget build(BuildContext context) {
-    return Obx(() {
-      final selected = controller.selectedChip.value;
-
-      if (selected == LeaderboardTopWalkersPageEnum.global) {
-        // return RefreshIndicator(
-        //   onRefresh: postController.refreshAllPosts,
-        //   child: SingleChildScrollView(
-        //     controller: postController.postScrollController,
-        //     physics: const AlwaysScrollableScrollPhysics(),
-        //     child: Column(
-        //       crossAxisAlignment: CrossAxisAlignment.start,
-        //       children: [
-        //         _buildChipFilter(context),
-        //         SizedBox(height: 16.h),
-        //         SocialYourPageUpdatesView(),
-        //       ],
-        //     ),
-        //   ),
-        // );
-      } else if (selected == LeaderboardTopWalkersPageEnum.country) {
-        // return RefreshIndicator(
-        //   onRefresh: () async {
-        //     followingController.load(refresh: true);
-        //   },
-        //   child: SingleChildScrollView(
-        //     controller: followingController.scrollFriendsController,
-        //     physics: const AlwaysScrollableScrollPhysics(),
-        //     child: Column(
-        //       crossAxisAlignment: CrossAxisAlignment.start,
-        //       children: [
-        //         _buildChipFilter(context),
-        //         SizedBox(height: 16.h),
-        //         const SocialYourPageFollowingView(),
-        //       ],
-        //     ),
-        //   ),
-        // );
-      } else if (selected == LeaderboardTopWalkersPageEnum.province) {
-        // return RefreshIndicator(
-        //   onRefresh: () async {
-        //     followersController.load(refresh: true);
-        //   },
-        //   child: SingleChildScrollView(
-        //     controller: followersController.scrollFriendsController,
-        //     physics: const AlwaysScrollableScrollPhysics(),
-        //     child: Column(
-        //       crossAxisAlignment: CrossAxisAlignment.start,
-        //       children: [
-        //         _buildChipFilter(context),
-        //         SizedBox(height: 16.h),
-        //         const SocialYourPageFollowersView(),
-        //       ],
-        //     ),
-        //   ),
-        // );
-      }
-
-      return SingleChildScrollView(
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            _buildChipFilter(context),
-            const SizedBox(),
-            _buildTopWalkersList(context),
-          ],
+    return Stack(
+      children: [
+        RefreshIndicator(
+          onRefresh: () async {
+            controller.refreshLeaderboard();
+          },
+          child: SingleChildScrollView(
+            controller: controller.leaderboardScrollController,
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                _buildChipFilter(context),
+                const SizedBox(),
+                _buildTopWalkersList(context),
+                SizedBox(height: 80.h),
+              ],
+            ),
+          ),
         ),
-      );
-    });
+
+        Obx(
+          () {
+            if (controller.isLoadingGetLeaderboard.value && controller.pageLeaderboard.value == 1) {
+              return const SizedBox();
+            }
+
+            return _buildFloatingRank(context);
+          }
+        ),
+      ],
+    );
   }
 
   Widget _buildChipFilter(BuildContext context) {
@@ -115,6 +80,7 @@ class LeaderboardTopWalkersTabView extends GetView<LeaderboardTopWalkersControll
                   value: controller.isFriendsOnly.value,
                   onChanged: (newValue) {
                     controller.isFriendsOnly.value = newValue;
+                    controller.refreshLeaderboard();
                   },
                   activeGradient: const LinearGradient(
                     colors: [
@@ -208,41 +174,99 @@ class LeaderboardTopWalkersTabView extends GetView<LeaderboardTopWalkersControll
   }
 
   Widget _buildTopWalkersList(BuildContext context) {
-    return Column(
-      children: [
-        Top3WalkersList(
-          topWalkers: [
-            LeaderboardUserModel(
-              rank: 1,
-              name: 'James',
-              imageUrl: 'https://avatar.iran.liara.run/public/16',
-              totalStep: 4999999,
-            ),
-            LeaderboardUserModel(
-              rank: 2,
-              name: 'Danny',
-              imageUrl: 'https://avatar.iran.liara.run/public/26',
-              totalStep: 2999999,
-            ),
-            LeaderboardUserModel(
-              rank: 3,
-              name: 'You',
-              imageUrl: 'https://avatar.iran.liara.run/public/22',
-              totalStep: 1999999,
-            ),
-          ]
-        ),
+    return Obx(
+      () {
+        if (controller.isLoadingGetLeaderboard.value && controller.pageLeaderboard.value == 1) {
+          return const LeaderboardShimmerEffect();
+        }
 
-        // List view
-        ListView.builder(
-          shrinkWrap: true,
-          physics: const NeverScrollableScrollPhysics(),
-          itemCount: 15,
-          itemBuilder: (context, index) {
-            return OthersWalkers(isCurrentUser: index == 3);
-          },
-        ),
-      ],
+        LeaderboardUserModel? me = controller.me.value;
+
+        final otherWalkersList = controller.leaderboards.length > 3
+          ? controller.leaderboards.sublist(3)
+          : <LeaderboardUserModel>[];
+
+        return Column(
+          children: [
+            Top3WalkersList(
+              topWalkers: controller.leaderboards.take(3).toList().map((e) {
+                return e.copyWith(
+                  name: (me?.rank == e.rank) ? 'You' : e.name
+                );
+              }).toList(),
+            ),
+
+            // List view
+            controller.leaderboards.length > 3
+            ? ListView.builder(
+              shrinkWrap: true,
+              physics: const NeverScrollableScrollPhysics(),
+              itemCount: otherWalkersList.length + (controller.hasReacheMax.value ? 0 : 1),
+              itemBuilder: (context, index) {
+                if (index == otherWalkersList.length && !controller.hasReacheMax.value) {
+                  return const Padding(
+                    padding: EdgeInsets.all(8.0),
+                    child: Center(
+                      child: CircularProgressIndicator(),
+                    ),
+                  );
+                }
+
+                final walker = otherWalkersList[index];
+                final bool isCurrentUser = (me?.rank == walker.rank);
+
+                // ✨ KUNCI: Bungkus item user dengan VisibilityDetector ✨
+                if (isCurrentUser) {
+                  return VisibilityDetector(
+                    key: const Key('my_rank_in_list'),
+                    onVisibilityChanged: (visibilityInfo) {
+                      bool isVisible = visibilityInfo.visibleFraction > 0.1;
+                      controller.onMyRankVisibilityChanged(isVisible);
+                    },
+                    child: OthersWalkers(
+                      walker: walker,
+                      isCurrentUser: true,
+                    ),
+                  );
+                }
+
+                return OthersWalkers(
+                  walker: walker,
+                  isCurrentUser: false,
+                );
+              },
+            )
+            : const SizedBox.shrink(),
+          ],
+        );
+      }
     );
+  }
+
+  Widget _buildFloatingRank(BuildContext context) {
+    return Obx(() {
+      final me = controller.me.value;
+
+      // Gunakan AnimatedPositioned untuk animasi muncul/hilang yang mulus
+      return AnimatedPositioned(
+        duration: const Duration(milliseconds: 300),
+        curve: Curves.easeInOut,
+        // Posisikan di bawah layar jika disembunyikan, atau di atas jika ditampilkan
+        bottom: controller.showFloatingRank.value ? 16.h : -100.h,
+        left: 0,
+        right: 0,
+        child: (me != null)
+            ? Material(
+                elevation: 8,
+                borderRadius: BorderRadius.circular(12.r),
+                child: OthersWalkers(
+                  walker: me,
+                  isCurrentUser: true,
+                  isFloating: true,
+                ),
+              )
+            : const SizedBox.shrink(),
+      );
+    });
   }
 }

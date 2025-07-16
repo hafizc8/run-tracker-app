@@ -389,23 +389,11 @@ class HomeView extends GetView<HomeController> {
                         final currentUserRankIndex =
                             leaderboards.indexWhere((leader) => leader.id == currentUser.id);
                       
-                        // Helper function untuk format rank
-                        String formatRank(int? rank) {
-                          if (rank == null) return '-';
-                          if (rank == 1) return '1st';
-                          if (rank == 2) return '2nd';
-                          if (rank == 3) return '3rd';
-                          if (rank % 10 == 1 && rank % 100 != 11) return '${rank}st';
-                          if (rank % 10 == 2 && rank % 100 != 12) return '${rank}nd';
-                          if (rank % 10 == 3 && rank % 100 != 13) return '${rank}rd';
-                          return '${rank}th';
-                        }
-                      
                         /// Widget untuk tombol "See More"
                         Widget buildSeeMoreButton() {
                           return GestureDetector(
                             onTap: () {
-                              Get.snackbar("Coming soon", "Navigate to full leaderboard page.");
+                              Get.toNamed(AppRoutes.leaderboard);
                             },
                             child: Container(
                               height: 126.h,
@@ -446,7 +434,7 @@ class HomeView extends GetView<HomeController> {
                                   final bool isCurrentUser = walker.id == currentUser.id;
                                   return Expanded(
                                     child: WalkerProfile(
-                                      rank: formatRank(walker.rank),
+                                      rank: NumberHelper().formatRank(walker.rank),
                                       name: isCurrentUser ? 'Your' : (walker.name ?? '-'),
                                       imageUrl: walker.imageUrl ?? '',
                                     ),
@@ -472,7 +460,7 @@ class HomeView extends GetView<HomeController> {
                                     final bool isCurrentUser = walker.id == currentUser.id;
                                     return Expanded(
                                       child: WalkerProfile(
-                                        rank: formatRank(walker.rank),
+                                        rank: NumberHelper().formatRank(walker.rank),
                                         name: isCurrentUser ? 'Your' : (walker.name ?? '-'),
                                         imageUrl: walker.imageUrl ?? (isCurrentUser ? currentUser.imageUrl ?? '' : ''),
                                         backgroundColor: isCurrentUser ? const Color(0xFF393939) : null,

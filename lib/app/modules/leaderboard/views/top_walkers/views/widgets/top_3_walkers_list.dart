@@ -4,7 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:intl/intl.dart';
-import 'package:zest_mobile/app/core/models/model/home_page_data_model.dart';
+import 'package:zest_mobile/app/core/models/model/leaderboard_user_model.dart';
 import 'package:zest_mobile/app/core/shared/theme/color_schemes.dart';
 import 'package:zest_mobile/app/core/shared/widgets/shimmer_loading_circle.dart';
 
@@ -25,29 +25,29 @@ class Top3WalkersList extends StatelessWidget {
       padding: EdgeInsets.symmetric(vertical: 16.h),
       child: Row(
         mainAxisAlignment: MainAxisAlignment.center,
-        crossAxisAlignment: CrossAxisAlignment.center, // Ratakan ke bawah
+        crossAxisAlignment: CrossAxisAlignment.center,
         children: [
           // Peringkat 2 (Kiri)
           if (secondPlace != null)
             _PodiumWalkerProfile(walker: secondPlace)
           else
-            const Expanded(child: SizedBox()), // Beri ruang kosong jika data tidak ada
+            const Expanded(child: SizedBox()),
 
           SizedBox(width: 16.w),
 
           // Peringkat 1 (Tengah)
           if (firstPlace != null)
-            _PodiumWalkerProfile(walker: firstPlace)
+            _PodiumWalkerProfile(
+              walker: firstPlace,
+              isFirstPlace: (thirdPlace == null) ? false : true,
+            )
           else
             const Expanded(child: SizedBox()),
 
           SizedBox(width: 16.w),
 
           // Peringkat 3 (Kanan)
-          if (thirdPlace != null)
-            _PodiumWalkerProfile(walker: thirdPlace)
-          else
-            const Expanded(child: SizedBox()),
+          if (thirdPlace != null) _PodiumWalkerProfile(walker: thirdPlace)
         ],
       ),
     );
@@ -57,13 +57,15 @@ class Top3WalkersList extends StatelessWidget {
 /// Widget internal untuk menampilkan satu profil walker di podium.
 class _PodiumWalkerProfile extends StatelessWidget {
   final LeaderboardUserModel walker;
+  final bool isFirstPlace;
 
-  const _PodiumWalkerProfile({required this.walker});
+  const _PodiumWalkerProfile({
+    required this.walker,
+    this.isFirstPlace = false,
+  });
 
   @override
   Widget build(BuildContext context) {
-    final bool isFirstPlace = walker.rank == 1;
-
     // Tentukan ukuran dinamis berdasarkan peringkat
     final double avatarSize = isFirstPlace ? 100.r : 70.r;
     final double rankBadgeSize = isFirstPlace ? 40.r : 29.r;
@@ -145,7 +147,7 @@ class _PodiumWalkerProfile extends StatelessWidget {
           
           // Jumlah langkah
           Text(
-            NumberFormat('#,###').format(walker.totalStep ?? 0),
+            NumberFormat('#,###', "id_ID").format(walker.totalStep ?? 0),
             style: Theme.of(context).textTheme.titleSmall?.copyWith(
               color: const Color(0xFF656565),
               fontSize: 12,

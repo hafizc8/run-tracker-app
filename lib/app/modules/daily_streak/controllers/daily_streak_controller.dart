@@ -1,4 +1,5 @@
 import 'package:get/get.dart';
+import 'package:table_calendar/table_calendar.dart';
 
 class DailyStreakController extends GetxController {
   // State untuk mengontrol hari yang sedang ditampilkan di kalender
@@ -12,8 +13,13 @@ class DailyStreakController extends GetxController {
 
   // Method untuk menangani saat pengguna memilih tanggal
   void onDaySelected(DateTime selected, DateTime focused) {
-    selectedDay.value = selected;
-    focusedDay.value = focused;
+    // Jika pengguna menekan tanggal yang sudah dipilih, batalkan pilihan.
+    if (isSameDay(selectedDay.value, selected)) {
+      selectedDay.value = null;
+    } else {
+      selectedDay.value = selected;
+      focusedDay.value = focused;
+    }
   }
 
   // Method untuk menangani saat pengguna menggeser bulan

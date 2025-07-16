@@ -57,4 +57,15 @@ class NumberHelper {
     );
     return formatter.format(amount); // contoh: Rp 10.000
   }
+
+  String formatRank(int? rank) {
+    if (rank == null) return '-';
+    if (rank == 1) return '1st';
+    if (rank == 2) return '2nd';
+    if (rank == 3) return '3rd';
+    if (rank % 10 == 1 && rank % 100 != 11) return '${rank}st';
+    if (rank % 10 == 2 && rank % 100 != 12) return '${rank}nd';
+    if (rank % 10 == 3 && rank % 100 != 13) return '${rank}rd';
+    return '${rank}th';
+  }
 }

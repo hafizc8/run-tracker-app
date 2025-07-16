@@ -1,4 +1,6 @@
 import 'package:zest_mobile/app/core/models/enums/http_method_enum.dart';
+import 'package:zest_mobile/app/core/models/interface/pagination_response_model.dart';
+import 'package:zest_mobile/app/core/models/model/daily_record_model.dart';
 import 'package:zest_mobile/app/core/models/model/record_activity_model.dart';
 import 'package:zest_mobile/app/core/services/api_service.dart';
 import 'package:zest_mobile/app/core/values/app_constants.dart';
@@ -78,6 +80,31 @@ class RecordActivityService {
       );
 
       return response.data['success'];
+    } catch (e) {
+      rethrow;
+    }
+  }
+
+  Future<PaginatedDataResponse<DailyRecordModel>> getDailyRecord({
+    String? yearMonth, // YYYY-MM
+    int page = 1,
+    int? limit = 32,
+  }) async {
+    try {
+      final response = await _apiService.request(
+        path: AppConstants.dailyRecordGetAll,
+        method: HttpMethod.get,
+        queryParams: {
+          'page': page.toString(),
+          if (limit != null) 'limit': limit.toString(),
+          if (yearMonth != null) 'month': yearMonth,
+        },
+      );
+
+      return PaginatedDataResponse<DailyRecordModel>.fromJson(
+        response.data['data'],
+        (json) => DailyRecordModel.fromJson(json),
+      );
     } catch (e) {
       rethrow;
     }

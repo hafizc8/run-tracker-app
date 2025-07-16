@@ -38,6 +38,7 @@ class UserModel extends Model<UserModel> {
     this.followingCount,
     this.clubsCount,
     this.badgesCount,
+    this.recordDailyStreakCount,
     this.userPreference,
     this.currentUserXp,
     this.currentUserStamina,
@@ -76,6 +77,7 @@ class UserModel extends Model<UserModel> {
   final int? followingCount;
   final int? clubsCount;
   final int? badgesCount;
+  final int? recordDailyStreakCount;
   final UserPreferenceModel? userPreference;
   final CurrentUserXpModel? currentUserXp;
   final CurrentUserStaminaModel? currentUserStamina;
@@ -114,6 +116,7 @@ class UserModel extends Model<UserModel> {
     int? followingCount,
     int? clubsCount,
     int? badgesCount,
+    int? recordDailyStreakCount,
     UserPreferenceModel? userPreference,
     CurrentUserXpModel? currentUserXp,
     CurrentUserStaminaModel? currentUserStamina,
@@ -152,6 +155,7 @@ class UserModel extends Model<UserModel> {
       followingCount: followingCount ?? this.followingCount,
       clubsCount: clubsCount ?? this.clubsCount,
       badgesCount: badgesCount ?? this.badgesCount,
+      recordDailyStreakCount: recordDailyStreakCount ?? this.recordDailyStreakCount,
       userPreference: userPreference ?? this.userPreference,
       currentUserXp: currentUserXp ?? this.currentUserXp,
       currentUserStamina: currentUserStamina ?? this.currentUserStamina,
@@ -193,6 +197,7 @@ class UserModel extends Model<UserModel> {
       followingCount: json["following_count"],
       clubsCount: json["clubs_count"],
       badgesCount: json["badges_count"],
+      recordDailyStreakCount: json["record_daily_streak_count"],
       userPreference: json["user_preference"] != null ? UserPreferenceModel.fromJson(json["user_preference"]) : null,
       currentUserXp: json["current_user_xp"] != null ? CurrentUserXpModel.fromJson(json["current_user_xp"]) : null,
       currentUserStamina: json["current_user_stamina"] != null ? CurrentUserStaminaModel.fromJson(json["current_user_stamina"]) : null,
@@ -237,6 +242,7 @@ class UserModel extends Model<UserModel> {
         "following_count": followingCount,
         "clubs_count": clubsCount,
         "badges_count": badgesCount,
+        "record_daily_streak_count": recordDailyStreakCount,
         "user_preference": userPreference?.toJson(),
         "current_user_xp": currentUserXp?.toJson(),
         "current_user_stamina": currentUserStamina?.toJson(),
@@ -277,6 +283,7 @@ class UserModel extends Model<UserModel> {
         followingCount,
         clubsCount,
         badgesCount,
+        recordDailyStreakCount,
         userPreference,
         currentUserXp,
         currentUserStamina,

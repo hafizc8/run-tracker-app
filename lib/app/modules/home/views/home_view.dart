@@ -226,13 +226,13 @@ class HomeView extends GetView<HomeController> {
                           onTap: () => Get.toNamed(AppRoutes.dailyStreak),
                           // Widget ikon Anda
                           child: SizedBox(
-                            width: 21.w + 6,
-                            height: 21.w + 19,
+                            width: 23.w + 6,
+                            height: 23.w + 19,
                             child: Stack(
                               children: [
                                 SvgPicture.asset(
                                   'assets/icons/ic_streak.svg',
-                                  width: 21.w,
+                                  width: 23.w,
                                 ),
                                 Obx(() {
                                   if (controller.homePageData.value?.recordDailyStreakCount == 0) {
@@ -247,11 +247,11 @@ class HomeView extends GetView<HomeController> {
                                         shape: BoxShape.circle,
                                         color: Colors.white,
                                       ),
-                                      padding: const EdgeInsets.all(6),
+                                      padding: const EdgeInsets.all(5),
                                       child: Text(
                                         '${controller.homePageData.value?.recordDailyStreakCount ?? 0}',
                                         style: GoogleFonts.poppins(
-                                          fontSize: 10.sp,
+                                          fontSize: 9.sp,
                                           fontWeight: FontWeight.w700,
                                           color: const Color(0xFF292929),
                                         ),

@@ -29,7 +29,7 @@ import 'package:zest_mobile/app/routes/app_routes.dart';
 import 'dart:ui' as ui;
 
 class RecordActivityController extends GetxController {
-  final _service = FlutterBackgroundService(); // Instance service
+  final _service = FlutterBackgroundService();
   final _localDb = LocalActivityService();
   final _recordActivityService = sl<RecordActivityService>();
   final _locationService = sl<LocationService>();
@@ -485,6 +485,9 @@ class RecordActivityController extends GetxController {
       await _syncActivityData();
 
       final recordActivityData = await _recordActivityService.endSession(recordActivityId: _recordActivityId!);
+
+      _service.invoke("stopService");
+
       if (recordActivityData.id?.isNotEmpty ?? false) {
         await _localDb.clearAllUnsyncedData();
         Get.offAndToNamed(AppRoutes.activityEdit, arguments: recordActivityData);
@@ -498,8 +501,7 @@ class RecordActivityController extends GetxController {
   }
 
   void deleteActivity() async {
-    final service = FlutterBackgroundService();
-    service.invoke("stopRecording");
+    _service.invoke("stopService");
     await _localDb.clearAllUnsyncedData();
   }
 

@@ -32,13 +32,23 @@ void onStart(ServiceInstance service) async {
 
   bool justResumed = false;
 
+  StreamSubscription<int>? pedometerSubscription;
+  StreamSubscription<Position>? positionSubscription;
+
+  void cleanup() {
+    _log(service, LogLevel.warning, "Performing cleanup: Canceling all timers and subscriptions.");
+    updateTimer?.cancel();
+    pedometerSubscription?.cancel();
+    positionSubscription?.cancel();
+  }
+
   // =========================================================================
   // KUNCI #1: ARSITEKTUR SENSOR SELALU AKTIF
   // Stream diinisialisasi satu kali saja dan berjalan selama service hidup.
   // Ini mencegah error inisialisasi ulang.
   // =========================================================================
 
-  Pedometer().stepCountStream().listen((steps) {
+  pedometerSubscription = Pedometer().stepCountStream().listen((steps) {
 
     if (!isRecording || isPaused) {
       // Jika tidak merekam, cukup simpan state terakhir untuk perhitungan nanti
@@ -56,20 +66,15 @@ void onStart(ServiceInstance service) async {
     }
 
     stepsInSession = steps - totalStepsAtStart;
-  }).onError((error) {
-    _log(service, LogLevel.error, "Pedometer Stream Error", error);
-    // Anda bisa mengirim error ini ke UI jika perlu
-    // service.invoke('error', {'source': 'pedometer', 'message': error.toString()});
   });
 
   // --- Listener Geolocator (Selalu Aktif) ---
-  final positionStream = Geolocator.getPositionStream(
+  positionSubscription = Geolocator.getPositionStream(
     locationSettings: const LocationSettings(
       accuracy: LocationAccuracy.bestForNavigation,
       distanceFilter: 0,
     ),
-  );
-  positionStream.listen((Position position) {
+  ).listen((Position position) {
     if (!isRecording || isPaused) return; // Abaikan jika tidak merekam atau sedang pause
 
     final newPoint = LocationPoint(
@@ -112,8 +117,6 @@ void onStart(ServiceInstance service) async {
       "distance": currentDistanceInMeters,
       "location": latestLocation,
     });
-  }).onError((error) {
-    _log(service, LogLevel.error, "Geolocator Stream Error", error);
   });
 
   // =========================================================================
@@ -197,10 +200,8 @@ void onStart(ServiceInstance service) async {
   });
 
   service.on('stopService').listen((event) {
-    _log(service, LogLevel.warning,
-        "==> Event 'stopService' received. Shutting down.");
-    updateTimer?.cancel();
-    // Tidak perlu membatalkan stream utama karena mereka terikat pada siklus hidup service
+    _log(service, LogLevel.warning, "==> Event 'stopService' received. Shutting down.");
+    cleanup();
     service.stopSelf();
   });
 

@@ -28,10 +28,7 @@ class Top3WalkersList extends StatelessWidget {
         crossAxisAlignment: CrossAxisAlignment.center,
         children: [
           // Peringkat 2 (Kiri)
-          if (secondPlace != null)
-            _PodiumWalkerProfile(walker: secondPlace)
-          else
-            const Expanded(child: SizedBox()),
+          if (secondPlace != null) _PodiumWalkerProfile(walker: secondPlace),
 
           SizedBox(width: 16.w),
 
@@ -39,7 +36,7 @@ class Top3WalkersList extends StatelessWidget {
           if (firstPlace != null)
             _PodiumWalkerProfile(
               walker: firstPlace,
-              isFirstPlace: (thirdPlace == null) ? false : true,
+              isFirstPlace: thirdPlace == null ? (secondPlace == null ? true : false) : true,
             )
           else
             const Expanded(child: SizedBox()),
@@ -67,7 +64,7 @@ class _PodiumWalkerProfile extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     // Tentukan ukuran dinamis berdasarkan peringkat
-    final double avatarSize = isFirstPlace ? 100.r : 70.r;
+    final double avatarSize = isFirstPlace ? 90.r : 70.r;
     final double rankBadgeSize = isFirstPlace ? 40.r : 29.r;
     final double rankFontSize = isFirstPlace ? 20.sp : 14.sp;
 

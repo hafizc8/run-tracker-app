@@ -1,5 +1,6 @@
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/widgets.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:intl/intl.dart';
 import 'package:zest_mobile/app/core/models/model/leaderboard_user_model.dart';
@@ -23,8 +24,8 @@ class OthersWalkers extends StatelessWidget {
         padding: EdgeInsets.only(
           bottom: 10.h,
           top: 10.h,
-          left: 18.w,
-          right: 18.w,
+          left: 12.w,
+          right: 12.w,
         ),
         // Tambahkan shadow jika ini adalah kartu yang mengambang
         decoration: (isCurrentUser
@@ -38,14 +39,22 @@ class OthersWalkers extends StatelessWidget {
                   )
                 : const BoxDecoration()),
         child: Row(
+          crossAxisAlignment: CrossAxisAlignment.center,
+          mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            Text(
-              NumberHelper().formatRank(walker?.rank),
-              style: Theme.of(context).textTheme.bodySmall?.copyWith(
-                    fontWeight: FontWeight.w700,
-                    color: isCurrentUser ? const Color(0xFF2E2E2E) : const Color(0xFFA5A5A5),
-                    fontSize: 12.sp,
-                  ),
+            ConstrainedBox(
+              constraints: BoxConstraints(
+                minWidth: 28.w,
+                maxWidth: 28.w,
+              ),
+              child: Text(
+                NumberHelper().formatRank(walker?.rank),
+                style: Theme.of(context).textTheme.bodySmall?.copyWith(
+                  fontWeight: FontWeight.w700,
+                  color: isCurrentUser ? const Color(0xFF2E2E2E) : const Color(0xFFA5A5A5),
+                  fontSize: 12.sp,
+                ),
+              ),
             ),
             SizedBox(width: 10.w),
             ClipOval(
@@ -62,22 +71,32 @@ class OthersWalkers extends StatelessWidget {
               ),
             ),
             SizedBox(width: 12.w),
-            Text(
-              '${isCurrentUser ? 'You' : walker?.name}',
-              style: Theme.of(context).textTheme.bodySmall?.copyWith(
-                    fontWeight: FontWeight.normal,
-                    color: isCurrentUser ? const Color(0xFF2E2E2E) : const Color(0xFFA5A5A5),
-                    fontSize: 12.sp,
-                  ),
+            ConstrainedBox(
+              constraints: BoxConstraints(
+                minWidth: 150.w,
+                maxWidth: 150.w,
+              ),
+              child: Text(
+                '${isCurrentUser ? 'You' : walker?.name}',
+                style: Theme.of(context).textTheme.bodySmall?.copyWith(
+                  fontWeight: FontWeight.normal,
+                  color: isCurrentUser ? const Color(0xFF2E2E2E) : const Color(0xFFA5A5A5),
+                  fontSize: 12.sp,
+                ),
+                maxLines: 2,
+                overflow: TextOverflow.ellipsis,
+              ),
             ),
             const Spacer(),
             Text(
               NumberFormat('#,###', 'id_ID').format(walker?.totalStep ?? 0),
               style: Theme.of(context).textTheme.bodySmall?.copyWith(
-                    fontWeight: FontWeight.normal,
-                    color: isCurrentUser ? const Color(0xFF2E2E2E) : darkColorScheme.primary,
-                    fontSize: 12.sp,
-                  ),
+                fontWeight: FontWeight.normal,
+                color: isCurrentUser ? const Color(0xFF2E2E2E) : darkColorScheme.primary,
+                fontSize: 12.sp,
+              ),
+              maxLines: 1,
+              overflow: TextOverflow.ellipsis,
             ),
           ],
         ),

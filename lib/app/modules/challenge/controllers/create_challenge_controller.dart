@@ -62,8 +62,8 @@ class ChallangeCreateController extends GetxController {
       Get.snackbar(
         'Error',
         'You cannot delete your team',
-        backgroundColor: Colors.red,
-        colorText: Colors.white,
+        backgroundColor: Colors.yellow,
+        colorText: Colors.black,
       );
       return;
     }
@@ -91,11 +91,19 @@ class ChallangeCreateController extends GetxController {
   }
 
   void addTeam() {
-    if ((form.value.teams?.length ?? 0) < 4) {
-      form.value = form.value.copyWith(teams: [
-        ...(form.value.teams ?? []),
-        const Teams(name: 'New Team', members: []),
-      ]);
+    if ((form.value.teams?.length ?? 0) >= 4) {
+      Get.snackbar(
+        'Warning!',
+        'You cannot add more than 4 teams',
+        backgroundColor: Colors.yellow,
+        colorText: Colors.black,
+      );
+      return;
     }
+
+    form.value = form.value.copyWith(teams: [
+      ...(form.value.teams ?? []),
+      const Teams(name: 'New Team', members: []),
+    ]);
   }
 }

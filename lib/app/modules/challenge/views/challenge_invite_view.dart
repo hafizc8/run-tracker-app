@@ -138,11 +138,10 @@ class ChallengeInviteFriendView extends GetView<ChallengeInviteController> {
           child: SizedBox(
             height: 55,
             child: GradientElevatedButton(
-              onPressed: controller.invites.isEmpty ||
-                      controller.isLoadingInviteFriend.value
+              onPressed: controller.invites.isEmpty
                   ? null
-                  : () async {
-                      await controller.inviteEvent(isReserved: false);
+                  : () {
+                      controller.inviteEvent();
                     },
               child: Visibility(
                 visible: !controller.isLoadingInviteFriend.value,

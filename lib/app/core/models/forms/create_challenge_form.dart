@@ -101,11 +101,13 @@ class CreateChallengeFormModel extends FormModel<CreateChallengeFormModel>
 }
 
 class Teams extends Equatable {
+  final String? id;
   final String? name;
   final bool? isEdit;
   final bool? isOwner;
   final List<User>? members;
   const Teams({
+    this.id,
     this.name,
     this.members,
     this.isOwner,
@@ -113,12 +115,14 @@ class Teams extends Equatable {
   });
 
   Teams copyWith({
+    String? id,
     String? name,
     List<User>? members,
     bool? isEdit,
     bool? isOwner,
   }) {
     return Teams(
+      id: id ?? this.id,
       name: name ?? this.name,
       members: members ?? this.members,
       isOwner: isOwner ?? this.isOwner,
@@ -128,6 +132,7 @@ class Teams extends Equatable {
 
   @override
   List<Object?> get props => [
+        id,
         name,
         members,
         isOwner,

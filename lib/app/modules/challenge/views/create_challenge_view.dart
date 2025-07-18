@@ -1,10 +1,8 @@
 import 'package:flutter/material.dart';
-import 'package:flutter/widgets.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
 import 'package:zest_mobile/app/core/shared/widgets/gradient_elevated_button.dart';
 import 'package:zest_mobile/app/modules/challenge/controllers/create_challenge_controller.dart';
-import 'package:zest_mobile/app/routes/app_routes.dart';
 
 class ChallengeCreateView extends GetView<ChallangeCreateController> {
   const ChallengeCreateView({super.key});

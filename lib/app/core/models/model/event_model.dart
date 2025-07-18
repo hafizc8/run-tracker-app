@@ -274,6 +274,7 @@ class User extends Model {
   });
 
   final String? id;
+
   final String? name;
   final String? imagePath;
   final String? imageUrl;

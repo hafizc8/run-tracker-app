@@ -1,11 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:zest_mobile/app/core/di/service_locator.dart';
-import 'package:zest_mobile/app/core/exception/app_exception.dart';
-import 'package:zest_mobile/app/core/exception/handler/app_exception_handler_info.dart';
 import 'package:zest_mobile/app/core/models/interface/pagination_response_model.dart';
+import 'package:zest_mobile/app/core/models/model/event_model.dart';
 import 'package:zest_mobile/app/core/models/model/user_mini_model.dart';
-import 'package:zest_mobile/app/core/services/event_service.dart';
 import 'package:zest_mobile/app/core/services/user_service.dart';
 import 'package:zest_mobile/app/core/shared/helpers/debouncer.dart';
 
@@ -14,7 +12,7 @@ class ChallengeInviteController extends GetxController {
   var isLoadingInviteFriend = false.obs;
   var isLoadingReserveFriend = false.obs;
   var hasReacheMaxFriend = false.obs;
-  final _eventService = sl<EventService>();
+
   final _userService = sl<UserService>();
 
   var friends = <UserMiniModel>[].obs;
@@ -31,14 +29,10 @@ class ChallengeInviteController extends GetxController {
   var search = ''.obs;
   var resultSearchEmpty = false.obs;
 
-  var eventId = '';
-
   @override
   void onInit() {
     super.onInit();
-    if (Get.arguments != null) {
-      eventId = Get.arguments['eventId'];
-    }
+
     loadFriends();
     debounce(
       search,
@@ -146,30 +140,17 @@ class ChallengeInviteController extends GetxController {
     }
   }
 
-  Future<void> inviteEvent({bool? isReserved}) async {
-    isLoadingInviteFriend.value = true;
-    try {
-      bool isSuccess = await _eventService.inviteOrReserveEvent(
-        eventId,
-        isReserved: isReserved,
-        userIds: invites.map((e) => e.id).toList(),
-      );
-
-      if (isSuccess) {
-        Get.back(result: true);
-      }
-    } on AppException catch (e) {
-      // show error snackbar, toast, etc
-      AppExceptionHandlerInfo.handle(e);
-    } catch (e) {
-      Get.snackbar(
-        'Error',
-        e.toString(),
-        backgroundColor: Colors.red,
-        colorText: Colors.white,
-      );
-    } finally {
-      isLoadingInviteFriend.value = false;
-    }
+  void inviteEvent() {
+    List<User> result = invites
+        .map(
+          (e) => User(
+            id: e.id,
+            name: e.name,
+            imagePath: e.imagePath,
+            imageUrl: e.imageUrl,
+          ),
+        )
+        .toList();
+    Get.back(result: result);
   }
 }

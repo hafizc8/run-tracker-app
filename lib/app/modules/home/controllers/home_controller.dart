@@ -113,7 +113,7 @@ class HomeController extends GetxController {
     final startTime = DateTime(now.year, now.month, now.day);
     int pedometerSteps = 0;
     try {
-      // pedometerSteps = await Pedometer().getStepCount(from: startTime, to: now);
+      pedometerSteps = await Pedometer().getStepCount(from: startTime, to: now);
     } catch (e) {
       _logService.log
           .e("Failed to get initial step count from Pedometer.", error: e);
@@ -141,26 +141,26 @@ class HomeController extends GetxController {
     final startTime = DateTime(now.year, now.month, now.day);
     int currentPedometerSteps = 0;
     try {
-      // currentPedometerSteps =
-      //     await Pedometer().getStepCount(from: startTime, to: now);
+      currentPedometerSteps =
+          await Pedometer().getStepCount(from: startTime, to: now);
 
       // get step di jam 13:30 sd 13:40
       final startTimeTest = DateTime(2025, 7, 11, 13, 30);
       final endTimeTest = DateTime(2025, 7, 11, 13, 40);
 
-      // int testGetSteps =
-      //     await Pedometer().getStepCount(from: startTimeTest, to: endTimeTest);
-      // _logService.log
-      //     .i("TEST: $startTimeTest to $endTimeTest = $testGetSteps steps.");
+      int testGetSteps =
+          await Pedometer().getStepCount(from: startTimeTest, to: endTimeTest);
+      _logService.log
+          .i("TEST: $startTimeTest to $endTimeTest = $testGetSteps steps.");
 
       // get step di jam 13:35 sd 13:36
       final startTimeTest2 = DateTime(2025, 7, 11, 13, 35);
       final endTimeTest2 = DateTime(2025, 7, 11, 13, 36);
 
-      // int testGetSteps2 = await Pedometer()
-      //     .getStepCount(from: startTimeTest2, to: endTimeTest2);
-      // _logService.log
-      //     .i("TEST: $startTimeTest2 to $endTimeTest2 = $testGetSteps2 steps.");
+      int testGetSteps2 = await Pedometer()
+          .getStepCount(from: startTimeTest2, to: endTimeTest2);
+      _logService.log
+          .i("TEST: $startTimeTest2 to $endTimeTest2 = $testGetSteps2 steps.");
     } catch (e) {
       _logService.log.e("Failed to get step count during sync.", error: e);
       return; // Hentikan jika gagal mengambil data

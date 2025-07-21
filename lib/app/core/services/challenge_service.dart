@@ -3,6 +3,7 @@ import 'package:zest_mobile/app/core/models/forms/create_challenge_form.dart';
 import 'package:zest_mobile/app/core/models/interface/pagination_response_model.dart';
 import 'package:zest_mobile/app/core/models/model/challenge_detail_model.dart';
 import 'package:zest_mobile/app/core/models/model/challenge_model.dart';
+import 'package:zest_mobile/app/core/models/model/challenge_team_model.dart';
 import 'package:zest_mobile/app/core/services/api_service.dart';
 import 'package:zest_mobile/app/core/values/app_constants.dart';
 
@@ -38,7 +39,7 @@ class ChallengeService {
     }
   }
 
-  Future<bool> storeChallenge(CreateChallengeFormModel form) async {
+  Future<ChallengeModel?> storeChallenge(CreateChallengeFormModel form) async {
     try {
       final response = await _apiService.request(
         path: AppConstants.challenge(),
@@ -50,7 +51,49 @@ class ChallengeService {
         throw Exception('Failed to create challenge');
       }
 
-      return response.data['success'];
+      return ChallengeModel.fromJson(response.data['data']);
+    } catch (e) {
+      rethrow;
+    }
+  }
+
+  Future<ChallengeModel?> cancelChallenge(String id) async {
+    try {
+      final response = await _apiService.request(
+        path: AppConstants.challengeCancel(id: id),
+        method: HttpMethod.post,
+      );
+
+      if (response.statusCode != 200) {
+        throw Exception('Failed to create challenge');
+      }
+
+      return ChallengeModel.fromJson(response.data['data']);
+    } catch (e) {
+      rethrow;
+    }
+  }
+
+  Future<PaginatedDataResponse<ChallengeTeamsModel>> challengeUser(
+    String id,
+    String team,
+  ) async {
+    try {
+      final response = await _apiService.request(
+          path: AppConstants.challengeUser(id: id),
+          method: HttpMethod.get,
+          queryParams: {
+            'team': team,
+          });
+
+      if (response.statusCode != 200) {
+        throw Exception('Failed to create challenge');
+      }
+
+      return PaginatedDataResponse<ChallengeTeamsModel>.fromJson(
+        response.data['data'],
+        (json) => ChallengeTeamsModel.fromJson(json),
+      );
     } catch (e) {
       rethrow;
     }

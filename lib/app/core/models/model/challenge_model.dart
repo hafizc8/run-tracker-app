@@ -1,7 +1,7 @@
 import 'package:intl/intl.dart';
 import 'package:zest_mobile/app/core/models/interface/model_interface.dart';
 
-class ChallengeModel extends Model {
+class ChallengeModel extends Model<ChallengeModel> {
   ChallengeModel({
     required this.id,
     required this.type,

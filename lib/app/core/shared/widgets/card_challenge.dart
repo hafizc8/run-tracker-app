@@ -5,6 +5,7 @@ import 'package:flutter_svg/flutter_svg.dart';
 import 'package:zest_mobile/app/core/extension/date_extension.dart';
 import 'package:zest_mobile/app/core/models/enums/challenge_enum.dart';
 import 'package:zest_mobile/app/core/models/model/challenge_model.dart';
+import 'package:zest_mobile/app/core/shared/widgets/gradient_outlined_button.dart';
 
 class CardChallenge extends StatelessWidget {
   const CardChallenge({super.key, required this.challengeModel});
@@ -255,6 +256,20 @@ class CardChallenge extends StatelessWidget {
                 ),
               ],
             ),
+            if (challengeModel.cancelledAt != null) ...[
+              const SizedBox(height: 16),
+              GradientOutlinedButton(
+                style: ButtonStyle(
+                  shape: MaterialStateProperty.all(
+                    RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(11.r),
+                    ),
+                  ),
+                ),
+                onPressed: null,
+                child: const Text('Cancelled'),
+              ),
+            ]
           ],
         ),
       ),

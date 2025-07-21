@@ -1,4 +1,3 @@
-import 'package:equatable/equatable.dart';
 import 'package:zest_mobile/app/core/models/interface/model_interface.dart';
 
 class ChallengeTeamsModel extends Model {

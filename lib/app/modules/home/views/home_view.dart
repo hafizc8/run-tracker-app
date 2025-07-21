@@ -532,8 +532,10 @@ class HomeView extends GetView<HomeController> {
                 GestureDetector(
                   onTap: () async {
                     var res = await Get.toNamed(AppRoutes.challengeCreate);
-                    if (res != null && res) {
-                      Get.toNamed(AppRoutes.challengedetails);
+                    if (res != null) {
+                      Get.toNamed(AppRoutes.challengedetails, arguments: {
+                        'challengeId': res.id,
+                      });
                     }
                   },
                   child: Container(

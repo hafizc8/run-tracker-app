@@ -7,6 +7,7 @@ import 'package:zest_mobile/app/core/exception/app_exception.dart';
 import 'package:zest_mobile/app/core/exception/handler/app_exception_handler_info.dart';
 import 'package:zest_mobile/app/core/models/enums/app_exception_enum.dart';
 import 'package:zest_mobile/app/core/models/forms/create_challenge_form.dart';
+import 'package:zest_mobile/app/core/models/model/challenge_model.dart';
 import 'package:zest_mobile/app/core/models/model/event_model.dart';
 import 'package:zest_mobile/app/core/services/auth_service.dart';
 import 'package:zest_mobile/app/core/services/challenge_service.dart';
@@ -47,8 +48,8 @@ class ChallangeCreateController extends GetxController {
   Future<void> storeChallenge({bool isTeam = false}) async {
     isLoading.value = true;
     try {
-      final res = await _challengeService.storeChallenge(form.value);
-      if (res) {
+      ChallengeModel? res = await _challengeService.storeChallenge(form.value);
+      if (res != null) {
         if (isTeam) {
           Get.back();
           Get.back(result: res);

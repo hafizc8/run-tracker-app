@@ -38,29 +38,30 @@ void onStart(ServiceInstance service) async {
   // Ini mencegah error inisialisasi ulang.
   // =========================================================================
 
-  // Pedometer().stepCountStream().listen((steps) {
-  //   if (!isRecording || isPaused) {
-  //     // Jika tidak merekam, cukup simpan state terakhir untuk perhitungan nanti
-  //     totalStepsAtPause = steps;
-  //     return;
-  //   }
+  Pedometer().stepCountStream().listen((steps) {
+    if (!isRecording || isPaused) {
+      // Jika tidak merekam, cukup simpan state terakhir untuk perhitungan nanti
+      totalStepsAtPause = steps;
+      return;
+    }
 
-  //   _log(service, LogLevel.verbose, "Pedometer raw event: $steps steps.");
+    _log(service, LogLevel.verbose, "Pedometer raw event: $steps steps.");
 
-  //   // Jika baru saja resume dari pause
-  //   if (totalStepsAtPause > 0) {
-  //     int stepsDuringPause = steps - totalStepsAtPause;
-  //     totalStepsAtStart +=
-  //         stepsDuringPause; // Tambahkan langkah saat pause ke offset
-  //     totalStepsAtPause = 0; // Reset
-  //   }
+    // Jika baru saja resume dari pause
+    if (totalStepsAtPause > 0) {
+      int stepsDuringPause = steps - totalStepsAtPause;
+      totalStepsAtStart +=
+          stepsDuringPause; // Tambahkan langkah saat pause ke offset
+      totalStepsAtPause = 0; // Reset
+    }
 
-  //   stepsInSession = steps - totalStepsAtStart;
-  // }).onError((error) {
-  //   _log(service, LogLevel.error, "Pedometer Stream Error", error);
-  //   // Anda bisa mengirim error ini ke UI jika perlu
-  //   // service.invoke('error', {'source': 'pedometer', 'message': error.toString()});
-  // });
+    stepsInSession = steps - totalStepsAtStart;
+  }).onError((error) {
+    _log(service, LogLevel.error, "Pedometer Stream Error", error);
+    // Anda bisa mengirim error ini ke UI jika perlu
+    service
+        .invoke('error', {'source': 'pedometer', 'message': error.toString()});
+  });
 
   // --- Listener Geolocator (Selalu Aktif) ---
   final positionStream = Geolocator.getPositionStream(
@@ -140,10 +141,10 @@ void onStart(ServiceInstance service) async {
     totalStepsAtPause = 0;
 
     // Ambil total langkah saat ini sebagai titik awal (offset)
-    // Pedometer()
-    //     .stepCountStream()
-    //     .first
-    //     .then((value) => totalStepsAtStart = value);
+    Pedometer()
+        .stepCountStream()
+        .first
+        .then((value) => totalStepsAtStart = value);
 
     isRecording = true;
 

@@ -1,4 +1,4 @@
-import 'package:device_preview/device_preview.dart';
+// import 'package:device_preview/device_preview.dart';
 import 'package:zest_mobile/app/core/services/log_service.dart';
 import 'app/app.dart';
 import 'package:firebase_core/firebase_core.dart';
@@ -50,11 +50,11 @@ void main() async {
 
   // 6. Jalankan Aplikasi
   runApp(
-    DevicePreview(
-      enabled: !kReleaseMode, // Hanya aktif saat mode debug
-      builder: (context) => const App(),
-    ),
-    // const App(),
+    // DevicePreview(
+    //   enabled: !kReleaseMode, // Hanya aktif saat mode debug
+    //   builder: (context) => const App(),
+    // ),
+    const App(),
   );
 }
 

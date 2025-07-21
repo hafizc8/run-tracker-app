@@ -89,8 +89,11 @@ class AppConstants {
       "/record-activity/$recordActivityId/end";
 
   static const String dailyRecordSync = "/record-daily";
+  static const String dailyRecordGetAll = "/record-daily";
 
   static const String homePageData = "/home";
-  static const String staminaRequirement =
-      "/record-activity/stamina-requirement";
+  static const String staminaRequirement = "/record-activity/stamina-requirement";
+
+  // leaderboard
+  static const String leaderboard = "/leaderboard";
 }

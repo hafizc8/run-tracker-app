@@ -6,6 +6,7 @@ import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:zest_mobile/app/core/models/forms/edit_activity_form.dart';
 import 'package:zest_mobile/app/core/models/model/post_model.dart';
 import 'package:zest_mobile/app/core/shared/widgets/custom_circular_progress_indicator.dart';
+import 'package:zest_mobile/app/core/shared/widgets/custom_dialog_confirmation.dart';
 import 'package:zest_mobile/app/core/shared/widgets/gradient_elevated_button.dart';
 import 'package:zest_mobile/app/core/shared/widgets/gradient_outlined_button.dart';
 import 'package:zest_mobile/app/core/shared/widgets/shimmer_loading_list.dart';
@@ -185,8 +186,18 @@ class EditActivityView extends GetView<EditActivityController> {
                     height: 55,
                     child: GradientOutlinedButton(
                       onPressed: () {
-                        Get.offAllNamed(AppRoutes.mainHome);
-                        Get.snackbar('Success', 'Successfully delete activity');
+                        Get.dialog(
+                          CustomDialogConfirmation(
+                            title: 'Delete Activity',
+                            subtitle: 'Are you sure to delete this activity?',
+                            labelConfirm: 'Yes, delete',
+                            onConfirm: () {
+                              Get.offAllNamed(AppRoutes.mainHome);
+                              Get.snackbar('Success', 'Successfully delete activity');
+                            },
+                            onCancel: () => Get.back(),
+                          )
+                        );
                       },
                       child: const Text('Delete'),
                     ),

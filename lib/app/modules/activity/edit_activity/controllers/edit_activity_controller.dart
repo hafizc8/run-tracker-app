@@ -13,6 +13,9 @@ import 'package:zest_mobile/app/core/models/model/post_model.dart';
 import 'package:zest_mobile/app/core/models/model/record_activity_model.dart';
 import 'package:zest_mobile/app/core/services/post_service.dart';
 import 'package:zest_mobile/app/core/shared/theme/color_schemes.dart';
+import 'package:zest_mobile/app/modules/home/controllers/main_home_controller.dart';
+import 'package:zest_mobile/app/modules/main_profile/controllers/main_profile_controller.dart';
+import 'package:zest_mobile/app/modules/main_profile/widgets/custom_tab_bar/controllers/custom_tab_bar_controller.dart';
 import 'package:zest_mobile/app/routes/app_routes.dart';
 import 'dart:ui' as ui;
 
@@ -184,7 +187,12 @@ class EditActivityController extends GetxController {
       bool isSuccess = await _postService.shareRecordActivity(editActivityForm.value);
 
       if (isSuccess) {
-        Get.offAllNamed(AppRoutes.mainHome);
+        // find MainHomeController
+        Get.close(2);
+        Get.find<MainHomeController>().changeTab(3); // change to menu profile
+        Get.find<ProfileMainController>().getPostActivity(refresh: true);
+        Get.find<TabBarController>().changeTabIndex(0); // change to tab overview
+
         Get.snackbar('Success', 'Successfully share activity');
       }
     } on AppException catch (e) {

@@ -87,7 +87,7 @@ class AppExceptionHandler {
 
         return AppException(
           type: AppExceptionType.unknown,
-          message: e.message ?? "Terjadi kesalahan yang tidak diketahui.",
+          message: e.message ?? "Terjadi kesalahan dalam menghubungi server.",
         );
 
       default:

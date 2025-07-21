@@ -228,13 +228,13 @@ class HomeView extends GetView<HomeController> {
                           onTap: () => Get.toNamed(AppRoutes.dailyStreak),
                           // Widget ikon Anda
                           child: SizedBox(
-                            width: 21.w + 6,
-                            height: 21.w + 19,
+                            width: 23.w + 6,
+                            height: 23.w + 19,
                             child: Stack(
                               children: [
                                 SvgPicture.asset(
                                   'assets/icons/ic_streak.svg',
-                                  width: 21.w,
+                                  width: 23.w,
                                 ),
                                 Obx(() {
                                   if (controller.homePageData.value
@@ -251,11 +251,11 @@ class HomeView extends GetView<HomeController> {
                                         shape: BoxShape.circle,
                                         color: Colors.white,
                                       ),
-                                      padding: const EdgeInsets.all(6),
+                                      padding: const EdgeInsets.all(5),
                                       child: Text(
                                         '${controller.homePageData.value?.recordDailyStreakCount ?? 0}',
                                         style: GoogleFonts.poppins(
-                                          fontSize: 10.sp,
+                                          fontSize: 9.sp,
                                           fontWeight: FontWeight.w700,
                                           color: const Color(0xFF292929),
                                         ),
@@ -396,33 +396,14 @@ class HomeView extends GetView<HomeController> {
                         }
 
                         // Cari data dan indeks peringkat dari pengguna yang sedang login
-                        final currentUserLeaderboardData =
-                            leaderboards.firstWhereOrNull(
-                                (leader) => leader.id == currentUser.id);
-                        final currentUserRankIndex = leaderboards.indexWhere(
-                            (leader) => leader.id == currentUser.id);
-
-                        // Helper function untuk format rank
-                        String formatRank(int? rank) {
-                          if (rank == null) return '-';
-                          if (rank == 1) return '1st';
-                          if (rank == 2) return '2nd';
-                          if (rank == 3) return '3rd';
-                          if (rank % 10 == 1 && rank % 100 != 11)
-                            return '${rank}st';
-                          if (rank % 10 == 2 && rank % 100 != 12)
-                            return '${rank}nd';
-                          if (rank % 10 == 3 && rank % 100 != 13)
-                            return '${rank}rd';
-                          return '${rank}th';
-                        }
-
+                        final currentUserLeaderboardData = leaderboards.firstWhereOrNull((leader) => leader.id == currentUser.id);
+                        final currentUserRankIndex = leaderboards.indexWhere((leader) => leader.id == currentUser.id);
+                      
                         /// Widget untuk tombol "See More"
                         Widget buildSeeMoreButton() {
                           return GestureDetector(
                             onTap: () {
-                              Get.snackbar("Coming soon",
-                                  "Navigate to full leaderboard page.");
+                              Get.toNamed(AppRoutes.leaderboard);
                             },
                             child: Container(
                               height: 126.h,
@@ -468,10 +449,8 @@ class HomeView extends GetView<HomeController> {
                                       walker.id == currentUser.id;
                                   return Expanded(
                                     child: WalkerProfile(
-                                      rank: formatRank(walker.rank),
-                                      name: isCurrentUser
-                                          ? 'Your'
-                                          : (walker.name ?? '-'),
+                                      rank: NumberHelper().formatRank(walker.rank),
+                                      name: isCurrentUser ? 'Your' : (walker.name ?? '-'),
                                       imageUrl: walker.imageUrl ?? '',
                                     ),
                                   );
@@ -504,17 +483,10 @@ class HomeView extends GetView<HomeController> {
                                         walker.id == currentUser.id;
                                     return Expanded(
                                       child: WalkerProfile(
-                                        rank: formatRank(walker.rank),
-                                        name: isCurrentUser
-                                            ? 'Your'
-                                            : (walker.name ?? '-'),
-                                        imageUrl: walker.imageUrl ??
-                                            (isCurrentUser
-                                                ? currentUser.imageUrl ?? ''
-                                                : ''),
-                                        backgroundColor: isCurrentUser
-                                            ? const Color(0xFF393939)
-                                            : null,
+                                        rank: NumberHelper().formatRank(walker.rank),
+                                        name: isCurrentUser ? 'Your' : (walker.name ?? '-'),
+                                        imageUrl: walker.imageUrl ?? (isCurrentUser ? currentUser.imageUrl ?? '' : ''),
+                                        backgroundColor: isCurrentUser ? const Color(0xFF393939) : null,
                                       ),
                                     );
                                   }).toList();

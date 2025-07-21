@@ -21,7 +21,6 @@ class HomeController extends GetxController {
   final _logService = sl<LogService>();
   final _recordActivityService = sl<RecordActivityService>();
   final _prefs = sl<SharedPreferences>();
-  final _initialGoalSetKey = 'initial_goal_has_been_set';
 
   // --- UI STATE ---
   final RxInt _validatedSteps = 0.obs;
@@ -62,9 +61,6 @@ class HomeController extends GetxController {
 
       // 4. Setelah data sinkron, mulai sinkronisasi berkala
       _startPeriodicSync();
-      
-      // 5. Tampilkan dialog jika perlu
-      await _checkAndShowDailyGoalDialog();
 
     } catch (e, s) {
       _logService.log.e("Critical error during HomeController init.", error: e, stackTrace: s);
@@ -138,19 +134,19 @@ class HomeController extends GetxController {
     try {
       currentPedometerSteps = await Pedometer().getStepCount(from: startTime, to: now);
 
-      // get step di jam 13:30 sd 13:40
-      final startTimeTest = DateTime(2025, 7, 11, 13, 30);
-      final endTimeTest = DateTime(2025, 7, 11, 13, 40);
+      // // get step di jam 13:30 sd 13:40
+      // final startTimeTest = DateTime(2025, 7, 11, 13, 30);
+      // final endTimeTest = DateTime(2025, 7, 11, 13, 40);
 
-      int testGetSteps = await Pedometer().getStepCount(from: startTimeTest, to: endTimeTest);
-      _logService.log.i("TEST: $startTimeTest to $endTimeTest = $testGetSteps steps.");
+      // int testGetSteps = await Pedometer().getStepCount(from: startTimeTest, to: endTimeTest);
+      // _logService.log.i("TEST: $startTimeTest to $endTimeTest = $testGetSteps steps.");
 
-      // get step di jam 13:35 sd 13:36
-      final startTimeTest2 = DateTime(2025, 7, 11, 13, 35);
-      final endTimeTest2 = DateTime(2025, 7, 11, 13, 36);
+      // // get step di jam 13:35 sd 13:36
+      // final startTimeTest2 = DateTime(2025, 7, 11, 13, 35);
+      // final endTimeTest2 = DateTime(2025, 7, 11, 13, 36);
 
-      int testGetSteps2 = await Pedometer().getStepCount(from: startTimeTest2, to: endTimeTest2);
-      _logService.log.i("TEST: $startTimeTest2 to $endTimeTest2 = $testGetSteps2 steps.");
+      // int testGetSteps2 = await Pedometer().getStepCount(from: startTimeTest2, to: endTimeTest2);
+      // _logService.log.i("TEST: $startTimeTest2 to $endTimeTest2 = $testGetSteps2 steps.");
     } catch (e) {
       _logService.log.e("Failed to get step count during sync.", error: e);
       return; // Hentikan jika gagal mengambil data
@@ -193,7 +189,10 @@ class HomeController extends GetxController {
     isLoadingGetUserData.value = true;
 
     try {
-      await _authService.me();
+      final user = await _authService.me();
+      if (user.userPreference?.dailyStepGoals == 0) {
+        await _showDailyGoalDialog();
+      }
     } catch (e) {
       rethrow;
     } finally {
@@ -229,48 +228,31 @@ class HomeController extends GetxController {
   }
 
   // ✨ KUNCI: Fungsi untuk memeriksa dan menampilkan dialog
-  Future<void> _checkAndShowDailyGoalDialog() async {
-    // Jangan tampilkan dialog jika data user belum ada
-    if (user == null) return;
+  Future<void> _showDailyGoalDialog() async {
+    Get.dialog(
+      SetDailyGoalDialog(
+        onSave: (selectedGoal) async {
+          try {
+            // Di sini Anda panggil API untuk menyimpan goal
+            var response = await _userService.updateUserPreference(
+              dailyStepGoals: selectedGoal
+            );
 
-    final bool hasAlreadySetGoal = _prefs.getBool(_initialGoalSetKey) ?? false;
+            if (response) {
+              Get.back();
+              Get.snackbar('Success', 'Your daily goal has been set to $selectedGoal steps!');
 
-    // Jika tanggal terakhir disimpan tidak sama dengan hari ini, tampilkan dialog
-    if (!hasAlreadySetGoal) {
-      Get.dialog(
-        SetDailyGoalDialog(
-          onSave: (selectedGoal) async {
-            print('Goal to save: $selectedGoal');
-            try {
-              // Di sini Anda panggil API untuk menyimpan goal
-              var response = await _userService.updateUserPreference(
-                dailyStepGoals: selectedGoal
-              );
-
-              if (response) {
-                await _prefs.setBool(_initialGoalSetKey, true);
-                
-                // Perbarui state user di aplikasi Anda secara lokal
-                // Contoh: user.update((val) { val?.userPreference?.dailyStepGoals = selectedGoal; });
-
-                Get.back(); // Tutup dialog
-                Get.snackbar('Success', 'Your daily goal has been set to $selectedGoal steps!');
-
-                refreshData();
-              }
-
-
-            } catch (e) {
-              print('Failed to save goal: $e');
-              Get.snackbar('Error', 'Failed to save your daily goal.');
-              // Mungkin jangan tutup dialog jika gagal, biarkan user coba lagi
+              refreshData();
             }
-          },
-        ),
-        barrierDismissible: false, // User harus mengatur goal
-      );
-    } else {
-      print("Daily goal for today has already been set.");
-    }
+
+
+          } catch (e) {
+            print('Failed to save goal: $e');
+            Get.snackbar('Error', 'Failed to save your daily goal.');
+          }
+        },
+      ),
+      barrierDismissible: false, // User harus mengatur goal
+    );
   }
 }

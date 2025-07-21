@@ -149,7 +149,7 @@ class _SetDailyGoalDialogState extends State<SetDailyGoalDialog> {
                 _buildSteppedSlider(),
                 const SizedBox(height: 12),
                 Text(
-                  '${NumberFormat('#,###').format(selectedSteps)} Steps', 
+                  '${NumberFormat('#,###', 'id_ID').format(selectedSteps)} Steps', 
                   style: Theme.of(context).textTheme.bodySmall?.copyWith(
                     fontWeight: FontWeight.w400,
                     fontSize: 20,

@@ -29,6 +29,7 @@ class MainHomeController extends GetxController {
       ];
   void changeTab(int index) {
     currentIndex.value = index;
+    print('tab has changed to $index');
   }
 
   @override

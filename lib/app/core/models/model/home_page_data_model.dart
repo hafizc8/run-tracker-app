@@ -1,5 +1,6 @@
 import 'package:intl/intl.dart';
 import 'package:zest_mobile/app/core/models/interface/model_interface.dart';
+import 'package:zest_mobile/app/core/models/model/leaderboard_user_model.dart';
 
 // =========================================================================
 // MODEL UTAMA
@@ -158,71 +159,6 @@ class RecordDailyModel extends Model<RecordDailyModel> {
 
   @override
   List<Object?> get props => [id, userId, date, step, stepGoal, updatedAt];
-}
-
-// =========================================================================
-// SUB-MODEL UNTUK LEADERBOARD
-// =========================================================================
-
-class LeaderboardUserModel extends Model<LeaderboardUserModel> {
-  LeaderboardUserModel({
-    this.id,
-    this.name,
-    this.imagePath,
-    this.imageUrl,
-    this.totalStep,
-    this.rank,
-  });
-
-  final String? id;
-  final String? name;
-  final String? imagePath;
-  final String? imageUrl;
-  final int? totalStep;
-  final int? rank;
-
-  @override
-  LeaderboardUserModel copyWith({
-    String? id,
-    String? name,
-    String? imagePath,
-    String? imageUrl,
-    int? totalStep,
-    int? rank,
-  }) {
-    return LeaderboardUserModel(
-      id: id ?? this.id,
-      name: name ?? this.name,
-      imagePath: imagePath ?? this.imagePath,
-      imageUrl: imageUrl ?? this.imageUrl,
-      totalStep: totalStep ?? this.totalStep,
-      rank: rank ?? this.rank,
-    );
-  }
-
-  factory LeaderboardUserModel.fromJson(Map<String, dynamic> json) {
-    return LeaderboardUserModel(
-      id: json["id"],
-      name: json["name"],
-      imagePath: json["image_path"],
-      imageUrl: json["image_url"],
-      totalStep: json["total_step"],
-      rank: json["rank"],
-    );
-  }
-
-  @override
-  Map<String, dynamic> toJson() => {
-        "id": id,
-        "name": name,
-        "image_path": imagePath,
-        "image_url": imageUrl,
-        "total_step": totalStep,
-        "rank": rank,
-      };
-
-  @override
-  List<Object?> get props => [id, name, imagePath, imageUrl, totalStep, rank];
 }
 
 // =========================================================================

@@ -80,6 +80,7 @@ dependencies:
   pedometer_2: ^5.0.4
   disable_battery_optimization: ^1.1.1
   table_calendar: ^3.0.9
+  uuid: ^4.5.1
   visibility_detector: ^0.4.0+2
 
 dependency_overrides:

@@ -189,7 +189,7 @@ class EditActivityView extends GetView<EditActivityController> {
                         Get.dialog(
                           CustomDialogConfirmation(
                             title: 'Delete Activity',
-                            subtitle: 'Are you sure to delete this activity?',
+                            subtitle: 'This will permanently delete your session history. Are you sure?',
                             labelConfirm: 'Yes, delete',
                             onConfirm: () {
                               Get.offAllNamed(AppRoutes.mainHome);

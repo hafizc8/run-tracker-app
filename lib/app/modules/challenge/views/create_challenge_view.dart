@@ -1,10 +1,8 @@
 import 'package:flutter/material.dart';
-import 'package:flutter/widgets.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
 import 'package:zest_mobile/app/core/shared/widgets/gradient_elevated_button.dart';
 import 'package:zest_mobile/app/modules/challenge/controllers/create_challenge_controller.dart';
-import 'package:zest_mobile/app/routes/app_routes.dart';
 
 class ChallengeCreateView extends GetView<ChallangeCreateController> {
   const ChallengeCreateView({super.key});
@@ -242,8 +240,11 @@ class ChallengeCreateView extends GetView<ChallangeCreateController> {
                   TextFormField(
                     cursorColor: Colors.white,
                     keyboardType: TextInputType.text,
+                    controller: controller.startDateController,
                     readOnly: true,
-                    onTap: () {},
+                    onTap: () {
+                      controller.selectDate(context, true);
+                    },
                     decoration: InputDecoration(
                       hintText: 'Start Date',
                       errorText: form.errors?['start_date'],
@@ -350,11 +351,11 @@ class ChallengeCreateView extends GetView<ChallangeCreateController> {
                                         const SizedBox(height: 12),
                                         TextFormField(
                                           cursorColor: Colors.white,
-                                          keyboardType: TextInputType.text,
+                                          keyboardType: TextInputType.number,
                                           onChanged: (value) {
                                             controller.form.value =
                                                 form.copyWith(
-                                              title: value,
+                                              target: int.parse(value),
                                               errors: form.errors,
                                               field: 'target',
                                             );
@@ -469,8 +470,13 @@ class ChallengeCreateView extends GetView<ChallangeCreateController> {
                                         TextFormField(
                                           cursorColor: Colors.white,
                                           keyboardType: TextInputType.text,
+                                          controller:
+                                              controller.endDateController,
                                           readOnly: true,
-                                          onTap: () {},
+                                          onTap: () {
+                                            controller.selectDate(
+                                                context, false);
+                                          },
                                           decoration: InputDecoration(
                                             hintText: 'Choose Date',
                                             errorText: form.errors?['end_date'],

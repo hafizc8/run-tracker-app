@@ -107,7 +107,7 @@ class HomeView extends GetView<HomeController> {
                     ],
                   ),
                 ),
-          
+
                 // Level
                 Container(
                   margin: EdgeInsets.only(left: 16.w, top: 10.h),
@@ -124,8 +124,8 @@ class HomeView extends GetView<HomeController> {
                           currentExp:
                               controller.user?.currentUserXp?.currentAmount ??
                                   0,
-                          maxExp: controller.user?.currentUserXp?.levelDetail
-                                  ?.xpNeeded ??
+                          maxExp: controller
+                                  .user?.currentUserXp?.levelDetail?.xpNeeded ??
                               0,
                           height: 15,
                         ),
@@ -133,11 +133,10 @@ class HomeView extends GetView<HomeController> {
                     ],
                   ),
                 ),
-          
+
                 // coin & energy
                 Container(
-                  margin:
-                      EdgeInsets.only(left: 16.w, top: 14.h, bottom: 10.h),
+                  margin: EdgeInsets.only(left: 16.w, top: 14.h, bottom: 10.h),
                   child: Row(
                     children: [
                       Row(
@@ -186,14 +185,15 @@ class HomeView extends GetView<HomeController> {
                     ],
                   ),
                 ),
-          
+
                 // Widget Step Tracker
                 Container(
                   margin: EdgeInsets.symmetric(horizontal: 32.w),
                   child: StepsTrackerWidget(
                     progressValue: controller.progressValue,
                     currentSteps: controller.validatedSteps,
-                    maxSteps: controller.user?.userPreference?.dailyStepGoals ?? 0,
+                    maxSteps:
+                        controller.user?.userPreference?.dailyStepGoals ?? 0,
                   ),
                 ),
                 // Error message when step sensor not found
@@ -204,12 +204,11 @@ class HomeView extends GetView<HomeController> {
                       margin: EdgeInsets.only(bottom: 8.h),
                       child: Text(
                         controller.error,
-                        style:
-                            Theme.of(context).textTheme.titleSmall?.copyWith(
-                                  color: Colors.red.shade400,
-                                  fontSize: 13.sp,
-                                  fontStyle: FontStyle.italic,
-                                ),
+                        style: Theme.of(context).textTheme.titleSmall?.copyWith(
+                              color: Colors.red.shade400,
+                              fontSize: 13.sp,
+                              fontStyle: FontStyle.italic,
+                            ),
                         textAlign: TextAlign.center,
                       ),
                     ),
@@ -217,7 +216,10 @@ class HomeView extends GetView<HomeController> {
                 }),
                 Container(
                   width: double.infinity,
-                  margin: EdgeInsets.only(left: 16.w, right: 24.w,),
+                  margin: EdgeInsets.only(
+                    left: 16.w,
+                    right: 24.w,
+                  ),
                   child: Row(
                     children: [
                       Flexible(
@@ -235,7 +237,9 @@ class HomeView extends GetView<HomeController> {
                                   width: 23.w,
                                 ),
                                 Obx(() {
-                                  if (controller.homePageData.value?.recordDailyStreakCount == 0) {
+                                  if (controller.homePageData.value
+                                          ?.recordDailyStreakCount ==
+                                      0) {
                                     return const SizedBox();
                                   }
 
@@ -270,7 +274,9 @@ class HomeView extends GetView<HomeController> {
                           children: [
                             Obx(() {
                               // Ambil nilai dari controller
-                              final goal = controller.user?.userPreference?.dailyStepGoals ?? 0;
+                              final goal = controller
+                                      .user?.userPreference?.dailyStepGoals ??
+                                  0;
                               final current = controller.validatedSteps;
 
                               // ✨ KUNCI PERBAIKAN: Logika Kondisional ✨
@@ -278,10 +284,15 @@ class HomeView extends GetView<HomeController> {
                                 // --- TAMPILAN JIKA GOAL TERCAPAI ---
                                 return Text(
                                   "Goal reached! Awesome job hitting your step target today!",
-                                  style: Theme.of(context).textTheme.titleSmall?.copyWith(
-                                    color: Theme.of(context).colorScheme.primary, // Beri warna berbeda
-                                    fontWeight: FontWeight.w600,
-                                  ),
+                                  style: Theme.of(context)
+                                      .textTheme
+                                      .titleSmall
+                                      ?.copyWith(
+                                        color: Theme.of(context)
+                                            .colorScheme
+                                            .primary, // Beri warna berbeda
+                                        fontWeight: FontWeight.w600,
+                                      ),
                                   textAlign: TextAlign.center,
                                 );
                               } else {
@@ -307,19 +318,17 @@ class HomeView extends GetView<HomeController> {
                                       width: 15.w,
                                     ),
                                     SizedBox(width: 8.w),
-                                    Obx(
-                                      () {
-                                        return Text(
-                                          '${NumberHelper().secondsToMinutes(controller.totalActiveTimeInSeconds)} Mins',
-                                          style: Theme.of(context)
-                                              .textTheme
-                                              .titleSmall
-                                              ?.copyWith(
-                                                fontSize: 12.5.sp,
-                                              ),
-                                        );
-                                      }
-                                    ),
+                                    Obx(() {
+                                      return Text(
+                                        '${NumberHelper().secondsToMinutes(controller.totalActiveTimeInSeconds)} Mins',
+                                        style: Theme.of(context)
+                                            .textTheme
+                                            .titleSmall
+                                            ?.copyWith(
+                                              fontSize: 12.5.sp,
+                                            ),
+                                      );
+                                    }),
                                   ],
                                 ),
                                 SizedBox(width: 20.w),
@@ -354,9 +363,9 @@ class HomeView extends GetView<HomeController> {
                     ],
                   ),
                 ),
-          
+
                 SizedBox(height: 24.h),
-          
+
                 Column(
                   crossAxisAlignment: CrossAxisAlignment
                       .start, // Agar judul "Top Walkers" rata kiri
@@ -375,19 +384,20 @@ class HomeView extends GetView<HomeController> {
                       },
                       child: Obx(() {
                         // Ambil data leaderboards dari controller
-                        final leaderboards = controller.homePageData.value?.leaderboards;
+                        final leaderboards =
+                            controller.homePageData.value?.leaderboards;
                         final currentUser = controller.user;
-                      
+
                         // Tampilkan container kosong jika data belum siap
-                        if (leaderboards == null || leaderboards.isEmpty || currentUser == null) {
+                        if (leaderboards == null ||
+                            leaderboards.isEmpty ||
+                            currentUser == null) {
                           return const SizedBox(height: 145);
                         }
-                      
+
                         // Cari data dan indeks peringkat dari pengguna yang sedang login
-                        final currentUserLeaderboardData =
-                            leaderboards.firstWhereOrNull((leader) => leader.id == currentUser.id);
-                        final currentUserRankIndex =
-                            leaderboards.indexWhere((leader) => leader.id == currentUser.id);
+                        final currentUserLeaderboardData = leaderboards.firstWhereOrNull((leader) => leader.id == currentUser.id);
+                        final currentUserRankIndex = leaderboards.indexWhere((leader) => leader.id == currentUser.id);
                       
                         /// Widget untuk tombol "See More"
                         Widget buildSeeMoreButton() {
@@ -408,14 +418,17 @@ class HomeView extends GetView<HomeController> {
                                   SizedBox(height: 8.h),
                                   Text(
                                     "See more",
-                                    style: Theme.of(Get.context!).textTheme.titleSmall?.copyWith(fontSize: 12.sp),
+                                    style: Theme.of(Get.context!)
+                                        .textTheme
+                                        .titleSmall
+                                        ?.copyWith(fontSize: 12.sp),
                                   ),
                                 ],
                               ),
                             ),
                           );
                         }
-                      
+
                         return Container(
                           width: 398.w,
                           decoration: BoxDecoration(
@@ -428,10 +441,12 @@ class HomeView extends GetView<HomeController> {
                             crossAxisAlignment: CrossAxisAlignment.start,
                             children: [
                               // ✨ KUNCI: Gunakan kondisi untuk menentukan widget yang akan di-render ✨
-                              if (currentUserRankIndex != -1 && currentUserRankIndex < 3)
+                              if (currentUserRankIndex != -1 &&
+                                  currentUserRankIndex < 3)
                                 // --- TAMPILAN JIKA USER TOP 3 ---
                                 ...leaderboards.take(3).map((walker) {
-                                  final bool isCurrentUser = walker.id == currentUser.id;
+                                  final bool isCurrentUser =
+                                      walker.id == currentUser.id;
                                   return Expanded(
                                     child: WalkerProfile(
                                       rank: NumberHelper().formatRank(walker.rank),
@@ -440,24 +455,32 @@ class HomeView extends GetView<HomeController> {
                                     ),
                                   );
                                 }).toList(),
-                              if (currentUserRankIndex != -1 && currentUserRankIndex < 3)
+                              if (currentUserRankIndex != -1 &&
+                                  currentUserRankIndex < 3)
                                 // --- Tombol "See More" ---
                                 Expanded(
                                   child: buildSeeMoreButton(),
                                 ),
-                              
-                              if (currentUserRankIndex == -1 || currentUserRankIndex >= 3)
+
+                              if (currentUserRankIndex == -1 ||
+                                  currentUserRankIndex >= 3)
                                 // --- TAMPILAN JIKA USER BUKAN TOP 3 ---
                                 ...() {
-                                  final otherWalkers = leaderboards.where((leader) => leader.id != currentUser.id).toList();
-                                  final top3OtherWalkers = otherWalkers.take(3).toList();
+                                  final otherWalkers = leaderboards
+                                      .where((leader) =>
+                                          leader.id != currentUser.id)
+                                      .toList();
+                                  final top3OtherWalkers =
+                                      otherWalkers.take(3).toList();
                                   final walkersToShow = [...top3OtherWalkers];
                                   if (currentUserLeaderboardData != null) {
-                                    walkersToShow.add(currentUserLeaderboardData);
+                                    walkersToShow
+                                        .add(currentUserLeaderboardData);
                                   }
-                                  
+
                                   return walkersToShow.map((walker) {
-                                    final bool isCurrentUser = walker.id == currentUser.id;
+                                    final bool isCurrentUser =
+                                        walker.id == currentUser.id;
                                     return Expanded(
                                       child: WalkerProfile(
                                         rank: NumberHelper().formatRank(walker.rank),
@@ -475,34 +498,44 @@ class HomeView extends GetView<HomeController> {
                     ),
                   ],
                 ),
-          
+
                 SizedBox(height: 12.h),
-          
-                Container(
-                  decoration: BoxDecoration(
-                    color: darkColorScheme.surface,
-                    borderRadius: BorderRadius.circular(12),
-                  ),
-                  margin:
-                      EdgeInsets.symmetric(horizontal: 16.w, vertical: 12.h),
-                  padding:
-                      EdgeInsets.symmetric(horizontal: 20.w, vertical: 12.h),
-                  child: Row(
-                    children: [
-                      Text(
-                        'Challenge Your Friends!',
-                        style: Theme.of(context).textTheme.titleSmall,
-                      ),
-                      const Spacer(),
-                      const FaIcon(
-                        FontAwesomeIcons.circlePlus,
-                        color: Color(0xFF5A5A5A),
-                        size: 38,
-                      ),
-                    ],
+
+                GestureDetector(
+                  onTap: () async {
+                    var res = await Get.toNamed(AppRoutes.challengeCreate);
+                    if (res != null) {
+                      Get.toNamed(AppRoutes.challengedetails, arguments: {
+                        'challengeId': res.id,
+                      });
+                    }
+                  },
+                  child: Container(
+                    decoration: BoxDecoration(
+                      color: darkColorScheme.surface,
+                      borderRadius: BorderRadius.circular(12),
+                    ),
+                    margin:
+                        EdgeInsets.symmetric(horizontal: 16.w, vertical: 12.h),
+                    padding:
+                        EdgeInsets.symmetric(horizontal: 20.w, vertical: 12.h),
+                    child: Row(
+                      children: [
+                        Text(
+                          'Challenge Your Friends!',
+                          style: Theme.of(context).textTheme.titleSmall,
+                        ),
+                        const Spacer(),
+                        const FaIcon(
+                          FontAwesomeIcons.circlePlus,
+                          color: Color(0xFF5A5A5A),
+                          size: 38,
+                        ),
+                      ],
+                    ),
                   ),
                 ),
-          
+
                 SizedBox(height: 36.h),
               ],
             ),

@@ -1,6 +1,9 @@
 import 'package:zest_mobile/app/core/models/enums/http_method_enum.dart';
+import 'package:zest_mobile/app/core/models/forms/create_challenge_form.dart';
 import 'package:zest_mobile/app/core/models/interface/pagination_response_model.dart';
+import 'package:zest_mobile/app/core/models/model/challenge_detail_model.dart';
 import 'package:zest_mobile/app/core/models/model/challenge_model.dart';
+import 'package:zest_mobile/app/core/models/model/challenge_team_model.dart';
 import 'package:zest_mobile/app/core/services/api_service.dart';
 import 'package:zest_mobile/app/core/values/app_constants.dart';
 
@@ -17,7 +20,7 @@ class ChallengeService {
   }) async {
     try {
       final response = await _apiService.request(
-          path: AppConstants.challenge,
+          path: AppConstants.challenge(),
           method: HttpMethod.get,
           queryParams: {
             'page': page.toString(),
@@ -31,6 +34,83 @@ class ChallengeService {
         response.data['data'],
         (json) => ChallengeModel.fromJson(json),
       );
+    } catch (e) {
+      rethrow;
+    }
+  }
+
+  Future<ChallengeModel?> storeChallenge(CreateChallengeFormModel form) async {
+    try {
+      final response = await _apiService.request(
+        path: AppConstants.challenge(),
+        method: HttpMethod.post,
+        data: form.toJson(),
+      );
+
+      if (response.statusCode != 200) {
+        throw Exception('Failed to create challenge');
+      }
+
+      return ChallengeModel.fromJson(response.data['data']);
+    } catch (e) {
+      rethrow;
+    }
+  }
+
+  Future<ChallengeModel?> cancelChallenge(String id) async {
+    try {
+      final response = await _apiService.request(
+        path: AppConstants.challengeCancel(id: id),
+        method: HttpMethod.post,
+      );
+
+      if (response.statusCode != 200) {
+        throw Exception('Failed to create challenge');
+      }
+
+      return ChallengeModel.fromJson(response.data['data']);
+    } catch (e) {
+      rethrow;
+    }
+  }
+
+  Future<PaginatedDataResponse<ChallengeTeamsModel>> challengeUser(
+    String id,
+    String team,
+  ) async {
+    try {
+      final response = await _apiService.request(
+          path: AppConstants.challengeUser(id: id),
+          method: HttpMethod.get,
+          queryParams: {
+            'team': team,
+          });
+
+      if (response.statusCode != 200) {
+        throw Exception('Failed to create challenge');
+      }
+
+      return PaginatedDataResponse<ChallengeTeamsModel>.fromJson(
+        response.data['data'],
+        (json) => ChallengeTeamsModel.fromJson(json),
+      );
+    } catch (e) {
+      rethrow;
+    }
+  }
+
+  Future<ChallengeDetailModel?> detailChallenge(String id) async {
+    try {
+      final response = await _apiService.request(
+        path: AppConstants.challenge(id: id),
+        method: HttpMethod.get,
+      );
+
+      if (response.statusCode != 200) {
+        throw Exception('Failed to load challenge detail');
+      }
+
+      return ChallengeDetailModel.fromJson(response.data['data']);
     } catch (e) {
       rethrow;
     }

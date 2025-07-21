@@ -59,7 +59,11 @@ class AppConstants {
   static String event([String? id]) => id != null ? "/event/$id" : "/event";
 
   // Challenge
-  static const String challenge = "/challange";
+  static String challenge({String? id}) =>
+      id != null ? "/challange/$id" : "/challange";
+
+  static String challengeCancel({String? id}) => "/challange/$id/cancel";
+  static String challengeUser({String? id}) => "/challange/$id/user";
 
   // Clubs
   static const String clubsMini = "/club";
@@ -79,8 +83,10 @@ class AppConstants {
 
   // Record Activity
   static const String recordActivityCreateSession = "/record-activity/create";
-  static String recordActivitySyncRecord(String recordActivityId) => "/record-activity/$recordActivityId/sync";
-  static String recordActivityEndSession(String recordActivityId) => "/record-activity/$recordActivityId/end";
+  static String recordActivitySyncRecord(String recordActivityId) =>
+      "/record-activity/$recordActivityId/sync";
+  static String recordActivityEndSession(String recordActivityId) =>
+      "/record-activity/$recordActivityId/end";
 
   static const String dailyRecordSync = "/record-daily";
   static const String dailyRecordGetAll = "/record-daily";

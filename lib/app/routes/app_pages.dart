@@ -43,6 +43,7 @@ import 'package:zest_mobile/app/modules/club/partial/update_club/views/update_cl
 import 'package:zest_mobile/app/modules/daily_streak/bindings/daily_streak_binding.dart';
 import 'package:zest_mobile/app/modules/daily_streak/views/daily_streak_view.dart';
 import 'package:zest_mobile/app/modules/debug/views/debug_view.dart';
+import 'package:zest_mobile/app/modules/detail_challenge/bindings/detail_challenge_binding.dart';
 import 'package:zest_mobile/app/modules/detail_challenge/views/detail_challenge_view.dart';
 import 'package:zest_mobile/app/modules/home/bindings/main_home_binding.dart';
 import 'package:zest_mobile/app/modules/home/views/main_home_view.dart';
@@ -323,7 +324,7 @@ class AppPages {
     GetPage(
       name: AppRoutes.challengedetails,
       page: () => const DetailChallengeView(),
-      binding: DetailClubBinding(),
+      binding: DetailChallengeBinding(),
     ),
   ];
 }

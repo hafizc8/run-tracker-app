@@ -172,8 +172,15 @@ class CustomTabBar extends GetView<TabBarController> {
                           );
                         }
                         final challenge = profileController.challenges[index];
-                        return CardChallenge(
-                          challengeModel: challenge,
+                        return GestureDetector(
+                          onTap: () {
+                            Get.toNamed(AppRoutes.challengedetails, arguments: {
+                              "challengeId": challenge.id,
+                            });
+                          },
+                          child: CardChallenge(
+                            challengeModel: challenge,
+                          ),
                         );
                       },
                       separatorBuilder: (context, index) => SizedBox(

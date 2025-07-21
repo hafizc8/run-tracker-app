@@ -1,19 +1,78 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:intl/intl.dart';
 import 'package:uuid/uuid.dart';
 import 'package:zest_mobile/app/core/di/service_locator.dart';
+import 'package:zest_mobile/app/core/exception/app_exception.dart';
+import 'package:zest_mobile/app/core/exception/handler/app_exception_handler_info.dart';
+import 'package:zest_mobile/app/core/models/enums/app_exception_enum.dart';
 import 'package:zest_mobile/app/core/models/forms/create_challenge_form.dart';
 import 'package:zest_mobile/app/core/models/model/event_model.dart';
 import 'package:zest_mobile/app/core/services/auth_service.dart';
+import 'package:zest_mobile/app/core/services/challenge_service.dart';
 import 'package:zest_mobile/app/routes/app_routes.dart';
 
 class ChallangeCreateController extends GetxController {
+  final TextEditingController startDateController = TextEditingController();
+  final TextEditingController endDateController = TextEditingController();
   var isLoading = false.obs;
   var form = CreateChallengeFormModel().obs;
   final _authService = sl<AuthService>();
+  final _challengeService = sl<ChallengeService>();
   String get userId => _authService.user?.id ?? ''; // userId
 
-  void storeChallenge() {}
+  Future<void> selectDate(BuildContext context, bool isStartDate) async {
+    DateTime? picked = await showDatePicker(
+      context: context,
+      initialDate: DateTime.now(),
+      firstDate: DateTime(2000),
+      lastDate: DateTime(2101),
+    );
+
+    if (picked != null) {
+      // Format tanggal (misalnya: 19-07-2025)
+      String formattedDate = DateFormat('yyyy-MM-dd').format(picked);
+
+      if (isStartDate) {
+        startDateController.text = formattedDate;
+        form.value = form.value.copyWith(startDate: picked);
+      } else {
+        endDateController.text = formattedDate;
+        form.value = form.value.copyWith(endDate: picked);
+      }
+      // Set ke controller
+    }
+  }
+
+  Future<void> storeChallenge({bool isTeam = false}) async {
+    isLoading.value = true;
+    try {
+      final res = await _challengeService.storeChallenge(form.value);
+      if (res) {
+        if (isTeam) {
+          Get.back();
+          Get.back(result: res);
+        }
+        Get.back(result: res);
+      }
+    } on AppException catch (e) {
+      if (e.type == AppExceptionType.validation) {
+        form.value = form.value.setErrors(e.errors!);
+        return;
+      }
+      // show error snackbar, toast, etc
+      AppExceptionHandlerInfo.handle(e);
+    } catch (e) {
+      Get.snackbar(
+        'Error',
+        e.toString(),
+        backgroundColor: Colors.red,
+        colorText: Colors.white,
+      );
+    } finally {
+      isLoading.value = false;
+    }
+  }
 
   // Menyimpan nama sementara ketika diedit
   final tempEditedNames = <int, String>{}.obs;

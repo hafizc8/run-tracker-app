@@ -1,4 +1,5 @@
 import 'package:equatable/equatable.dart';
+import 'package:intl/intl.dart';
 import 'package:zest_mobile/app/core/models/interface/form_model_interface.dart';
 import 'package:zest_mobile/app/core/models/interface/mixin/form_model_mixin.dart';
 import 'package:zest_mobile/app/core/models/model/event_model.dart';
@@ -86,10 +87,22 @@ class CreateChallengeFormModel extends FormModel<CreateChallengeFormModel>
       'title': title,
       'type': type,
       'mode': mode,
-      'start_date': startDate,
+      'start_date': startDate != null
+          ? DateFormat('yyyy-MM-dd').format(startDate!)
+          : null,
       if (mode == 0) 'target': target,
-      if (mode == 1) 'end_date': endDate,
-      'teams': teams,
+      if (mode == 1)
+        'end_date':
+            endDate != null ? DateFormat('yyyy-MM-dd').format(endDate!) : null,
+      if (type == 1)
+        'teams': teams != null
+            ? teams!.map((e) {
+                return {
+                  "name": e.name,
+                  "users": e.members?.map((e) => e.id).toList()
+                };
+              }).toList()
+            : [],
       if (clubId != null) 'record_activity_id': clubId,
     };
   }

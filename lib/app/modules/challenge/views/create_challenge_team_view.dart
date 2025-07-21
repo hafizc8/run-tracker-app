@@ -70,26 +70,30 @@ class ChallengeCreateTeamView extends GetView<ChallangeCreateController> {
               ),
             ),
             SizedBox(height: 16.h),
-            SizedBox(
-              height: 43.h,
-              child: GradientElevatedButton(
-                contentPadding: EdgeInsets.symmetric(vertical: 5.w),
-                onPressed: () {
-                  controller.toChallengeTeam();
-                },
-                child: Visibility(
-                  visible: controller.isLoading.value,
-                  replacement: Text(
-                    'Continue',
-                    style: Theme.of(context).textTheme.labelLarge?.copyWith(
-                          fontSize: 15.sp,
-                          fontWeight: FontWeight.w700,
-                        ),
+            Obx(
+              () => SizedBox(
+                height: 43.h,
+                child: GradientElevatedButton(
+                  contentPadding: EdgeInsets.symmetric(vertical: 5.w),
+                  onPressed: controller.isLoading.value
+                      ? null
+                      : () {
+                          controller.storeChallenge(isTeam: true);
+                        },
+                  child: Visibility(
+                    visible: controller.isLoading.value,
+                    replacement: Text(
+                      'Create Challenge',
+                      style: Theme.of(context).textTheme.labelLarge?.copyWith(
+                            fontSize: 15.sp,
+                            fontWeight: FontWeight.w700,
+                          ),
+                    ),
+                    child: const CircularProgressIndicator(),
                   ),
-                  child: const CircularProgressIndicator(),
                 ),
               ),
-            )
+            ),
           ],
         ),
       ),
@@ -292,7 +296,7 @@ class ChallengeCreateTeamView extends GetView<ChallangeCreateController> {
                             );
                             return;
                           }
-                          ;
+
                           var res = await Get.toNamed(
                             AppRoutes.challengeInviteFriend,
                           );

@@ -530,8 +530,11 @@ class HomeView extends GetView<HomeController> {
                 SizedBox(height: 12.h),
 
                 GestureDetector(
-                  onTap: () {
-                    Get.toNamed(AppRoutes.challengeCreate);
+                  onTap: () async {
+                    var res = await Get.toNamed(AppRoutes.challengeCreate);
+                    if (res != null && res) {
+                      Get.toNamed(AppRoutes.challengedetails);
+                    }
                   },
                   child: Container(
                     decoration: BoxDecoration(

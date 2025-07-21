@@ -4,8 +4,8 @@ import 'package:zest_mobile/app/modules/detail_challenge/controllers/detail_chal
 class DetailChallengeBinding extends Bindings {
   @override
   void dependencies() {
-    Get.lazyPut<DetailChallangeController>(
-      () => DetailChallangeController(),
+    Get.put<DetailChallangeController>(
+      DetailChallangeController(),
     );
   }
 }

@@ -42,6 +42,7 @@ class ChallengeModel extends Model {
   final int? isPendingJoin;
   final List<String> teams;
 
+  @override
   ChallengeModel copyWith({
     String? id,
     int? type,
@@ -109,6 +110,7 @@ class ChallengeModel extends Model {
     );
   }
 
+  @override
   Map<String, dynamic> toJson() => {
         "id": id,
         "type": type,

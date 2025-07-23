@@ -10,6 +10,7 @@ import 'package:zest_mobile/app/core/shared/widgets/shimmer_loading_event.dart';
 import 'package:zest_mobile/app/modules/club/partial/detail_club/partial/tab_bar_club/views/widgets/participants_avatars.dart';
 import 'package:zest_mobile/app/modules/detail_challenge/controllers/detail_challenge_controller.dart';
 import 'package:zest_mobile/app/modules/detail_challenge/widgets/card_challenge.dart';
+import 'package:zest_mobile/app/routes/app_routes.dart';
 
 class DetailChallengeView extends GetView<DetailChallangeController> {
   const DetailChallengeView({super.key});
@@ -45,6 +46,12 @@ class DetailChallengeView extends GetView<DetailChallangeController> {
                 onSelected: (value) async {
                   // Handle the selection
                   if (value == 'edit_challenge') {
+                    var res = await Get.toNamed(AppRoutes.challengeEdit,
+                        arguments: controller.detailChallenge.value);
+                    if (res != null) {
+                      controller.challengeId = res.id!;
+                      controller.load();
+                    }
                   } else if (value == 'cancel_challenge') {
                     controller.confirmCancel();
                   }
@@ -112,73 +119,78 @@ class DetailChallengeView extends GetView<DetailChallangeController> {
             ),
             child: Obx(
               () => Visibility(
-                visible: controller.detailChallenge.value?.isOwner == 1,
-                replacement: SizedBox(
-                  height: 43.h,
-                  child: GradientOutlinedButton(
-                    style: ButtonStyle(
-                      shape: MaterialStateProperty.all(
-                        RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(11.r),
+                visible: controller.detailChallenge.value?.mode == 0,
+                child: Visibility(
+                  visible: controller.detailChallenge.value?.isJoined == 1,
+                  replacement: SizedBox(
+                    height: 43.h,
+                    child: GradientOutlinedButton(
+                      style: ButtonStyle(
+                        shape: MaterialStateProperty.all(
+                          RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(11.r),
+                          ),
                         ),
                       ),
-                    ),
-                    onPressed: () {},
-                    child: ShaderMask(
-                      shaderCallback: (bounds) => const LinearGradient(
-                        begin: Alignment.centerLeft,
-                        end: Alignment.centerRight,
-                        colors: [
-                          Color(0xFFA2FF00),
-                          Color(0xFF00FF7F),
-                        ],
-                      ).createShader(
-                        Rect.fromLTWH(0, 0, bounds.width, bounds.height),
-                      ),
-                      child: Text(
-                        'Join Challenge',
-                        maxLines: 1,
-                        overflow: TextOverflow.ellipsis,
-                        style: Theme.of(context).textTheme.bodyLarge?.copyWith(
-                              color: Colors.white,
-                              fontSize: 17.sp,
-                              fontWeight: FontWeight.w700,
-                            ),
+                      onPressed: () {},
+                      child: ShaderMask(
+                        shaderCallback: (bounds) => const LinearGradient(
+                          begin: Alignment.centerLeft,
+                          end: Alignment.centerRight,
+                          colors: [
+                            Color(0xFFA2FF00),
+                            Color(0xFF00FF7F),
+                          ],
+                        ).createShader(
+                          Rect.fromLTWH(0, 0, bounds.width, bounds.height),
+                        ),
+                        child: Text(
+                          'Join Challenge',
+                          maxLines: 1,
+                          overflow: TextOverflow.ellipsis,
+                          style:
+                              Theme.of(context).textTheme.bodyLarge?.copyWith(
+                                    color: Colors.white,
+                                    fontSize: 17.sp,
+                                    fontWeight: FontWeight.w700,
+                                  ),
+                        ),
                       ),
                     ),
                   ),
-                ),
-                child: SizedBox(
-                  height: 43.h,
-                  child: GradientOutlinedButton(
-                    style: ButtonStyle(
-                      shape: MaterialStateProperty.all(
-                        RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(11.r),
+                  child: SizedBox(
+                    height: 43.h,
+                    child: GradientOutlinedButton(
+                      style: ButtonStyle(
+                        shape: MaterialStateProperty.all(
+                          RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(11.r),
+                          ),
                         ),
                       ),
-                    ),
-                    onPressed: () {},
-                    child: ShaderMask(
-                      shaderCallback: (bounds) => const LinearGradient(
-                        begin: Alignment.centerLeft,
-                        end: Alignment.centerRight,
-                        colors: [
-                          Color(0xFFA2FF00),
-                          Color(0xFF00FF7F),
-                        ],
-                      ).createShader(
-                        Rect.fromLTWH(0, 0, bounds.width, bounds.height),
-                      ),
-                      child: Text(
-                        'Share',
-                        maxLines: 1,
-                        overflow: TextOverflow.ellipsis,
-                        style: Theme.of(context).textTheme.bodyLarge?.copyWith(
-                              color: Colors.white,
-                              fontSize: 17.sp,
-                              fontWeight: FontWeight.w700,
-                            ),
+                      onPressed: () {},
+                      child: ShaderMask(
+                        shaderCallback: (bounds) => const LinearGradient(
+                          begin: Alignment.centerLeft,
+                          end: Alignment.centerRight,
+                          colors: [
+                            Color(0xFFA2FF00),
+                            Color(0xFF00FF7F),
+                          ],
+                        ).createShader(
+                          Rect.fromLTWH(0, 0, bounds.width, bounds.height),
+                        ),
+                        child: Text(
+                          'Share',
+                          maxLines: 1,
+                          overflow: TextOverflow.ellipsis,
+                          style:
+                              Theme.of(context).textTheme.bodyLarge?.copyWith(
+                                    color: Colors.white,
+                                    fontSize: 17.sp,
+                                    fontWeight: FontWeight.w700,
+                                  ),
+                        ),
                       ),
                     ),
                   ),

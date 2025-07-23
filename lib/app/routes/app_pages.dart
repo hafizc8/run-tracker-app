@@ -23,9 +23,11 @@ import 'package:zest_mobile/app/modules/auth/register/views/register_verify_emai
 import 'package:zest_mobile/app/modules/auth/register/views/register_view.dart';
 import 'package:zest_mobile/app/modules/challenge/bindings/challenge_invite_binding.dart';
 import 'package:zest_mobile/app/modules/challenge/bindings/create_challenge_binding.dart';
+import 'package:zest_mobile/app/modules/challenge/bindings/edit_challenge_binding.dart';
 import 'package:zest_mobile/app/modules/challenge/views/challenge_invite_view.dart';
 import 'package:zest_mobile/app/modules/challenge/views/create_challenge_team_view.dart';
 import 'package:zest_mobile/app/modules/challenge/views/create_challenge_view.dart';
+import 'package:zest_mobile/app/modules/challenge/views/edit_challenge_view.dart';
 import 'package:zest_mobile/app/modules/choose_location/bindings/choose_location_binding.dart';
 import 'package:zest_mobile/app/modules/choose_location/views/choose_location_view.dart';
 import 'package:zest_mobile/app/modules/club/partial/create_club/bindings/create_club_binding.dart';
@@ -305,12 +307,12 @@ class AppPages {
       page: () => const ChallengeCreateView(),
       binding: ChallengeCreateBinding(),
     ),
-
     GetPage(
-      name: AppRoutes.challengeCreateTeam,
-      page: () => const ChallengeCreateTeamView(),
-      binding: ChallengeCreateBinding(),
+      name: AppRoutes.challengeEdit,
+      page: () => const ChallengeEditView(),
+      binding: ChallengeEditBinding(),
     ),
+
     GetPage(
       name: AppRoutes.challengeCreateTeam,
       page: () => const ChallengeCreateTeamView(),

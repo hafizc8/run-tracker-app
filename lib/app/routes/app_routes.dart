@@ -70,6 +70,7 @@ abstract class AppRoutes {
   static const dailyStreak = '/daily-streak';
 
   static const challengeCreate = '/challenge/create';
+  static const challengeEdit = '/challenge/edit';
   static const challengeCreateTeam = '/challenge/create/team';
   static const challengeInviteFriend = '/challenge/invite';
   static const challengedetails = '/challenge/details';

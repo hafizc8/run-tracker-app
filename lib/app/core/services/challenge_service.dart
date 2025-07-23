@@ -57,6 +57,25 @@ class ChallengeService {
     }
   }
 
+  Future<ChallengeModel?> updateChallenge(
+      CreateChallengeFormModel form, String id) async {
+    try {
+      final response = await _apiService.request(
+        path: AppConstants.challenge(id: id),
+        method: HttpMethod.post,
+        data: form.toJson('put'),
+      );
+
+      if (response.statusCode != 200) {
+        throw Exception('Failed to create challenge');
+      }
+
+      return ChallengeModel.fromJson(response.data['data']);
+    } catch (e) {
+      rethrow;
+    }
+  }
+
   Future<ChallengeModel?> cancelChallenge(String id) async {
     try {
       final response = await _apiService.request(

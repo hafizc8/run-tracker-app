@@ -82,7 +82,7 @@ class CreateChallengeFormModel extends FormModel<CreateChallengeFormModel>
   }
 
   @override
-  Map<String, dynamic> toJson() {
+  Map<String, dynamic> toJson([String? field]) {
     return {
       'title': title,
       'type': type,
@@ -104,12 +104,20 @@ class CreateChallengeFormModel extends FormModel<CreateChallengeFormModel>
               }).toList()
             : [],
       if (clubId != null) 'record_activity_id': clubId,
+      '_method': field,
     };
   }
 
   @override
   bool isValidToUpdate(CreateChallengeFormModel formHasEdited) {
-    throw UnimplementedError();
+    return title != formHasEdited.title ||
+        type != formHasEdited.type ||
+        mode != formHasEdited.mode ||
+        target != formHasEdited.target ||
+        startDate != formHasEdited.startDate ||
+        endDate != formHasEdited.endDate ||
+        teams != formHasEdited.teams ||
+        clubId != formHasEdited.clubId;
   }
 }
 

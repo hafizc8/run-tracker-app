@@ -93,9 +93,7 @@ class ChallengeEditView extends GetView<ChallangeEditController> {
                 () => Row(
                   children: [
                     GestureDetector(
-                      onTap: () {
-                        controller.form.value = form.copyWith(type: 0);
-                      },
+                      onTap: null,
                       child: Container(
                         padding: EdgeInsets.all(1.w), // Lebar border
                         decoration: BoxDecoration(
@@ -145,9 +143,7 @@ class ChallengeEditView extends GetView<ChallangeEditController> {
                     ),
                     SizedBox(width: 12.w),
                     GestureDetector(
-                      onTap: () {
-                        controller.form.value = form.copyWith(type: 1);
-                      },
+                      onTap: null,
                       child: Container(
                         padding: EdgeInsets.all(1.w), // Lebar border
                         decoration: BoxDecoration(
@@ -297,6 +293,7 @@ class ChallengeEditView extends GetView<ChallangeEditController> {
                             value: 0,
                             groupValue: form.mode,
                             onChanged: (value) {
+                              if (form.mode == 1) return;
                               controller.form.value = form.copyWith(
                                 mode: value,
                                 errors: form.errors,
@@ -416,6 +413,7 @@ class ChallengeEditView extends GetView<ChallangeEditController> {
                             value: 1,
                             groupValue: form.mode,
                             onChanged: (value) {
+                              if (form.mode == 0) return;
                               controller.form.value = form.copyWith(
                                 mode: value,
                                 errors: form.errors,

@@ -13,13 +13,18 @@ class DetailChallangeController extends GetxController {
   var isLoading = false.obs;
   var isLoadingCancel = false.obs;
   var isLoadingTeams = false.obs;
+  var isLoadingInvited = false.obs;
+  var isLoadingParticipants = false.obs;
+
   final _challengeService = sl<ChallengeService>();
   var challengeId = "";
   Rx<ChallengeDetailModel?> detailChallenge = Rx<ChallengeDetailModel?>(null);
   Rx<ChallengeModel?> lastdetailChallenge = Rx<ChallengeModel?>(null);
   Rx<Map<String, List<ChallengeTeamsModel>>> teams =
       Rx<Map<String, List<ChallengeTeamsModel>>>({});
-
+  Rx<List<ChallengeTeamsModel>> invited = Rx<List<ChallengeTeamsModel>>([]);
+  Rx<List<ChallengeTeamsModel>> participants =
+      Rx<List<ChallengeTeamsModel>>([]);
   final _authService = sl<AuthService>();
   String get userId => _authService.user?.id ?? ''; // userId
 
@@ -88,16 +93,35 @@ class DetailChallangeController extends GetxController {
     }
   }
 
+  Future<void> getUsersInvited() async {
+    try {
+      isLoadingInvited.value = true;
+      final res = await _challengeService.challengeUser(
+        challengeId,
+        pendingJoin: '1',
+        limit: '999',
+      );
+      invited.value = res.data;
+    } on AppException catch (e) {
+      AppExceptionHandlerInfo.handle(e);
+    } catch (e) {
+      Get.snackbar('Error', e.toString());
+    } finally {
+      isLoadingInvited.value = false;
+    }
+  }
+
   Future<List<ChallengeTeamsModel>> getUserOnTeam(String team) async {
     try {
-      final response = await _challengeService.challengeUser(challengeId, team);
+      final response =
+          await _challengeService.challengeUser(challengeId, team: team);
       return response.data;
     } catch (e) {
       rethrow;
     }
   }
 
-  Future<void> loadTeams() async {
+  Future<void> loadUserOnTeams() async {
     if ((detailChallenge.value?.teams.length ?? 0) == 0) return;
     try {
       isLoadingTeams.value = true;
@@ -121,7 +145,7 @@ class DetailChallangeController extends GetxController {
   Future<void> init() async {
     Future.microtask(() async {
       await load();
-      await loadTeams();
+      await loadUserOnTeams();
     });
   }
 }

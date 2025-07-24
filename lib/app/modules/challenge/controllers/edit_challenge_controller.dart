@@ -9,6 +9,8 @@ import 'package:zest_mobile/app/core/models/enums/app_exception_enum.dart';
 import 'package:zest_mobile/app/core/models/forms/create_challenge_form.dart';
 import 'package:zest_mobile/app/core/models/model/challenge_detail_model.dart';
 import 'package:zest_mobile/app/core/models/model/challenge_model.dart';
+import 'package:zest_mobile/app/core/models/model/challenge_team_model.dart'
+    as team;
 import 'package:zest_mobile/app/core/models/model/event_model.dart' as event;
 import 'package:zest_mobile/app/core/services/auth_service.dart';
 import 'package:zest_mobile/app/core/services/challenge_service.dart';
@@ -18,6 +20,7 @@ class ChallangeEditController extends GetxController {
   final TextEditingController startDateController = TextEditingController();
   final TextEditingController endDateController = TextEditingController();
   var isLoading = false.obs;
+  var isLoadingTeams = false.obs;
 
   var form = CreateChallengeFormModel().obs;
   var formOriginal = CreateChallengeFormModel().obs;
@@ -28,13 +31,24 @@ class ChallangeEditController extends GetxController {
   final _challengeService = sl<ChallengeService>();
   String get userId => _authService.user?.id ?? ''; // userId
   String challengeId = '';
+  ChallengeDetailModel? challengeDetail;
 
   @override
   void onInit() {
     super.onInit();
     if (Get.arguments != null && Get.arguments is ChallengeDetailModel) {
+      challengeDetail = Get.arguments as ChallengeDetailModel;
       initFormEdit(Get.arguments as ChallengeDetailModel);
     }
+  }
+
+  @override
+  void onClose() {
+    startDateController.dispose();
+    endDateController.dispose();
+    challengeDetail = null;
+    challengeId = '';
+    super.onClose();
   }
 
   void initFormEdit(ChallengeDetailModel challenge) async {
@@ -60,7 +74,7 @@ class ChallangeEditController extends GetxController {
     DateTime? picked = await showDatePicker(
       context: context,
       initialDate: form.value.startDate ?? DateTime.now(),
-      firstDate: DateTime(2000),
+      firstDate: DateTime.now(),
       lastDate: DateTime(2101),
     );
 
@@ -207,24 +221,55 @@ class ChallangeEditController extends GetxController {
   }
 
   void toChallengeTeam() {
-    form.value = form.value.copyWith(
-      teams: [
-        Teams(
-            id: const Uuid().v4(),
-            isOwner: true,
-            name: 'Blue Team',
-            members: [
-              event.User(
-                id: _authService.user?.id ?? '',
-                name: _authService.user?.name ?? '',
-                imagePath: _authService.user?.imagePath ?? '',
-                imageUrl: _authService.user?.imageUrl ?? '',
-              ),
-            ]),
-        Teams(id: const Uuid().v4(), name: 'Orange Team', members: const []),
-      ],
-    );
-    Get.toNamed(AppRoutes.challengeCreateTeam);
+    loadTeams();
+    Get.toNamed(AppRoutes.challengeEditTeam);
+  }
+
+  Future<List<team.ChallengeTeamsModel>> getUserOnTeam(String team) async {
+    try {
+      final response =
+          await _challengeService.challengeUser(challengeId, team: team);
+      return response.data;
+    } catch (e) {
+      rethrow;
+    }
+  }
+
+  Future<void> loadTeams() async {
+    if ((challengeDetail?.teams.length ?? 0) == 0) return;
+    try {
+      isLoadingTeams.value = true;
+      final results = await Future.wait(
+        challengeDetail!.teams.map((team) async {
+          final data = await getUserOnTeam(team);
+          return MapEntry(team, data);
+        }),
+      );
+      final List<Teams> teams = results.map((entry) {
+        return Teams(
+          id: const Uuid().v4(),
+          name: entry.key,
+          isOwner: entry.value.any((e) => e.user?.id == userId),
+          members: entry.value
+              .map(
+                (e) => event.User(
+                  id: e.user?.id,
+                  name: e.user?.name,
+                  imagePath: e.user?.imagePath,
+                  imageUrl: e.user?.imageUrl,
+                ),
+              )
+              .toList(),
+        );
+      }).toList();
+      form.value = form.value.copyWith(teams: teams);
+    } on AppException catch (e) {
+      AppExceptionHandlerInfo.handle(e);
+    } catch (e) {
+      Get.snackbar('Error', e.toString());
+    } finally {
+      isLoadingTeams.value = false;
+    }
   }
 
   void addTeam() {

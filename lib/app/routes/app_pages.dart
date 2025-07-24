@@ -27,6 +27,7 @@ import 'package:zest_mobile/app/modules/challenge/bindings/edit_challenge_bindin
 import 'package:zest_mobile/app/modules/challenge/views/challenge_invite_view.dart';
 import 'package:zest_mobile/app/modules/challenge/views/create_challenge_team_view.dart';
 import 'package:zest_mobile/app/modules/challenge/views/create_challenge_view.dart';
+import 'package:zest_mobile/app/modules/challenge/views/edit_challenge_team_view.dart';
 import 'package:zest_mobile/app/modules/challenge/views/edit_challenge_view.dart';
 import 'package:zest_mobile/app/modules/choose_location/bindings/choose_location_binding.dart';
 import 'package:zest_mobile/app/modules/choose_location/views/choose_location_view.dart';
@@ -317,6 +318,11 @@ class AppPages {
       name: AppRoutes.challengeCreateTeam,
       page: () => const ChallengeCreateTeamView(),
       binding: ChallengeCreateBinding(),
+    ),
+    GetPage(
+      name: AppRoutes.challengeEditTeam,
+      page: () => const ChallengeEditTeamView(),
+      binding: ChallengeEditBinding(),
     ),
     GetPage(
       name: AppRoutes.challengeInviteFriend,

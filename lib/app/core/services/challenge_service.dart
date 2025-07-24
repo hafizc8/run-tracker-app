@@ -94,15 +94,18 @@ class ChallengeService {
   }
 
   Future<PaginatedDataResponse<ChallengeTeamsModel>> challengeUser(
-    String id,
-    String team,
-  ) async {
+    String id, {
+    String? team,
+    String? pendingJoin,
+    String? limit,
+  }) async {
     try {
       final response = await _apiService.request(
           path: AppConstants.challengeUser(id: id),
           method: HttpMethod.get,
           queryParams: {
-            'team': team,
+            if (team != null) 'team': team,
+            if (pendingJoin != null) 'pending_join': pendingJoin,
           });
 
       if (response.statusCode != 200) {

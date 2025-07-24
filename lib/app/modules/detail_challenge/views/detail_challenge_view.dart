@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:get/get.dart';
+import 'package:zest_mobile/app/core/extension/date_extension.dart';
 import 'package:zest_mobile/app/core/extension/initial_profile_empty.dart';
 import 'package:zest_mobile/app/core/shared/widgets/gradient_outlined_button.dart';
 import 'package:zest_mobile/app/core/shared/widgets/shimmer_loading_circle.dart';
@@ -41,7 +42,10 @@ class DetailChallengeView extends GetView<DetailChallangeController> {
         actions: [
           Obx(
             () => Visibility(
-              visible: controller.detailChallenge.value?.isOwner == 1,
+              visible: (controller.detailChallenge.value?.isOwner == 1 &&
+                  (controller.detailChallenge.value?.startDate!
+                          .isFutureDate() ==
+                      true)),
               child: PopupMenuButton<String>(
                 onSelected: (value) async {
                   // Handle the selection
@@ -420,11 +424,19 @@ class DetailChallengeView extends GetView<DetailChallangeController> {
                         const SizedBox(
                           height: 16,
                         ),
-                        // Row(
-                        //   children: [
-                        //     ParticipantsAvatars(imageUrls: imageUrls),
-                        //   ],
-                        // )
+                        Obx(() {
+                          if (controller.isLoadingInvited.value) {
+                            return const CircularProgressIndicator();
+                          }
+                          return ParticipantsAvatars(
+                            imageUrls: controller.invited.value
+                                .map((e) => e.user?.imageUrl ?? 'null')
+                                .toList(),
+                            avatarSize: 29,
+                            overlapOffset: 38,
+                            maxVisible: 3,
+                          );
+                        })
                       ],
                       const SizedBox(
                         height: 16,

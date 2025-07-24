@@ -192,8 +192,7 @@ class HomeView extends GetView<HomeController> {
                   child: StepsTrackerWidget(
                     progressValue: controller.progressValue,
                     currentSteps: controller.validatedSteps,
-                    maxSteps:
-                        controller.user?.userPreference?.dailyStepGoals ?? 0,
+                    maxSteps: controller.user?.userPreference?.dailyStepGoals ?? 0,
                   ),
                 ),
                 // Error message when step sensor not found

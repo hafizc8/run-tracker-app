@@ -1,3 +1,5 @@
+import 'dart:ffi';
+
 import 'package:get/get.dart';
 import 'package:zest_mobile/app/core/di/service_locator.dart';
 import 'package:zest_mobile/app/core/exception/app_exception.dart';
@@ -111,6 +113,24 @@ class DetailChallangeController extends GetxController {
     }
   }
 
+  Future<void> getUsersParticipants() async {
+    try {
+      isLoadingParticipants.value = true;
+      final res = await _challengeService.challengeUser(
+        challengeId,
+        pendingJoin: '0',
+        limit: '999',
+      );
+      participants.value = res.data;
+    } on AppException catch (e) {
+      AppExceptionHandlerInfo.handle(e);
+    } catch (e) {
+      Get.snackbar('Error', e.toString());
+    } finally {
+      isLoadingParticipants.value = false;
+    }
+  }
+
   Future<List<ChallengeTeamsModel>> getUserOnTeam(String team) async {
     try {
       final response =
@@ -145,7 +165,11 @@ class DetailChallangeController extends GetxController {
   Future<void> init() async {
     Future.microtask(() async {
       await load();
-      await loadUserOnTeams();
+      Future.wait([
+        getUsersInvited(),
+        if (detailChallenge.value?.type == 0) getUsersParticipants(),
+        loadUserOnTeams(),
+      ]);
     });
   }
 }

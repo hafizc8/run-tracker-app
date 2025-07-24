@@ -84,7 +84,7 @@ class CardChallenge extends StatelessWidget {
             ),
             const SizedBox(height: 8),
             Text(
-              "${challengeDetailModel.typeText} Challenge",
+              "${challengeDetailModel.modeText} Challenge",
               maxLines: 1,
               overflow: TextOverflow.ellipsis,
               style: Theme.of(context).textTheme.bodyLarge?.copyWith(

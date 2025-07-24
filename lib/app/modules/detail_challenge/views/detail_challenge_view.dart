@@ -219,7 +219,37 @@ class DetailChallengeView extends GetView<DetailChallangeController> {
                               controller.detailChallenge.value!,
                         ),
                       ),
-                      if (controller.detailChallenge.value?.mode == 1) ...[
+                      if (controller.detailChallenge.value?.type == 0) ...[
+                        const SizedBox(
+                          height: 16,
+                        ),
+                        Text(
+                          'Participants',
+                          style:
+                              Theme.of(context).textTheme.bodyMedium?.copyWith(
+                                    fontWeight: FontWeight.w400,
+                                    color: Color(0xFFA5A5A5),
+                                    fontSize: 15.sp,
+                                  ),
+                        ),
+                        const SizedBox(
+                          height: 16,
+                        ),
+                        Obx(() {
+                          if (controller.isLoadingParticipants.value) {
+                            return const CircularProgressIndicator();
+                          }
+                          return ParticipantsAvatars(
+                            imageUrls: controller.participants.value
+                                .map((e) => e.user?.imageUrl ?? 'null')
+                                .toList(),
+                            avatarSize: 29,
+                            overlapOffset: 38,
+                            maxVisible: 3,
+                          );
+                        })
+                      ],
+                      if (controller.detailChallenge.value?.type == 1) ...[
                         const SizedBox(
                           height: 16,
                         ),
@@ -424,19 +454,25 @@ class DetailChallengeView extends GetView<DetailChallangeController> {
                         const SizedBox(
                           height: 16,
                         ),
-                        Obx(() {
-                          if (controller.isLoadingInvited.value) {
-                            return const CircularProgressIndicator();
-                          }
-                          return ParticipantsAvatars(
-                            imageUrls: controller.invited.value
-                                .map((e) => e.user?.imageUrl ?? 'null')
-                                .toList(),
-                            avatarSize: 29,
-                            overlapOffset: 38,
-                            maxVisible: 3,
-                          );
-                        })
+                        Row(
+                          children: [
+                            Obx(() {
+                              if (controller.isLoadingInvited.value) {
+                                return const CircularProgressIndicator();
+                              }
+                              return ParticipantsAvatars(
+                                imageUrls: controller.invited.value
+                                    .map((e) => e.user?.imageUrl ?? 'null')
+                                    .toList(),
+                                avatarSize: 29,
+                                overlapOffset: 38,
+                                maxVisible: 3,
+                              );
+                            }),
+                            const Spacer(),
+                            SvgPicture.asset('assets/icons/ic_add2.svg'),
+                          ],
+                        )
                       ],
                       const SizedBox(
                         height: 16,

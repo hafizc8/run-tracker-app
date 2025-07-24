@@ -6,7 +6,7 @@ import 'package:geolocator/geolocator.dart';
 import 'package:zest_mobile/app/core/models/model/location_point_model.dart';
 import 'package:zest_mobile/app/core/services/log_service.dart';
 import 'package:zest_mobile/app/core/shared/helpers/number_helper.dart';
-import 'package:pedometer_2/pedometer_2.dart';
+// import 'package:pedometer_2/pedometer_2.dart';
 
 // --- Entry Point untuk Service ---
 @pragma('vm:entry-point')
@@ -36,7 +36,8 @@ void onStart(ServiceInstance service) async {
   StreamSubscription<Position>? positionSubscription;
 
   void cleanup() {
-    _log(service, LogLevel.warning, "Performing cleanup: Canceling all timers and subscriptions.");
+    _log(service, LogLevel.warning,
+        "Performing cleanup: Canceling all timers and subscriptions.");
     updateTimer?.cancel();
     pedometerSubscription?.cancel();
     positionSubscription?.cancel();
@@ -48,25 +49,25 @@ void onStart(ServiceInstance service) async {
   // Ini mencegah error inisialisasi ulang.
   // =========================================================================
 
-  pedometerSubscription = Pedometer().stepCountStream().listen((steps) {
+  // pedometerSubscription = Pedometer().stepCountStream().listen((steps) {
 
-    if (!isRecording || isPaused) {
-      // Jika tidak merekam, cukup simpan state terakhir untuk perhitungan nanti
-      totalStepsAtPause = steps;
-      return;
-    }
+  //   if (!isRecording || isPaused) {
+  //     // Jika tidak merekam, cukup simpan state terakhir untuk perhitungan nanti
+  //     totalStepsAtPause = steps;
+  //     return;
+  //   }
 
-    _log(service, LogLevel.verbose, "Pedometer raw event: $steps steps.");
+  //   _log(service, LogLevel.verbose, "Pedometer raw event: $steps steps.");
 
-    // Jika baru saja resume dari pause
-    if (totalStepsAtPause > 0) {
-      int stepsDuringPause = steps - totalStepsAtPause;
-      totalStepsAtStart += stepsDuringPause; // Tambahkan langkah saat pause ke offset
-      totalStepsAtPause = 0; // Reset
-    }
+  //   // Jika baru saja resume dari pause
+  //   if (totalStepsAtPause > 0) {
+  //     int stepsDuringPause = steps - totalStepsAtPause;
+  //     totalStepsAtStart += stepsDuringPause; // Tambahkan langkah saat pause ke offset
+  //     totalStepsAtPause = 0; // Reset
+  //   }
 
-    stepsInSession = steps - totalStepsAtStart;
-  });
+  //   stepsInSession = steps - totalStepsAtStart;
+  // });
 
   // --- Listener Geolocator (Selalu Aktif) ---
   positionSubscription = Geolocator.getPositionStream(
@@ -75,7 +76,8 @@ void onStart(ServiceInstance service) async {
       distanceFilter: 0,
     ),
   ).listen((Position position) {
-    if (!isRecording || isPaused) return; // Abaikan jika tidak merekam atau sedang pause
+    if (!isRecording || isPaused)
+      return; // Abaikan jika tidak merekam atau sedang pause
 
     final newPoint = LocationPoint(
       latitude: position.latitude,
@@ -86,7 +88,8 @@ void onStart(ServiceInstance service) async {
     if (justResumed) {
       // Jika baru saja resume, jangan hitung jarak.
       // Cukup tambahkan titik baru sebagai titik awal untuk segmen rute berikutnya.
-      _log(service, LogLevel.info, "Just resumed. Ignoring distance calculation for this point.");
+      _log(service, LogLevel.info,
+          "Just resumed. Ignoring distance calculation for this point.");
       // Set flag kembali ke false agar perhitungan selanjutnya berjalan normal.
       justResumed = false;
     } else if (currentPath.isNotEmpty) {
@@ -98,7 +101,8 @@ void onStart(ServiceInstance service) async {
         newPoint.longitude,
       );
 
-      _log(service, LogLevel.verbose, "Geolocator new position: lat=${position.latitude}, lon=${position.longitude}, distance=$distance meters.");
+      _log(service, LogLevel.verbose,
+          "Geolocator new position: lat=${position.latitude}, lon=${position.longitude}, distance=$distance meters.");
 
       if (distance > 0) {
         currentDistanceInMeters += distance;
@@ -140,7 +144,10 @@ void onStart(ServiceInstance service) async {
     totalStepsAtPause = 0;
 
     // Ambil total langkah saat ini sebagai titik awal (offset)
-    Pedometer().stepCountStream().first.then((value) => totalStepsAtStart = value);
+    // Pedometer()
+    //     .stepCountStream()
+    //     .first
+    //     .then((value) => totalStepsAtStart = value);
 
     isRecording = true;
 
@@ -200,7 +207,8 @@ void onStart(ServiceInstance service) async {
   });
 
   service.on('stopService').listen((event) {
-    _log(service, LogLevel.warning, "==> Event 'stopService' received. Shutting down.");
+    _log(service, LogLevel.warning,
+        "==> Event 'stopService' received. Shutting down.");
     cleanup();
     service.stopSelf();
   });

@@ -137,4 +137,24 @@ class ChallengeService {
       rethrow;
     }
   }
+
+  Future<bool?> inviteFriendChallenge(String id, List<String> userIds) async {
+    try {
+      final response = await _apiService.request(
+        path: AppConstants.challengeInviteFriend(id: id),
+        method: HttpMethod.post,
+        data: {
+          'user_ids': userIds,
+        },
+      );
+
+      if (response.statusCode != 200) {
+        throw Exception('Failed to load challenge invite friend');
+      }
+
+      return response.data['success'];
+    } catch (e) {
+      rethrow;
+    }
+  }
 }

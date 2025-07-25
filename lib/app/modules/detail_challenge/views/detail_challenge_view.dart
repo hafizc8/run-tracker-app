@@ -5,6 +5,8 @@ import 'package:flutter_svg/flutter_svg.dart';
 import 'package:get/get.dart';
 import 'package:zest_mobile/app/core/extension/date_extension.dart';
 import 'package:zest_mobile/app/core/extension/initial_profile_empty.dart';
+import 'package:zest_mobile/app/core/models/model/challenge_team_model.dart';
+import 'package:zest_mobile/app/core/models/model/user_mini_model.dart';
 import 'package:zest_mobile/app/core/shared/widgets/gradient_outlined_button.dart';
 import 'package:zest_mobile/app/core/shared/widgets/shimmer_loading_circle.dart';
 import 'package:zest_mobile/app/core/shared/widgets/shimmer_loading_event.dart';
@@ -303,134 +305,259 @@ class DetailChallengeView extends GetView<DetailChallangeController> {
                                           ),
                                     ),
                                     const SizedBox(height: 16),
-                                    GridView(
-                                      padding:
-                                          const EdgeInsets.only(bottom: 16),
-                                      shrinkWrap: true,
-                                      physics:
-                                          const NeverScrollableScrollPhysics(),
-                                      gridDelegate:
-                                          const SliverGridDelegateWithFixedCrossAxisCount(
-                                        crossAxisCount: 3,
-                                        mainAxisSpacing: 12,
-                                        crossAxisSpacing: 12,
-                                        childAspectRatio: 71 / 90,
-                                      ),
-                                      children: [
-                                        ...(List.generate(teams.length, (i) {
-                                          final e = teams[i];
-
-                                          return AspectRatio(
-                                            aspectRatio: 71 / 90,
-                                            child: Container(
-                                              padding: EdgeInsets.all(8.w),
-                                              decoration: BoxDecoration(
-                                                color: const Color(0xFF3C3C3C),
-                                                borderRadius:
-                                                    BorderRadius.circular(10.w),
+                                    SizedBox(
+                                      height: 90.h,
+                                      child: ListView(
+                                        shrinkWrap: true,
+                                        scrollDirection: Axis.horizontal,
+                                        children: [
+                                          Visibility(
+                                            visible: teams.every(
+                                              (element) =>
+                                                  element.user?.id !=
+                                                  controller.userId,
+                                            ),
+                                            child: GestureDetector(
+                                              onTap: () async {},
+                                              child: AspectRatio(
+                                                aspectRatio: 71 / 90,
+                                                child: Container(
+                                                  padding: EdgeInsets.all(1.w),
+                                                  decoration: BoxDecoration(
+                                                    gradient:
+                                                        const LinearGradient(
+                                                      colors: [
+                                                        Color(0xFFA2FF00),
+                                                        Color(0xFF00FF7F),
+                                                      ],
+                                                      begin:
+                                                          Alignment.topCenter,
+                                                      end: Alignment
+                                                          .bottomCenter,
+                                                    ),
+                                                    borderRadius:
+                                                        BorderRadius.circular(
+                                                            11.r),
+                                                  ),
+                                                  child: Container(
+                                                    decoration: BoxDecoration(
+                                                      borderRadius:
+                                                          BorderRadius.circular(
+                                                              10.r),
+                                                      color: Theme.of(context)
+                                                          .colorScheme
+                                                          .background,
+                                                    ),
+                                                    alignment: Alignment.center,
+                                                    child: SvgPicture.asset(
+                                                      width: 24.r,
+                                                      height: 24.r,
+                                                      'assets/icons/ic_switch_user.svg',
+                                                    ),
+                                                  ),
+                                                ),
                                               ),
-                                              child: Column(
-                                                mainAxisAlignment:
-                                                    MainAxisAlignment.center,
-                                                children: [
-                                                  ClipOval(
-                                                    child: CachedNetworkImage(
-                                                      imageUrl:
-                                                          e.user?.imageUrl ??
-                                                              '',
-                                                      width: 32.r,
-                                                      height: 32.r,
-                                                      fit: BoxFit.cover,
-                                                      placeholder: (context,
-                                                              url) =>
-                                                          ShimmerLoadingCircle(
-                                                        size: 32.r,
-                                                      ),
-                                                      errorWidget: (context,
-                                                              url, error) =>
-                                                          CircleAvatar(
-                                                        radius: 32.r,
-                                                        backgroundColor:
-                                                            Theme.of(context)
-                                                                .colorScheme
-                                                                .onBackground,
-                                                        child: Text(
-                                                          (e.user?.name ?? '')
-                                                              .toInitials(),
-                                                          style:
+                                            ),
+                                          ),
+                                          ...(List.generate(teams.length, (i) {
+                                            final e = teams[i];
+
+                                            return AspectRatio(
+                                              aspectRatio: 71 / 90,
+                                              child: Container(
+                                                padding: EdgeInsets.all(8.w),
+                                                decoration: BoxDecoration(
+                                                  color:
+                                                      const Color(0xFF3C3C3C),
+                                                  borderRadius:
+                                                      BorderRadius.circular(
+                                                          10.w),
+                                                ),
+                                                child: Column(
+                                                  mainAxisAlignment:
+                                                      MainAxisAlignment.center,
+                                                  children: [
+                                                    ClipOval(
+                                                      child: CachedNetworkImage(
+                                                        imageUrl:
+                                                            e.user?.imageUrl ??
+                                                                '',
+                                                        width: 32.r,
+                                                        height: 32.r,
+                                                        fit: BoxFit.cover,
+                                                        placeholder: (context,
+                                                                url) =>
+                                                            ShimmerLoadingCircle(
+                                                          size: 32.r,
+                                                        ),
+                                                        errorWidget: (context,
+                                                                url, error) =>
+                                                            CircleAvatar(
+                                                          radius: 32.r,
+                                                          backgroundColor:
                                                               Theme.of(context)
-                                                                  .textTheme
-                                                                  .bodySmall
-                                                                  ?.copyWith(
-                                                                    color: Theme.of(
-                                                                            context)
-                                                                        .colorScheme
-                                                                        .background,
-                                                                  ),
+                                                                  .colorScheme
+                                                                  .onBackground,
+                                                          child: Text(
+                                                            (e.user?.name ?? '')
+                                                                .toInitials(),
+                                                            style: Theme.of(
+                                                                    context)
+                                                                .textTheme
+                                                                .bodySmall
+                                                                ?.copyWith(
+                                                                  color: Theme.of(
+                                                                          context)
+                                                                      .colorScheme
+                                                                      .background,
+                                                                ),
+                                                          ),
                                                         ),
                                                       ),
                                                     ),
-                                                  ),
-                                                  SizedBox(height: 8.h),
-                                                  Text(
-                                                    e.user?.name ?? '-',
-                                                    overflow:
-                                                        TextOverflow.ellipsis,
-                                                    maxLines: 1,
-                                                  ),
-                                                ],
-                                              ),
-                                            ),
-                                          );
-                                        })),
-                                        Visibility(
-                                          visible: teams.every(
-                                            (element) =>
-                                                element.user?.id !=
-                                                controller.userId,
-                                          ),
-                                          child: GestureDetector(
-                                            onTap: () async {},
-                                            child: AspectRatio(
-                                              aspectRatio: 71 / 90,
-                                              child: Container(
-                                                padding: EdgeInsets.all(1.w),
-                                                decoration: BoxDecoration(
-                                                  gradient:
-                                                      const LinearGradient(
-                                                    colors: [
-                                                      Color(0xFFA2FF00),
-                                                      Color(0xFF00FF7F),
-                                                    ],
-                                                    begin: Alignment.topCenter,
-                                                    end: Alignment.bottomCenter,
-                                                  ),
-                                                  borderRadius:
-                                                      BorderRadius.circular(
-                                                          11.r),
-                                                ),
-                                                child: Container(
-                                                  decoration: BoxDecoration(
-                                                    borderRadius:
-                                                        BorderRadius.circular(
-                                                            10.r),
-                                                    color: Theme.of(context)
-                                                        .colorScheme
-                                                        .background,
-                                                  ),
-                                                  alignment: Alignment.center,
-                                                  child: SvgPicture.asset(
-                                                    width: 24.r,
-                                                    height: 24.r,
-                                                    'assets/icons/ic_switch_user.svg',
-                                                  ),
+                                                    SizedBox(height: 8.h),
+                                                    Text(
+                                                      e.user?.name ?? '-',
+                                                      overflow:
+                                                          TextOverflow.ellipsis,
+                                                      maxLines: 1,
+                                                    ),
+                                                  ],
                                                 ),
                                               ),
-                                            ),
-                                          ),
-                                        )
-                                      ],
+                                            );
+                                          })),
+                                        ],
+                                      ),
                                     ),
+                                    // GridView(
+                                    //   padding:
+                                    //       const EdgeInsets.only(bottom: 16),
+                                    //   shrinkWrap: true,
+                                    //   physics:
+                                    //       const NeverScrollableScrollPhysics(),
+                                    //   gridDelegate:
+                                    //       const SliverGridDelegateWithFixedCrossAxisCount(
+                                    //     crossAxisCount: 3,
+                                    //     mainAxisSpacing: 12,
+                                    //     crossAxisSpacing: 12,
+                                    //     childAspectRatio: 71 / 90,
+                                    //   ),
+                                    //   children: [
+                                    //     ...(List.generate(teams.length, (i) {
+                                    //       final e = teams[i];
+
+                                    //       return AspectRatio(
+                                    //         aspectRatio: 71 / 90,
+                                    //         child: Container(
+                                    //           padding: EdgeInsets.all(8.w),
+                                    //           decoration: BoxDecoration(
+                                    //             color: const Color(0xFF3C3C3C),
+                                    //             borderRadius:
+                                    //                 BorderRadius.circular(10.w),
+                                    //           ),
+                                    //           child: Column(
+                                    //             mainAxisAlignment:
+                                    //                 MainAxisAlignment.center,
+                                    //             children: [
+                                    //               ClipOval(
+                                    //                 child: CachedNetworkImage(
+                                    //                   imageUrl:
+                                    //                       e.user?.imageUrl ??
+                                    //                           '',
+                                    //                   width: 32.r,
+                                    //                   height: 32.r,
+                                    //                   fit: BoxFit.cover,
+                                    //                   placeholder: (context,
+                                    //                           url) =>
+                                    //                       ShimmerLoadingCircle(
+                                    //                     size: 32.r,
+                                    //                   ),
+                                    //                   errorWidget: (context,
+                                    //                           url, error) =>
+                                    //                       CircleAvatar(
+                                    //                     radius: 32.r,
+                                    //                     backgroundColor:
+                                    //                         Theme.of(context)
+                                    //                             .colorScheme
+                                    //                             .onBackground,
+                                    //                     child: Text(
+                                    //                       (e.user?.name ?? '')
+                                    //                           .toInitials(),
+                                    //                       style:
+                                    //                           Theme.of(context)
+                                    //                               .textTheme
+                                    //                               .bodySmall
+                                    //                               ?.copyWith(
+                                    //                                 color: Theme.of(
+                                    //                                         context)
+                                    //                                     .colorScheme
+                                    //                                     .background,
+                                    //                               ),
+                                    //                     ),
+                                    //                   ),
+                                    //                 ),
+                                    //               ),
+                                    //               SizedBox(height: 8.h),
+                                    //               Text(
+                                    //                 e.user?.name ?? '-',
+                                    //                 overflow:
+                                    //                     TextOverflow.ellipsis,
+                                    //                 maxLines: 1,
+                                    //               ),
+                                    //             ],
+                                    //           ),
+                                    //         ),
+                                    //       );
+                                    //     })),
+                                    //     Visibility(
+                                    //       visible: teams.every(
+                                    //         (element) =>
+                                    //             element.user?.id !=
+                                    //             controller.userId,
+                                    //       ),
+                                    //       child: GestureDetector(
+                                    //         onTap: () async {},
+                                    //         child: AspectRatio(
+                                    //           aspectRatio: 71 / 90,
+                                    //           child: Container(
+                                    //             padding: EdgeInsets.all(1.w),
+                                    //             decoration: BoxDecoration(
+                                    //               gradient:
+                                    //                   const LinearGradient(
+                                    //                 colors: [
+                                    //                   Color(0xFFA2FF00),
+                                    //                   Color(0xFF00FF7F),
+                                    //                 ],
+                                    //                 begin: Alignment.topCenter,
+                                    //                 end: Alignment.bottomCenter,
+                                    //               ),
+                                    //               borderRadius:
+                                    //                   BorderRadius.circular(
+                                    //                       11.r),
+                                    //             ),
+                                    //             child: Container(
+                                    //               decoration: BoxDecoration(
+                                    //                 borderRadius:
+                                    //                     BorderRadius.circular(
+                                    //                         10.r),
+                                    //                 color: Theme.of(context)
+                                    //                     .colorScheme
+                                    //                     .background,
+                                    //               ),
+                                    //               alignment: Alignment.center,
+                                    //               child: SvgPicture.asset(
+                                    //                 width: 24.r,
+                                    //                 height: 24.r,
+                                    //                 'assets/icons/ic_switch_user.svg',
+                                    //               ),
+                                    //             ),
+                                    //           ),
+                                    //         ),
+                                    //       ),
+                                    //     )
+                                    //   ],
+                                    // ),
                                   ],
                                 ),
                               );
@@ -470,7 +597,22 @@ class DetailChallengeView extends GetView<DetailChallangeController> {
                               );
                             }),
                             const Spacer(),
-                            SvgPicture.asset('assets/icons/ic_add2.svg'),
+                            GestureDetector(
+                              onTap: () async {
+                                var res = await Get.toNamed(
+                                    AppRoutes.challengedetailsInvite,
+                                    arguments: {
+                                      'challengeId': controller.challengeId
+                                    });
+                                if (res != null && res is List<UserMiniModel>) {
+                                  controller.invited.value = [
+                                    ...controller.invited.value
+                                  ];
+                                }
+                              },
+                              child:
+                                  SvgPicture.asset('assets/icons/ic_add2.svg'),
+                            ),
                           ],
                         )
                       ],

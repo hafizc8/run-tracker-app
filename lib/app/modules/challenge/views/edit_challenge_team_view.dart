@@ -171,14 +171,19 @@ class ChallengeEditTeamView extends GetView<ChallangeEditController> {
                                         color: Colors.grey),
                                   ),
                                   const SizedBox(width: 16),
-                                  GestureDetector(
-                                    onTap: () {
-                                      controller.deleteTeam(index,
-                                          form.teams?[index].isOwner ?? false);
-                                    },
-                                    child: const Icon(
-                                      Icons.delete_outlined,
-                                      color: Colors.red,
+                                  Visibility(
+                                    visible: controller.showDeleteTeam(index),
+                                    child: GestureDetector(
+                                      onTap: () {
+                                        controller.deleteTeam(
+                                            index,
+                                            form.teams?[index].isOwner ??
+                                                false);
+                                      },
+                                      child: const Icon(
+                                        Icons.delete_outlined,
+                                        color: Colors.red,
+                                      ),
                                     ),
                                   ),
                                 ],
@@ -261,85 +266,9 @@ class ChallengeEditTeamView extends GetView<ChallangeEditController> {
                                 ),
                               ),
                             ),
-                            if (controller.userId != e?.id)
-                              Positioned(
-                                top: -8,
-                                right: -8,
-                                child: GestureDetector(
-                                  onTap: () {
-                                    controller.removeMemberFromTeam(index, i);
-                                  },
-                                  child: Container(
-                                    padding: EdgeInsets.all(2.w),
-                                    decoration: BoxDecoration(
-                                      shape: BoxShape.circle,
-                                      color:
-                                          Theme.of(context).colorScheme.error,
-                                    ),
-                                    child: const Icon(
-                                      Icons.close,
-                                      size: 15,
-                                    ),
-                                  ),
-                                ),
-                              ),
                           ],
                         );
                       })),
-                      GestureDetector(
-                        onTap: () async {
-                          if ((controller.form.value.teams?[index].members
-                                      ?.length ??
-                                  0) >=
-                              10) {
-                            Get.snackbar(
-                              'Warning!',
-                              'You cannot add more than 10 members',
-                              backgroundColor: Colors.yellow,
-                              colorText: Colors.black,
-                            );
-                            return;
-                          }
-
-                          var res = await Get.toNamed(
-                            AppRoutes.challengeInviteFriend,
-                          );
-                          if (res != null) {
-                            controller.addMembersToTeam(
-                                index, res as List<User>);
-                            ();
-                          }
-                        },
-                        child: AspectRatio(
-                          aspectRatio: 71 / 90,
-                          child: Container(
-                            padding: EdgeInsets.all(1.w),
-                            decoration: BoxDecoration(
-                              gradient: const LinearGradient(
-                                colors: [
-                                  Color(0xFFA2FF00),
-                                  Color(0xFF00FF7F),
-                                ],
-                                begin: Alignment.topCenter,
-                                end: Alignment.bottomCenter,
-                              ),
-                              borderRadius: BorderRadius.circular(11.r),
-                            ),
-                            child: Container(
-                              decoration: BoxDecoration(
-                                borderRadius: BorderRadius.circular(10.r),
-                                color: Theme.of(context).colorScheme.background,
-                              ),
-                              alignment: Alignment.center,
-                              child: SvgPicture.asset(
-                                width: 24.r,
-                                height: 24.r,
-                                'assets/icons/follow_gradient.svg',
-                              ),
-                            ),
-                          ),
-                        ),
-                      )
                     ],
                   ),
                 ],

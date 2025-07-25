@@ -240,9 +240,6 @@ class ChallengeEditView extends GetView<ChallangeEditController> {
                     keyboardType: TextInputType.text,
                     controller: controller.startDateController,
                     readOnly: true,
-                    onTap: () {
-                      controller.selectDate(context, true);
-                    },
                     decoration: InputDecoration(
                       hintText: 'Start Date',
                       errorText: form.errors?['start_date'],

@@ -64,6 +64,7 @@ class AppConstants {
 
   static String challengeCancel({String? id}) => "/challange/$id/cancel";
   static String challengeUser({String? id}) => "/challange/$id/user";
+  static String challengeInviteFriend({String? id}) => "/challange/$id/invite";
 
   // Clubs
   static const String clubsMini = "/club";
@@ -92,7 +93,8 @@ class AppConstants {
   static const String dailyRecordGetAll = "/record-daily";
 
   static const String homePageData = "/home";
-  static const String staminaRequirement = "/record-activity/stamina-requirement";
+  static const String staminaRequirement =
+      "/record-activity/stamina-requirement";
 
   // leaderboard
   static const String leaderboard = "/leaderboard";

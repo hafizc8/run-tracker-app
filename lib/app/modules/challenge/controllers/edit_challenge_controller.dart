@@ -1,3 +1,5 @@
+import 'dart:ffi';
+
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:intl/intl.dart';
@@ -186,38 +188,14 @@ class ChallangeEditController extends GetxController {
     form.value = form.value.copyWith(teams: updatedTeams);
   }
 
-  void addMembersToTeam(int teamIndex, List<event.User> newMembers) {
+  bool showDeleteTeam(int index) {
     final teams = form.value.teams ?? [];
-    final team = teams[teamIndex];
-    final existingMembers = team.members ?? [];
+    var result = (challengeDetail?.totalUsersTeams.length ?? 0) >= teams.length
+        ? (challengeDetail?.totalUsersTeams[index].team == teams[index].name &&
+            challengeDetail?.totalUsersTeams[index].total_users == 0)
+        : true;
 
-    // Gabungkan dan hilangkan duplikat berdasarkan `id`
-    final combinedMembers = [
-      ...existingMembers,
-      ...newMembers,
-    ]
-        .fold<Map<String, event.User>>({}, (map, user) {
-          map[user.id!] = user;
-          return map;
-        })
-        .values
-        .toList();
-
-    final updatedTeam = team.copyWith(members: combinedMembers);
-    final updatedTeams = [...teams]..[teamIndex] = updatedTeam;
-
-    form.value = form.value.copyWith(teams: updatedTeams);
-  }
-
-  void removeMemberFromTeam(int teamIndex, int memberIndex) {
-    final teams = form.value.teams ?? [];
-    final team = teams[teamIndex];
-    final updatedMembers = [...?team.members]..removeAt(memberIndex);
-
-    final updatedTeam = team.copyWith(members: updatedMembers);
-    final updatedTeams = [...teams]..[teamIndex] = updatedTeam;
-
-    form.value = form.value.copyWith(teams: updatedTeams);
+    return result;
   }
 
   void toChallengeTeam() {

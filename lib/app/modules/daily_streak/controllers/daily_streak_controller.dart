@@ -79,6 +79,9 @@ class DailyStreakController extends GetxController {
       selectedDay.value = null;
       selectedRecord.value = null;
 
+      // set onDaySelected ke hari ini
+      onDaySelected(DateTime.now(), DateTime.now());
+
     } catch (e, s) {
       _logService.log.e("Failed to fetch daily records", error: e, stackTrace: s);
       Get.snackbar("Error", "Could not load streak data.");
@@ -90,19 +93,14 @@ class DailyStreakController extends GetxController {
 
   /// ✨ KUNCI #4: Menampilkan data detail saat tanggal dipilih
   void onDaySelected(DateTime selected, DateTime focused) {
-    if (isSameDay(selectedDay.value, selected)) {
-      selectedDay.value = null;
-      selectedRecord.value = null;
-    } else {
-      selectedDay.value = selected;
-      focusedDay.value = focused;
-      // Cari data record yang cocok dengan tanggal yang dipilih
-      final record = dailyRecords.firstWhere(
-        (r) => isSameDay(r.date, selected),
-        orElse: () => DailyRecordModel(), // Kembalikan model kosong jika tidak ditemukan
-      );
-      selectedRecord.value = record;
-    }
+    selectedDay.value = selected;
+    focusedDay.value = focused;
+    // Cari data record yang cocok dengan tanggal yang dipilih
+    final record = dailyRecords.firstWhere(
+      (r) => isSameDay(r.date, selected),
+      orElse: () => DailyRecordModel(), // Kembalikan model kosong jika tidak ditemukan
+    );
+    selectedRecord.value = record;
   }
 
   /// ✨ KUNCI #2: Fetch data baru saat bulan diganti

@@ -13,6 +13,9 @@ class AppConstants {
   static const String baseUrlDev = "https://dev.zestplus.app/api/$apiVersion";
   static const String baseUrl = "https://dev.zestplus.app/api/$apiVersion";
 
+  // Link Share
+  static const String baseUrlShareLink = "https://dev.zestplus.app/link";
+
   // Auth
   static const String login = "/login";
   static const String register = "/register";
@@ -96,4 +99,12 @@ class AppConstants {
 
   // leaderboard
   static const String leaderboard = "/leaderboard";
+
+
+
+
+  // Share Link
+  static String shareProfileLink(String id) => "$baseUrlShareLink/share-profile?user=$id";
+  static String shareClubLink(String id) => "$baseUrlShareLink/share-club?club=$id";
+  static String shareEventLink(String id) => "$baseUrlShareLink/share-event?event=$id";
 }

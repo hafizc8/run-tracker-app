@@ -4,12 +4,14 @@ import 'package:flutter/widgets.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:get/get.dart';
+import 'package:share_plus/share_plus.dart';
 import 'package:zest_mobile/app/core/models/model/club_mini_model.dart';
 import 'package:zest_mobile/app/core/models/model/club_model.dart';
 import 'package:zest_mobile/app/core/models/model/event_model.dart';
 import 'package:zest_mobile/app/core/shared/helpers/number_helper.dart';
 import 'package:zest_mobile/app/core/shared/widgets/shimmer_loading_circle.dart';
 import 'package:zest_mobile/app/core/shared/widgets/shimmer_loading_list.dart';
+import 'package:zest_mobile/app/core/values/app_constants.dart';
 import 'package:zest_mobile/app/modules/club/partial/detail_club/controllers/detail_club_controller.dart';
 import 'package:zest_mobile/app/core/extension/date_extension.dart';
 import 'package:zest_mobile/app/modules/club/partial/detail_club/partial/tab_bar_club/controllers/club_activity_tab_controller.dart';
@@ -122,8 +124,12 @@ class DetailClubView extends GetView<DetailClubController> {
               top: 0,
               right: 0,
               child: InkWell(
-                onTap: () =>
-                    Get.snackbar('Coming soon', 'Feature is coming soon'),
+                onTap: () {
+                  // share club
+                  Share.share(
+                    '[Zest+] Check out club ${club?.name} here: ${AppConstants.shareClubLink(club?.id ?? '')}',
+                  );
+                },
                 child: SvgPicture.asset(
                   'assets/icons/ic_share-2.svg',
                 ),

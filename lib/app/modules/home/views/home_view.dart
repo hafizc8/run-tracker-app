@@ -187,14 +187,16 @@ class HomeView extends GetView<HomeController> {
                 ),
 
                 // Widget Step Tracker
-                Container(
-                  margin: EdgeInsets.symmetric(horizontal: 32.w),
-                  child: StepsTrackerWidget(
-                    progressValue: controller.progressValue,
-                    currentSteps: controller.validatedSteps,
-                    maxSteps: controller.user?.userPreference?.dailyStepGoals ?? 0,
-                  ),
-                ),
+                Obx(() {
+                  return Container(
+                    margin: EdgeInsets.symmetric(horizontal: 32.w),
+                    child: StepsTrackerWidget(
+                      progressValue: controller.progressValue,
+                      currentSteps: controller.validatedSteps.value,
+                      maxSteps: controller.user?.userPreference?.dailyStepGoals ?? 0,
+                    ),
+                  );
+                }),
                 // Error message when step sensor not found
                 Obx(() {
                   return Visibility(
@@ -273,10 +275,8 @@ class HomeView extends GetView<HomeController> {
                           children: [
                             Obx(() {
                               // Ambil nilai dari controller
-                              final goal = controller
-                                      .user?.userPreference?.dailyStepGoals ??
-                                  0;
-                              final current = controller.validatedSteps;
+                              final goal = controller.user?.userPreference?.dailyStepGoals ?? 0;
+                              final current = controller.validatedSteps.value;
 
                               // ✨ KUNCI PERBAIKAN: Logika Kondisional ✨
                               if (current >= goal) {

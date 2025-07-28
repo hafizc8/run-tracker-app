@@ -1,3 +1,5 @@
+import 'dart:ffi';
+
 import 'package:get/get.dart';
 import 'package:zest_mobile/app/core/di/service_locator.dart';
 import 'package:zest_mobile/app/core/exception/app_exception.dart';
@@ -13,13 +15,20 @@ class DetailChallangeController extends GetxController {
   var isLoading = false.obs;
   var isLoadingCancel = false.obs;
   var isLoadingTeams = false.obs;
+  var isLoadingJoin = false.obs;
+  var isLoadingInvited = false.obs;
+  var isLoadingParticipants = false.obs;
+
   final _challengeService = sl<ChallengeService>();
   var challengeId = "";
+  var teamName = "";
   Rx<ChallengeDetailModel?> detailChallenge = Rx<ChallengeDetailModel?>(null);
   Rx<ChallengeModel?> lastdetailChallenge = Rx<ChallengeModel?>(null);
   Rx<Map<String, List<ChallengeTeamsModel>>> teams =
       Rx<Map<String, List<ChallengeTeamsModel>>>({});
-
+  Rx<List<ChallengeTeamsModel>> invited = Rx<List<ChallengeTeamsModel>>([]);
+  Rx<List<ChallengeTeamsModel>> participants =
+      Rx<List<ChallengeTeamsModel>>([]);
   final _authService = sl<AuthService>();
   String get userId => _authService.user?.id ?? ''; // userId
 
@@ -39,6 +48,7 @@ class DetailChallangeController extends GetxController {
     challengeId = "";
     detailChallenge.value = null;
     lastdetailChallenge.value = null;
+    teamName = "";
   }
 
   Future<void> load() async {
@@ -88,16 +98,53 @@ class DetailChallangeController extends GetxController {
     }
   }
 
+  Future<void> getUsersInvited() async {
+    try {
+      isLoadingInvited.value = true;
+      final res = await _challengeService.challengeUser(
+        challengeId,
+        pendingJoin: '1',
+        limit: '999',
+      );
+      invited.value = res.data;
+    } on AppException catch (e) {
+      AppExceptionHandlerInfo.handle(e);
+    } catch (e) {
+      Get.snackbar('Error', e.toString());
+    } finally {
+      isLoadingInvited.value = false;
+    }
+  }
+
+  Future<void> getUsersParticipants() async {
+    try {
+      isLoadingParticipants.value = true;
+      final res = await _challengeService.challengeUser(
+        challengeId,
+        pendingJoin: '0',
+        limit: '999',
+      );
+      participants.value = res.data;
+    } on AppException catch (e) {
+      AppExceptionHandlerInfo.handle(e);
+    } catch (e) {
+      Get.snackbar('Error', e.toString());
+    } finally {
+      isLoadingParticipants.value = false;
+    }
+  }
+
   Future<List<ChallengeTeamsModel>> getUserOnTeam(String team) async {
     try {
-      final response = await _challengeService.challengeUser(challengeId, team);
+      final response =
+          await _challengeService.challengeUser(challengeId, team: team);
       return response.data;
     } catch (e) {
       rethrow;
     }
   }
 
-  Future<void> loadTeams() async {
+  Future<void> loadUserOnTeams() async {
     if ((detailChallenge.value?.teams.length ?? 0) == 0) return;
     try {
       isLoadingTeams.value = true;
@@ -118,10 +165,55 @@ class DetailChallangeController extends GetxController {
     }
   }
 
+  Future<void> join({
+    String? toTeam,
+  }) async {
+    teamName = toTeam ?? '';
+
+    try {
+      isLoadingJoin.value = true;
+      ChallengeTeamsModel res = await _challengeService.joinChallenge(
+        challengeId,
+        toTeam,
+      );
+      if (toTeam == null) {
+        participants.value = [...participants.value, res];
+      } else {
+        // Cari fromTeam dari data teams.value
+        String? fromTeam;
+        teams.value.forEach((teamName, members) {
+          if (members.any((member) => member.user?.id == userId)) {
+            fromTeam = teamName;
+          }
+        });
+
+        // Hapus dari tim lama
+        teams.value[fromTeam]?.removeWhere((u) => u.user?.id == userId);
+        teams.value[toTeam] = [...teams.value[toTeam]!, res];
+        teams.refresh();
+      }
+
+      detailChallenge.value = detailChallenge.value!.copyWith(
+        isJoined: 1,
+      );
+    } on AppException catch (e) {
+      AppExceptionHandlerInfo.handle(e);
+    } catch (e) {
+      Get.snackbar('Error', e.toString());
+    } finally {
+      isLoadingJoin.value = false;
+      teamName = '';
+    }
+  }
+
   Future<void> init() async {
     Future.microtask(() async {
       await load();
-      await loadTeams();
+      Future.wait([
+        if (detailChallenge.value?.isJoined == 1) getUsersInvited(),
+        if (detailChallenge.value?.type == 0) getUsersParticipants(),
+        if (detailChallenge.value?.type == 1) loadUserOnTeams(),
+      ]);
     });
   }
 }

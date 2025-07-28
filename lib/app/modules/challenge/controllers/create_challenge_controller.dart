@@ -23,10 +23,22 @@ class ChallangeCreateController extends GetxController {
   String get userId => _authService.user?.id ?? ''; // userId
 
   Future<void> selectDate(BuildContext context, bool isStartDate) async {
+    if (isStartDate == false && form.value.startDate == null) {
+      Get.snackbar(
+        'Warning!!!',
+        'Please select start date first',
+        backgroundColor: Colors.yellow,
+        colorText: Colors.black,
+      );
+      return;
+    }
     DateTime? picked = await showDatePicker(
       context: context,
-      initialDate: DateTime.now(),
-      firstDate: DateTime(2000),
+      initialDate: isStartDate
+          ? DateTime.now()
+          : form.value.endDate ?? (form.value.startDate ?? DateTime.now()),
+      firstDate:
+          isStartDate ? DateTime.now() : form.value.startDate ?? DateTime.now(),
       lastDate: DateTime(2101),
     );
 
@@ -122,7 +134,7 @@ class ChallangeCreateController extends GetxController {
   void deleteTeam(int index, bool isOwner) {
     if (isOwner) {
       Get.snackbar(
-        'Error',
+        'Warning!!!',
         'You cannot delete your team',
         backgroundColor: Colors.yellow,
         colorText: Colors.black,

@@ -25,6 +25,7 @@ import 'package:zest_mobile/app/core/services/user_service.dart';
 import 'package:zest_mobile/app/core/shared/theme/color_schemes.dart';
 import 'package:zest_mobile/app/core/shared/widgets/custom_dialog_confirmation.dart';
 import 'package:zest_mobile/app/modules/activity/record_activity/views/widgets/use_stamina_dialog.dart';
+import 'package:zest_mobile/app/modules/home/controllers/home_controller.dart';
 import 'package:zest_mobile/app/routes/app_routes.dart';
 import 'dart:ui' as ui;
 
@@ -489,6 +490,7 @@ class RecordActivityController extends GetxController {
       _service.invoke("stopService");
 
       if (recordActivityData.id?.isNotEmpty ?? false) {
+        await Get.find<HomeController>().refreshData();
         await _localDb.clearAllUnsyncedData();
         Get.offAndToNamed(AppRoutes.activityEdit, arguments: recordActivityData);
       }

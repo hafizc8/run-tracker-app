@@ -34,12 +34,13 @@ void main() async {
   Hive.registerAdapter(ActivityDataPointAdapter());
 
   // 4. Inisialisasi Dependency Injection dan Background Service
-  await setupServiceLocator(); 
+  await setupServiceLocator();
   await sl.allReady();
   await initializeService();
 
   // 5. Konfigurasi Crashlytics dan Orientasi Layar
   if (kReleaseMode) {
+    // Hanya aktifkan Crashlytics di mode release
     FlutterError.onError = (errorDetails) {
       FirebaseCrashlytics.instance.recordFlutterFatalError(errorDetails);
     };
@@ -71,7 +72,8 @@ Future<void> initializeService() async {
 
   // Inisialisasi plugin notifikasi dan buat channel
   await FlutterLocalNotificationsPlugin()
-      .resolvePlatformSpecificImplementation<AndroidFlutterLocalNotificationsPlugin>()
+      .resolvePlatformSpecificImplementation<
+          AndroidFlutterLocalNotificationsPlugin>()
       ?.createNotificationChannel(const AndroidNotificationChannel(
         notificationChannelId,
         notificationChannelName,

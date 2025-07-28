@@ -25,6 +25,7 @@ class ChallengeDetailModel extends Model {
     required this.friendsNames,
     required this.leaderboardUsers,
     required this.leaderboardTeams,
+    required this.totalUsersTeams,
     required this.userProgress,
     required this.teamProgress,
   });
@@ -51,6 +52,7 @@ class ChallengeDetailModel extends Model {
   final List<dynamic> friendsNames;
   final List<LeaderboardUser> leaderboardUsers;
   final List<LeaderboardTeam> leaderboardTeams;
+  final List<TotalUsersTeams> totalUsersTeams;
   final int? userProgress;
   final int? teamProgress;
 
@@ -78,6 +80,7 @@ class ChallengeDetailModel extends Model {
     List<dynamic>? friendsNames,
     List<LeaderboardUser>? leaderboardUsers,
     List<LeaderboardTeam>? leaderboardTeams,
+    List<TotalUsersTeams>? totalUsersTeams,
     int? userProgress,
     int? teamProgress,
   }) {
@@ -104,6 +107,7 @@ class ChallengeDetailModel extends Model {
       friendsNames: friendsNames ?? this.friendsNames,
       leaderboardUsers: leaderboardUsers ?? this.leaderboardUsers,
       leaderboardTeams: leaderboardTeams ?? this.leaderboardTeams,
+      totalUsersTeams: totalUsersTeams ?? this.totalUsersTeams,
       userProgress: userProgress ?? this.userProgress,
       teamProgress: teamProgress ?? this.teamProgress,
     );
@@ -143,6 +147,10 @@ class ChallengeDetailModel extends Model {
           ? []
           : List<LeaderboardTeam>.from(json["leaderboard_teams"]!
               .map((x) => LeaderboardTeam.fromJson(x))),
+      totalUsersTeams: json["total_user_teams"] == null
+          ? []
+          : List<TotalUsersTeams>.from(json["total_user_teams"]!
+              .map((x) => TotalUsersTeams.fromJson(x))),
       userProgress: json["user_progress"],
       teamProgress: json["team_progress"],
     );
@@ -311,6 +319,51 @@ class LeaderboardUser extends Model {
         rank,
         point,
         user,
+      ];
+}
+
+class TotalUsersTeams extends Model {
+  TotalUsersTeams({
+    required this.team,
+    required this.total_users,
+  });
+
+  final String? team;
+  final int? total_users;
+
+  @override
+  TotalUsersTeams copyWith({
+    String? team,
+    int? total_users,
+  }) {
+    return TotalUsersTeams(
+      team: team ?? this.team,
+      total_users: total_users ?? this.total_users,
+    );
+  }
+
+  factory TotalUsersTeams.fromJson(Map<String, dynamic> json) {
+    return TotalUsersTeams(
+      team: json["team"],
+      total_users: json["total_users"],
+    );
+  }
+
+  @override
+  Map<String, dynamic> toJson() => {
+        "team": team,
+        "total_users": total_users,
+      };
+
+  @override
+  String toString() {
+    return "$team, $total_users, ";
+  }
+
+  @override
+  List<Object?> get props => [
+        team,
+        total_users,
       ];
 }
 

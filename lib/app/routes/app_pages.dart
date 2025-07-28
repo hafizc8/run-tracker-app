@@ -23,9 +23,12 @@ import 'package:zest_mobile/app/modules/auth/register/views/register_verify_emai
 import 'package:zest_mobile/app/modules/auth/register/views/register_view.dart';
 import 'package:zest_mobile/app/modules/challenge/bindings/challenge_invite_binding.dart';
 import 'package:zest_mobile/app/modules/challenge/bindings/create_challenge_binding.dart';
+import 'package:zest_mobile/app/modules/challenge/bindings/edit_challenge_binding.dart';
 import 'package:zest_mobile/app/modules/challenge/views/challenge_invite_view.dart';
 import 'package:zest_mobile/app/modules/challenge/views/create_challenge_team_view.dart';
 import 'package:zest_mobile/app/modules/challenge/views/create_challenge_view.dart';
+import 'package:zest_mobile/app/modules/challenge/views/edit_challenge_team_view.dart';
+import 'package:zest_mobile/app/modules/challenge/views/edit_challenge_view.dart';
 import 'package:zest_mobile/app/modules/choose_location/bindings/choose_location_binding.dart';
 import 'package:zest_mobile/app/modules/choose_location/views/choose_location_view.dart';
 import 'package:zest_mobile/app/modules/club/partial/create_club/bindings/create_club_binding.dart';
@@ -44,6 +47,8 @@ import 'package:zest_mobile/app/modules/daily_streak/bindings/daily_streak_bindi
 import 'package:zest_mobile/app/modules/daily_streak/views/daily_streak_view.dart';
 import 'package:zest_mobile/app/modules/debug/views/debug_view.dart';
 import 'package:zest_mobile/app/modules/detail_challenge/bindings/detail_challenge_binding.dart';
+import 'package:zest_mobile/app/modules/detail_challenge/bindings/detail_challenge_invite_friend_binding.dart';
+import 'package:zest_mobile/app/modules/detail_challenge/views/detail_challenge_invite_friend_view.dart';
 import 'package:zest_mobile/app/modules/detail_challenge/views/detail_challenge_view.dart';
 import 'package:zest_mobile/app/modules/home/bindings/main_home_binding.dart';
 import 'package:zest_mobile/app/modules/home/views/main_home_view.dart';
@@ -305,6 +310,11 @@ class AppPages {
       page: () => const ChallengeCreateView(),
       binding: ChallengeCreateBinding(),
     ),
+    GetPage(
+      name: AppRoutes.challengeEdit,
+      page: () => const ChallengeEditView(),
+      binding: ChallengeEditBinding(),
+    ),
 
     GetPage(
       name: AppRoutes.challengeCreateTeam,
@@ -312,14 +322,19 @@ class AppPages {
       binding: ChallengeCreateBinding(),
     ),
     GetPage(
-      name: AppRoutes.challengeCreateTeam,
-      page: () => const ChallengeCreateTeamView(),
-      binding: ChallengeCreateBinding(),
+      name: AppRoutes.challengeEditTeam,
+      page: () => const ChallengeEditTeamView(),
+      binding: ChallengeEditBinding(),
     ),
     GetPage(
       name: AppRoutes.challengeInviteFriend,
       page: () => const ChallengeInviteFriendView(),
       binding: ChallengeInviteBinding(),
+    ),
+    GetPage(
+      name: AppRoutes.challengedetailsInvite,
+      page: () => const DetailChallengeInviteFriendView(),
+      binding: DetailChallengeInviteBinding(),
     ),
     GetPage(
       name: AppRoutes.challengedetails,

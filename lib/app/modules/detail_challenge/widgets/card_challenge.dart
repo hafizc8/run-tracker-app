@@ -28,7 +28,7 @@ class CardChallenge extends StatelessWidget {
                 // Label "Individual"
                 Container(
                   padding:
-                      const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
+                      EdgeInsets.symmetric(horizontal: 12.w, vertical: 6.h),
                   decoration: BoxDecoration(
                     borderRadius: BorderRadius.circular(12),
                     color: Theme.of(context).colorScheme.secondary,
@@ -84,7 +84,7 @@ class CardChallenge extends StatelessWidget {
             ),
             const SizedBox(height: 8),
             Text(
-              "${challengeDetailModel.typeText} Challenge",
+              "${challengeDetailModel.modeText} Challenge",
               maxLines: 1,
               overflow: TextOverflow.ellipsis,
               style: Theme.of(context).textTheme.bodyLarge?.copyWith(

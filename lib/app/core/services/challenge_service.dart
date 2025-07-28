@@ -1,5 +1,6 @@
 import 'package:zest_mobile/app/core/models/enums/http_method_enum.dart';
 import 'package:zest_mobile/app/core/models/forms/create_challenge_form.dart';
+import 'package:zest_mobile/app/core/models/forms/edit_challenge_form.dart';
 import 'package:zest_mobile/app/core/models/interface/pagination_response_model.dart';
 import 'package:zest_mobile/app/core/models/model/challenge_detail_model.dart';
 import 'package:zest_mobile/app/core/models/model/challenge_model.dart';
@@ -57,6 +58,25 @@ class ChallengeService {
     }
   }
 
+  Future<ChallengeModel?> updateChallenge(
+      EditChallengeFormModel form, String id) async {
+    try {
+      final response = await _apiService.request(
+        path: AppConstants.challenge(id: id),
+        method: HttpMethod.post,
+        data: form.toJson(),
+      );
+
+      if (response.statusCode != 200) {
+        throw Exception('Failed to update challenge');
+      }
+
+      return ChallengeModel.fromJson(response.data['data']);
+    } catch (e) {
+      rethrow;
+    }
+  }
+
   Future<ChallengeModel?> cancelChallenge(String id) async {
     try {
       final response = await _apiService.request(
@@ -75,15 +95,18 @@ class ChallengeService {
   }
 
   Future<PaginatedDataResponse<ChallengeTeamsModel>> challengeUser(
-    String id,
-    String team,
-  ) async {
+    String id, {
+    String? team,
+    String? pendingJoin,
+    String? limit,
+  }) async {
     try {
       final response = await _apiService.request(
           path: AppConstants.challengeUser(id: id),
           method: HttpMethod.get,
           queryParams: {
-            'team': team,
+            if (team != null) 'team': team,
+            if (pendingJoin != null) 'pending_join': pendingJoin,
           });
 
       if (response.statusCode != 200) {
@@ -111,6 +134,48 @@ class ChallengeService {
       }
 
       return ChallengeDetailModel.fromJson(response.data['data']);
+    } catch (e) {
+      rethrow;
+    }
+  }
+
+  Future<List<ChallengeTeamsModel>?> inviteFriendChallenge(
+      String id, List<String> userIds) async {
+    try {
+      final response = await _apiService.request(
+        path: AppConstants.challengeInviteFriend(id: id),
+        method: HttpMethod.post,
+        data: {
+          'user_ids': userIds,
+        },
+      );
+
+      if (response.statusCode != 200) {
+        throw Exception('Failed to load challenge invite friend');
+      }
+
+      return List.from(response.data['data'])
+          .map<ChallengeTeamsModel>((e) => ChallengeTeamsModel.fromJson(e))
+          .toList();
+    } catch (e) {
+      rethrow;
+    }
+  }
+
+  Future<ChallengeTeamsModel> joinChallenge(String id, String? team) async {
+    try {
+      final response = await _apiService.request(
+          path: AppConstants.challengeJoin(id: id),
+          method: HttpMethod.post,
+          queryParams: {
+            if (team != null) 'team': team,
+          });
+
+      if (response.statusCode != 200) {
+        throw Exception('Failed to join challenge');
+      }
+
+      return ChallengeTeamsModel.fromJson(response.data['data']);
     } catch (e) {
       rethrow;
     }

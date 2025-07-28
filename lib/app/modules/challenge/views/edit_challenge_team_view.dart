@@ -1,28 +1,26 @@
 import 'package:cached_network_image/cached_network_image.dart';
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/widgets.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:get/get.dart';
-import 'package:uuid/uuid.dart';
 import 'package:zest_mobile/app/core/extension/initial_profile_empty.dart';
 import 'package:zest_mobile/app/core/models/model/event_model.dart';
 import 'package:zest_mobile/app/core/shared/widgets/gradient_elevated_button.dart';
 import 'package:zest_mobile/app/core/shared/widgets/gradient_outlined_button.dart';
 import 'package:zest_mobile/app/core/shared/widgets/shimmer_loading_circle.dart';
-import 'package:zest_mobile/app/modules/challenge/controllers/create_challenge_controller.dart';
+import 'package:zest_mobile/app/core/shared/widgets/shimmer_loading_list.dart';
+import 'package:zest_mobile/app/modules/challenge/controllers/edit_challenge_controller.dart';
 import 'package:zest_mobile/app/routes/app_routes.dart';
 
-class ChallengeCreateTeamView extends GetView<ChallangeCreateController> {
-  const ChallengeCreateTeamView({super.key});
+class ChallengeEditTeamView extends GetView<ChallangeEditController> {
+  const ChallengeEditTeamView({super.key});
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
         title: Text(
-          'Create a Challenge',
+          'Edit a Challenge',
           style: Theme.of(context).textTheme.headlineSmall?.copyWith(
                 color: Color(0xFFA5A5A5),
               ),
@@ -78,12 +76,12 @@ class ChallengeCreateTeamView extends GetView<ChallangeCreateController> {
                   onPressed: controller.isLoading.value
                       ? null
                       : () {
-                          controller.storeChallenge(isTeam: true);
+                          controller.updateChallenge(isTeam: true);
                         },
                   child: Visibility(
                     visible: controller.isLoading.value,
                     replacement: Text(
-                      'Create Challenge',
+                      'Update Challenge',
                       style: Theme.of(context).textTheme.labelLarge?.copyWith(
                             fontSize: 15.sp,
                             fontWeight: FontWeight.w700,
@@ -98,6 +96,12 @@ class ChallengeCreateTeamView extends GetView<ChallangeCreateController> {
         ),
       ),
       body: Obx(() {
+        if (controller.isLoadingTeams.value) {
+          return const ShimmerLoadingList(
+            itemCount: 5,
+            itemHeight: 100,
+          );
+        }
         var form = controller.form.value;
 
         return ListView.separated(
@@ -167,14 +171,19 @@ class ChallengeCreateTeamView extends GetView<ChallangeCreateController> {
                                         color: Colors.grey),
                                   ),
                                   const SizedBox(width: 16),
-                                  GestureDetector(
-                                    onTap: () {
-                                      controller.deleteTeam(index,
-                                          form.teams?[index].isOwner ?? false);
-                                    },
-                                    child: const Icon(
-                                      Icons.delete_outlined,
-                                      color: Colors.red,
+                                  Visibility(
+                                    visible: controller.showDeleteTeam(index),
+                                    child: GestureDetector(
+                                      onTap: () {
+                                        controller.deleteTeam(
+                                            index,
+                                            form.teams?[index].isOwner ??
+                                                false);
+                                      },
+                                      child: const Icon(
+                                        Icons.delete_outlined,
+                                        color: Colors.red,
+                                      ),
                                     ),
                                   ),
                                 ],
@@ -257,85 +266,9 @@ class ChallengeCreateTeamView extends GetView<ChallangeCreateController> {
                                 ),
                               ),
                             ),
-                            if (controller.userId != e?.id)
-                              Positioned(
-                                top: -8,
-                                right: -8,
-                                child: GestureDetector(
-                                  onTap: () {
-                                    controller.removeMemberFromTeam(index, i);
-                                  },
-                                  child: Container(
-                                    padding: EdgeInsets.all(2.w),
-                                    decoration: BoxDecoration(
-                                      shape: BoxShape.circle,
-                                      color:
-                                          Theme.of(context).colorScheme.error,
-                                    ),
-                                    child: const Icon(
-                                      Icons.close,
-                                      size: 15,
-                                    ),
-                                  ),
-                                ),
-                              ),
                           ],
                         );
                       })),
-                      GestureDetector(
-                        onTap: () async {
-                          if ((controller.form.value.teams?[index].members
-                                      ?.length ??
-                                  0) >=
-                              10) {
-                            Get.snackbar(
-                              'Warning!',
-                              'You cannot add more than 10 members',
-                              backgroundColor: Colors.yellow,
-                              colorText: Colors.black,
-                            );
-                            return;
-                          }
-
-                          var res = await Get.toNamed(
-                            AppRoutes.challengeInviteFriend,
-                          );
-                          if (res != null) {
-                            controller.addMembersToTeam(
-                                index, res as List<User>);
-                            ();
-                          }
-                        },
-                        child: AspectRatio(
-                          aspectRatio: 71 / 90,
-                          child: Container(
-                            padding: EdgeInsets.all(1.w),
-                            decoration: BoxDecoration(
-                              gradient: const LinearGradient(
-                                colors: [
-                                  Color(0xFFA2FF00),
-                                  Color(0xFF00FF7F),
-                                ],
-                                begin: Alignment.topCenter,
-                                end: Alignment.bottomCenter,
-                              ),
-                              borderRadius: BorderRadius.circular(11.r),
-                            ),
-                            child: Container(
-                              decoration: BoxDecoration(
-                                borderRadius: BorderRadius.circular(10.r),
-                                color: Theme.of(context).colorScheme.background,
-                              ),
-                              alignment: Alignment.center,
-                              child: SvgPicture.asset(
-                                width: 24.r,
-                                height: 24.r,
-                                'assets/icons/follow_gradient.svg',
-                              ),
-                            ),
-                          ),
-                        ),
-                      )
                     ],
                   ),
                 ],

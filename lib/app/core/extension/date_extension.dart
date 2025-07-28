@@ -59,4 +59,11 @@ extension DateTimeExtensions on DateTime {
 
     return combinedDateTime.isAfter(DateTime.now());
   }
+
+  bool isFutureDate() {
+    final now = DateTime.now();
+    final today = DateTime(now.year, now.month, now.day);
+    final dateOnly = DateTime(year, month, day);
+    return dateOnly.isAfter(today);
+  }
 }

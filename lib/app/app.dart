@@ -43,25 +43,35 @@ class _AppState extends State<App> {
             'token': uri.queryParameters['token'],
             'email': uri.queryParameters['email']
           });
-        } else if (
-            uri.host == "share-club" &&
-            uri.queryParameters['club'] != null &&
-            token != null
-        ) {
-          Get.toNamed(AppRoutes.detailClub, arguments: uri.queryParameters['club']);
-        } else if (
-            uri.host == "share-profile" &&
-            uri.queryParameters['user'] != null &&
-            token != null
-        ) {
-          Get.toNamed(AppRoutes.profileUser, arguments: uri.queryParameters['user']);
-        } else if (
-            uri.host == "share-event" &&
-            uri.queryParameters['event'] != null &&
-            token != null
-        ) {
-          Get.toNamed(AppRoutes.socialYourPageEventDetail, arguments: {'eventId': uri.queryParameters['event']});
+        } else {
+          // Start - Share Link
+          if (
+              uri.host == "share-club" &&
+              uri.queryParameters['club'] != null &&
+              token != null
+          ) {
+            // wait home page loaded
+            Future.delayed(const Duration(seconds: 2));
+            Get.toNamed(AppRoutes.detailClub, arguments: uri.queryParameters['club']);
+          } else if (
+              uri.host == "share-profile" &&
+              uri.queryParameters['user'] != null &&
+              token != null
+          ) {
+            // wait home page loaded
+            Future.delayed(const Duration(seconds: 2));
+            Get.toNamed(AppRoutes.profileUser, arguments: uri.queryParameters['user']);
+          } else if (
+              uri.host == "share-event" &&
+              uri.queryParameters['event'] != null &&
+              token != null
+          ) {
+            // wait home page loaded
+            Future.delayed(const Duration(seconds: 2));
+            Get.toNamed(AppRoutes.socialYourPageEventDetail, arguments: {'eventId': uri.queryParameters['event']});
+          }
         }
+        // End - Share Link
       }
     });
   }

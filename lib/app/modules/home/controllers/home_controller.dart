@@ -11,7 +11,7 @@ import 'package:zest_mobile/app/core/services/record_activity_service.dart';
 import 'package:zest_mobile/app/core/services/user_service.dart';
 import 'package:zest_mobile/app/modules/home/widgets/set_daily_goals_dialog.dart';
 import 'dart:math';
-// import 'package:pedometer_2/pedometer_2.dart';
+import 'package:pedometer_2/pedometer_2.dart';
 import 'package:intl/intl.dart';
 
 class HomeController extends GetxController {
@@ -109,7 +109,7 @@ class HomeController extends GetxController {
     final startTime = DateTime(now.year, now.month, now.day);
     int pedometerSteps = 0;
     try {
-      // pedometerSteps = await Pedometer().getStepCount(from: startTime, to: now);
+      pedometerSteps = await Pedometer().getStepCount(from: startTime, to: now);
     } catch (e) {
       _logService.log
           .e("Failed to get initial step count from Pedometer.", error: e);
@@ -137,8 +137,8 @@ class HomeController extends GetxController {
     final startTime = DateTime(now.year, now.month, now.day);
     int currentPedometerSteps = 0;
     try {
-      // currentPedometerSteps =
-      //     await Pedometer().getStepCount(from: startTime, to: now);
+      currentPedometerSteps =
+          await Pedometer().getStepCount(from: startTime, to: now);
 
       // // get step di jam 13:30 sd 13:40
       // final startTimeTest = DateTime(2025, 7, 11, 13, 30);

@@ -1,5 +1,6 @@
 import 'package:zest_mobile/app/core/models/enums/http_method_enum.dart';
 import 'package:zest_mobile/app/core/models/forms/create_challenge_form.dart';
+import 'package:zest_mobile/app/core/models/forms/edit_challenge_form.dart';
 import 'package:zest_mobile/app/core/models/interface/pagination_response_model.dart';
 import 'package:zest_mobile/app/core/models/model/challenge_detail_model.dart';
 import 'package:zest_mobile/app/core/models/model/challenge_model.dart';
@@ -58,16 +59,16 @@ class ChallengeService {
   }
 
   Future<ChallengeModel?> updateChallenge(
-      CreateChallengeFormModel form, String id) async {
+      EditChallengeFormModel form, String id) async {
     try {
       final response = await _apiService.request(
         path: AppConstants.challenge(id: id),
         method: HttpMethod.post,
-        data: form.toJson('put'),
+        data: form.toJson(),
       );
 
       if (response.statusCode != 200) {
-        throw Exception('Failed to create challenge');
+        throw Exception('Failed to update challenge');
       }
 
       return ChallengeModel.fromJson(response.data['data']);

@@ -1,5 +1,3 @@
-import 'dart:ffi';
-
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:intl/intl.dart';
@@ -8,7 +6,8 @@ import 'package:zest_mobile/app/core/di/service_locator.dart';
 import 'package:zest_mobile/app/core/exception/app_exception.dart';
 import 'package:zest_mobile/app/core/exception/handler/app_exception_handler_info.dart';
 import 'package:zest_mobile/app/core/models/enums/app_exception_enum.dart';
-import 'package:zest_mobile/app/core/models/forms/create_challenge_form.dart';
+
+import 'package:zest_mobile/app/core/models/forms/edit_challenge_form.dart';
 import 'package:zest_mobile/app/core/models/model/challenge_detail_model.dart';
 import 'package:zest_mobile/app/core/models/model/challenge_model.dart';
 import 'package:zest_mobile/app/core/models/model/challenge_team_model.dart'
@@ -24,8 +23,8 @@ class ChallangeEditController extends GetxController {
   var isLoading = false.obs;
   var isLoadingTeams = false.obs;
 
-  var form = CreateChallengeFormModel().obs;
-  var formOriginal = CreateChallengeFormModel().obs;
+  var form = EditChallengeFormModel().obs;
+  var formOriginal = EditChallengeFormModel().obs;
 
   bool get isEdited => formOriginal.value.isValidToUpdate(form.value);
 
@@ -97,6 +96,7 @@ class ChallangeEditController extends GetxController {
 
   Future<void> updateChallenge({bool isTeam = false}) async {
     isLoading.value = true;
+
     try {
       ChallengeModel? res = await _challengeService.updateChallenge(
         form.value,
@@ -153,11 +153,69 @@ class ChallangeEditController extends GetxController {
 
   void saveEdit(int index) {
     final name = tempEditedNames[index];
-    if (name == null) return;
+    if (name == null || name.trim().isEmpty) return;
 
     final teams = form.value.teams ?? [];
-    final updatedTeam = teams[index].copyWith(name: name, isEdit: false);
+    final currentTeam = teams[index];
+    final oldName = currentTeam.name;
 
+    final lowerName = name.toLowerCase().trim();
+
+    // Validasi duplikat (abaikan dirinya sendiri)
+    final nameExists = teams
+        .where((t) => t != currentTeam)
+        .any((t) => t.name?.toLowerCase().trim() == lowerName);
+
+    if (nameExists) {
+      Get.snackbar(
+        'Error',
+        'Team name "$name" already exists',
+        backgroundColor: Colors.yellow,
+        colorText: Colors.black,
+      );
+      return;
+    }
+
+    // === PENENTUAN: tim baru atau lama ===
+    final isNewTeam = currentTeam.id == null ||
+        (form.value.newTeams?.contains(oldName) ?? false);
+
+    // Tim Baru → Update newTeams
+    if (isNewTeam) {
+      // Replace nama lama di newTeams
+      List<String>? currentNewTeams = [...(form.value.newTeams ?? [])];
+      final indexInNew = currentNewTeams.indexWhere(
+        (t) => t.toLowerCase().trim() == oldName?.toLowerCase().trim(),
+      );
+
+      if (indexInNew != -1) {
+        currentNewTeams[indexInNew] = name;
+      }
+
+      form.value = form.value.copyWith(newTeams: currentNewTeams);
+    } else {
+      // Tim Lama → Tambah atau update di renameTeams
+      if (oldName != null && oldName != name) {
+        List<RenameTeam>? currentRename = [...(form.value.renameTeams ?? [])];
+
+        final indexRename =
+            currentRename.indexWhere((r) => r.newName == oldName);
+
+        if (indexRename != -1) {
+          // Sudah pernah di-rename → update newName
+          currentRename[indexRename] =
+              currentRename[indexRename].copyWith(newName: name);
+        } else {
+          // Belum pernah di-rename → tambah entri baru
+          currentRename.add(RenameTeam(oldName: oldName, newName: name));
+        }
+
+        form.value = form.value.copyWith(renameTeams: currentRename);
+      }
+    }
+
+    // Update tim di list
+    final updatedTeam = currentTeam.copyWith(name: name, isEdit: false);
     final updatedTeams = [...teams]..[index] = updatedTeam;
     form.value = form.value.copyWith(teams: updatedTeams);
 
@@ -184,8 +242,35 @@ class ChallangeEditController extends GetxController {
     }
 
     final currentTeams = form.value.teams ?? [];
+    final teamToDelete = currentTeams[index];
+    final teamName = teamToDelete.name;
+
+    // Apakah tim ini tim baru? (tidak punya ID atau berasal dari newTeams)
+    final isNewTeam = teamToDelete.id == null ||
+        (form.value.newTeams?.contains(teamName) ?? false);
+
+    // Hapus dari teams list
     final updatedTeams = [...currentTeams]..removeAt(index);
-    form.value = form.value.copyWith(teams: updatedTeams);
+
+    // Jika tim baru → juga hapus dari newTeams
+    List<String>? updatedNewTeams = form.value.newTeams;
+    if (isNewTeam && teamName != null) {
+      updatedNewTeams = [...(form.value.newTeams ?? [])]..removeWhere(
+          (t) => t.toLowerCase().trim() == teamName.toLowerCase().trim());
+    }
+
+    // Jika tim dari server → tambahkan ke deleteTeams
+    List<String>? updatedDeleteTeams = form.value.deleteTeams;
+    if (!isNewTeam && teamName != null) {
+      updatedDeleteTeams = [...(form.value.deleteTeams ?? []), teamName];
+    }
+
+    // Update form
+    form.value = form.value.copyWith(
+      teams: updatedTeams,
+      newTeams: updatedNewTeams,
+      deleteTeams: updatedDeleteTeams,
+    );
   }
 
   bool showDeleteTeam(int index) {
@@ -261,9 +346,31 @@ class ChallangeEditController extends GetxController {
       return;
     }
 
-    form.value = form.value.copyWith(teams: [
-      ...(form.value.teams ?? []),
-      Teams(id: const Uuid().v4(), name: 'New Team', members: const []),
-    ]);
+    final newTeamName = 'New Team ${(form.value.teams?.length ?? 0) + 1}';
+
+    if (form.value.teams
+            ?.any((t) => t.name?.toLowerCase() == newTeamName.toLowerCase()) ??
+        false) {
+      Get.snackbar(
+        'Error',
+        'Team name "$newTeamName" already exists',
+        backgroundColor: Colors.yellow,
+        colorText: Colors.black,
+      );
+      return;
+    }
+    final newTeam =
+        Teams(id: const Uuid().v4(), name: newTeamName, members: const []);
+
+    List<Teams>? updatedTeams = [...(form.value.teams ?? []), newTeam];
+    List<String>? updatedNewTeams = [
+      ...(form.value.newTeams ?? []),
+      newTeamName
+    ];
+
+    form.value = form.value.copyWith(
+      teams: updatedTeams,
+      newTeams: updatedNewTeams,
+    );
   }
 }

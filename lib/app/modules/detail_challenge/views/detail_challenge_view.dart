@@ -1,5 +1,6 @@
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/widgets.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:get/get.dart';
@@ -7,6 +8,7 @@ import 'package:zest_mobile/app/core/extension/date_extension.dart';
 import 'package:zest_mobile/app/core/extension/initial_profile_empty.dart';
 import 'package:zest_mobile/app/core/models/model/challenge_team_model.dart';
 import 'package:zest_mobile/app/core/models/model/user_mini_model.dart';
+import 'package:zest_mobile/app/core/shared/widgets/custom_circular_progress_indicator.dart';
 import 'package:zest_mobile/app/core/shared/widgets/gradient_outlined_button.dart';
 import 'package:zest_mobile/app/core/shared/widgets/shimmer_loading_circle.dart';
 import 'package:zest_mobile/app/core/shared/widgets/shimmer_loading_event.dart';
@@ -123,12 +125,11 @@ class DetailChallengeView extends GetView<DetailChallangeController> {
             decoration: BoxDecoration(
               color: Theme.of(context).colorScheme.background,
             ),
-            child: Obx(
-              () => Visibility(
-                visible: controller.detailChallenge.value?.mode == 0,
-                child: Visibility(
-                  visible: controller.detailChallenge.value?.isJoined == 1,
-                  replacement: SizedBox(
+            child: Obx(() {
+              if (controller.detailChallenge.value?.type == 0 &&
+                  controller.detailChallenge.value?.isJoined == 0) {
+                return Obx(
+                  () => SizedBox(
                     height: 43.h,
                     child: GradientOutlinedButton(
                       style: ButtonStyle(
@@ -138,71 +139,79 @@ class DetailChallengeView extends GetView<DetailChallangeController> {
                           ),
                         ),
                       ),
-                      onPressed: () {},
-                      child: ShaderMask(
-                        shaderCallback: (bounds) => const LinearGradient(
-                          begin: Alignment.centerLeft,
-                          end: Alignment.centerRight,
-                          colors: [
-                            Color(0xFFA2FF00),
-                            Color(0xFF00FF7F),
-                          ],
-                        ).createShader(
-                          Rect.fromLTWH(0, 0, bounds.width, bounds.height),
-                        ),
-                        child: Text(
-                          'Join Challenge',
-                          maxLines: 1,
-                          overflow: TextOverflow.ellipsis,
-                          style:
-                              Theme.of(context).textTheme.bodyLarge?.copyWith(
-                                    color: Colors.white,
-                                    fontSize: 17.sp,
-                                    fontWeight: FontWeight.w700,
-                                  ),
+                      onPressed: controller.isLoadingJoin.value
+                          ? null
+                          : () {
+                              controller.join();
+                            },
+                      child: Visibility(
+                        visible: !controller.isLoadingJoin.value,
+                        replacement: CustomCircularProgressIndicator(),
+                        child: ShaderMask(
+                          shaderCallback: (bounds) => const LinearGradient(
+                            begin: Alignment.centerLeft,
+                            end: Alignment.centerRight,
+                            colors: [
+                              Color(0xFFA2FF00),
+                              Color(0xFF00FF7F),
+                            ],
+                          ).createShader(
+                            Rect.fromLTWH(0, 0, bounds.width, bounds.height),
+                          ),
+                          child: Text(
+                            'Join Challenge',
+                            maxLines: 1,
+                            overflow: TextOverflow.ellipsis,
+                            style:
+                                Theme.of(context).textTheme.bodyLarge?.copyWith(
+                                      color: Colors.white,
+                                      fontSize: 17.sp,
+                                      fontWeight: FontWeight.w700,
+                                    ),
+                          ),
                         ),
                       ),
                     ),
                   ),
-                  child: SizedBox(
-                    height: 43.h,
-                    child: GradientOutlinedButton(
-                      style: ButtonStyle(
-                        shape: MaterialStateProperty.all(
-                          RoundedRectangleBorder(
-                            borderRadius: BorderRadius.circular(11.r),
+                );
+              }
+
+              return SizedBox(
+                height: 43.h,
+                child: GradientOutlinedButton(
+                  style: ButtonStyle(
+                    shape: MaterialStateProperty.all(
+                      RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(11.r),
+                      ),
+                    ),
+                  ),
+                  onPressed: () {},
+                  child: ShaderMask(
+                    shaderCallback: (bounds) => const LinearGradient(
+                      begin: Alignment.centerLeft,
+                      end: Alignment.centerRight,
+                      colors: [
+                        Color(0xFFA2FF00),
+                        Color(0xFF00FF7F),
+                      ],
+                    ).createShader(
+                      Rect.fromLTWH(0, 0, bounds.width, bounds.height),
+                    ),
+                    child: Text(
+                      'Share',
+                      maxLines: 1,
+                      overflow: TextOverflow.ellipsis,
+                      style: Theme.of(context).textTheme.bodyLarge?.copyWith(
+                            color: Colors.white,
+                            fontSize: 17.sp,
+                            fontWeight: FontWeight.w700,
                           ),
-                        ),
-                      ),
-                      onPressed: () {},
-                      child: ShaderMask(
-                        shaderCallback: (bounds) => const LinearGradient(
-                          begin: Alignment.centerLeft,
-                          end: Alignment.centerRight,
-                          colors: [
-                            Color(0xFFA2FF00),
-                            Color(0xFF00FF7F),
-                          ],
-                        ).createShader(
-                          Rect.fromLTWH(0, 0, bounds.width, bounds.height),
-                        ),
-                        child: Text(
-                          'Share',
-                          maxLines: 1,
-                          overflow: TextOverflow.ellipsis,
-                          style:
-                              Theme.of(context).textTheme.bodyLarge?.copyWith(
-                                    color: Colors.white,
-                                    fontSize: 17.sp,
-                                    fontWeight: FontWeight.w700,
-                                  ),
-                        ),
-                      ),
                     ),
                   ),
                 ),
-              ),
-            ),
+              );
+            }),
           ),
         ),
       ),
@@ -317,42 +326,61 @@ class DetailChallengeView extends GetView<DetailChallangeController> {
                                                   element.user?.id !=
                                                   controller.userId,
                                             ),
-                                            child: GestureDetector(
-                                              onTap: () async {},
-                                              child: AspectRatio(
-                                                aspectRatio: 71 / 90,
-                                                child: Container(
-                                                  padding: EdgeInsets.all(1.w),
-                                                  decoration: BoxDecoration(
-                                                    gradient:
-                                                        const LinearGradient(
-                                                      colors: [
-                                                        Color(0xFFA2FF00),
-                                                        Color(0xFF00FF7F),
-                                                      ],
-                                                      begin:
-                                                          Alignment.topCenter,
-                                                      end: Alignment
-                                                          .bottomCenter,
-                                                    ),
-                                                    borderRadius:
-                                                        BorderRadius.circular(
-                                                            11.r),
-                                                  ),
+                                            child: Obx(
+                                              () => GestureDetector(
+                                                onTap: controller
+                                                        .isLoadingJoin.value
+                                                    ? null
+                                                    : () async {
+                                                        controller.join(
+                                                          toTeam: teamKey,
+                                                        );
+                                                      },
+                                                child: AspectRatio(
+                                                  aspectRatio: 71 / 90,
                                                   child: Container(
+                                                    padding:
+                                                        EdgeInsets.all(1.w),
                                                     decoration: BoxDecoration(
+                                                      gradient:
+                                                          const LinearGradient(
+                                                        colors: [
+                                                          Color(0xFFA2FF00),
+                                                          Color(0xFF00FF7F),
+                                                        ],
+                                                        begin:
+                                                            Alignment.topCenter,
+                                                        end: Alignment
+                                                            .bottomCenter,
+                                                      ),
                                                       borderRadius:
                                                           BorderRadius.circular(
-                                                              10.r),
-                                                      color: Theme.of(context)
-                                                          .colorScheme
-                                                          .background,
+                                                              11.r),
                                                     ),
-                                                    alignment: Alignment.center,
-                                                    child: SvgPicture.asset(
-                                                      width: 24.r,
-                                                      height: 24.r,
-                                                      'assets/icons/ic_switch_user.svg',
+                                                    child: Container(
+                                                      decoration: BoxDecoration(
+                                                        borderRadius:
+                                                            BorderRadius
+                                                                .circular(10.r),
+                                                        color: Theme.of(context)
+                                                            .colorScheme
+                                                            .background,
+                                                      ),
+                                                      alignment:
+                                                          Alignment.center,
+                                                      child: Visibility(
+                                                        visible: controller
+                                                                .teamName ==
+                                                            teamKey,
+                                                        replacement:
+                                                            SvgPicture.asset(
+                                                          width: 24.r,
+                                                          height: 24.r,
+                                                          'assets/icons/ic_switch_user.svg',
+                                                        ),
+                                                        child:
+                                                            CustomCircularProgressIndicator(),
+                                                      ),
                                                     ),
                                                   ),
                                                 ),
@@ -362,67 +390,75 @@ class DetailChallengeView extends GetView<DetailChallangeController> {
                                           ...(List.generate(teams.length, (i) {
                                             final e = teams[i];
 
-                                            return AspectRatio(
-                                              aspectRatio: 71 / 90,
-                                              child: Container(
-                                                padding: EdgeInsets.all(8.w),
-                                                decoration: BoxDecoration(
-                                                  color:
-                                                      const Color(0xFF3C3C3C),
-                                                  borderRadius:
-                                                      BorderRadius.circular(
-                                                          10.w),
-                                                ),
-                                                child: Column(
-                                                  mainAxisAlignment:
-                                                      MainAxisAlignment.center,
-                                                  children: [
-                                                    ClipOval(
-                                                      child: CachedNetworkImage(
-                                                        imageUrl:
-                                                            e.user?.imageUrl ??
-                                                                '',
-                                                        width: 32.r,
-                                                        height: 32.r,
-                                                        fit: BoxFit.cover,
-                                                        placeholder: (context,
-                                                                url) =>
-                                                            ShimmerLoadingCircle(
-                                                          size: 32.r,
-                                                        ),
-                                                        errorWidget: (context,
-                                                                url, error) =>
-                                                            CircleAvatar(
-                                                          radius: 32.r,
-                                                          backgroundColor:
-                                                              Theme.of(context)
-                                                                  .colorScheme
-                                                                  .onBackground,
-                                                          child: Text(
-                                                            (e.user?.name ?? '')
-                                                                .toInitials(),
-                                                            style: Theme.of(
-                                                                    context)
-                                                                .textTheme
-                                                                .bodySmall
-                                                                ?.copyWith(
-                                                                  color: Theme.of(
-                                                                          context)
-                                                                      .colorScheme
-                                                                      .background,
-                                                                ),
+                                            return Padding(
+                                              padding:
+                                                  EdgeInsets.only(left: 8.w),
+                                              child: AspectRatio(
+                                                aspectRatio: 71 / 90,
+                                                child: Container(
+                                                  padding: EdgeInsets.all(8.w),
+                                                  decoration: BoxDecoration(
+                                                    color:
+                                                        const Color(0xFF3C3C3C),
+                                                    borderRadius:
+                                                        BorderRadius.circular(
+                                                            10.w),
+                                                  ),
+                                                  child: Column(
+                                                    mainAxisAlignment:
+                                                        MainAxisAlignment
+                                                            .center,
+                                                    children: [
+                                                      ClipOval(
+                                                        child:
+                                                            CachedNetworkImage(
+                                                          imageUrl: e.user
+                                                                  ?.imageUrl ??
+                                                              '',
+                                                          width: 32.r,
+                                                          height: 32.r,
+                                                          fit: BoxFit.cover,
+                                                          placeholder: (context,
+                                                                  url) =>
+                                                              ShimmerLoadingCircle(
+                                                            size: 32.r,
+                                                          ),
+                                                          errorWidget: (context,
+                                                                  url, error) =>
+                                                              CircleAvatar(
+                                                            radius: 32.r,
+                                                            backgroundColor:
+                                                                Theme.of(
+                                                                        context)
+                                                                    .colorScheme
+                                                                    .onBackground,
+                                                            child: Text(
+                                                              (e.user?.name ??
+                                                                      '')
+                                                                  .toInitials(),
+                                                              style: Theme.of(
+                                                                      context)
+                                                                  .textTheme
+                                                                  .bodySmall
+                                                                  ?.copyWith(
+                                                                    color: Theme.of(
+                                                                            context)
+                                                                        .colorScheme
+                                                                        .background,
+                                                                  ),
+                                                            ),
                                                           ),
                                                         ),
                                                       ),
-                                                    ),
-                                                    SizedBox(height: 8.h),
-                                                    Text(
-                                                      e.user?.name ?? '-',
-                                                      overflow:
-                                                          TextOverflow.ellipsis,
-                                                      maxLines: 1,
-                                                    ),
-                                                  ],
+                                                      SizedBox(height: 8.h),
+                                                      Text(
+                                                        e.user?.name ?? '-',
+                                                        overflow: TextOverflow
+                                                            .ellipsis,
+                                                        maxLines: 1,
+                                                      ),
+                                                    ],
+                                                  ),
                                                 ),
                                               ),
                                             );
@@ -565,7 +601,8 @@ class DetailChallengeView extends GetView<DetailChallangeController> {
                           );
                         })
                       ],
-                      if (controller.detailChallenge.value?.isOwner == 1) ...[
+                      if (controller.detailChallenge.value?.isOwner == 1 ||
+                          controller.detailChallenge.value?.isJoined == 1) ...[
                         const SizedBox(
                           height: 16,
                         ),
@@ -604,9 +641,10 @@ class DetailChallengeView extends GetView<DetailChallangeController> {
                                     arguments: {
                                       'challengeId': controller.challengeId
                                     });
-                                if (res != null && res is List<UserMiniModel>) {
+                                if (res != null &&
+                                    res is List<ChallengeTeamsModel>) {
                                   controller.invited.value = [
-                                    ...controller.invited.value
+                                    ...controller.invited.value..addAll(res)
                                   ];
                                 }
                               },

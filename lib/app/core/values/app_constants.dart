@@ -65,6 +65,7 @@ class AppConstants {
   static String challengeCancel({String? id}) => "/challange/$id/cancel";
   static String challengeUser({String? id}) => "/challange/$id/user";
   static String challengeInviteFriend({String? id}) => "/challange/$id/invite";
+  static String challengeJoin({String? id}) => "/challange/$id/join";
 
   // Clubs
   static const String clubsMini = "/club";

@@ -153,8 +153,8 @@ class DetailChallengeInviteController extends GetxController {
       final res = await _challengeService.inviteFriendChallenge(
           challengeId, invites.map((e) => e.id).toList());
 
-      if (res ?? false) {
-        Get.back(result: invites);
+      if (res != null) {
+        Get.back(result: res);
       }
     } on AppException catch (e) {
       AppExceptionHandlerInfo.handle(e);

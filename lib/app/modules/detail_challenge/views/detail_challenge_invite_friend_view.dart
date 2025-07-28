@@ -138,7 +138,8 @@ class DetailChallengeInviteFriendView
           child: SizedBox(
             height: 55,
             child: GradientElevatedButton(
-              onPressed: controller.invites.isEmpty
+              onPressed: controller.invites.isEmpty ||
+                      controller.isLoadingInviteFriend.value
                   ? null
                   : () {
                       controller.invite();

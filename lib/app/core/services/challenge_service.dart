@@ -138,7 +138,8 @@ class ChallengeService {
     }
   }
 
-  Future<bool?> inviteFriendChallenge(String id, List<String> userIds) async {
+  Future<List<ChallengeTeamsModel>?> inviteFriendChallenge(
+      String id, List<String> userIds) async {
     try {
       final response = await _apiService.request(
         path: AppConstants.challengeInviteFriend(id: id),
@@ -152,7 +153,28 @@ class ChallengeService {
         throw Exception('Failed to load challenge invite friend');
       }
 
-      return response.data['success'];
+      return List.from(response.data['data'])
+          .map<ChallengeTeamsModel>((e) => ChallengeTeamsModel.fromJson(e))
+          .toList();
+    } catch (e) {
+      rethrow;
+    }
+  }
+
+  Future<ChallengeTeamsModel> joinChallenge(String id, String? team) async {
+    try {
+      final response = await _apiService.request(
+          path: AppConstants.challengeJoin(id: id),
+          method: HttpMethod.post,
+          queryParams: {
+            if (team != null) 'team': team,
+          });
+
+      if (response.statusCode != 200) {
+        throw Exception('Failed to join challenge');
+      }
+
+      return ChallengeTeamsModel.fromJson(response.data['data']);
     } catch (e) {
       rethrow;
     }

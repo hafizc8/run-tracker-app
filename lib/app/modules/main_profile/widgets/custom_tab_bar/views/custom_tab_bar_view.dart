@@ -7,6 +7,8 @@ import 'package:zest_mobile/app/core/shared/widgets/card_challenge.dart';
 import 'package:zest_mobile/app/modules/main_profile/controllers/main_profile_controller.dart';
 import 'package:zest_mobile/app/modules/main_profile/widgets/card_event/card_event_profile.dart';
 import 'package:zest_mobile/app/modules/main_profile/widgets/custom_tab_bar/controllers/custom_tab_bar_controller.dart';
+import 'package:zest_mobile/app/modules/social/views/partial/for_you_tab/event/controllers/event_action_controller.dart';
+import 'package:zest_mobile/app/modules/social/views/partial/for_you_tab/event/controllers/event_controller.dart';
 
 import 'package:zest_mobile/app/routes/app_routes.dart';
 
@@ -16,6 +18,8 @@ class CustomTabBar extends GetView<TabBarController> {
   final List<String> tabs = ['Overview', 'Challenges', 'Events'];
 
   final ProfileMainController profileController = Get.find();
+  final EventController eventController = Get.put(EventController());
+  final EventActionController eventActionController = Get.put(EventActionController());
   @override
   Widget build(BuildContext context) {
     return Column(

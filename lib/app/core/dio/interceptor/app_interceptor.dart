@@ -1,5 +1,6 @@
 import 'package:dio/dio.dart';
 import 'package:get/get.dart' as g;
+import 'package:package_info_plus/package_info_plus.dart';
 import 'package:zest_mobile/app/core/di/service_locator.dart';
 import 'package:zest_mobile/app/core/exception/app_exception.dart';
 import 'package:zest_mobile/app/core/exception/handler/app_exception_handler.dart';
@@ -12,8 +13,13 @@ import 'package:get/get.dart';
 
 class AppInterceptor extends Interceptor {
   @override
-  void onRequest(RequestOptions options, RequestInterceptorHandler handler) {
+  void onRequest(RequestOptions options, RequestInterceptorHandler handler) async {
     final token = sl<StorageService>().read(StorageKeys.token);
+    final packageInfo = await PackageInfo.fromPlatform();
+
+    options.headers['App-Version'] = packageInfo.version;
+    options.headers['App-Platform'] = 'Android';
+    
     if (token != null) {
       options.headers['Authorization'] = 'Bearer $token';
     }

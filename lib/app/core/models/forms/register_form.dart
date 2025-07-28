@@ -5,6 +5,7 @@ class RegisterFormModel extends FormModel<RegisterFormModel> {
   final String password;
   final String passwordConfirmation;
   final bool isAgree;
+  final String? fcmToken;
   final Map<String, dynamic>? errors;
 
   RegisterFormModel({
@@ -12,6 +13,7 @@ class RegisterFormModel extends FormModel<RegisterFormModel> {
     this.password = '',
     this.passwordConfirmation = '',
     this.isAgree = false,
+    this.fcmToken,
     this.errors = const {},
   });
 
@@ -26,6 +28,7 @@ class RegisterFormModel extends FormModel<RegisterFormModel> {
     String? password,
     String? passwordConfirmation,
     bool? isAgree,
+    String? fcmToken,
     Map<String, dynamic>? errors,
     String? field,
   }) {
@@ -39,6 +42,7 @@ class RegisterFormModel extends FormModel<RegisterFormModel> {
       password: password ?? this.password,
       passwordConfirmation: passwordConfirmation ?? this.passwordConfirmation,
       isAgree: isAgree ?? this.isAgree,
+      fcmToken: fcmToken ?? this.fcmToken,
       errors: errors ?? this.errors,
     );
   }
@@ -49,6 +53,7 @@ class RegisterFormModel extends FormModel<RegisterFormModel> {
         password,
         passwordConfirmation,
         isAgree,
+        fcmToken,
         errors,
       ];
 
@@ -70,6 +75,7 @@ class RegisterFormModel extends FormModel<RegisterFormModel> {
       'password': password,
       'password_confirmation': passwordConfirmation,
       'is_agree': isAgree,
+      'fcm_token': fcmToken,
     };
   }
 }

@@ -3,9 +3,12 @@ import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
 import 'package:loader_overlay/loader_overlay.dart';
+import 'package:zest_mobile/app/core/di/service_locator.dart';
+import 'package:zest_mobile/app/core/services/storage_service.dart';
 import 'package:zest_mobile/app/core/shared/theme/app_theme.dart';
 import 'package:zest_mobile/app/core/shared/theme/color_schemes.dart';
 import 'package:zest_mobile/app/core/values/app_constants.dart';
+import 'package:zest_mobile/app/core/values/storage_keys.dart';
 import 'package:zest_mobile/app/routes/app_pages.dart';
 import 'package:zest_mobile/app/routes/app_routes.dart';
 
@@ -25,8 +28,11 @@ class _AppState extends State<App> {
   }
 
   void _listenDynamicLinks() {
+    
     _appLinks.uriLinkStream.listen((Uri? uri) {
       if (uri != null && uri.scheme == "devzestplus") {
+        final token = sl<StorageService>().read(StorageKeys.token);
+
         if (uri.host == "email-verified" &&
             uri.queryParameters['verified'] == 'true') {
           Get.offAllNamed(AppRoutes.registerVerifyEmailSuccess);
@@ -37,6 +43,24 @@ class _AppState extends State<App> {
             'token': uri.queryParameters['token'],
             'email': uri.queryParameters['email']
           });
+        } else if (
+            uri.host == "share-club" &&
+            uri.queryParameters['club'] != null &&
+            token != null
+        ) {
+          Get.toNamed(AppRoutes.detailClub, arguments: uri.queryParameters['club']);
+        } else if (
+            uri.host == "share-profile" &&
+            uri.queryParameters['user'] != null &&
+            token != null
+        ) {
+          Get.toNamed(AppRoutes.profileUser, arguments: uri.queryParameters['user']);
+        } else if (
+            uri.host == "share-event" &&
+            uri.queryParameters['event'] != null &&
+            token != null
+        ) {
+          Get.toNamed(AppRoutes.socialYourPageEventDetail, arguments: {'eventId': uri.queryParameters['event']});
         }
       }
     });

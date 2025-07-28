@@ -4,11 +4,13 @@ class LoginFormModel extends FormModel<LoginFormModel> {
   final String email;
   final String password;
   final Map<String, dynamic>? errors;
+  final String fcmToken;
 
   LoginFormModel({
     this.email = '',
     this.password = '',
     this.errors = const {},
+    this.fcmToken = '',
   });
 
   @override
@@ -20,6 +22,7 @@ class LoginFormModel extends FormModel<LoginFormModel> {
   LoginFormModel copyWith({
     String? email,
     String? password,
+    String? fcmToken,
     Map<String, dynamic>? errors,
     String? field,
   }) {
@@ -31,12 +34,13 @@ class LoginFormModel extends FormModel<LoginFormModel> {
     return LoginFormModel(
       email: email ?? this.email,
       password: password ?? this.password,
+      fcmToken: fcmToken ?? this.fcmToken,
       errors: errors ?? this.errors,
     );
   }
 
   @override
-  List<Object?> get props => [email, password, errors];
+  List<Object?> get props => [email, password, errors, fcmToken];
 
   @override
   LoginFormModel setErrors(Map<String, List<dynamic>> errorsMap) {
@@ -54,6 +58,7 @@ class LoginFormModel extends FormModel<LoginFormModel> {
     return {
       'email': email,
       'password': password,
+      'fcm_token': fcmToken,
     };
   }
 }

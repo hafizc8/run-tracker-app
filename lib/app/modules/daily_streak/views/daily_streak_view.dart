@@ -310,17 +310,36 @@ class DailyStreakView extends GetView<DailyStreakController> {
                 topRight: Radius.circular(10.r),
               ),
             ),
-            child: Center(
-              child: Text(
-                // Tampilkan tanggal yang dipilih atau teks default
-                record?.date != null
-                    ? DateFormat('EEEE, dd MMMM yyyy').format(record!.date!)
-                    : 'Select a date to see details',
-                style: Theme.of(context).textTheme.bodySmall?.copyWith(
-                      fontWeight: FontWeight.w600,
-                      color: Colors.white
-                    ),
-              ),
+            child: Row(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                SvgPicture.asset('assets/icons/ic_shoes_4.svg', width: 25.w),
+                SizedBox(width: 10.w),
+                Text(
+                  NumberHelper().formatNumberToKWithComma(record?.step ?? 0),
+                  style: GoogleFonts.poppins(
+                    color: const Color(0xFFD9D9D9),
+                    fontSize: 15.sp,
+                    fontWeight: FontWeight.w700,
+                  ),
+                ),
+                Text(
+                  ' /',
+                  style: GoogleFonts.poppins(
+                    color: const Color(0xFFD9D9D9),
+                    fontSize: 15.sp,
+                    fontWeight: FontWeight.w700,
+                  ),
+                ),
+                Text(
+                  NumberHelper().formatNumberToKWithComma(record?.stepGoal ?? (controller.user?.userPreference?.dailyStepGoals ?? 0)),
+                  style: GoogleFonts.poppins(
+                    color: const Color(0xFF929292),
+                    fontSize: 12.sp,
+                    fontWeight: FontWeight.w700,
+                  ),
+                ),
+              ],
             ),
           ),
           Container(
@@ -328,10 +347,10 @@ class DailyStreakView extends GetView<DailyStreakController> {
             child: Row(
               mainAxisAlignment: MainAxisAlignment.spaceAround,
               children: [
-                _buildXpColumn(context, 'Steps\nXp', record?.xpPerStep ?? 0),
-                _buildXpColumn(context, 'Daily Goals\nXp', record?.xpDailyBonus ?? 0),
-                _buildXpColumn(context, 'Activity\nXp', record?.xpRecordActivity ?? 0),
-                _buildXpColumn(context, 'Special Event\nXp', record?.xpSpecialEvent ?? 0),
+                _buildXpColumn(context, 'Steps\nXP', record?.xpPerStep ?? 0),
+                _buildXpColumn(context, 'Daily Goals\nXP', record?.xpDailyBonus ?? 0),
+                _buildXpColumn(context, 'Activity\nXP', record?.xpRecordActivity ?? 0),
+                _buildXpColumn(context, 'Special Event\nXP', record?.xpSpecialEvent ?? 0),
               ],
             ),
           ),
@@ -343,7 +362,7 @@ class DailyStreakView extends GetView<DailyStreakController> {
                     color: darkColorScheme.primary,
                   ),
               children: <TextSpan>[
-                const TextSpan(text: 'Total Xp Gained  '),
+                const TextSpan(text: 'Total XP Gained  '),
                 TextSpan(
                   text: NumberHelper().formatNumberToKWithComma(totalXp),
                   style: const TextStyle(fontWeight: FontWeight.w700),

@@ -7,6 +7,25 @@
   "client": [
     {
       "client_info": {
+        "mobilesdk_app_id": "1:567284478969:android:ddc86ded88c52a93da4328",
+        "android_client_info": {
+          "package_name": "app.zestplus.mobile"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyCf7Amnn3xRjB65Y_z_UVwRtky95jl0hnM"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    },
+    {
+      "client_info": {
         "mobilesdk_app_id": "1:567284478969:android:78d06f4906dff835da4328",
         "android_client_info": {
           "package_name": "com.example.zest_mobile"

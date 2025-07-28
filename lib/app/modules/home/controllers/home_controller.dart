@@ -2,6 +2,7 @@ import 'dart:async';
 import 'package:get/get.dart';
 import 'package:permission_handler/permission_handler.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+import 'package:table_calendar/table_calendar.dart';
 import 'package:zest_mobile/app/core/di/service_locator.dart';
 import 'package:zest_mobile/app/core/models/model/home_page_data_model.dart';
 import 'package:zest_mobile/app/core/models/model/user_model.dart';
@@ -23,8 +24,7 @@ class HomeController extends GetxController {
   final _prefs = sl<SharedPreferences>();
 
   // --- UI STATE ---
-  final RxInt _validatedSteps = 0.obs;
-  int get validatedSteps => _validatedSteps.value;
+  final RxInt validatedSteps = 0.obs;
 
   // ✨ State untuk waktu aktif ditambahkan kembali ✨
   final RxInt _totalActiveTimeInSeconds = 0.obs;
@@ -38,7 +38,7 @@ class HomeController extends GetxController {
   Rx<HomePageDataModel?> homePageData = Rx<HomePageDataModel?>(null);
 
   Timer? _syncTimer;
-  static const _syncInterval = Duration(minutes: 2);
+  static const _syncInterval = Duration(seconds: 10);
   final _lastSyncedStepsKey = 'last_synced_steps';
   final _lastSavedDateKey = 'last_saved_date';
 
@@ -88,9 +88,7 @@ class HomeController extends GetxController {
     }
   }
 
-  double get progressValue =>
-      (validatedSteps / (user?.userPreference?.dailyStepGoals ?? 0))
-          .clamp(0.0, 1.0);
+  double get progressValue => (validatedSteps.value / (user?.userPreference?.dailyStepGoals ?? 0)).clamp(0.0, 1.0);
 
   Future<void> _reconcileAndSyncInitialData() async {
     _logService.log.i("Reconciling step data...");
@@ -125,7 +123,7 @@ class HomeController extends GetxController {
         "Reconciliation: Backend ($backendSteps) vs Pedometer ($pedometerSteps). Authoritative: $authoritativeSteps steps.");
 
     // 5. Atur state UI dengan nilai yang paling benar
-    _validatedSteps.value = authoritativeSteps;
+    validatedSteps.value = authoritativeSteps;
 
     // 6. ✨ PENTING: Lakukan sinkronisasi pertama kali secara langsung
     await syncDailyRecord();
@@ -140,26 +138,13 @@ class HomeController extends GetxController {
       currentPedometerSteps =
           await Pedometer().getStepCount(from: startTime, to: now);
 
-      // // get step di jam 13:30 sd 13:40
-      // final startTimeTest = DateTime(2025, 7, 11, 13, 30);
-      // final endTimeTest = DateTime(2025, 7, 11, 13, 40);
-
-      // int testGetSteps = await Pedometer().getStepCount(from: startTimeTest, to: endTimeTest);
-      // _logService.log.i("TEST: $startTimeTest to $endTimeTest = $testGetSteps steps.");
-
-      // // get step di jam 13:35 sd 13:36
-      // final startTimeTest2 = DateTime(2025, 7, 11, 13, 35);
-      // final endTimeTest2 = DateTime(2025, 7, 11, 13, 36);
-
-      // int testGetSteps2 = await Pedometer().getStepCount(from: startTimeTest2, to: endTimeTest2);
-      // _logService.log.i("TEST: $startTimeTest2 to $endTimeTest2 = $testGetSteps2 steps.");
     } catch (e) {
       _logService.log.e("Failed to get step count during sync.", error: e);
-      return; // Hentikan jika gagal mengambil data
+      return;
     }
 
     // Perbarui UI dengan data terbaru
-    _validatedSteps.value = currentPedometerSteps;
+    validatedSteps.value = currentPedometerSteps;
 
     final lastSyncedSteps = _prefs.getInt(_lastSyncedStepsKey) ?? 0;
 
@@ -260,5 +245,62 @@ class HomeController extends GetxController {
       ),
       barrierDismissible: false, // User harus mengatur goal
     );
+  }
+
+  Future<void> _syncMissingDailyRecords() async {
+    _logService.log.i("Checking for missing daily records to sync...");
+
+    // 1. Dapatkan tanggal record terakhir dari server
+    final records = await _recordActivityService.getDailyRecord(limit: 1);
+    if (records.data.isEmpty) {
+      _logService.log.w("No last record date found. Skipping catch-up sync.");
+      return;
+    }
+
+    final lastRecordDate = records.data.first.date ?? DateTime.now();
+    
+    // 2. Hitung selisih hari dengan hari ini
+    final today = DateTime.now();
+    final differenceInDays = today.difference(lastRecordDate).inDays;
+
+    if (differenceInDays <= 0) {
+      _logService.log.i("Data is up to date. No catch-up sync needed.");
+      return;
+    }
+
+    _logService.log.w("$differenceInDays day(s) of data are missing. Starting catch-up sync...");
+
+    // 3. Lakukan perulangan untuk setiap hari yang hilang
+    for (int i = 1; i <= differenceInDays; i++) {
+      final dateToSync = lastRecordDate.add(Duration(days: i));
+      
+      // Jangan sync untuk hari ini, karena akan ditangani oleh periodic sync
+      if (isSameDay(dateToSync, today)) continue; 
+
+      try {
+        // Tentukan rentang waktu untuk hari yang hilang
+        final startTime = DateTime(dateToSync.year, dateToSync.month, dateToSync.day);
+        final endTime = DateTime(dateToSync.year, dateToSync.month, dateToSync.day, 23, 59, 59);
+
+        // 4. Ambil data langkah dari Pedometer
+        final stepsForDay = await Pedometer().getStepCount(from: startTime, to: endTime);
+
+        if (stepsForDay > 0) {
+          _logService.log.i("Syncing data for ${DateFormat('yyyy-MM-dd').format(dateToSync)}: $stepsForDay steps.");
+          
+          // 5. Kirim ke backend dengan tanggal yang spesifik
+          await _recordActivityService.syncDailyRecord(
+            step: stepsForDay,
+            // date: DateFormat('yyyy-MM-dd').format(dateToSync),
+          );
+        }
+      } catch (e, s) {
+        _logService.log.e("Failed to sync data for day ${DateFormat('yyyy-MM-dd').format(dateToSync)}", error: e, stackTrace: s);
+        // Lanjutkan ke hari berikutnya meskipun ada error
+        continue;
+      }
+    }
+
+    _logService.log.i("Catch-up sync finished.");
   }
 }

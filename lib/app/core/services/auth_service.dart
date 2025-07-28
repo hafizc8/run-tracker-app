@@ -7,12 +7,14 @@ import 'package:zest_mobile/app/core/models/forms/register_form.dart';
 import 'package:zest_mobile/app/core/models/forms/reset_password_form.dart';
 import 'package:zest_mobile/app/core/models/model/user_model.dart';
 import 'package:zest_mobile/app/core/services/api_service.dart';
+import 'package:zest_mobile/app/core/services/fcm_service.dart';
 import 'package:zest_mobile/app/core/services/storage_service.dart';
 import 'package:zest_mobile/app/core/values/app_constants.dart';
 import 'package:zest_mobile/app/core/values/storage_keys.dart';
 
 class AuthService {
   final ApiService _apiService;
+  final FcmService _fcmService = FcmService(); 
   AuthService(this._apiService);
 
   UserModel? get user {
@@ -30,6 +32,12 @@ class AuthService {
 
   Future<bool> login(LoginFormModel form) async {
     try {
+      final fcmToken = await _fcmService.getFcmToken();
+
+      if (fcmToken != null) {
+        form = form.copyWith(fcmToken: fcmToken);
+      }
+
       final response = await _apiService.request(
         path: AppConstants.login,
         method: HttpMethod.post,
@@ -48,6 +56,12 @@ class AuthService {
 
   Future<bool> register(RegisterFormModel form) async {
     try {
+      final fcmToken = await _fcmService.getFcmToken();
+
+      if (fcmToken != null) {
+        form = form.copyWith(fcmToken: fcmToken);
+      }
+
       final response = await _apiService.request(
         path: AppConstants.register,
         method: HttpMethod.post,

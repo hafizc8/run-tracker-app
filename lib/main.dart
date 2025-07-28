@@ -1,4 +1,5 @@
 // import 'package:device_preview/device_preview.dart';
+import 'package:zest_mobile/app/core/services/fcm_service.dart';
 import 'package:zest_mobile/app/core/services/log_service.dart';
 import 'app/app.dart';
 import 'package:firebase_core/firebase_core.dart';
@@ -18,12 +19,15 @@ void main() async {
   // 1. Inisialisasi dasar Flutter
   WidgetsFlutterBinding.ensureInitialized();
 
-  // 2. Inisialisasi service-service inti (bisa berjalan paralel)
-  await Future.wait([
-    GetStorage.init(),
-    Firebase.initializeApp(),
-    // Hive bisa dipisah jika ada dependensi
-  ]);
+  // Inisialisasi Firebase terlebih dahulu ✨
+  await Firebase.initializeApp();
+
+  // ✨ Panggil inisialisasi FCM setelah Firebase siap
+  await FcmService().initNotifications();
+  
+  // 2. Inisialisasi service lain yang tidak bergantung pada Firebase
+  // bisa tetap di sini jika ada.
+  await GetStorage.init();
 
   // 3. Inisialisasi Hive (setelah initFlutter)
   await Hive.initFlutter();
@@ -32,7 +36,7 @@ void main() async {
   // 4. Inisialisasi Dependency Injection dan Background Service
   await setupServiceLocator();
   await sl.allReady();
-  await initializeService(); // Sekarang hanya mengkonfigurasi service
+  await initializeService();
 
   // 5. Konfigurasi Crashlytics dan Orientasi Layar
   if (kReleaseMode) {

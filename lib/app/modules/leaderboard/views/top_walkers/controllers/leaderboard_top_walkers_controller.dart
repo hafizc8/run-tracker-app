@@ -88,7 +88,7 @@ class LeaderboardTopWalkersController extends GetxController {
 
       LeaderboardResponseModel response = await _leaderboardService.getLeaderboard(
         page: pageLeaderboard.value,
-        locationLevel: selectedChip.value.name,
+        locationLevel: selectedChip.value.value,
         friendOnly: isFriendsOnly.value,
       );
 

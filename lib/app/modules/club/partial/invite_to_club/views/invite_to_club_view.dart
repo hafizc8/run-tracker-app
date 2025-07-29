@@ -1,5 +1,6 @@
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
 import 'package:zest_mobile/app/core/models/model/user_mini_model.dart';
 import 'package:zest_mobile/app/core/shared/theme/color_schemes.dart';
@@ -197,7 +198,7 @@ class InviteToClubView extends GetView<InviteToClubController> {
           visible: !controller.isLoadingInviteToClub.value,
           replacement: const Center(child: CircularProgressIndicator()),
           child: SizedBox(
-            height: 55,
+            height: 43.h,
             child: GradientElevatedButton(
               onPressed: () {
                 controller.inviteToClub();

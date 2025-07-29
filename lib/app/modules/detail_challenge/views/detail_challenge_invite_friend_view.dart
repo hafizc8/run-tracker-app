@@ -14,10 +14,15 @@ class DetailChallengeInviteFriendView
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: _buildAppBar(context),
-      body: SingleChildScrollView(
-        child: Container(
+    return RefreshIndicator(
+      onRefresh: () async {
+        controller.loadFriends(refresh: true);
+      },
+      child: Scaffold(
+        appBar: _buildAppBar(context),
+        body: SingleChildScrollView(
+          physics: const AlwaysScrollableScrollPhysics(),
+          controller: controller.scrollControllerFriend,
           padding: const EdgeInsets.all(16),
           child: Column(
             children: [
@@ -98,8 +103,8 @@ class DetailChallengeInviteFriendView
             ],
           ),
         ),
+        bottomNavigationBar: _buildBottomBar(context),
       ),
-      bottomNavigationBar: _buildBottomBar(context),
     );
   }
 
@@ -134,23 +139,22 @@ class DetailChallengeInviteFriendView
         color: Theme.of(context).colorScheme.background,
       ),
       child: Obx(
-        () => Expanded(
-          child: SizedBox(
-            height: 55,
-            child: GradientElevatedButton(
-              onPressed: controller.invites.isEmpty ||
-                      controller.isLoadingInviteFriend.value
-                  ? null
-                  : () {
-                      controller.invite();
-                    },
-              child: Visibility(
-                visible: !controller.isLoadingInviteFriend.value,
-                replacement: CustomCircularProgressIndicator(),
-                child: Text(
-                  'Invite',
-                  style: Theme.of(context).textTheme.labelSmall,
-                ),
+        () => SizedBox(
+          height: 55,
+          width: double.infinity,
+          child: GradientElevatedButton(
+            onPressed: controller.invites.isEmpty ||
+                    controller.isLoadingInviteFriend.value
+                ? null
+                : () {
+                    controller.invite();
+                  },
+            child: Visibility(
+              visible: !controller.isLoadingInviteFriend.value,
+              replacement: CustomCircularProgressIndicator(),
+              child: Text(
+                'Invite',
+                style: Theme.of(context).textTheme.labelSmall,
               ),
             ),
           ),
@@ -188,7 +192,6 @@ class DetailChallengeInviteFriendView
                   ?.copyWith(fontWeight: FontWeight.w600),
             ),
           ),
-          const Spacer(),
           // checkbox
           Obx(
             () => Checkbox(

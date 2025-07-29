@@ -205,6 +205,7 @@ class RegisterCreateProfileView
                                 'lng': form.longitude,
                                 'address': controller.addressController.text,
                               });
+
                           if (res != null) {
                             if (res['address'] != null &&
                                 res['address'] is String) {

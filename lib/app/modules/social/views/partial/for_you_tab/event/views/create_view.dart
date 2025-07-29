@@ -194,8 +194,10 @@ class EventCreateView extends GetView<EventActionController> {
                         final res = await Get.toNamed(
                           AppRoutes.chooseLocationEvent,
                           arguments: {
-                            'lat': form.latitude,
-                            'lng': form.longitude,
+                            'lat': form.latitude ??
+                                controller.currentPosition.value?.latitude,
+                            'lng': form.longitude ??
+                                controller.currentPosition.value?.longitude,
                             'address': controller.addressController.text,
                             'placeName': controller.placeNameController.text,
                           },

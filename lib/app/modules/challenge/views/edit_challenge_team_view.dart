@@ -1,16 +1,15 @@
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/widgets.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:get/get.dart';
 import 'package:zest_mobile/app/core/extension/initial_profile_empty.dart';
-import 'package:zest_mobile/app/core/models/model/event_model.dart';
 import 'package:zest_mobile/app/core/shared/widgets/gradient_elevated_button.dart';
 import 'package:zest_mobile/app/core/shared/widgets/gradient_outlined_button.dart';
 import 'package:zest_mobile/app/core/shared/widgets/shimmer_loading_circle.dart';
 import 'package:zest_mobile/app/core/shared/widgets/shimmer_loading_list.dart';
 import 'package:zest_mobile/app/modules/challenge/controllers/edit_challenge_controller.dart';
-import 'package:zest_mobile/app/routes/app_routes.dart';
 
 class ChallengeEditTeamView extends GetView<ChallangeEditController> {
   const ChallengeEditTeamView({super.key});
@@ -194,28 +193,22 @@ class ChallengeEditTeamView extends GetView<ChallangeEditController> {
                     ],
                   ),
                   SizedBox(height: 12.h),
-                  GridView(
-                    padding: const EdgeInsets.only(bottom: 16),
-                    shrinkWrap: true,
-                    physics: const NeverScrollableScrollPhysics(),
-                    gridDelegate:
-                        const SliverGridDelegateWithFixedCrossAxisCount(
-                      crossAxisCount: 3,
-                      mainAxisSpacing: 12,
-                      crossAxisSpacing: 12,
-                      childAspectRatio: 71 / 90,
-                    ),
-                    children: [
-                      ...(List.generate(
-                          controller.form.value.teams?[index].members?.length ??
-                              0, (i) {
-                        final e =
-                            controller.form.value.teams?[index].members?[i];
+                  SizedBox(
+                    height: 90.h,
+                    child: ListView(
+                      shrinkWrap: true,
+                      scrollDirection: Axis.horizontal,
+                      children: [
+                        ...(List.generate(
+                            controller
+                                    .form.value.teams?[index].members?.length ??
+                                0, (i) {
+                          final e =
+                              controller.form.value.teams?[index].members?[i];
 
-                        return Stack(
-                          clipBehavior: Clip.none,
-                          children: [
-                            AspectRatio(
+                          return Padding(
+                            padding: EdgeInsets.only(left: 8.w),
+                            child: AspectRatio(
                               aspectRatio: 71 / 90,
                               child: Container(
                                 padding: EdgeInsets.all(8.w),
@@ -266,10 +259,10 @@ class ChallengeEditTeamView extends GetView<ChallangeEditController> {
                                 ),
                               ),
                             ),
-                          ],
-                        );
-                      })),
-                    ],
+                          );
+                        })),
+                      ],
+                    ),
                   ),
                 ],
               ),

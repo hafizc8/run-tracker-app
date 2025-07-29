@@ -458,9 +458,7 @@ class DetailClubView extends GetView<DetailClubController> {
         PopupMenuButton<String>(
           onSelected: (value) async {
             // Handle the selection
-            if (value == 'invite_friend') {
-              Get.toNamed(AppRoutes.inviteToClub, arguments: controller.clubId);
-            } else if (value == 'share_club') {
+            if (value == 'share_club') {
               Get.snackbar('Coming soon', 'Feature is coming soon');
             } else if (value == 'mute_club') {
               Get.snackbar('Coming soon', 'Feature is coming soon');
@@ -471,16 +469,6 @@ class DetailClubView extends GetView<DetailClubController> {
           surfaceTintColor: Theme.of(context).colorScheme.onPrimary,
           itemBuilder: (BuildContext context) {
             return [
-              PopupMenuItem<String>(
-                value: 'invite_friend',
-                child: Text(
-                  'Invite a Friend',
-                  style: Theme.of(context)
-                      .textTheme
-                      .bodyMedium
-                      ?.copyWith(fontWeight: FontWeight.w600),
-                ),
-              ),
               PopupMenuItem<String>(
                 value: 'share_club',
                 child: Text(

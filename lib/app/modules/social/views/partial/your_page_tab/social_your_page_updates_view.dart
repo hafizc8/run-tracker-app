@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
 import 'package:zest_mobile/app/core/shared/theme/elevated_btn_theme.dart';
+// import 'package:zest_mobile/app/core/shared/widgets/gradient_elevated_button.dart';
 import 'package:zest_mobile/app/modules/social/controllers/post_controller.dart';
 import 'package:zest_mobile/app/modules/social/controllers/social_controller.dart';
 import 'package:zest_mobile/app/modules/social/widgets/activity_card.dart';
@@ -66,26 +67,22 @@ class SocialYourPageUpdatesView extends GetView<SocialController> {
   }
 
   Widget _buildActivityPrompt(BuildContext context) {
-    return InkWell(
-      onTap: () {
-        postController.openCreatePostDialog();
-      },
-      borderRadius: BorderRadius.circular(12.r),
-      child: Ink(
+    return GestureDetector(
+      onTap: () => postController.openCreatePostDialog(),
+      child: Container(
+        height: 43.h,
+        width: double.infinity,
         decoration: BoxDecoration(
           gradient: kAppDefaultButtonGradient,
-          borderRadius: BorderRadius.circular(12.r),
+          borderRadius: BorderRadius.circular(8.66.r),
         ),
-        child: Container(
-          padding: EdgeInsets.all(12.w),
-          child: Center(
-            child: Text(
-              'Share your today’s vibe!',
-              style: Theme.of(context)
-                  .textTheme
-                  .labelMedium
-                  ?.copyWith(fontSize: 14.sp),
-            ),
+        child: Center(
+          child: Text(
+            'Share your today’s vibe!',
+            style: Theme.of(context)
+                .textTheme
+                .labelMedium
+                ?.copyWith(fontSize: 14.sp),
           ),
         ),
       ),

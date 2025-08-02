@@ -32,6 +32,17 @@ class ChallangeCreateController extends GetxController {
       );
       return;
     }
+    DateTime now = DateTime.now();
+    DateTime startDate = form.value.startDate ?? now;
+    DateTime endDate = form.value.endDate ?? now;
+
+    DateTime firstDate =
+        isStartDate ? now : startDate.add(const Duration(days: 1));
+
+    DateTime initialDate = isStartDate
+        ? (startDate.isBefore(firstDate) ? firstDate : startDate)
+        : (endDate.isBefore(firstDate) ? firstDate : endDate);
+
     DateTime? picked = await showDatePicker(
       context: context,
       initialDate: isStartDate

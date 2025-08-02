@@ -6,8 +6,10 @@ import 'package:flutter_svg/flutter_svg.dart';
 import 'package:get/get.dart';
 import 'package:zest_mobile/app/core/extension/date_extension.dart';
 import 'package:zest_mobile/app/core/extension/initial_profile_empty.dart';
+import 'package:zest_mobile/app/core/models/model/challenge_detail_model.dart';
 import 'package:zest_mobile/app/core/models/model/challenge_team_model.dart';
 import 'package:zest_mobile/app/core/models/model/user_mini_model.dart';
+import 'package:zest_mobile/app/core/shared/helpers/number_helper.dart';
 import 'package:zest_mobile/app/core/shared/widgets/custom_circular_progress_indicator.dart';
 import 'package:zest_mobile/app/core/shared/widgets/gradient_outlined_button.dart';
 import 'package:zest_mobile/app/core/shared/widgets/shimmer_loading_circle.dart';
@@ -265,7 +267,7 @@ class DetailChallengeView extends GetView<DetailChallangeController> {
                           height: 16,
                         ),
                         Text(
-                          'Leaderboard',
+                          'Teams',
                           style:
                               Theme.of(context).textTheme.bodyMedium?.copyWith(
                                     fontWeight: FontWeight.w400,
@@ -314,6 +316,59 @@ class DetailChallengeView extends GetView<DetailChallangeController> {
                                           ),
                                     ),
                                     const SizedBox(height: 16),
+                                    if (!(controller.detailChallenge.value
+                                                ?.startDate!
+                                                .isFutureDate() ==
+                                            true) &&
+                                        teams.any((element) =>
+                                            element.user?.id ==
+                                            controller.userId)) ...[
+                                      Column(
+                                        crossAxisAlignment:
+                                            CrossAxisAlignment.start,
+                                        children: [
+                                          Text(
+                                            'Your Team Progress',
+                                            style: Theme.of(context)
+                                                .textTheme
+                                                .bodyMedium
+                                                ?.copyWith(
+                                                  fontWeight: FontWeight.w400,
+                                                  color: Color(0xFFA5A5A5),
+                                                  fontSize: 12.sp,
+                                                ),
+                                          ),
+                                          const SizedBox(height: 8),
+                                          ProgressWidget(
+                                            currentSteps: controller
+                                                    .detailChallenge
+                                                    .value
+                                                    ?.teamProgress ??
+                                                0,
+                                            targetSteps: controller
+                                                    .detailChallenge
+                                                    .value
+                                                    ?.target ??
+                                                0,
+                                            startDate: controller
+                                                        .detailChallenge
+                                                        .value
+                                                        ?.mode ==
+                                                    1
+                                                ? controller.detailChallenge
+                                                    .value?.startDate
+                                                : null,
+                                            endDate: controller.detailChallenge
+                                                        .value?.mode ==
+                                                    1
+                                                ? controller.detailChallenge
+                                                    .value?.endDate
+                                                : null,
+                                          ),
+                                          const SizedBox(height: 16),
+                                        ],
+                                      )
+                                    ],
                                     SizedBox(
                                       height: 90.h,
                                       child: ListView(
@@ -322,10 +377,14 @@ class DetailChallengeView extends GetView<DetailChallangeController> {
                                         children: [
                                           Visibility(
                                             visible: teams.every(
-                                              (element) =>
-                                                  element.user?.id !=
-                                                  controller.userId,
-                                            ),
+                                                  (element) =>
+                                                      element.user?.id !=
+                                                      controller.userId,
+                                                ) &&
+                                                controller.detailChallenge.value
+                                                        ?.startDate!
+                                                        .isFutureDate() ==
+                                                    true,
                                             child: Obx(
                                               () => GestureDetector(
                                                 onTap: controller
@@ -473,8 +532,12 @@ class DetailChallengeView extends GetView<DetailChallangeController> {
                           );
                         })
                       ],
-                      if (controller.detailChallenge.value?.isOwner == 1 ||
-                          controller.detailChallenge.value?.isJoined == 1) ...[
+                      if ((controller.detailChallenge.value?.isOwner == 1 ||
+                              controller.detailChallenge.value?.isJoined ==
+                                  1) &&
+                          controller.detailChallenge.value?.startDate!
+                                  .isFutureDate() ==
+                              true) ...[
                         const SizedBox(
                           height: 16,
                         ),
@@ -525,6 +588,99 @@ class DetailChallengeView extends GetView<DetailChallangeController> {
                             ),
                           ],
                         )
+                      ] else ...[
+                        const SizedBox(
+                          height: 16,
+                        ),
+                        Row(
+                          children: [
+                            Text(
+                              'Leaderboard',
+                              style: Theme.of(context)
+                                  .textTheme
+                                  .bodyMedium
+                                  ?.copyWith(
+                                    fontWeight: FontWeight.w400,
+                                    color: Color(0xFFA5A5A5),
+                                    fontSize: 15.sp,
+                                  ),
+                            ),
+                            const Spacer(),
+                            SvgPicture.asset(
+                              'assets/icons/ic_share-2.svg',
+                              height: 24.r,
+                              width: 24.r,
+                            ),
+                          ],
+                        ),
+                        const SizedBox(
+                          height: 16,
+                        ),
+                        ListView.separated(
+                          shrinkWrap: true,
+                          physics: const NeverScrollableScrollPhysics(),
+                          itemCount: (controller.detailChallenge.value
+                                      ?.leaderboardTeams ??
+                                  [])
+                              .length,
+                          separatorBuilder: (context, index) => const SizedBox(
+                            height: 8,
+                          ),
+                          itemBuilder: (context, index) {
+                            LeaderboardTeam item = (controller
+                                    .detailChallenge.value?.leaderboardTeams ??
+                                [])[index];
+                            return ListTile(
+                              contentPadding: EdgeInsets.symmetric(
+                                horizontal: 16.w,
+                              ),
+                              title: Row(
+                                children: [
+                                  Expanded(
+                                    child: Text(
+                                      NumberHelper().formatRank(item.rank),
+                                      textAlign: TextAlign.left,
+                                      style: Theme.of(context)
+                                          .textTheme
+                                          .bodyMedium
+                                          ?.copyWith(
+                                            fontWeight: FontWeight.w700,
+                                            color: const Color(0xFFA5A5A5),
+                                            fontSize: 15.sp,
+                                          ),
+                                    ),
+                                  ),
+                                  Expanded(
+                                    flex: 5,
+                                    child: Text(
+                                      item.team ?? '-',
+                                      style: Theme.of(context)
+                                          .textTheme
+                                          .bodyMedium
+                                          ?.copyWith(
+                                            fontWeight: FontWeight.w400,
+                                            color: const Color(0xFFA5A5A5),
+                                            fontSize: 15.sp,
+                                          ),
+                                      overflow: TextOverflow.ellipsis,
+                                    ),
+                                  ),
+                                ],
+                              ),
+                              trailing: Text(
+                                item.point?.toString() ?? '-',
+                                style: Theme.of(context)
+                                    .textTheme
+                                    .bodyMedium
+                                    ?.copyWith(
+                                      fontWeight: FontWeight.w400,
+                                      color: Theme.of(context).primaryColor,
+                                      fontSize: 15.sp,
+                                    ),
+                              ),
+                            );
+                          },
+                        )
                       ],
                       const SizedBox(
                         height: 16,
@@ -539,7 +695,6 @@ class DetailChallengeView extends GetView<DetailChallangeController> {
                       ),
 
                       Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
                           SvgPicture.asset(
                             'assets/images/empty_reward.svg',
@@ -587,6 +742,100 @@ class DetailChallengeView extends GetView<DetailChallangeController> {
           ),
         ),
       ),
+    );
+  }
+}
+
+class ProgressWidget extends StatelessWidget {
+  final int currentSteps;
+  final int? targetSteps;
+  final DateTime? startDate;
+  final DateTime? endDate;
+
+  const ProgressWidget({
+    super.key,
+    required this.currentSteps,
+    this.targetSteps,
+    this.startDate,
+    this.endDate,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    final now = DateTime.now();
+    final today = DateTime(now.year, now.month, now.day);
+
+    double progress = 0;
+    String label = '';
+
+    if (targetSteps != null && targetSteps! > 0) {
+      // 👉 Step-based progress
+      progress = (currentSteps / targetSteps!).clamp(0.0, 1.0);
+      label = '$currentSteps / $targetSteps Steps';
+    } else if (startDate != null && endDate != null) {
+      // 👉 Date-based progress (inclusive)
+      final start = DateTime(startDate!.year, startDate!.month, startDate!.day);
+      final end = DateTime(endDate!.year, endDate!.month, endDate!.day);
+
+      final totalDays = end.difference(start).inDays + 1; // inclusive
+      final daysRemaining =
+          (end.difference(today).inDays + 1).clamp(0, totalDays);
+      final daysPassed = (totalDays - daysRemaining).clamp(0, totalDays);
+
+      progress = (daysPassed / totalDays).clamp(0.0, 1.0);
+      label = '$currentSteps Steps / $daysRemaining Days Remaining';
+    } else {
+      label = 'Invalid configuration';
+    }
+
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Stack(
+          children: [
+            // Background bar
+            Container(
+              height: 15,
+              decoration: BoxDecoration(
+                color: Color(0xFF595959),
+                borderRadius: BorderRadius.circular(5),
+              ),
+            ),
+            // Foreground gradient bar
+            FractionallySizedBox(
+              widthFactor: progress,
+              child: Container(
+                height: 15,
+                decoration: BoxDecoration(
+                  gradient: kAppDefaultButtonGradient,
+                  borderRadius: BorderRadius.circular(5),
+                ),
+              ),
+            ),
+          ],
+        ),
+        const SizedBox(height: 8),
+        ShaderMask(
+          shaderCallback: (bounds) => const LinearGradient(
+            begin: Alignment.centerLeft,
+            end: Alignment.centerRight,
+            colors: [
+              Color(0xFFA2FF00),
+              Color(0xFF00FF7F),
+            ],
+          ).createShader(
+            Rect.fromLTWH(0, 0, bounds.width, bounds.height),
+          ),
+          child: Text(
+            label,
+            style: Theme.of(context).textTheme.bodyMedium?.copyWith(
+                  color: Colors.white,
+                  fontSize: 12.sp,
+                  fontWeight: FontWeight.w400,
+                ),
+          ),
+        ),
+      ],
     );
   }
 }

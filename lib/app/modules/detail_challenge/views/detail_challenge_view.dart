@@ -1,6 +1,5 @@
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/widgets.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:get/get.dart';
@@ -8,7 +7,7 @@ import 'package:zest_mobile/app/core/extension/date_extension.dart';
 import 'package:zest_mobile/app/core/extension/initial_profile_empty.dart';
 import 'package:zest_mobile/app/core/models/model/challenge_detail_model.dart';
 import 'package:zest_mobile/app/core/models/model/challenge_team_model.dart';
-import 'package:zest_mobile/app/core/models/model/user_mini_model.dart';
+
 import 'package:zest_mobile/app/core/shared/helpers/number_helper.dart';
 import 'package:zest_mobile/app/core/shared/widgets/custom_circular_progress_indicator.dart';
 import 'package:zest_mobile/app/core/shared/widgets/gradient_outlined_button.dart';
@@ -17,6 +16,9 @@ import 'package:zest_mobile/app/core/shared/widgets/shimmer_loading_event.dart';
 import 'package:zest_mobile/app/modules/club/partial/detail_club/partial/tab_bar_club/views/widgets/participants_avatars.dart';
 import 'package:zest_mobile/app/modules/detail_challenge/controllers/detail_challenge_controller.dart';
 import 'package:zest_mobile/app/modules/detail_challenge/widgets/card_challenge.dart';
+import 'package:zest_mobile/app/modules/detail_challenge/widgets/leaderboard_other.dart';
+import 'package:zest_mobile/app/modules/detail_challenge/widgets/leaderboard_top.dart';
+
 import 'package:zest_mobile/app/routes/app_routes.dart';
 
 class DetailChallengeView extends GetView<DetailChallangeController> {
@@ -178,37 +180,42 @@ class DetailChallengeView extends GetView<DetailChallangeController> {
                 );
               }
 
-              return SizedBox(
-                height: 43.h,
-                child: GradientOutlinedButton(
-                  style: ButtonStyle(
-                    shape: MaterialStateProperty.all(
-                      RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(11.r),
+              return Visibility(
+                visible: controller.detailChallenge.value?.startDate!
+                        .isFutureDate() ==
+                    true,
+                child: SizedBox(
+                  height: 43.h,
+                  child: GradientOutlinedButton(
+                    style: ButtonStyle(
+                      shape: MaterialStateProperty.all(
+                        RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(11.r),
+                        ),
                       ),
                     ),
-                  ),
-                  onPressed: () {},
-                  child: ShaderMask(
-                    shaderCallback: (bounds) => const LinearGradient(
-                      begin: Alignment.centerLeft,
-                      end: Alignment.centerRight,
-                      colors: [
-                        Color(0xFFA2FF00),
-                        Color(0xFF00FF7F),
-                      ],
-                    ).createShader(
-                      Rect.fromLTWH(0, 0, bounds.width, bounds.height),
-                    ),
-                    child: Text(
-                      'Share',
-                      maxLines: 1,
-                      overflow: TextOverflow.ellipsis,
-                      style: Theme.of(context).textTheme.bodyLarge?.copyWith(
-                            color: Colors.white,
-                            fontSize: 17.sp,
-                            fontWeight: FontWeight.w700,
-                          ),
+                    onPressed: () {},
+                    child: ShaderMask(
+                      shaderCallback: (bounds) => const LinearGradient(
+                        begin: Alignment.centerLeft,
+                        end: Alignment.centerRight,
+                        colors: [
+                          Color(0xFFA2FF00),
+                          Color(0xFF00FF7F),
+                        ],
+                      ).createShader(
+                        Rect.fromLTWH(0, 0, bounds.width, bounds.height),
+                      ),
+                      child: Text(
+                        'Share',
+                        maxLines: 1,
+                        overflow: TextOverflow.ellipsis,
+                        style: Theme.of(context).textTheme.bodyLarge?.copyWith(
+                              color: Colors.white,
+                              fontSize: 17.sp,
+                              fontWeight: FontWeight.w700,
+                            ),
+                      ),
                     ),
                   ),
                 ),
@@ -616,71 +623,113 @@ class DetailChallengeView extends GetView<DetailChallangeController> {
                         const SizedBox(
                           height: 16,
                         ),
-                        ListView.separated(
-                          shrinkWrap: true,
-                          physics: const NeverScrollableScrollPhysics(),
-                          itemCount: (controller.detailChallenge.value
-                                      ?.leaderboardTeams ??
-                                  [])
-                              .length,
-                          separatorBuilder: (context, index) => const SizedBox(
-                            height: 8,
-                          ),
-                          itemBuilder: (context, index) {
-                            LeaderboardTeam item = (controller
-                                    .detailChallenge.value?.leaderboardTeams ??
-                                [])[index];
-                            return ListTile(
-                              contentPadding: EdgeInsets.symmetric(
-                                horizontal: 16.w,
-                              ),
-                              title: Row(
-                                children: [
-                                  Expanded(
-                                    child: Text(
-                                      NumberHelper().formatRank(item.rank),
-                                      textAlign: TextAlign.left,
-                                      style: Theme.of(context)
-                                          .textTheme
-                                          .bodyMedium
-                                          ?.copyWith(
-                                            fontWeight: FontWeight.w700,
-                                            color: const Color(0xFFA5A5A5),
-                                            fontSize: 15.sp,
-                                          ),
+                        if (controller.detailChallenge.value?.type == 1) ...[
+                          ListView.separated(
+                            shrinkWrap: true,
+                            physics: const NeverScrollableScrollPhysics(),
+                            itemCount: (controller.detailChallenge.value
+                                        ?.leaderboardTeams ??
+                                    [])
+                                .length,
+                            separatorBuilder: (context, index) =>
+                                const SizedBox(
+                              height: 8,
+                            ),
+                            itemBuilder: (context, index) {
+                              LeaderboardTeam item = (controller.detailChallenge
+                                      .value?.leaderboardTeams ??
+                                  [])[index];
+                              return ListTile(
+                                contentPadding: EdgeInsets.symmetric(
+                                  horizontal: 16.w,
+                                ),
+                                title: Row(
+                                  children: [
+                                    Expanded(
+                                      child: Text(
+                                        NumberHelper().formatRank(item.rank),
+                                        textAlign: TextAlign.left,
+                                        style: Theme.of(context)
+                                            .textTheme
+                                            .bodyMedium
+                                            ?.copyWith(
+                                              fontWeight: FontWeight.w700,
+                                              color: const Color(0xFFA5A5A5),
+                                              fontSize: 15.sp,
+                                            ),
+                                      ),
                                     ),
-                                  ),
-                                  Expanded(
-                                    flex: 5,
-                                    child: Text(
-                                      item.team ?? '-',
-                                      style: Theme.of(context)
-                                          .textTheme
-                                          .bodyMedium
-                                          ?.copyWith(
-                                            fontWeight: FontWeight.w400,
-                                            color: const Color(0xFFA5A5A5),
-                                            fontSize: 15.sp,
-                                          ),
-                                      overflow: TextOverflow.ellipsis,
+                                    Expanded(
+                                      flex: 5,
+                                      child: Text(
+                                        item.team ?? '-',
+                                        style: Theme.of(context)
+                                            .textTheme
+                                            .bodyMedium
+                                            ?.copyWith(
+                                              fontWeight: FontWeight.w400,
+                                              color: const Color(0xFFA5A5A5),
+                                              fontSize: 15.sp,
+                                            ),
+                                        overflow: TextOverflow.ellipsis,
+                                      ),
                                     ),
-                                  ),
-                                ],
-                              ),
-                              trailing: Text(
-                                item.point?.toString() ?? '-',
-                                style: Theme.of(context)
-                                    .textTheme
-                                    .bodyMedium
-                                    ?.copyWith(
-                                      fontWeight: FontWeight.w400,
-                                      color: Theme.of(context).primaryColor,
-                                      fontSize: 15.sp,
-                                    ),
-                              ),
+                                  ],
+                                ),
+                                trailing: Text(
+                                  item.point?.toString() ?? '-',
+                                  style: Theme.of(context)
+                                      .textTheme
+                                      .bodyMedium
+                                      ?.copyWith(
+                                        fontWeight: FontWeight.w400,
+                                        color: Theme.of(context).primaryColor,
+                                        fontSize: 15.sp,
+                                      ),
+                                ),
+                              );
+                            },
+                          )
+                        ] else ...[
+                          Obx(() {
+                            final otherWalkersList = (controller.detailChallenge
+                                            .value?.leaderboardUsers.length ??
+                                        0) >
+                                    3
+                                ? controller
+                                    .detailChallenge.value?.leaderboardUsers
+                                    .sublist(3)
+                                : <LeaderboardUser>[];
+
+                            return Column(
+                              children: [
+                                Top3LeaderBoardIndividualList(
+                                    topWalkers: controller.detailChallenge.value
+                                            ?.leaderboardUsers ??
+                                        <LeaderboardUser>[].take(3).toList()),
+
+                                // List view
+                                (controller.detailChallenge.value
+                                                ?.leaderboardUsers.length ??
+                                            0) >
+                                        3
+                                    ? ListView.builder(
+                                        shrinkWrap: true,
+                                        physics:
+                                            const NeverScrollableScrollPhysics(),
+                                        itemCount: otherWalkersList?.length,
+                                        itemBuilder: (context, index) {
+                                          return ChallengeOthersWalkers(
+                                            walker: otherWalkersList?[index],
+                                            isCurrentUser: false,
+                                          );
+                                        },
+                                      )
+                                    : const SizedBox.shrink(),
+                              ],
                             );
-                          },
-                        )
+                          })
+                        ]
                       ],
                       const SizedBox(
                         height: 16,

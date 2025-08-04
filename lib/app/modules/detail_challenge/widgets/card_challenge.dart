@@ -100,7 +100,8 @@ class CardChallenge extends StatelessWidget {
                   ),
             ),
             const SizedBox(height: 16),
-            if (!(challengeDetailModel.startDate!.isFutureDate() == true)) ...[
+            if (!(challengeDetailModel.startDate!.isFutureDate() == true) &&
+                challengeDetailModel.type == 0) ...[
               Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
@@ -113,16 +114,14 @@ class CardChallenge extends StatelessWidget {
                         ),
                   ),
                   const SizedBox(height: 8),
-                  if (challengeDetailModel.mode == 0) ...[
-                    ProgressWidget(
-                      currentSteps: challengeDetailModel.userProgress ?? 0,
-                      targetSteps: challengeDetailModel.target ?? 0,
-                      startDate: challengeDetailModel.startDate,
-                      endDate: challengeDetailModel.mode == 1
-                          ? challengeDetailModel.endDate
-                          : null,
-                    ),
-                  ],
+                  ProgressWidget(
+                    currentSteps: challengeDetailModel.userProgress ?? 0,
+                    targetSteps: challengeDetailModel.target ?? 0,
+                    startDate: challengeDetailModel.startDate,
+                    endDate: challengeDetailModel.mode == 1
+                        ? challengeDetailModel.endDate
+                        : null,
+                  ),
                   const SizedBox(height: 16),
                 ],
               )

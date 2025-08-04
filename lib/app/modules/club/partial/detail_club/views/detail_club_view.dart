@@ -420,7 +420,7 @@ class DetailClubView extends GetView<DetailClubController> {
                     arguments: {'eventId': res.id});
 
                 if (result != null && result is EventModel) {
-                  clubActivityTabController.getClubActivity();
+                  clubActivityTabController.syncActivityClubEvent(result);
                 }
               }
             } else if (value == 'create_a_challange') {

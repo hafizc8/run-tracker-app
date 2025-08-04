@@ -87,6 +87,7 @@ class EventActionController extends GetxController {
     addressController.text = '';
     placeNameController.text = '';
     imageController.text = '';
+    feeController.text = '';
     isEdit.value = false;
     event.value = null;
   }

@@ -174,85 +174,88 @@ class SocialView extends GetView<SocialController> {
       }
 
       return Container(
+        color: Theme.of(context).colorScheme.background,
         margin: EdgeInsets.symmetric(horizontal: 16.w),
-        padding: EdgeInsets.all(1.w), // Lebar border
-        decoration: BoxDecoration(
-          gradient: const LinearGradient(
-            colors: [
-              Color(0xFF00FF7F),
-              Color(0xFFA2FF00),
-            ],
-            begin: Alignment.centerLeft,
-            end: Alignment.centerRight,
-          ),
-          borderRadius: BorderRadius.circular(11.r),
-        ),
         child: Container(
-          height: 38.h,
+          padding: EdgeInsets.all(1.w), // Lebar border
           decoration: BoxDecoration(
-            borderRadius: BorderRadius.circular(10),
-            color: Theme.of(context).colorScheme.onPrimary,
+            gradient: const LinearGradient(
+              colors: [
+                Color(0xFF00FF7F),
+                Color(0xFFA2FF00),
+              ],
+              begin: Alignment.centerLeft,
+              end: Alignment.centerRight,
+            ),
+            borderRadius: BorderRadius.circular(11.r),
           ),
-          child: ClipRRect(
-            borderRadius: BorderRadius.circular(10),
-            child: TabBar(
-              controller: controller.tabBarController,
-              indicator: BoxDecoration(
-                gradient: const LinearGradient(
-                  begin: Alignment.centerLeft,
-                  end: Alignment.centerRight,
-                  colors: [
-                    Color(0xFFA2FF00),
-                    Color(0xFF00FF7F),
-                  ],
-                ),
-                borderRadius: indicatorBorderRadius,
-              ),
-              automaticIndicatorColorAdjustment: false,
-              indicatorWeight: 0,
-              indicatorSize: TabBarIndicatorSize.tab,
-              dividerHeight: 0,
-              labelColor: Theme.of(context).colorScheme.onPrimary,
-              unselectedLabelColor: Theme.of(context).colorScheme.primary,
-              labelStyle: Theme.of(context).textTheme.bodySmall?.copyWith(
-                    fontWeight: FontWeight.w400,
+          child: Container(
+            height: 38.h,
+            decoration: BoxDecoration(
+              borderRadius: BorderRadius.circular(10.r),
+              color: Theme.of(context).colorScheme.onPrimary,
+            ),
+            child: ClipRRect(
+              borderRadius: BorderRadius.circular(10),
+              child: TabBar(
+                controller: controller.tabBarController,
+                indicator: BoxDecoration(
+                  gradient: const LinearGradient(
+                    begin: Alignment.centerLeft,
+                    end: Alignment.centerRight,
+                    colors: [
+                      Color(0xFFA2FF00),
+                      Color(0xFF00FF7F),
+                    ],
                   ),
-              unselectedLabelStyle:
-                  Theme.of(context).textTheme.bodySmall?.copyWith(
-                        fontWeight: FontWeight.w400,
+                  borderRadius: indicatorBorderRadius,
+                ),
+                automaticIndicatorColorAdjustment: false,
+                indicatorWeight: 0,
+                indicatorSize: TabBarIndicatorSize.tab,
+                dividerHeight: 0,
+                labelColor: Theme.of(context).colorScheme.onPrimary,
+                unselectedLabelColor: Theme.of(context).colorScheme.primary,
+                labelStyle: Theme.of(context).textTheme.bodySmall?.copyWith(
+                      fontWeight: FontWeight.w400,
+                    ),
+                unselectedLabelStyle:
+                    Theme.of(context).textTheme.bodySmall?.copyWith(
+                          fontWeight: FontWeight.w400,
+                        ),
+                tabs: controller.tabs.map((element) {
+                  bool isSelected =
+                      controller.tabs.indexOf(element) == currentTab;
+                  if (isSelected) {
+                    return Tab(
+                      child: Text(
+                        element,
+                        style: Theme.of(context).textTheme.bodySmall?.copyWith(
+                              color: Theme.of(context).colorScheme.onPrimary,
+                            ),
                       ),
-              tabs: controller.tabs.map((element) {
-                bool isSelected =
-                    controller.tabs.indexOf(element) == currentTab;
-                if (isSelected) {
+                    );
+                  }
                   return Tab(
-                    child: Text(
-                      element,
-                      style: Theme.of(context).textTheme.bodySmall?.copyWith(
-                            color: Theme.of(context).colorScheme.onPrimary,
-                          ),
+                    child: ShaderMask(
+                      shaderCallback: (bounds) => const LinearGradient(
+                        begin: Alignment.centerLeft,
+                        end: Alignment.centerRight,
+                        colors: [
+                          Color(0xFFA2FF00),
+                          Color(0xFF00FF7F),
+                        ],
+                      ).createShader(
+                        Rect.fromLTWH(0, 0, bounds.width, bounds.height),
+                      ),
+                      child: Text(
+                        element,
+                        style: Theme.of(context).textTheme.bodySmall,
+                      ),
                     ),
                   );
-                }
-                return Tab(
-                  child: ShaderMask(
-                    shaderCallback: (bounds) => const LinearGradient(
-                      begin: Alignment.centerLeft,
-                      end: Alignment.centerRight,
-                      colors: [
-                        Color(0xFFA2FF00),
-                        Color(0xFF00FF7F),
-                      ],
-                    ).createShader(
-                      Rect.fromLTWH(0, 0, bounds.width, bounds.height),
-                    ),
-                    child: Text(
-                      element,
-                      style: Theme.of(context).textTheme.bodySmall,
-                    ),
-                  ),
-                );
-              }).toList(),
+                }).toList(),
+              ),
             ),
           ),
         ),

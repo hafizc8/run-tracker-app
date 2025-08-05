@@ -4,10 +4,16 @@ import 'package:flutter_svg/flutter_svg.dart';
 import 'package:zest_mobile/app/core/extension/date_extension.dart';
 import 'package:zest_mobile/app/core/models/enums/challenge_enum.dart';
 import 'package:zest_mobile/app/core/models/model/challenge_detail_model.dart';
+import 'package:zest_mobile/app/modules/detail_challenge/views/detail_challenge_view.dart';
 
 class CardChallenge extends StatelessWidget {
-  const CardChallenge({super.key, required this.challengeDetailModel});
+  const CardChallenge({
+    super.key,
+    required this.challengeDetailModel,
+    this.isStartChallenge,
+  });
   final ChallengeDetailModel challengeDetailModel;
+  final bool? isStartChallenge;
 
   @override
   Widget build(BuildContext context) {
@@ -94,6 +100,32 @@ class CardChallenge extends StatelessWidget {
                   ),
             ),
             const SizedBox(height: 16),
+            if (!(challengeDetailModel.startDate!.isFutureDate() == true) &&
+                challengeDetailModel.type == 0) ...[
+              Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text(
+                    'Your Progress',
+                    style: Theme.of(context).textTheme.bodyMedium?.copyWith(
+                          fontWeight: FontWeight.w400,
+                          color: Color(0xFFA5A5A5),
+                          fontSize: 12.sp,
+                        ),
+                  ),
+                  const SizedBox(height: 8),
+                  ProgressWidget(
+                    currentSteps: challengeDetailModel.userProgress ?? 0,
+                    targetSteps: challengeDetailModel.target ?? 0,
+                    startDate: challengeDetailModel.startDate,
+                    endDate: challengeDetailModel.mode == 1
+                        ? challengeDetailModel.endDate
+                        : null,
+                  ),
+                  const SizedBox(height: 16),
+                ],
+              )
+            ],
             Text(
               "Challenge Overview",
               maxLines: 1,

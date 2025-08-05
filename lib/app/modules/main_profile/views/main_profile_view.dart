@@ -1,7 +1,5 @@
 import 'package:cached_network_image/cached_network_image.dart';
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/widgets.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:get/get.dart';
@@ -134,7 +132,7 @@ class MainProfileView extends GetView<ProfileMainController> {
                                                       ),
                                                 ),
                                               ),
-                                              SizedBox(width: 8.w),
+                                              const SizedBox(width: 4),
                                               GestureDetector(
                                                 onTap: () async {
                                                   var res = await Get.toNamed(
@@ -224,7 +222,7 @@ class MainProfileView extends GetView<ProfileMainController> {
                         ),
                       ),
                       Positioned(
-                        bottom: 45.h,
+                        bottom: 58.h,
                         right: 0,
                         child: IgnorePointer(
                           child: CachedNetworkImage(
@@ -238,7 +236,7 @@ class MainProfileView extends GetView<ProfileMainController> {
                         ),
                       ),
                       Positioned(
-                        bottom: 62.h,
+                        bottom: 68.h,
                         right: 31.w,
                         child: IgnorePointer(
                           child: RichText(

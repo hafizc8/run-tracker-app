@@ -5,6 +5,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_cache_manager/flutter_cache_manager.dart';
 import 'package:geolocator/geolocator.dart';
 import 'package:get/get.dart';
+import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:intl/intl.dart';
 import 'package:url_launcher/url_launcher.dart';
@@ -19,6 +20,7 @@ import 'package:zest_mobile/app/core/models/model/club_mini_model.dart';
 import 'package:zest_mobile/app/core/models/model/event_activity_model.dart';
 import 'package:zest_mobile/app/core/models/model/event_model.dart';
 import 'package:zest_mobile/app/core/services/event_service.dart';
+import 'package:zest_mobile/app/core/services/location_service.dart';
 import 'package:zest_mobile/app/modules/social/views/partial/for_you_tab/event/controllers/event_controller.dart';
 import 'package:zest_mobile/app/modules/social/views/partial/for_you_tab/event/views/add_clubs_view.dart';
 
@@ -30,6 +32,9 @@ class EventActionController extends GetxController {
   var imageController = TextEditingController();
 
   final _eventService = sl<EventService>();
+  final _locationService = sl<LocationService>();
+
+  Rxn<LatLng> currentPosition = Rxn<LatLng>();
   var eventActivities = <EventActivityModel>[].obs;
   var eventClubs = <ClubMiniModel>[].obs;
   Rx<EventModel?> event = Rx(null);
@@ -65,9 +70,14 @@ class EventActionController extends GetxController {
   onInit() {
     super.onInit();
     requestPermission();
+    initLocation();
     _imagePicker = ImagePicker();
     getActivites();
     getClubs();
+  }
+
+  Future<void> initLocation() async {
+    currentPosition.value = await _locationService.getCurrentLocation();
   }
 
   void resetForm() {
@@ -77,6 +87,7 @@ class EventActionController extends GetxController {
     addressController.text = '';
     placeNameController.text = '';
     imageController.text = '';
+    feeController.text = '';
     isEdit.value = false;
     event.value = null;
   }

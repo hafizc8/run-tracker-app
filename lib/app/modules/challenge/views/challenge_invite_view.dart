@@ -4,7 +4,6 @@ import 'package:get/get.dart';
 import 'package:zest_mobile/app/core/models/model/user_mini_model.dart';
 import 'package:zest_mobile/app/core/shared/widgets/custom_circular_progress_indicator.dart';
 import 'package:zest_mobile/app/core/shared/widgets/gradient_elevated_button.dart';
-import 'package:zest_mobile/app/core/shared/widgets/gradient_outlined_button.dart';
 import 'package:zest_mobile/app/core/shared/widgets/shimmer_loading_circle.dart';
 import 'package:zest_mobile/app/core/shared/widgets/shimmer_loading_list.dart';
 import 'package:zest_mobile/app/modules/challenge/controllers/challenge_invite_friend_controller.dart';
@@ -14,10 +13,15 @@ class ChallengeInviteFriendView extends GetView<ChallengeInviteController> {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: _buildAppBar(context),
-      body: SingleChildScrollView(
-        child: Container(
+    return RefreshIndicator(
+      onRefresh: () async {
+        controller.loadFriends(refresh: true);
+      },
+      child: Scaffold(
+        appBar: _buildAppBar(context),
+        body: SingleChildScrollView(
+          physics: const AlwaysScrollableScrollPhysics(),
+          controller: controller.scrollControllerFriend,
           padding: const EdgeInsets.all(16),
           child: Column(
             children: [
@@ -98,8 +102,8 @@ class ChallengeInviteFriendView extends GetView<ChallengeInviteController> {
             ],
           ),
         ),
+        bottomNavigationBar: _buildBottomBar(context),
       ),
-      bottomNavigationBar: _buildBottomBar(context),
     );
   }
 
@@ -134,22 +138,21 @@ class ChallengeInviteFriendView extends GetView<ChallengeInviteController> {
         color: Theme.of(context).colorScheme.background,
       ),
       child: Obx(
-        () => Expanded(
-          child: SizedBox(
-            height: 55,
-            child: GradientElevatedButton(
-              onPressed: controller.invites.isEmpty
-                  ? null
-                  : () {
-                      controller.inviteEvent();
-                    },
-              child: Visibility(
-                visible: !controller.isLoadingInviteFriend.value,
-                replacement: CustomCircularProgressIndicator(),
-                child: Text(
-                  'Invite',
-                  style: Theme.of(context).textTheme.labelSmall,
-                ),
+        () => SizedBox(
+          height: 55,
+          width: double.infinity,
+          child: GradientElevatedButton(
+            onPressed: controller.invites.isEmpty
+                ? null
+                : () {
+                    controller.inviteEvent();
+                  },
+            child: Visibility(
+              visible: !controller.isLoadingInviteFriend.value,
+              replacement: CustomCircularProgressIndicator(),
+              child: Text(
+                'Invite',
+                style: Theme.of(context).textTheme.labelSmall,
               ),
             ),
           ),
@@ -187,7 +190,7 @@ class ChallengeInviteFriendView extends GetView<ChallengeInviteController> {
                   ?.copyWith(fontWeight: FontWeight.w600),
             ),
           ),
-          const Spacer(),
+
           // checkbox
           Obx(
             () => Checkbox(

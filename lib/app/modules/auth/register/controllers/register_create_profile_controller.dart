@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:geolocator/geolocator.dart';
 import 'package:get/get.dart';
+import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:zest_mobile/app/core/di/service_locator.dart';
 import 'package:zest_mobile/app/core/exception/app_exception.dart';
 import 'package:zest_mobile/app/core/exception/handler/app_exception_handler_info.dart';
@@ -8,6 +9,7 @@ import 'package:zest_mobile/app/core/extension/date_extension.dart';
 import 'package:zest_mobile/app/core/models/enums/app_exception_enum.dart';
 import 'package:zest_mobile/app/core/models/forms/registe_create_profile_form.dart';
 import 'package:zest_mobile/app/core/services/auth_service.dart';
+import 'package:zest_mobile/app/core/services/location_service.dart';
 import 'package:zest_mobile/app/routes/app_routes.dart';
 
 class RegisterCreateProfileController extends GetxController {
@@ -20,10 +22,19 @@ class RegisterCreateProfileController extends GetxController {
 
   bool get isValid => form.value.isValid;
 
+  final _locationService = sl<LocationService>();
+
+  Future<void> initLocation() async {
+    LatLng latLng = await _locationService.getCurrentLocation();
+    form.value = form.value
+        .copyWith(latitude: latLng.latitude, longitude: latLng.longitude);
+  }
+
   @override
   void onInit() {
     super.onInit();
     requestPermission();
+    initLocation();
   }
 
   void requestPermission() async {

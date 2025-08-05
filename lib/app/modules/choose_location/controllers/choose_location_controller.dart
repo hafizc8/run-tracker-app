@@ -39,7 +39,7 @@ class ChooseLocationController extends GetxController {
         address.value = args['address'];
       }
     } else {
-      currentPosition.value = const LatLng(-6.2615, 106.8106);
+      setCurrentLocation();
     }
   }
 

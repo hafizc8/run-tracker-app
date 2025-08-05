@@ -98,7 +98,9 @@ class HomeController extends GetxController {
     }
   }
 
-  double get progressValue => (validatedSteps.value / (user?.userPreference?.dailyStepGoals ?? 0)).clamp(0.0, 1.0);
+  double get progressValue =>
+      (validatedSteps.value / (user?.userPreference?.dailyStepGoals ?? 0))
+          .clamp(0.0, 1.0);
 
   Future<void> _reconcileAndSyncInitialData() async {
     _logService.log.i("Reconciling step data...");
@@ -147,7 +149,6 @@ class HomeController extends GetxController {
     try {
       currentPedometerSteps =
           await Pedometer().getStepCount(from: startTime, to: now);
-
     } catch (e) {
       _logService.log.e("Failed to get step count during sync.", error: e);
       return;
@@ -273,7 +274,7 @@ class HomeController extends GetxController {
     }
 
     final lastRecordDate = records.data.first.date ?? DateTime.now();
-    
+
     // 2. Hitung selisih hari dengan hari ini
     final today = DateTime.now();
     final differenceInDays = today.difference(lastRecordDate).inDays;
@@ -283,28 +284,33 @@ class HomeController extends GetxController {
       return;
     }
 
-    _logService.log.w("$differenceInDays day(s) of data are missing. Starting catch-up sync...");
+    _logService.log.w(
+        "$differenceInDays day(s) of data are missing. Starting catch-up sync...");
 
     List<RecordDailyMiniModel> recordDailyToSync = [];
 
     // 3. Lakukan perulangan untuk setiap hari yang hilang
     for (int i = 1; i <= differenceInDays; i++) {
       final dateToSync = lastRecordDate.add(Duration(days: i));
-      
+
       // Jangan sync untuk hari ini, karena akan ditangani oleh periodic sync
-      if (isSameDay(dateToSync, today)) continue; 
+      if (isSameDay(dateToSync, today)) continue;
 
       try {
         // Tentukan rentang waktu untuk hari yang hilang
-        final startTime = DateTime(dateToSync.year, dateToSync.month, dateToSync.day);
-        final endTime = DateTime(dateToSync.year, dateToSync.month, dateToSync.day, 23, 59, 59);
+        final startTime =
+            DateTime(dateToSync.year, dateToSync.month, dateToSync.day);
+        final endTime = DateTime(
+            dateToSync.year, dateToSync.month, dateToSync.day, 23, 59, 59);
 
         // 4. Ambil data langkah dari Pedometer
-        final stepsForDay = await Pedometer().getStepCount(from: startTime, to: endTime);
+        final stepsForDay =
+            await Pedometer().getStepCount(from: startTime, to: endTime);
 
         if (stepsForDay > 0) {
-          _logService.log.i("Syncing data for ${DateFormat('yyyy-MM-dd').format(dateToSync)}: $stepsForDay steps.");
-          
+          _logService.log.i(
+              "Syncing data for ${DateFormat('yyyy-MM-dd').format(dateToSync)}: $stepsForDay steps.");
+
           // 5. Kirim ke backend dengan tanggal yang spesifik
           recordDailyToSync.add(
             RecordDailyMiniModel(
@@ -317,7 +323,10 @@ class HomeController extends GetxController {
           
         }
       } catch (e, s) {
-        _logService.log.e("Failed to sync data for day ${DateFormat('yyyy-MM-dd').format(dateToSync)}", error: e, stackTrace: s);
+        _logService.log.e(
+            "Failed to sync data for day ${DateFormat('yyyy-MM-dd').format(dateToSync)}",
+            error: e,
+            stackTrace: s);
         // Lanjutkan ke hari berikutnya meskipun ada error
         continue;
       }

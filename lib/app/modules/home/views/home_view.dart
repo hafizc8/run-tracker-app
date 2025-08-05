@@ -1,6 +1,4 @@
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/widgets.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
@@ -13,6 +11,7 @@ import 'package:zest_mobile/app/modules/home/widgets/home_shimmer_layout.dart';
 import 'package:zest_mobile/app/modules/home/widgets/custom_exp_progress_bar.dart';
 import 'package:zest_mobile/app/modules/home/widgets/walker_profile.dart';
 import 'package:zest_mobile/app/routes/app_routes.dart';
+
 import '../controllers/home_controller.dart';
 
 class HomeView extends GetView<HomeController> {
@@ -38,31 +37,35 @@ class HomeView extends GetView<HomeController> {
                   margin: EdgeInsets.only(top: 16.h, left: 16.w, right: 16.w),
                   child: Row(
                     children: [
-                      Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          Text(
-                            'Hello,',
-                            style: Theme.of(context)
-                                .textTheme
-                                .titleSmall
-                                ?.copyWith(
-                                  fontSize: 20.sp,
-                                ),
-                          ),
-                          Text(
-                            '${controller.user?.name}',
-                            style: Theme.of(context)
-                                .textTheme
-                                .titleSmall
-                                ?.copyWith(
-                                  fontSize: 20.sp,
-                                  fontWeight: FontWeight.w700,
-                                ),
-                          ),
-                        ],
+                      Expanded(
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Text(
+                              'Hello,',
+                              style: Theme.of(context)
+                                  .textTheme
+                                  .titleSmall
+                                  ?.copyWith(
+                                    fontSize: 20.sp,
+                                  ),
+                            ),
+                            Text(
+                              '${controller.user?.name}',
+                              maxLines: 2,
+                              overflow: TextOverflow.ellipsis,
+                              style: Theme.of(context)
+                                  .textTheme
+                                  .titleSmall
+                                  ?.copyWith(
+                                    fontSize: 20.sp,
+                                    fontWeight: FontWeight.w700,
+                                  ),
+                            ),
+                          ],
+                        ),
                       ),
-                      const Spacer(),
+                      const SizedBox(width: 5),
                       InkWell(
                         onTap: () {
                           Get.toNamed(AppRoutes.notification);
@@ -190,7 +193,8 @@ class HomeView extends GetView<HomeController> {
                     child: StepsTrackerWidget(
                       progressValue: controller.progressValue,
                       currentSteps: controller.validatedSteps.value,
-                      maxSteps: controller.user?.userPreference?.dailyStepGoals ?? 0,
+                      maxSteps:
+                          controller.user?.userPreference?.dailyStepGoals ?? 0,
                     ),
                   );
                 }),
@@ -272,7 +276,9 @@ class HomeView extends GetView<HomeController> {
                           children: [
                             Obx(() {
                               // Ambil nilai dari controller
-                              final goal = controller.user?.userPreference?.dailyStepGoals ?? 0;
+                              final goal = controller
+                                      .user?.userPreference?.dailyStepGoals ??
+                                  0;
                               final current = controller.validatedSteps.value;
 
                               // ✨ KUNCI PERBAIKAN: Logika Kondisional ✨
@@ -392,9 +398,12 @@ class HomeView extends GetView<HomeController> {
                         }
 
                         // Cari data dan indeks peringkat dari pengguna yang sedang login
-                        final currentUserLeaderboardData = leaderboards.firstWhereOrNull((leader) => leader.id == currentUser.id);
-                        final currentUserRankIndex = leaderboards.indexWhere((leader) => leader.id == currentUser.id);
-                      
+                        final currentUserLeaderboardData =
+                            leaderboards.firstWhereOrNull(
+                                (leader) => leader.id == currentUser.id);
+                        final currentUserRankIndex = leaderboards.indexWhere(
+                            (leader) => leader.id == currentUser.id);
+
                         /// Widget untuk tombol "See More"
                         Widget buildSeeMoreButton() {
                           return GestureDetector(
@@ -445,8 +454,11 @@ class HomeView extends GetView<HomeController> {
                                       walker.id == currentUser.id;
                                   return Expanded(
                                     child: WalkerProfile(
-                                      rank: NumberHelper().formatRank(walker.rank),
-                                      name: isCurrentUser ? 'Your' : (walker.name ?? '-'),
+                                      rank: NumberHelper()
+                                          .formatRank(walker.rank),
+                                      name: isCurrentUser
+                                          ? 'Your'
+                                          : (walker.name ?? '-'),
                                       imageUrl: walker.imageUrl ?? '',
                                     ),
                                   );
@@ -479,10 +491,18 @@ class HomeView extends GetView<HomeController> {
                                         walker.id == currentUser.id;
                                     return Expanded(
                                       child: WalkerProfile(
-                                        rank: NumberHelper().formatRank(walker.rank),
-                                        name: isCurrentUser ? 'Your' : (walker.name ?? '-'),
-                                        imageUrl: walker.imageUrl ?? (isCurrentUser ? currentUser.imageUrl ?? '' : ''),
-                                        backgroundColor: isCurrentUser ? const Color(0xFF393939) : null,
+                                        rank: NumberHelper()
+                                            .formatRank(walker.rank),
+                                        name: isCurrentUser
+                                            ? 'Your'
+                                            : (walker.name ?? '-'),
+                                        imageUrl: walker.imageUrl ??
+                                            (isCurrentUser
+                                                ? currentUser.imageUrl ?? ''
+                                                : ''),
+                                        backgroundColor: isCurrentUser
+                                            ? const Color(0xFF393939)
+                                            : null,
                                       ),
                                     );
                                   }).toList();

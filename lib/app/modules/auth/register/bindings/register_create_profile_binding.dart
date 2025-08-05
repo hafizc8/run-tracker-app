@@ -6,6 +6,7 @@ class RegisterCreateProfileBinding extends Bindings {
   void dependencies() {
     Get.lazyPut<RegisterCreateProfileController>(
       () => RegisterCreateProfileController(),
+      fenix: true,
     );
   }
 }

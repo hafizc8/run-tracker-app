@@ -14,7 +14,7 @@ import 'package:zest_mobile/app/core/values/storage_keys.dart';
 
 class AuthService {
   final ApiService _apiService;
-  final FcmService _fcmService = FcmService(); 
+  final FcmService _fcmService = FcmService();
   AuthService(this._apiService);
 
   UserModel? get user {

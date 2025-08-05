@@ -2,10 +2,11 @@ import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:get/get.dart';
 import 'package:zest_mobile/app/core/models/model/club_activities_model.dart';
+import 'package:zest_mobile/app/core/models/model/event_model.dart';
 import 'package:zest_mobile/app/core/shared/widgets/shimmer_loading_list.dart';
 import 'package:zest_mobile/app/modules/club/partial/detail_club/partial/tab_bar_club/controllers/club_activity_tab_controller.dart';
+import 'package:zest_mobile/app/modules/club/partial/detail_club/partial/tab_bar_club/views/widgets/event_card.dart';
 import 'package:zest_mobile/app/modules/social/views/partial/for_you_tab/event/controllers/event_controller.dart';
-import 'package:zest_mobile/app/modules/social/widgets/event_card.dart';
 import 'package:zest_mobile/app/routes/app_routes.dart';
 
 class ClubActivityTabView extends GetView<ClubActivityTabController> {
@@ -74,14 +75,20 @@ class ClubActivityTabView extends GetView<ClubActivityTabController> {
             }
 
             if (activity?.activityableType == 'event') {
-              return EventCard(
+              return EventClubCard(
                 backgroundColor: Theme.of(context).colorScheme.surface,
                 eventModel: activity?.event,
-                onTap: () {
-                  Get.toNamed(
+                onTap: () async {
+                  if (activity?.event?.cancelledAt != null) return;
+                  var result = await Get.toNamed(
                     AppRoutes.socialYourPageEventDetail,
                     arguments: {'eventId': activity?.event?.id},
                   );
+
+                  if (result != null && result is EventModel) {
+                    controller.syncEvent(result.copyWith(
+                        userOnEventsCount: result.userOnEvents?.length));
+                  }
                 },
               );
             } else {

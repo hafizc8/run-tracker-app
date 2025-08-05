@@ -76,4 +76,7 @@ abstract class AppRoutes {
   static const challengeInviteFriend = '/challenge/invite';
   static const challengedetails = '/challenge/details';
   static const challengedetailsInvite = '/challenge/details/invite';
+
+  // notification
+  static const notification = '/notification';
 }

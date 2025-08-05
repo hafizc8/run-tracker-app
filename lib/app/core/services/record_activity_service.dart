@@ -2,6 +2,7 @@ import 'package:zest_mobile/app/core/models/enums/http_method_enum.dart';
 import 'package:zest_mobile/app/core/models/interface/pagination_response_model.dart';
 import 'package:zest_mobile/app/core/models/model/daily_record_model.dart';
 import 'package:zest_mobile/app/core/models/model/record_activity_model.dart';
+import 'package:zest_mobile/app/core/models/model/record_daily_mini_model.dart';
 import 'package:zest_mobile/app/core/services/api_service.dart';
 import 'package:zest_mobile/app/core/values/app_constants.dart';
 
@@ -64,18 +65,14 @@ class RecordActivityService {
   }
 
   Future<bool> syncDailyRecord({
-    int? step,
-    int? calorie,
-    int? time,
+    List<RecordDailyMiniModel>? records,
   }) async {
     try {
       final response = await _apiService.request(
         path: AppConstants.dailyRecordSync,
         method: HttpMethod.post,
         data: {
-          if (step != null) 'step': step,
-          if (calorie != null) 'calorie': calorie,
-          if (time != null) 'time': time
+          'data': records?.map((e) => e.toJson()).toList(),
         }
       );
 

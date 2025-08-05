@@ -103,6 +103,9 @@ class AppConstants {
   // leaderboard
   static const String leaderboard = "/leaderboard";
 
+  // popup-notification
+  static const String readPopupNotification = "/popup-notification";
+
 
 
 

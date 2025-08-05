@@ -164,4 +164,22 @@ class UserService {
       rethrow;
     }
   }
+
+  Future<bool> readPopupNotification({
+    List<String>? ids,
+  }) async {
+    try {
+      final response = await _apiService.request(
+        path: AppConstants.readPopupNotification,
+        method: HttpMethod.put,
+        data: {
+          if (ids != null) 'ids': ids,
+        }
+      );
+
+      return response.data['success'];
+    } catch (e) {
+      rethrow;
+    }
+  }
 }

@@ -67,6 +67,8 @@ import 'package:zest_mobile/app/modules/main_profile/partials/social_info/views/
 import 'package:zest_mobile/app/modules/main_profile/views/badges_view.dart';
 import 'package:zest_mobile/app/modules/main_profile/views/main_profile_view.dart';
 import 'package:zest_mobile/app/modules/main_profile/views/settings_view.dart';
+import 'package:zest_mobile/app/modules/notification/bindings/notification_binding.dart';
+import 'package:zest_mobile/app/modules/notification/views/notification_view.dart';
 import 'package:zest_mobile/app/modules/social/bindings/social_binding.dart';
 import 'package:zest_mobile/app/modules/social/views/partial/for_you_tab/choose_location_event/bindings/choose_location_event_binding.dart';
 import 'package:zest_mobile/app/modules/social/views/partial/for_you_tab/choose_location_event/views/choose_location_event_view.dart';
@@ -340,6 +342,13 @@ class AppPages {
       name: AppRoutes.challengedetails,
       page: () => const DetailChallengeView(),
       binding: DetailChallengeBinding(),
+    ),
+
+    // Notification
+    GetPage(
+      name: AppRoutes.notification,
+      page: () => const NotificationView(),
+      binding: NotificationBinding(),
     ),
   ];
 }

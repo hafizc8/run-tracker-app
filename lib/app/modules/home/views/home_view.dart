@@ -9,7 +9,7 @@ import 'package:google_fonts/google_fonts.dart';
 import 'package:zest_mobile/app/core/shared/helpers/number_helper.dart';
 import 'package:zest_mobile/app/core/shared/theme/color_schemes.dart';
 import 'package:zest_mobile/app/core/shared/widgets/step_tracker_widget.dart';
-import 'package:zest_mobile/app/modules/home/views/widget/home_shimmer_layout.dart';
+import 'package:zest_mobile/app/modules/home/widgets/home_shimmer_layout.dart';
 import 'package:zest_mobile/app/modules/home/widgets/custom_exp_progress_bar.dart';
 import 'package:zest_mobile/app/modules/home/widgets/walker_profile.dart';
 import 'package:zest_mobile/app/routes/app_routes.dart';
@@ -65,10 +65,7 @@ class HomeView extends GetView<HomeController> {
                       const Spacer(),
                       InkWell(
                         onTap: () {
-                          Get.snackbar(
-                              'Coming Soon', 'Feature will be added soon',
-                              backgroundColor: Colors.green,
-                              colorText: Colors.white);
+                          Get.toNamed(AppRoutes.notification);
                         },
                         child: Container(
                           decoration: const BoxDecoration(

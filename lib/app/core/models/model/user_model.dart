@@ -1,4 +1,5 @@
 import 'package:zest_mobile/app/core/models/interface/model_interface.dart';
+import 'package:zest_mobile/app/core/models/model/popup_notification_model.dart';
 import 'package:zest_mobile/app/core/models/model/user_current_coin_model.dart';
 import 'package:zest_mobile/app/core/models/model/user_current_stamina_model.dart';
 import 'package:zest_mobile/app/core/models/model/user_current_xp_model.dart';
@@ -43,6 +44,7 @@ class UserModel extends Model<UserModel> {
     this.currentUserXp,
     this.currentUserStamina,
     this.currentUserCoin,
+    this.popupNotifications,
   });
 
   final String? id;
@@ -82,6 +84,7 @@ class UserModel extends Model<UserModel> {
   final CurrentUserXpModel? currentUserXp;
   final CurrentUserStaminaModel? currentUserStamina;
   final CurrentUserCoinModel? currentUserCoin;
+  final List<PopupNotificationModel>? popupNotifications;
 
   @override
   UserModel copyWith({
@@ -121,6 +124,7 @@ class UserModel extends Model<UserModel> {
     CurrentUserXpModel? currentUserXp,
     CurrentUserStaminaModel? currentUserStamina,
     CurrentUserCoinModel? currentUserCoin,
+    List<PopupNotificationModel>? popupNotifications,
   }) {
     return UserModel(
       id: id,
@@ -160,6 +164,7 @@ class UserModel extends Model<UserModel> {
       currentUserXp: currentUserXp ?? this.currentUserXp,
       currentUserStamina: currentUserStamina ?? this.currentUserStamina,
       currentUserCoin: currentUserCoin ?? this.currentUserCoin,
+      popupNotifications: popupNotifications ?? this.popupNotifications,
     );
   }
 
@@ -202,6 +207,7 @@ class UserModel extends Model<UserModel> {
       currentUserXp: json["current_user_xp"] != null ? CurrentUserXpModel.fromJson(json["current_user_xp"]) : null,
       currentUserStamina: json["current_user_stamina"] != null ? CurrentUserStaminaModel.fromJson(json["current_user_stamina"]) : null,
       currentUserCoin: json["current_user_coin"] != null ? CurrentUserCoinModel.fromJson(json["current_user_coin"]) : null,
+      popupNotifications: json["popup_notifications"] != null ? List<PopupNotificationModel>.from(json["popup_notifications"].map((x) => PopupNotificationModel.fromJson(x))) : null,
     );
   }
 
@@ -247,6 +253,7 @@ class UserModel extends Model<UserModel> {
         "current_user_xp": currentUserXp?.toJson(),
         "current_user_stamina": currentUserStamina?.toJson(),
         "current_user_coin": currentUserCoin?.toJson(),
+        "popup_notifications": popupNotifications?.map((x) => x.toJson()).toList(),
       };
 
   @override
@@ -288,5 +295,6 @@ class UserModel extends Model<UserModel> {
         currentUserXp,
         currentUserStamina,
         currentUserCoin,
+        popupNotifications,
       ];
 }

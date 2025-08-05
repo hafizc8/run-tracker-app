@@ -1,15 +1,21 @@
 import 'dart:async';
+import 'package:flutter/widgets.dart';
 import 'package:get/get.dart';
 import 'package:permission_handler/permission_handler.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:table_calendar/table_calendar.dart';
 import 'package:zest_mobile/app/core/di/service_locator.dart';
 import 'package:zest_mobile/app/core/models/model/home_page_data_model.dart';
+import 'package:zest_mobile/app/core/models/model/popup_notification_model.dart';
+import 'package:zest_mobile/app/core/models/model/record_daily_mini_model.dart';
 import 'package:zest_mobile/app/core/models/model/user_model.dart';
 import 'package:zest_mobile/app/core/services/auth_service.dart';
 import 'package:zest_mobile/app/core/services/log_service.dart';
 import 'package:zest_mobile/app/core/services/record_activity_service.dart';
 import 'package:zest_mobile/app/core/services/user_service.dart';
+import 'package:zest_mobile/app/modules/home/widgets/achieve_badge_dialog.dart';
+import 'package:zest_mobile/app/modules/home/widgets/achieve_streak_dialog.dart';
+import 'package:zest_mobile/app/modules/home/widgets/leveled_up_dialog.dart';
 import 'package:zest_mobile/app/modules/home/widgets/set_daily_goals_dialog.dart';
 import 'dart:math';
 import 'package:pedometer_2/pedometer_2.dart';
@@ -61,6 +67,10 @@ class HomeController extends GetxController {
 
       // 4. Setelah data sinkron, mulai sinkronisasi berkala
       _startPeriodicSync();
+
+      _syncMissingDailyRecords();
+
+      _showPopupNotifications();
     } catch (e, s) {
       _logService.log.e("Critical error during HomeController init.",
           error: e, stackTrace: s);
@@ -154,9 +164,14 @@ class HomeController extends GetxController {
           .i("SYNC: Attempting to sync (Steps: $currentPedometerSteps)");
       try {
         await _recordActivityService.syncDailyRecord(
-          step: currentPedometerSteps,
-          time: 0, // Anda bisa menambahkan logika waktu jika perlu
-          calorie: 0,
+          records: [
+            RecordDailyMiniModel(
+              step: lastSyncedSteps,
+              time: 0,
+              calorie: 0,
+              timestamp: now,
+            ),
+          ],
         );
 
         // Jika berhasil, perbarui nilai terakhir yang disinkronkan
@@ -270,6 +285,8 @@ class HomeController extends GetxController {
 
     _logService.log.w("$differenceInDays day(s) of data are missing. Starting catch-up sync...");
 
+    List<RecordDailyMiniModel> recordDailyToSync = [];
+
     // 3. Lakukan perulangan untuk setiap hari yang hilang
     for (int i = 1; i <= differenceInDays; i++) {
       final dateToSync = lastRecordDate.add(Duration(days: i));
@@ -289,10 +306,15 @@ class HomeController extends GetxController {
           _logService.log.i("Syncing data for ${DateFormat('yyyy-MM-dd').format(dateToSync)}: $stepsForDay steps.");
           
           // 5. Kirim ke backend dengan tanggal yang spesifik
-          await _recordActivityService.syncDailyRecord(
-            step: stepsForDay,
-            // date: DateFormat('yyyy-MM-dd').format(dateToSync),
+          recordDailyToSync.add(
+            RecordDailyMiniModel(
+              step: stepsForDay,
+              timestamp: dateToSync,
+              time: 0,
+              calorie: 0,
+            ),
           );
+          
         }
       } catch (e, s) {
         _logService.log.e("Failed to sync data for day ${DateFormat('yyyy-MM-dd').format(dateToSync)}", error: e, stackTrace: s);
@@ -301,6 +323,70 @@ class HomeController extends GetxController {
       }
     }
 
+    try {
+      if (recordDailyToSync.isNotEmpty) {
+        await _recordActivityService.syncDailyRecord(
+          records: recordDailyToSync,
+        );
+
+        _logService.log.i("Successfully synced missing daily records.");
+      }
+    } catch (e) {
+      _logService.log.e("Failed to sync missing daily records", error: e);
+    }
+
     _logService.log.i("Catch-up sync finished.");
+  }
+
+  // ✨ --- FUNGSI BARU UNTUK MENGELOLA ANTRIAN POPUP --- ✨
+  Future<void> _showPopupNotifications() async {
+    // Buat salinan dari daftar notifikasi agar kita bisa memodifikasinya
+    final notificationQueue = List<PopupNotificationModel>.from(user?.popupNotifications ?? []);
+
+    if (notificationQueue.isEmpty) {
+      _logService.log.i("No popup notifications to show.");
+      return;
+    }
+
+    _logService.log.i("Found ${notificationQueue.length} popup notifications. Showing them sequentially.");
+
+    // Gunakan perulangan `for...of` agar `await` berfungsi dengan benar
+    for (var notification in notificationQueue) {
+      // Tampilkan dialog dan TUNGGU sampai dialog ditutup
+      final result = await Get.dialog(
+        showDialogByType(notification),
+        barrierDismissible: false,
+      );
+      
+      _logService.log.i("Popup for notification ID ${notification.id} closed with result: $result");
+      
+      // Setelah dialog ditutup, panggil API untuk menandai notifikasi sudah dibaca
+      try {
+        await _userService.readPopupNotification(ids: [notification.id!]);
+        _logService.log.i("Notification ID ${notification.id} marked as read.");
+      } catch (e, s) {
+        _logService.log.e("Failed to mark notification as read.", error: e, stackTrace: s);
+      }
+    }
+
+    // Setelah semua notifikasi ditampilkan, refresh data user untuk menghapus
+    // popupNotifications dari state
+    await refreshData();
+  }
+
+  // function to show dialog by type (LevelUp, AchieveStreak, AchieveBadge)
+  Widget showDialogByType(PopupNotificationModel notification) {
+    switch (notification.typeText) {
+      case 'LevelUp':
+        return LeveledUpDialog(notification: notification);
+      case 'AchieveStreak':
+        // add daily goals step to notification
+        notification.data['daily_step_goals'] = user?.userPreference?.dailyStepGoals ?? 0;
+        return AchieveStreakDialog(notification: notification);
+      case 'AchieveBadge':
+        return AchieveBadgeDialog(notification: notification);
+      default:
+        return Container();
+    }
   }
 }

@@ -12,7 +12,7 @@ import 'package:zest_mobile/app/core/services/record_activity_service.dart';
 import 'package:zest_mobile/app/core/services/user_service.dart';
 import 'package:zest_mobile/app/modules/home/widgets/set_daily_goals_dialog.dart';
 import 'dart:math';
-// import 'package:pedometer_2/pedometer_2.dart';
+import 'package:pedometer_2/pedometer_2.dart';
 import 'package:intl/intl.dart';
 
 class HomeController extends GetxController {
@@ -109,7 +109,7 @@ class HomeController extends GetxController {
     final startTime = DateTime(now.year, now.month, now.day);
     int pedometerSteps = 0;
     try {
-      // pedometerSteps = await Pedometer().getStepCount(from: startTime, to: now);
+      pedometerSteps = await Pedometer().getStepCount(from: startTime, to: now);
     } catch (e) {
       _logService.log
           .e("Failed to get initial step count from Pedometer.", error: e);
@@ -137,8 +137,8 @@ class HomeController extends GetxController {
     final startTime = DateTime(now.year, now.month, now.day);
     int currentPedometerSteps = 0;
     try {
-      // currentPedometerSteps =
-      //     await Pedometer().getStepCount(from: startTime, to: now);
+      currentPedometerSteps =
+          await Pedometer().getStepCount(from: startTime, to: now);
     } catch (e) {
       _logService.log.e("Failed to get step count during sync.", error: e);
       return;
@@ -287,19 +287,19 @@ class HomeController extends GetxController {
             dateToSync.year, dateToSync.month, dateToSync.day, 23, 59, 59);
 
         // 4. Ambil data langkah dari Pedometer
-        // final stepsForDay =
-        //     await Pedometer().getStepCount(from: startTime, to: endTime);
+        final stepsForDay =
+            await Pedometer().getStepCount(from: startTime, to: endTime);
 
-        // if (stepsForDay > 0) {
-        //   _logService.log.i(
-        //       "Syncing data for ${DateFormat('yyyy-MM-dd').format(dateToSync)}: $stepsForDay steps.");
+        if (stepsForDay > 0) {
+          _logService.log.i(
+              "Syncing data for ${DateFormat('yyyy-MM-dd').format(dateToSync)}: $stepsForDay steps.");
 
-        //   // 5. Kirim ke backend dengan tanggal yang spesifik
-        //   await _recordActivityService.syncDailyRecord(
-        //     step: stepsForDay,
-        //     // date: DateFormat('yyyy-MM-dd').format(dateToSync),
-        //   );
-        // }
+          // 5. Kirim ke backend dengan tanggal yang spesifik
+          await _recordActivityService.syncDailyRecord(
+            step: stepsForDay,
+            // date: DateFormat('yyyy-MM-dd').format(dateToSync),
+          );
+        }
       } catch (e, s) {
         _logService.log.e(
             "Failed to sync data for day ${DateFormat('yyyy-MM-dd').format(dateToSync)}",

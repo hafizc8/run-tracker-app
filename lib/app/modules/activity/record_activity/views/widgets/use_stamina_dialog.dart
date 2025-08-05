@@ -69,6 +69,12 @@ class _UseStaminaDialogState
     }
   }
 
+  void _setMaxValue() {
+    setState(() {
+      _currentValue = widget.maxValue;
+    });
+  }
+
   @override
   Widget build(BuildContext context) {
     // Styling yang sama dengan dialog sebelumnya
@@ -190,14 +196,14 @@ class _UseStaminaDialogState
         _buildStaminaButton(
           icon: SvgPicture.asset(
             'assets/icons/ic_min.svg',
-            width: 15.w,
+            width: 12.w,
           ), 
           onPressed: _decrement,
         ),
-        SizedBox(width: 18.w),
+        SizedBox(width: 15.w),
         // Tampilan Nilai Stamina
         Container(
-          padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 8),
+          padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 4),
           decoration: BoxDecoration(
             borderRadius: BorderRadius.circular(9),
             border: Border.all(
@@ -209,14 +215,13 @@ class _UseStaminaDialogState
             children: [
               SvgPicture.asset(
                 'assets/icons/ic_energy_2.svg',
-                width: 12.w,
-                height: 18.w,
+                width: 8.w,
               ),
               SizedBox(width: 16.w),
               Text(
                 '$_currentValue',
                 style: GoogleFonts.poppins(
-                  fontSize: 17,
+                  fontSize: 14,
                   fontWeight: FontWeight.w700,
                   color: const Color(0xFFFFFFFF),
                 ),
@@ -224,14 +229,36 @@ class _UseStaminaDialogState
             ],
           ),
         ),
-        SizedBox(width: 18.w),
+        SizedBox(width: 15.w),
         // Tombol Increment
         _buildStaminaButton(
           icon: SvgPicture.asset(
             'assets/icons/ic_add.svg',
-            width: 15.w,
+            width: 12.w,
           ),
           onPressed: _increment,
+        ),
+        SizedBox(width: 10.w),
+        SizedBox(
+          height: 28.h,
+          width: 50.w,
+          child: GradientElevatedButton(
+            contentPadding: const EdgeInsets.all(0),
+            style: ButtonStyle(
+              shape: MaterialStateProperty.all(
+                RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
+              ),
+            ),
+            onPressed: _setMaxValue,
+            child: Text(
+              'Max',
+              style: GoogleFonts.poppins(
+                fontSize: 14,
+                fontWeight: FontWeight.w700,
+                color: const Color(0xFF292929),
+              ),
+            ),
+          ),
         ),
       ],
     );
@@ -242,8 +269,8 @@ class _UseStaminaDialogState
     return InkWell(
       onTap: onPressed,
       child: Container(
-        width: 32.w,
-        height: 32.w,
+        width: 28.w,
+        height: 28.w,
         padding: const EdgeInsets.all(10),
         decoration: const BoxDecoration(
           shape: BoxShape.circle,

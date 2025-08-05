@@ -23,7 +23,7 @@ class StartActivityController extends GetxController {
   void onInit() {
     super.onInit();
     setCurrentLocation();
-    _loadMe();
+    loadMe();
   }
 
   Future<void> setCurrentLocation() async {
@@ -78,7 +78,7 @@ class StartActivityController extends GetxController {
     return true;
   }
 
-  Future<void> _loadMe() async {
+  Future<void> loadMe() async {
     isLoadingGetUserData.value = true;
 
     try {

@@ -25,6 +25,7 @@ import 'package:zest_mobile/app/core/services/user_service.dart';
 import 'package:zest_mobile/app/core/shared/theme/color_schemes.dart';
 import 'package:zest_mobile/app/core/shared/widgets/custom_dialog_confirmation.dart';
 import 'package:zest_mobile/app/modules/activity/record_activity/views/widgets/use_stamina_dialog.dart';
+import 'package:zest_mobile/app/modules/activity/start_activity/controllers/start_activity_controller.dart';
 import 'package:zest_mobile/app/modules/home/controllers/home_controller.dart';
 import 'package:zest_mobile/app/routes/app_routes.dart';
 import 'dart:ui' as ui;
@@ -449,7 +450,7 @@ class RecordActivityController extends GetxController {
   void checkBeforeStopActivity() async {
     if (!isPaused.value) togglePauseResume();
 
-    if (currentPath.isEmpty || currentPath.length < 2) {
+    if (currentDistanceInMeters.value < 100) {
       return Get.dialog(
         CustomDialogConfirmation(
           title: 'Insufficient Location Data',
@@ -457,6 +458,7 @@ class RecordActivityController extends GetxController {
           labelConfirm: 'Yes, delete',
           onConfirm: () {
             deleteActivity();
+            Get.find<StartActivityController>().loadMe(); // refresh stamina in start activity page
             Get.back(closeOverlays: true);
           },
           onCancel: () => Get.back(),

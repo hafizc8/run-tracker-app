@@ -80,7 +80,9 @@ class DailyStreakController extends GetxController {
       selectedRecord.value = null;
 
       // set onDaySelected ke hari ini
-      onDaySelected(DateTime.now(), DateTime.now());
+      if (isInitialLoad || (date.month == DateTime.now().month && date.year == DateTime.now().year)) {
+        onDaySelected(DateTime.now(), DateTime.now());
+      }
 
     } catch (e, s) {
       _logService.log.e("Failed to fetch daily records", error: e, stackTrace: s);
@@ -93,25 +95,24 @@ class DailyStreakController extends GetxController {
 
   /// ✨ KUNCI #4: Menampilkan data detail saat tanggal dipilih
   void onDaySelected(DateTime selected, DateTime focused) {
-    selectedDay.value = selected;
     focusedDay.value = focused;
-    // Cari data record yang cocok dengan tanggal yang dipilih
-    final record = dailyRecords.firstWhere(
-      (r) => isSameDay(r.date, selected),
-      orElse: () => DailyRecordModel(), // Kembalikan model kosong jika tidak ditemukan
-    );
-    selectedRecord.value = record;
+    
+    if (isSameDay(selectedDay.value, selected)) {
+      selectedDay.value = null;
+      selectedRecord.value = null;
+    } else {
+      selectedDay.value = selected;
+      final record = dailyRecords.firstWhere(
+        (r) => isSameDay(r.date, selected),
+        orElse: () => DailyRecordModel(),
+      );
+      selectedRecord.value = record;
+    }
   }
 
   /// ✨ KUNCI #2: Fetch data baru saat bulan diganti
   void onPageChanged(DateTime focused) {
-    // Jangan fetch jika bulan tidak berubah
-    if (focusedDay.value.month == focused.month && focusedDay.value.year == focused.year) {
-      focusedDay.value = focused;
-      return;
-    }
     focusedDay.value = focused;
-    // Panggil API untuk bulan yang baru, tandai bukan sebagai initial load
     fetchDailyRecords(focused);
   }
 }

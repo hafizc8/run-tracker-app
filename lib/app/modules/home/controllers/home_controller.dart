@@ -39,7 +39,7 @@ class HomeController extends GetxController {
   final RxString _error = ''.obs;
   String get error => _error.value;
 
-  UserModel? get user => _authService.user;
+  Rx<UserModel?> user = Rx<UserModel?>(null);
   RxBool isLoadingGetUserData = true.obs;
   Rx<HomePageDataModel?> homePageData = Rx<HomePageDataModel?>(null);
 
@@ -47,6 +47,16 @@ class HomeController extends GetxController {
   static const _syncInterval = Duration(seconds: 10);
   final _lastSyncedStepsKey = 'last_synced_steps';
   final _lastSavedDateKey = 'last_saved_date';
+
+  // ✨ KUNCI #1: Tambahkan GlobalKey untuk mendapatkan posisi widget stamina
+  final LayerLink staminaLayerLink = LayerLink();
+  var isStaminaPopupVisible = false.obs;
+  Timer? _popupTimer;
+
+  // ✨ --- STATE BARU UNTUK STAMINA RECOVERY --- ✨
+  Timer? _staminaRecoveryTimer;
+  // Variabel reaktif untuk menampilkan sisa waktu di UI
+  var staminaRecoveryCountdown = "--:--:--".obs;
 
   @override
   void onInit() async {
@@ -61,6 +71,8 @@ class HomeController extends GetxController {
 
       // 2. Ambil data dari backend sebagai sumber kebenaran utama
       await refreshData();
+
+      _startStaminaRecoveryTimer(); 
 
       // 3. Lakukan rekonsiliasi dengan data lokal, reset jika hari baru, dan sync
       await _reconcileAndSyncInitialData();
@@ -83,6 +95,8 @@ class HomeController extends GetxController {
   @override
   void onClose() {
     _syncTimer?.cancel();
+    _popupTimer?.cancel();
+    _staminaRecoveryTimer?.cancel();
     _logService.log.i("HomeController: onClose.");
     super.onClose();
   }
@@ -99,7 +113,7 @@ class HomeController extends GetxController {
   }
 
   double get progressValue =>
-      (validatedSteps.value / (user?.userPreference?.dailyStepGoals ?? 0))
+      (validatedSteps.value / (user.value?.userPreference?.dailyStepGoals ?? 0))
           .clamp(0.0, 1.0);
 
   Future<void> _reconcileAndSyncInitialData() async {
@@ -198,10 +212,15 @@ class HomeController extends GetxController {
     isLoadingGetUserData.value = true;
 
     try {
-      final user = await _authService.me();
-      if (user.userPreference?.dailyStepGoals == 0) {
+      final response = await _authService.me();
+
+      user.value = response;
+
+      if (response.userPreference?.dailyStepGoals == 0) {
         await _showDailyGoalDialog();
       }
+
+      print('server_time: ${response.serverTime}');
     } catch (e) {
       rethrow;
     } finally {
@@ -230,7 +249,10 @@ class HomeController extends GetxController {
       await Future.wait([
         _loadMe(),
         _loadHomePageData(),
-      ]);
+      ]).then((value) {
+        _startStaminaRecoveryTimer();
+      });
+
     } finally {
       isLoadingGetUserData.value = false;
     }
@@ -350,7 +372,7 @@ class HomeController extends GetxController {
   // ✨ --- FUNGSI BARU UNTUK MENGELOLA ANTRIAN POPUP --- ✨
   Future<void> _showPopupNotifications() async {
     // Buat salinan dari daftar notifikasi agar kita bisa memodifikasinya
-    final notificationQueue = List<PopupNotificationModel>.from(user?.popupNotifications ?? []);
+    final notificationQueue = List<PopupNotificationModel>.from(user.value?.popupNotifications ?? []);
 
     if (notificationQueue.isEmpty) {
       _logService.log.i("No popup notifications to show.");
@@ -390,12 +412,89 @@ class HomeController extends GetxController {
         return LeveledUpDialog(notification: notification);
       case 'AchieveStreak':
         // add daily goals step to notification
-        notification.data['daily_step_goals'] = user?.userPreference?.dailyStepGoals ?? 0;
+        notification.data['daily_step_goals'] = user.value?.userPreference?.dailyStepGoals ?? 0;
         return AchieveStreakDialog(notification: notification);
       case 'AchieveBadge':
         return AchieveBadgeDialog(notification: notification);
       default:
         return Container();
     }
+  }
+
+  /// Menampilkan popup dan memulai timer untuk menutup otomatis.
+  void showStaminaPopup() {
+    // Jangan tampilkan jika sudah terlihat
+    if (isStaminaPopupVisible.value) return;
+
+    isStaminaPopupVisible.value = true;
+    _popupTimer?.cancel(); // Batalkan timer lama jika ada
+    _popupTimer = Timer(const Duration(seconds: 3), () {
+      hideStaminaPopup();
+    });
+  }
+
+  /// Menyembunyikan popup dan membatalkan timer.
+  void hideStaminaPopup() {
+    // Jangan sembunyikan jika sudah tidak terlihat
+    if (!isStaminaPopupVisible.value) return;
+    
+    isStaminaPopupVisible.value = false;
+    _popupTimer?.cancel();
+  }
+
+  // ✨ --- FUNGSI BARU UNTUK MENGELOLA COUNTDOWN --- ✨
+  void _startStaminaRecoveryTimer() {
+    // Selalu batalkan timer lama sebelum memulai yang baru
+    _staminaRecoveryTimer?.cancel();
+
+    // 1. Ambil semua data yang diperlukan dari model user
+    final staminaData = user.value?.currentUserStamina;
+    final serverTime = user.value?.serverTime;
+    final recoveryMinutes = user.value?.staminaReplenishmentMinute;
+    final maxStamina = user.value?.currentUserXp?.levelDetail?.staminaIncreaseTotal;
+
+    // 2. Lakukan validasi: jangan jalankan timer jika data tidak lengkap
+    if (staminaData == null || serverTime == null || recoveryMinutes == null || staminaData.updatedAt == null || maxStamina == null) {
+      staminaRecoveryCountdown.value = "N/A";
+      return;
+    }
+
+    // 3. Jangan jalankan timer jika stamina sudah penuh
+    if ((staminaData.currentAmount ?? 0) >= maxStamina) {
+      staminaRecoveryCountdown.value = "Full";
+      return;
+    }
+
+    // 4. Hitung waktu kapan stamina berikutnya akan pulih
+    final recoveryPeriod = Duration(minutes: recoveryMinutes);
+    final nextRecoveryTime = staminaData.updatedAt!.add(recoveryPeriod);
+    
+    // Hitung selisih waktu antara jam server dan jam lokal
+    final timeOffset = serverTime.difference(DateTime.now());
+
+    // 5. Buat Timer yang berjalan setiap detik
+    _staminaRecoveryTimer = Timer.periodic(const Duration(seconds: 1), (timer) {
+      // Dapatkan "waktu server saat ini" yang diestimasi dengan menambahkan offset
+      final estimatedServerTime = DateTime.now().add(timeOffset);
+      
+      // Hitung sisa waktu
+      final timeRemaining = nextRecoveryTime.difference(estimatedServerTime);
+
+      if (timeRemaining.isNegative || timeRemaining.inSeconds <= 0) {
+        // Jika waktu sudah habis, tampilkan "Ready!" dan hentikan timer
+        staminaRecoveryCountdown.value = "Ready!";
+        timer.cancel();
+        // Secara opsional, panggil refreshData() setelah beberapa detik
+        // untuk mendapatkan data stamina yang baru dari server.
+        Future.delayed(const Duration(seconds: 2), () => refreshData());
+      } else {
+        // Format sisa waktu menjadi HH:MM:SS
+        String twoDigits(int n) => n.toString().padLeft(2, "0");
+        final hours = twoDigits(timeRemaining.inHours);
+        final minutes = twoDigits(timeRemaining.inMinutes.remainder(60));
+        final seconds = twoDigits(timeRemaining.inSeconds.remainder(60));
+        staminaRecoveryCountdown.value = "$hours:$minutes:$seconds";
+      }
+    });
   }
 }

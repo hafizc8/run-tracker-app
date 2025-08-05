@@ -34,6 +34,8 @@ class UserModel extends Model<UserModel> {
     required this.updatedAt,
     required this.deletedAt,
 
+    this.serverTime,
+    this.staminaReplenishmentMinute,
     this.genderText,
     this.followersCount,
     this.followingCount,
@@ -74,6 +76,8 @@ class UserModel extends Model<UserModel> {
   final DateTime? updatedAt;
   final dynamic deletedAt;
 
+  final DateTime? serverTime;
+  final int? staminaReplenishmentMinute;
   final String? genderText;
   final int? followersCount;
   final int? followingCount;
@@ -114,6 +118,8 @@ class UserModel extends Model<UserModel> {
     DateTime? updatedAt,
     DateTime? deletedAt,
 
+    DateTime? serverTime,
+    int? staminaReplenishmentMinute,
     String? genderText,
     int? followersCount,
     int? followingCount,
@@ -154,6 +160,8 @@ class UserModel extends Model<UserModel> {
       updatedAt: updatedAt ?? this.updatedAt,
       deletedAt: deletedAt ?? this.deletedAt,
 
+      serverTime: serverTime ?? this.serverTime,
+      staminaReplenishmentMinute: staminaReplenishmentMinute ?? this.staminaReplenishmentMinute,
       genderText: genderText ?? this.genderText,
       followersCount: followersCount ?? this.followersCount,
       followingCount: followingCount ?? this.followingCount,
@@ -197,6 +205,8 @@ class UserModel extends Model<UserModel> {
       updatedAt: json["updated_at"] != null ? DateTime.tryParse(json["updated_at"]) : null,
       deletedAt: json["deleted_at"],
 
+      serverTime: json["server_time"] != null ? DateTime.tryParse(json["server_time"]) : null,
+      staminaReplenishmentMinute: json["stamina_replenishment_minute"],
       genderText: json["gender_text"],
       followersCount: json["followers_count"],
       followingCount: json["following_count"],
@@ -296,5 +306,8 @@ class UserModel extends Model<UserModel> {
         currentUserStamina,
         currentUserCoin,
         popupNotifications,
+
+        serverTime,
+        staminaReplenishmentMinute
       ];
 }

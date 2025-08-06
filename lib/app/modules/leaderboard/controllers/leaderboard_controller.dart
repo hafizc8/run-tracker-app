@@ -4,7 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 
 class LeaderboardController extends GetxController with GetSingleTickerProviderStateMixin {
-  var tabs = ['Top Walkers', 'Challange'].obs;
+  var tabs = ['Top Walkers', 'Challenge'].obs;
 
   late var tabBarController;
 

@@ -330,7 +330,7 @@ class ProfileMainController extends GetxController {
 
   // go to detail post
   void goToDetailPost({PostModel? post, bool isFocusComment = false}) {
-    final postController = Get.put(PostController());
+    final postController = Get.find<PostController>();
     postController.postDetail.value = post;
 
     postController.goToDetail(postId: post!.id!, isFocusComment: isFocusComment);

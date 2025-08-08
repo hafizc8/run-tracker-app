@@ -175,7 +175,7 @@ class NotificationController extends GetxController {
   }
 
   void goToDetailPost({required String postId}) async {
-    final postController = Get.put(PostController());
+    final postController = Get.find<PostController>();
 
     final PostModel post = await _postService.getDetail(postId: postId);
 

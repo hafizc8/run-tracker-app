@@ -21,7 +21,7 @@ class CustomTabBar extends GetView<TabBarController> {
   final ProfileMainController profileController = Get.find();
   final EventController eventController = Get.put(EventController());
   final EventActionController eventActionController = Get.put(EventActionController());
-  final PostController postController = Get.put(PostController());
+  final PostController postController = Get.find<PostController>();
   @override
   Widget build(BuildContext context) {
     return Column(

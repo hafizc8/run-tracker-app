@@ -7,6 +7,7 @@ import 'package:zest_mobile/app/core/shared/widgets/card_challenge.dart';
 import 'package:zest_mobile/app/modules/main_profile/controllers/main_profile_controller.dart';
 import 'package:zest_mobile/app/modules/main_profile/widgets/card_event/card_event_profile.dart';
 import 'package:zest_mobile/app/modules/main_profile/widgets/custom_tab_bar/controllers/custom_tab_bar_controller.dart';
+import 'package:zest_mobile/app/modules/social/controllers/post_controller.dart';
 import 'package:zest_mobile/app/modules/social/views/partial/for_you_tab/event/controllers/event_action_controller.dart';
 import 'package:zest_mobile/app/modules/social/views/partial/for_you_tab/event/controllers/event_controller.dart';
 
@@ -20,6 +21,7 @@ class CustomTabBar extends GetView<TabBarController> {
   final ProfileMainController profileController = Get.find();
   final EventController eventController = Get.put(EventController());
   final EventActionController eventActionController = Get.put(EventActionController());
+  final PostController postController = Get.put(PostController());
   @override
   Widget build(BuildContext context) {
     return Column(
@@ -102,27 +104,6 @@ class CustomTabBar extends GetView<TabBarController> {
         Obx(() {
           switch (controller.selectedIndex.value) {
             case 0:
-              // return Column(
-              //   crossAxisAlignment: CrossAxisAlignment.start,
-              //   children: [
-              //     const CardActivity(),
-              //     SizedBox(height: 8.h),
-              //     Center(
-              //       child: TextButton(
-              //         onPressed: () => Get.toNamed(AppRoutes.activity),
-              //         child: Text(
-              //           'See All',
-              //           style: Theme.of(context).textTheme.bodyLarge?.copyWith(
-              //                 color: Theme.of(context).colorScheme.primary,
-              //                 decoration: TextDecoration.underline,
-              //                 decorationColor:
-              //                     Theme.of(context).colorScheme.primary,
-              //               ),
-              //         ),
-              //       ),
-              //     ),
-              //   ],
-              // );
               return Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
@@ -139,14 +120,8 @@ class CustomTabBar extends GetView<TabBarController> {
                         final postActivity = profileController.posts[index];
                         return ActivityCard(
                           postData: postActivity,
-                          // TODO
-                          // onTap: () => Get.toNamed(
-                          //   AppRoutes.postDetail,
-                          //   arguments: postActivity,
-                          // ),
                           onTap: () {
-                            Get.snackbar('Under development',
-                                'This feature is under development');
+                            profileController.goToDetailPost(post: postActivity);
                           },
                         );
                       },

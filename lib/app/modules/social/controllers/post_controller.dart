@@ -83,13 +83,13 @@ class PostController extends GetxController {
     try {
       isLoadingGetAllPost.value = true;
 
-      final response = await _postService.getAll(page: pagePost);
+      final response = await _postService.getAll(page: pagePost, limit: 6);
 
       // Deteksi akhir halaman dengan lebih akurat
       if ((response.pagination.next == null ||
               response.pagination.next!.isEmpty) ||
           response.data.isEmpty ||
-          response.data.length < 20) {
+          response.data.length < 6) {
         hasReacheMax.value = true;
       }
 

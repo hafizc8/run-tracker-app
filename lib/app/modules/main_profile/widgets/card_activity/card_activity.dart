@@ -9,6 +9,8 @@ import 'package:zest_mobile/app/core/shared/helpers/number_helper.dart';
 import 'package:zest_mobile/app/core/shared/theme/color_schemes.dart';
 import 'package:zest_mobile/app/core/shared/widgets/shimmer_loading_circle.dart';
 import 'package:zest_mobile/app/modules/club/partial/detail_club/partial/tab_bar_club/views/widgets/participants_avatars.dart';
+import 'package:zest_mobile/app/modules/main_profile/controllers/main_profile_controller.dart';
+import 'package:zest_mobile/app/modules/social/controllers/post_controller.dart';
 import 'package:zest_mobile/app/modules/social/widgets/post_media.dart';
 import 'package:zest_mobile/app/modules/social/widgets/social_action_button.dart';
 import 'package:zest_mobile/app/modules/social/widgets/statistic_column.dart';
@@ -26,6 +28,8 @@ class ActivityCard extends StatelessWidget {
 
   void Function()? onTap;
   PostModel postData;
+  final PostController postController = Get.find();
+  final ProfileMainController profileController = Get.find();
 
   @override
   Widget build(BuildContext context) {
@@ -300,17 +304,11 @@ class ActivityCard extends StatelessWidget {
                           ),
                         ],
                         elevation: 8.0,
-                      ).then((value) async {
+                      ).then((value) {
                         if (value == 'edit') {
-                          // TODO
-                          // postController.goToEditPost(
-                          //     postId: postData.id ?? '', isFromDetail: false);
-                          Get.snackbar('Under development', 'This feature is under development');
+                          postController.goToEditPost(postId: postData.id ?? '', isFromDetail: false);
                         } else if (value == 'delete') {
-                          // TODO
-                          // postController.confirmAndDeletePost(
-                          //     postId: postData.id ?? '');
-                          Get.snackbar('Under development', 'This feature is under development');
+                          profileController.confirmAndDeletePost(postId: postData.id ?? '');
                         }
                       });
                     },
@@ -449,13 +447,11 @@ class ActivityCard extends StatelessWidget {
               ),
               label: 'Like',
               onTap: () {
-                Get.snackbar('Under development', 'This feature is under development');
+                profileController.likePost(
+                  postId: postData.id!,
+                  isDislike: postData.isLiked! ? 1 : 0,
+                );
               },
-              // TODO
-              // postController.likePost(
-              //   postId: postData.id!,
-              //   isDislike: postData.isLiked! ? 1 : 0,
-              // ),
               selected: postData.isLiked!,
             ),
           ),
@@ -473,10 +469,8 @@ class ActivityCard extends StatelessWidget {
               ),
               label: 'Comment',
               onTap: () {
-                Get.snackbar('Under development', 'This feature is under development');
+                profileController.goToDetailPost(post: postData, isFocusComment: true);
               },
-              // TODO
-                // postController.goToDetail(postId: postData.id!, isFocusComment: true),
             ),
           ),
         ),

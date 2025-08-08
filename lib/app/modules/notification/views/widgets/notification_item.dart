@@ -3,10 +3,12 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:get/get.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:zest_mobile/app/core/models/enums/notification_type_enum.dart';
 import 'package:zest_mobile/app/core/models/model/notification_model.dart';
 import 'package:zest_mobile/app/core/shared/theme/color_schemes.dart';
 import 'package:zest_mobile/app/core/shared/widgets/gradient_outlined_button.dart';
 import 'package:zest_mobile/app/modules/notification/controllers/notification_controller.dart';
+import 'package:zest_mobile/app/core/extension/date_extension.dart';
 
 class NotificationItem extends GetView<NotificationController> {
   final NotificationModel notification;
@@ -18,8 +20,15 @@ class NotificationItem extends GetView<NotificationController> {
     final theme = Theme.of(context);
 
     // Tentukan tipe notifikasi yang pesannya inline
-    final bool isInlineMessage = notification.type == 'NEW_FOLLOWER' || notification.type == 'ACTIVITY_LIKE';
-    final bool isFollowBackAction = notification.type == 'NEW_FOLLOWER';
+    final bool isInlineMessage = notification.type == NotificationTypeEnum.userFollowing.name || notification.type == NotificationTypeEnum.postLike.name;
+    final bool isFollowBackAction = notification.type == NotificationTypeEnum.userFollowing.name;
+    final String addedDescription = (notification.type == NotificationTypeEnum.eventInvite.name)
+      ? (notification.data?['event']['title'] ?? '') 
+      : (
+        notification.type == NotificationTypeEnum.challangeInvite.name
+        ? (notification.data?['challange']['title'] ?? '')
+        : ''
+      );
 
     return Padding(
       padding: EdgeInsets.symmetric(vertical: 12.h),
@@ -33,7 +42,7 @@ class NotificationItem extends GetView<NotificationController> {
               shape: BoxShape.circle,
             ),
             child: SvgPicture.asset(
-              notification.isRead
+              notification.readAt != null
               ? 'assets/icons/ic_notification_read.svg'
               : 'assets/icons/ic_notification.svg',
               width: 30.r,
@@ -60,18 +69,18 @@ class NotificationItem extends GetView<NotificationController> {
                             style: theme.textTheme.bodyMedium?.copyWith(
                               fontWeight: FontWeight.w400,
                               fontSize: 12.sp,
-                              color: darkColorScheme.onBackground,
+                              color: (notification.readAt != null) ? const Color(0xFF757575) : darkColorScheme.onBackground,
                             ),
                             children: [
                               TextSpan(
-                                text: notification.title, 
+                                text: notification.data?['title'] ?? '',
                                 style: GoogleFonts.poppins(
                                   fontWeight: FontWeight.w700,
                                   fontSize: 12.sp,
-                                  color: darkColorScheme.onBackground,
+                                  color: (notification.readAt != null) ? const Color(0xFF757575) : darkColorScheme.onBackground,
                                 ),
                               ),
-                              TextSpan(text: ' ${notification.message}'),
+                              TextSpan(text: ' ${notification.data?['description']}'),
                             ],
                           ),
                         )
@@ -81,24 +90,35 @@ class NotificationItem extends GetView<NotificationController> {
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
                             Text(
-                              notification.title,
+                              notification.data?['title'] ?? '',
                               style: GoogleFonts.poppins(
                                 fontWeight: FontWeight.w700,
                                 fontSize: 12.sp,
-                                color: darkColorScheme.onBackground,
+                                color: (notification.readAt != null) ? const Color(0xFF757575) : darkColorScheme.onBackground,
                               ),
                             ),
                             SizedBox(height: 4.h),
                             Text(
-                              notification.message,
+                              "${notification.data?['description'] ?? ''}$addedDescription",
                               style: theme.textTheme.bodyMedium?.copyWith(
                                 fontWeight: FontWeight.w400,
                                 fontSize: 12.sp,
-                                color: darkColorScheme.onBackground,
+                                color: (notification.readAt != null) ? const Color(0xFF757575) : darkColorScheme.onBackground,
                               ),
                             ),
                           ],
                         ),
+
+                      // date
+                      SizedBox(height: 10.h),
+                      Text(
+                        '${notification.createdAt?.toMMMddyyyyhhmmaString()}',
+                        style: theme.textTheme.bodySmall?.copyWith(
+                          fontWeight: FontWeight.w400,
+                          fontSize: 10.sp,
+                          color: (notification.readAt != null) ? const Color(0xFF757575) : const Color(0xFF6C6C6C),
+                        ),
+                      ),
                     ],
                   ),
                 ),
@@ -106,7 +126,8 @@ class NotificationItem extends GetView<NotificationController> {
                 // Tombol Follow Back (hanya muncul jika diperlukan)
                 if (isFollowBackAction) ...[
                   SizedBox(width: 8.w),
-                  SizedBox(
+                  notification.data?['user']['is_follower'] == 0
+                  ? SizedBox(
                     width: 100.w,
                     height: 28.h,
                     child: GradientOutlinedButton(
@@ -117,7 +138,7 @@ class NotificationItem extends GetView<NotificationController> {
                         ),
                       ),
                       onPressed: () {
-                        controller.followBack(notification.payload?['user_id'] ?? '');
+                        controller.followBack(notification.data?['user']['id']);
                       },
                       child: Text(
                         'Follow Back',
@@ -127,7 +148,7 @@ class NotificationItem extends GetView<NotificationController> {
                         ),
                       ),
                     ),
-                  )
+                  ) : const SizedBox(),
                 ],
               ],
             ),

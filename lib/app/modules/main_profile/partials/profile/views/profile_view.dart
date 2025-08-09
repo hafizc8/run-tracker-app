@@ -1,7 +1,5 @@
 import 'package:cached_network_image/cached_network_image.dart';
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/widgets.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
@@ -10,15 +8,15 @@ import 'package:google_fonts/google_fonts.dart';
 import 'package:share_plus/share_plus.dart';
 import 'package:zest_mobile/app/core/extension/initial_profile_empty.dart';
 import 'package:zest_mobile/app/core/shared/theme/color_schemes.dart';
+import 'package:zest_mobile/app/core/shared/widgets/gradient_outlined_button.dart';
+import 'package:zest_mobile/app/core/shared/widgets/shimmer_loading_circle.dart';
 import 'package:zest_mobile/app/core/values/app_constants.dart';
+import 'package:zest_mobile/app/modules/main_profile/partials/profile/controllers/profile_controller.dart';
 import 'package:zest_mobile/app/modules/main_profile/partials/social_info/controllers/social_info_clubs.dart';
 import 'package:zest_mobile/app/modules/main_profile/partials/social_info/controllers/social_info_controller.dart';
 import 'package:zest_mobile/app/modules/main_profile/partials/social_info/controllers/social_info_followers.dart';
 import 'package:zest_mobile/app/modules/main_profile/partials/social_info/controllers/social_info_following.dart';
 import 'package:zest_mobile/app/modules/main_profile/widgets/card_activity/card_activity.dart';
-import 'package:zest_mobile/app/core/shared/widgets/gradient_outlined_button.dart';
-import 'package:zest_mobile/app/core/shared/widgets/shimmer_loading_circle.dart';
-import 'package:zest_mobile/app/modules/main_profile/partials/profile/controllers/profile_controller.dart';
 import 'package:zest_mobile/app/routes/app_routes.dart';
 
 class ProfileView extends GetView<ProfileController> {
@@ -262,9 +260,9 @@ class ProfileView extends GetView<ProfileController> {
                                             ),
                                             const SizedBox(width: 10),
                                             InkWell(
-                                              onTap: () => Get.snackbar(
-                                                  'Coming Soon',
-                                                  'Feature coming soon'),
+                                              onTap: () => Get.toNamed(
+                                                AppRoutes.userChat,
+                                              ),
                                               child: SvgPicture.asset(
                                                 'assets/icons/msg.svg',
                                                 color: Theme.of(context)

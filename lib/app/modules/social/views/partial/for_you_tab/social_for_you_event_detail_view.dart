@@ -77,6 +77,20 @@ class SocialForYouEventDetailView extends GetView<EventDetailController> {
       elevation: 4,
       shadowColor: Colors.black.withOpacity(0.3),
       surfaceTintColor: Colors.transparent,
+      actions: [
+        if (controller.event.value?.isJoined == 1) ...[
+          InkWell(
+            onTap: () {
+              Get.toNamed(AppRoutes.eventChat);
+            },
+            child: SvgPicture.asset(
+              'assets/icons/msg.svg',
+              color: Theme.of(context).colorScheme.onBackground,
+            ),
+          ),
+          const SizedBox(width: 16),
+        ]
+      ],
     );
   }
 

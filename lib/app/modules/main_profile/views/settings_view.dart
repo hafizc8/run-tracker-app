@@ -5,6 +5,7 @@ import 'package:flutter_svg/flutter_svg.dart';
 import 'package:get/get.dart';
 import 'package:zest_mobile/app/modules/debug/controllers/debug_controller.dart';
 import 'package:zest_mobile/app/modules/main_profile/controllers/settings_controller.dart';
+import 'package:zest_mobile/app/routes/app_routes.dart';
 
 class SettingsView extends GetView<SettingsController> {
   SettingsView({super.key});
@@ -103,7 +104,7 @@ class SettingsView extends GetView<SettingsController> {
           ),
           ListTile(
             contentPadding: EdgeInsets.zero,
-            onTap: () => controller.showPrivacyPolicyDialog(context),
+            onTap: () => Get.toNamed(AppRoutes.privacyPolicy),
             title: Row(
               children: [
                 SvgPicture.asset(
@@ -123,6 +124,7 @@ class SettingsView extends GetView<SettingsController> {
           ),
           ListTile(
             contentPadding: EdgeInsets.zero,
+            onTap: () => Get.toNamed(AppRoutes.tnc),
             title: Row(
               children: [
                 SvgPicture.asset(

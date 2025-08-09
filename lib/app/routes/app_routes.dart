@@ -45,6 +45,7 @@ abstract class AppRoutes {
 
   // Event
   static const eventCreate = '/event/create';
+  static const eventChat = '/event/chat';
   static const eventSeeAllParticipant = '/event/seel-all-participant';
   static const chooseLocationEvent = '/choose-location-event';
   // club
@@ -54,6 +55,7 @@ abstract class AppRoutes {
   static const previewClub = '/preview-club';
   static const memberListInClub = '/detail-club/member-list';
   static const inviteToClub = '/detail-club/invite-to-club';
+  static const clubChat = '/club/chat';
 
   // activity
   static const activityStart = '/activity/start';
@@ -79,4 +81,9 @@ abstract class AppRoutes {
 
   // notification
   static const notification = '/notification';
+  static const userChat = '/chat';
+
+  static const tnc = '/terms-and-conditions';
+
+  static const privacyPolicy = '/privacy-policy';
 }

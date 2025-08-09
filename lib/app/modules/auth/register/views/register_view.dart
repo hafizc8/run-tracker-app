@@ -1,5 +1,7 @@
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/widgets.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 
@@ -170,12 +172,18 @@ class RegisterView extends GetView<RegisterController> {
                               'By signing up, you acknowledge and agree to our ',
                               style: Theme.of(context).textTheme.bodySmall,
                             ),
-                            const TextSpanWidget('Terms & Conditions'),
+                            GestureDetector(
+                              onTap: () => Get.toNamed(AppRoutes.tnc),
+                              child: const TextSpanWidget('Terms & Conditions'),
+                            ),
                             Text(
                               ' and ',
                               style: Theme.of(context).textTheme.bodySmall,
                             ),
-                            const TextSpanWidget('Privacy Policy'),
+                            GestureDetector(
+                              onTap: () => Get.toNamed(AppRoutes.privacyPolicy),
+                              child: const TextSpanWidget('Privacy Policy'),
+                            ),
                           ],
                         ),
                       ),

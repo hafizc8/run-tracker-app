@@ -18,7 +18,7 @@ import 'package:zest_mobile/app/modules/home/widgets/achieve_streak_dialog.dart'
 import 'package:zest_mobile/app/modules/home/widgets/leveled_up_dialog.dart';
 import 'package:zest_mobile/app/modules/home/widgets/set_daily_goals_dialog.dart';
 import 'dart:math';
-import 'package:pedometer_2/pedometer_2.dart';
+// import 'package:pedometer_2/pedometer_2.dart';
 import 'package:intl/intl.dart';
 
 class HomeController extends GetxController {
@@ -72,7 +72,7 @@ class HomeController extends GetxController {
       // 2. Ambil data dari backend sebagai sumber kebenaran utama
       await refreshData();
 
-      _startStaminaRecoveryTimer(); 
+      _startStaminaRecoveryTimer();
 
       // 3. Lakukan rekonsiliasi dengan data lokal, reset jika hari baru, dan sync
       await _reconcileAndSyncInitialData();
@@ -133,7 +133,8 @@ class HomeController extends GetxController {
     final startTime = DateTime(now.year, now.month, now.day);
     int pedometerSteps = 0;
     try {
-      pedometerSteps = await Pedometer().getStepCount(from: startTime, to: now);
+      // COMMENTED
+      // pedometerSteps = await Pedometer().getStepCount(from: startTime, to: now);
     } catch (e) {
       _logService.log
           .e("Failed to get initial step count from Pedometer.", error: e);
@@ -161,8 +162,9 @@ class HomeController extends GetxController {
     final startTime = DateTime(now.year, now.month, now.day);
     int currentPedometerSteps = 0;
     try {
-      currentPedometerSteps =
-          await Pedometer().getStepCount(from: startTime, to: now);
+      // COMMENTED
+      // currentPedometerSteps =
+      //     await Pedometer().getStepCount(from: startTime, to: now);
     } catch (e) {
       _logService.log.e("Failed to get step count during sync.", error: e);
       return;
@@ -252,7 +254,6 @@ class HomeController extends GetxController {
       ]).then((value) {
         _startStaminaRecoveryTimer();
       });
-
     } finally {
       isLoadingGetUserData.value = false;
     }
@@ -326,24 +327,25 @@ class HomeController extends GetxController {
             dateToSync.year, dateToSync.month, dateToSync.day, 23, 59, 59);
 
         // 4. Ambil data langkah dari Pedometer
-        final stepsForDay =
-            await Pedometer().getStepCount(from: startTime, to: endTime);
+        // COMMENTED
+        // final stepsForDay =
+        //     await Pedometer().getStepCount(from: startTime, to: endTime);
 
-        if (stepsForDay > 0) {
-          _logService.log.i(
-              "Syncing data for ${DateFormat('yyyy-MM-dd').format(dateToSync)}: $stepsForDay steps.");
+        // COMMENTED
+        // if (stepsForDay > 0) {
+        //   _logService.log.i(
+        //       "Syncing data for ${DateFormat('yyyy-MM-dd').format(dateToSync)}: $stepsForDay steps.");
 
-          // 5. Kirim ke backend dengan tanggal yang spesifik
-          recordDailyToSync.add(
-            RecordDailyMiniModel(
-              step: stepsForDay,
-              timestamp: dateToSync,
-              time: 0,
-              calorie: 0,
-            ),
-          );
-          
-        }
+        //   // 5. Kirim ke backend dengan tanggal yang spesifik
+        //   recordDailyToSync.add(
+        //     RecordDailyMiniModel(
+        //       step: stepsForDay,
+        //       timestamp: dateToSync,
+        //       time: 0,
+        //       calorie: 0,
+        //     ),
+        //   );
+        // }
       } catch (e, s) {
         _logService.log.e(
             "Failed to sync data for day ${DateFormat('yyyy-MM-dd').format(dateToSync)}",
@@ -372,14 +374,16 @@ class HomeController extends GetxController {
   // ✨ --- FUNGSI BARU UNTUK MENGELOLA ANTRIAN POPUP --- ✨
   Future<void> _showPopupNotifications() async {
     // Buat salinan dari daftar notifikasi agar kita bisa memodifikasinya
-    final notificationQueue = List<PopupNotificationModel>.from(user.value?.popupNotifications ?? []);
+    final notificationQueue =
+        List<PopupNotificationModel>.from(user.value?.popupNotifications ?? []);
 
     if (notificationQueue.isEmpty) {
       _logService.log.i("No popup notifications to show.");
       return;
     }
 
-    _logService.log.i("Found ${notificationQueue.length} popup notifications. Showing them sequentially.");
+    _logService.log.i(
+        "Found ${notificationQueue.length} popup notifications. Showing them sequentially.");
 
     // Gunakan perulangan `for...of` agar `await` berfungsi dengan benar
     for (var notification in notificationQueue) {
@@ -388,15 +392,17 @@ class HomeController extends GetxController {
         showDialogByType(notification),
         barrierDismissible: false,
       );
-      
-      _logService.log.i("Popup for notification ID ${notification.id} closed with result: $result");
-      
+
+      _logService.log.i(
+          "Popup for notification ID ${notification.id} closed with result: $result");
+
       // Setelah dialog ditutup, panggil API untuk menandai notifikasi sudah dibaca
       try {
         await _userService.readPopupNotification(ids: [notification.id!]);
         _logService.log.i("Notification ID ${notification.id} marked as read.");
       } catch (e, s) {
-        _logService.log.e("Failed to mark notification as read.", error: e, stackTrace: s);
+        _logService.log
+            .e("Failed to mark notification as read.", error: e, stackTrace: s);
       }
     }
 
@@ -412,7 +418,8 @@ class HomeController extends GetxController {
         return LeveledUpDialog(notification: notification);
       case 'AchieveStreak':
         // add daily goals step to notification
-        notification.data['daily_step_goals'] = user.value?.userPreference?.dailyStepGoals ?? 0;
+        notification.data['daily_step_goals'] =
+            user.value?.userPreference?.dailyStepGoals ?? 0;
         return AchieveStreakDialog(notification: notification);
       case 'AchieveBadge':
         return AchieveBadgeDialog(notification: notification);
@@ -437,7 +444,7 @@ class HomeController extends GetxController {
   void hideStaminaPopup() {
     // Jangan sembunyikan jika sudah tidak terlihat
     if (!isStaminaPopupVisible.value) return;
-    
+
     isStaminaPopupVisible.value = false;
     _popupTimer?.cancel();
   }
@@ -451,10 +458,15 @@ class HomeController extends GetxController {
     final staminaData = user.value?.currentUserStamina;
     final serverTime = user.value?.serverTime;
     final recoveryMinutes = user.value?.staminaReplenishmentMinute;
-    final maxStamina = user.value?.currentUserXp?.levelDetail?.staminaIncreaseTotal;
+    final maxStamina =
+        user.value?.currentUserXp?.levelDetail?.staminaIncreaseTotal;
 
     // 2. Lakukan validasi: jangan jalankan timer jika data tidak lengkap
-    if (staminaData == null || serverTime == null || recoveryMinutes == null || staminaData.updatedAt == null || maxStamina == null) {
+    if (staminaData == null ||
+        serverTime == null ||
+        recoveryMinutes == null ||
+        staminaData.updatedAt == null ||
+        maxStamina == null) {
       staminaRecoveryCountdown.value = "N/A";
       return;
     }
@@ -468,7 +480,7 @@ class HomeController extends GetxController {
     // 4. Hitung waktu kapan stamina berikutnya akan pulih
     final recoveryPeriod = Duration(minutes: recoveryMinutes);
     final nextRecoveryTime = staminaData.updatedAt!.add(recoveryPeriod);
-    
+
     // Hitung selisih waktu antara jam server dan jam lokal
     final timeOffset = serverTime.difference(DateTime.now());
 
@@ -476,7 +488,7 @@ class HomeController extends GetxController {
     _staminaRecoveryTimer = Timer.periodic(const Duration(seconds: 1), (timer) {
       // Dapatkan "waktu server saat ini" yang diestimasi dengan menambahkan offset
       final estimatedServerTime = DateTime.now().add(timeOffset);
-      
+
       // Hitung sisa waktu
       final timeRemaining = nextRecoveryTime.difference(estimatedServerTime);
 

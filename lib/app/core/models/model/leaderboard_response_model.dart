@@ -30,7 +30,6 @@ class LeaderboardResponseModel extends Model<LeaderboardResponseModel> {
   
   @override
   Map<String, dynamic> toJson() {
-    // TODO: implement toJson
     throw UnimplementedError();
   }
 }

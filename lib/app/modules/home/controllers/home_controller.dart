@@ -1,5 +1,6 @@
 import 'dart:async';
 import 'package:flutter/widgets.dart';
+import 'package:flutter_background_service/flutter_background_service.dart';
 import 'package:get/get.dart';
 import 'package:permission_handler/permission_handler.dart';
 import 'package:zest_mobile/app/core/di/service_locator.dart';
@@ -18,6 +19,7 @@ import 'package:zest_mobile/app/modules/home/widgets/set_daily_goals_dialog.dart
 import 'dart:math';
 import 'package:pedometer_2/pedometer_2.dart';
 import 'package:intl/intl.dart';
+import 'package:zest_mobile/app/routes/app_routes.dart';
 
 class HomeController extends GetxController {
   // --- DEPENDENCIES ---
@@ -60,6 +62,9 @@ class HomeController extends GetxController {
   void onInit() async {
     super.onInit();
     _logService.log.i("HomeController: onInit started.");
+
+    // Cek status service di paling awal ✨
+    _checkForOngoingActivity();
 
     isLoadingGetUserData.value = true;
     try {
@@ -478,5 +483,19 @@ class HomeController extends GetxController {
         staminaRecoveryCountdown.value = "$hours:$minutes:$seconds";
       }
     });
+  }
+
+  /// ✨ Fungsi baru untuk memeriksa dan mengarahkan jika ada aktivitas ✨
+  Future<void> _checkForOngoingActivity() async {
+    final service = FlutterBackgroundService();
+    final isRunning = await service.isRunning();
+
+    if (isRunning) {
+      _logService.log.w("Ongoing activity detected. Redirecting to RecordActivityView.");
+
+      WidgetsBinding.instance.addPostFrameCallback((_) {
+        Get.toNamed(AppRoutes.activityRecord);
+      });
+    }
   }
 }

@@ -161,8 +161,16 @@ class SocialYourPageFollowingView extends GetView<SocialFollowingController> {
                 visible: user.id == controller.userId.value,
                 replacement: Visibility(
                   visible: user.isFollowing == 0,
-                  replacement: SvgPicture.asset(
-                    'assets/icons/msg.svg',
+                  replacement: GestureDetector(
+                    onTap: () => Get.toNamed(
+                      AppRoutes.userChat,
+                      arguments: {
+                        'id': user.id,
+                      },
+                    ),
+                    child: SvgPicture.asset(
+                      'assets/icons/msg.svg',
+                    ),
                   ),
                   child: SvgPicture.asset(
                     'assets/icons/follback.svg',

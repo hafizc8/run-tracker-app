@@ -159,8 +159,14 @@ class SocialInfoFollowersView extends GetView<SocialInfoFollowersController> {
                 visible: user.id == controller.userId.value,
                 replacement: Visibility(
                   visible: user.isFollowing == 0,
-                  replacement: SvgPicture.asset(
-                    'assets/icons/msg.svg',
+                  replacement: InkWell(
+                    onTap: () => Get.toNamed(
+                      AppRoutes.userChat,
+                      arguments: user,
+                    ),
+                    child: SvgPicture.asset(
+                      'assets/icons/msg.svg',
+                    ),
                   ),
                   child: SvgPicture.asset(
                     'assets/icons/follback.svg',

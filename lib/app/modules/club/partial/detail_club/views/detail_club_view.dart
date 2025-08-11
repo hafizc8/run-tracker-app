@@ -321,8 +321,9 @@ class DetailClubView extends GetView<DetailClubController> {
                     ),
                     const SizedBox(width: 16),
                     InkWell(
-                      onTap: () =>
-                          Get.snackbar('Coming soon', 'Feature is coming soon'),
+                      onTap: () {
+                        Get.toNamed(AppRoutes.clubChat, arguments: club?.id);
+                      },
                       child: SvgPicture.asset(
                         'assets/icons/msg.svg',
                         color: Theme.of(context).colorScheme.onBackground,

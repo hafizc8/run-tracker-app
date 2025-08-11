@@ -12,6 +12,7 @@ import 'package:zest_mobile/app/core/shared/widgets/gradient_outlined_button.dar
 import 'package:zest_mobile/app/core/shared/widgets/shimmer_loading_circle.dart';
 import 'package:zest_mobile/app/core/values/app_constants.dart';
 import 'package:zest_mobile/app/modules/main_profile/partials/profile/controllers/profile_controller.dart';
+import 'package:zest_mobile/app/modules/main_profile/partials/profile/views/card_activity_profile.dart';
 import 'package:zest_mobile/app/modules/main_profile/partials/social_info/controllers/social_info_clubs.dart';
 import 'package:zest_mobile/app/modules/main_profile/partials/social_info/controllers/social_info_controller.dart';
 import 'package:zest_mobile/app/modules/main_profile/partials/social_info/controllers/social_info_followers.dart';
@@ -791,17 +792,13 @@ class ProfileView extends GetView<ProfileController> {
                           );
                         }
                         final postActivity = controller.posts[index];
-                        return ActivityCard(
+                        return CardActivityProfile(
                           postData: postActivity,
-                          // TODO
-                          // onTap: () => Get.toNamed(
-                          //   AppRoutes.postDetail,
-                          //   arguments: postActivity,
-                          // ),
                           onTap: () {
-                            Get.snackbar('Under development',
-                                'This feature is under development');
-                          },
+                            controller.goToDetailPost(
+                              post: postActivity,
+                            );
+                          }
                         );
                       },
                       separatorBuilder: (context, index) => const SizedBox(

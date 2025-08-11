@@ -1,9 +1,8 @@
 import 'dart:async';
 import 'package:flutter/widgets.dart';
+import 'package:flutter_background_service/flutter_background_service.dart';
 import 'package:get/get.dart';
 import 'package:permission_handler/permission_handler.dart';
-import 'package:shared_preferences/shared_preferences.dart';
-import 'package:table_calendar/table_calendar.dart';
 import 'package:zest_mobile/app/core/di/service_locator.dart';
 import 'package:zest_mobile/app/core/models/model/home_page_data_model.dart';
 import 'package:zest_mobile/app/core/models/model/popup_notification_model.dart';
@@ -20,6 +19,7 @@ import 'package:zest_mobile/app/modules/home/widgets/set_daily_goals_dialog.dart
 import 'dart:math';
 // import 'package:pedometer_2/pedometer_2.dart';
 import 'package:intl/intl.dart';
+import 'package:zest_mobile/app/routes/app_routes.dart';
 
 class HomeController extends GetxController {
   // --- DEPENDENCIES ---
@@ -27,7 +27,6 @@ class HomeController extends GetxController {
   final _userService = sl<UserService>();
   final _logService = sl<LogService>();
   final _recordActivityService = sl<RecordActivityService>();
-  final _prefs = sl<SharedPreferences>();
 
   // --- UI STATE ---
   final RxInt validatedSteps = 0.obs;
@@ -45,8 +44,9 @@ class HomeController extends GetxController {
 
   Timer? _syncTimer;
   static const _syncInterval = Duration(seconds: 10);
-  final _lastSyncedStepsKey = 'last_synced_steps';
-  final _lastSavedDateKey = 'last_saved_date';
+  
+  // ✨ --- State baru untuk menampung data langkah per jam --- ✨
+  var hourlySteps = <int, int>{}.obs; // Map<Jam, Jumlah_Langkah>
 
   // ✨ KUNCI #1: Tambahkan GlobalKey untuk mendapatkan posisi widget stamina
   final LayerLink staminaLayerLink = LayerLink();
@@ -61,32 +61,34 @@ class HomeController extends GetxController {
   @override
   void onInit() async {
     super.onInit();
-    _logService.log.i("HomeController: onInit.");
+    _logService.log.i("HomeController: onInit started.");
 
-    // ✨ --- ALUR INISIALISASI BARU YANG LEBIH ROBUST --- ✨
+    // Cek status service di paling awal ✨
+    _checkForOngoingActivity();
+
     isLoadingGetUserData.value = true;
     try {
-      // 1. Minta izin terlebih dahulu
-      await _requestPermissions();
+      // ✨ KUNCI #1: Alur inisialisasi yang baru dan lebih efisien ✨
+      
+      // 1. Jalankan tugas yang tidak saling bergantung secara paralel
+      await Future.wait([
+        _requestPermissions(),
+        refreshData(),
+      ]);
 
-      // 2. Ambil data dari backend sebagai sumber kebenaran utama
-      await refreshData();
+      // 2. Sinkronkan hari-hari yang terlewat terlebih dahulu
+      await _syncMissingDailyRecords();
 
-      _startStaminaRecoveryTimer();
-
-      // 3. Lakukan rekonsiliasi dengan data lokal, reset jika hari baru, dan sync
-      await _reconcileAndSyncInitialData();
-
-      // 4. Setelah data sinkron, mulai sinkronisasi berkala
+      // 3. Lakukan sinkronisasi pertama untuk HARI INI menggunakan metode per jam
+      await _syncTodaysData();
+      
+      // 4. Setelah semua data siap, baru mulai proses latar belakang
       _startPeriodicSync();
-
-      _syncMissingDailyRecords();
-
+      _startStaminaRecoveryTimer();
       _showPopupNotifications();
+
     } catch (e, s) {
-      _logService.log.e("Critical error during HomeController init.",
-          error: e, stackTrace: s);
-      _error.value = "Failed to initialize home data.";
+      _logService.log.e("Critical error during HomeController init.", error: e, stackTrace: s);
     } finally {
       isLoadingGetUserData.value = false;
     }
@@ -112,101 +114,102 @@ class HomeController extends GetxController {
     }
   }
 
-  double get progressValue =>
-      (validatedSteps.value / (user.value?.userPreference?.dailyStepGoals ?? 0))
-          .clamp(0.0, 1.0);
+  double get progressValue => (validatedSteps.value / (user.value?.userPreference?.dailyStepGoals ?? 0)).clamp(0.0, 1.0);
 
-  Future<void> _reconcileAndSyncInitialData() async {
-    _logService.log.i("Reconciling step data...");
-    final todayString = DateFormat('yyyy-MM-dd').format(DateTime.now());
-    final lastSavedDate = _prefs.getString(_lastSavedDateKey);
-
-    // 1. Reset 'last_synced_steps' jika ini hari baru
-    if (lastSavedDate != todayString) {
-      _logService.log.w("New day detected. Resetting last synced steps to 0.");
-      await _prefs.setInt(_lastSyncedStepsKey, 0);
-      await _prefs.setString(_lastSavedDateKey, todayString);
-    }
-
-    // 2. Ambil data dari Pedometer
-    final now = DateTime.now();
-    final startTime = DateTime(now.year, now.month, now.day);
-    int pedometerSteps = 0;
-    try {
-      // COMMENTED
-      // pedometerSteps = await Pedometer().getStepCount(from: startTime, to: now);
-    } catch (e) {
-      _logService.log
-          .e("Failed to get initial step count from Pedometer.", error: e);
-    }
-
-    // 3. Ambil data dari backend (sudah di-fetch oleh refreshData)
+  /// ✨ KUNCI #2: Fungsi baru untuk menyinkronkan data hari ini berdasarkan data per jam.
+  Future<void> _syncTodaysData() async {
+    _logService.log.i("Syncing today's hourly step data...");
+    final today = DateTime.now();
+    
+    // Dapatkan data per jam untuk hari ini
+    await _fetchHourlyStepData(today);
+    
+    final localTotalSteps = hourlySteps.values.fold(0, (sum, item) => sum + item);
+    
+    // Rekonsiliasi dengan data backend
     final backendSteps = homePageData.value?.recordDaily?.step ?? 0;
+    final authoritativeSteps = max(backendSteps, localTotalSteps);
 
-    // 4. Tentukan nilai yang "benar" dengan mengambil yang terbesar
-    final authoritativeSteps = max(backendSteps, pedometerSteps);
-
-    _logService.log.i(
-        "Reconciliation: Backend ($backendSteps) vs Pedometer ($pedometerSteps). Authoritative: $authoritativeSteps steps.");
-
-    // 5. Atur state UI dengan nilai yang paling benar
+    // Perbarui UI dengan nilai yang paling benar
     validatedSteps.value = authoritativeSteps;
+    _totalActiveTimeInSeconds.value = _estimateActiveTime(authoritativeSteps);
 
-    // 6. ✨ PENTING: Lakukan sinkronisasi pertama kali secara langsung
-    await syncDailyRecord();
-  }
-
-  Future<void> syncDailyRecord() async {
-    // Selalu ambil data terbaru dari Pedometer sebelum sync
-    final now = DateTime.now();
-    final startTime = DateTime(now.year, now.month, now.day);
-    int currentPedometerSteps = 0;
-    try {
-      // COMMENTED
-      // currentPedometerSteps =
-      //     await Pedometer().getStepCount(from: startTime, to: now);
-    } catch (e) {
-      _logService.log.e("Failed to get step count during sync.", error: e);
+    if (hourlySteps.isEmpty && backendSteps == 0) {
+      _logService.log.i("No steps recorded today to sync.");
       return;
     }
 
-    // Perbarui UI dengan data terbaru
-    validatedSteps.value = currentPedometerSteps;
+    // Konversi data per jam menjadi format yang bisa dikirim ke API
+    final recordsToSync = _prepareRecordsFromHourlyData(today, hourlySteps);
 
-    final lastSyncedSteps = _prefs.getInt(_lastSyncedStepsKey) ?? 0;
-
-    // Hanya kirim jika ada progres baru
-    if (currentPedometerSteps > lastSyncedSteps) {
-      _logService.log
-          .i("SYNC: Attempting to sync (Steps: $currentPedometerSteps)");
+    // Hanya kirim jika ada data untuk disinkronkan
+    if (recordsToSync.isNotEmpty) {
       try {
-        await _recordActivityService.syncDailyRecord(
-          records: [
-            RecordDailyMiniModel(
-              step: lastSyncedSteps,
-              time: 0,
-              calorie: 0,
-              timestamp: now,
-            ),
-          ],
-        );
-
-        // Jika berhasil, perbarui nilai terakhir yang disinkronkan
-        await _prefs.setInt(_lastSyncedStepsKey, currentPedometerSteps);
-        _logService.log.i("SYNC: Success.");
+        await _recordActivityService.syncDailyRecord(records: recordsToSync);
+        _logService.log.i("Successfully synced today's hourly data (${recordsToSync.length} records).");
       } catch (e, s) {
-        _logService.log.e("SYNC: Failed.", error: e, stackTrace: s);
+        _logService.log.e("Failed to sync today's hourly data.", error: e, stackTrace: s);
       }
-    } else {
-      _logService.log.i("SYNC: No new progress to sync.");
     }
   }
 
+  /// ✨ KUNCI #3: Fungsi ini sekarang menggunakan logika per jam untuk mengisi hari yang hilang.
+  Future<void> _syncMissingDailyRecords() async {
+    _logService.log.i("Checking for missing daily records to sync...");
+    final lastRecordDate = homePageData.value?.recordDaily?.date;
+    if (lastRecordDate == null) return;
+
+    final today = DateTime.now();
+    final differenceInDays = today.difference(lastRecordDate).inDays;
+
+    if (differenceInDays <= 0) return;
+    _logService.log.w("$differenceInDays day(s) of data are missing. Starting catch-up sync...");
+
+    List<RecordDailyMiniModel> allMissingRecords = [];
+
+    for (int i = 1; i < differenceInDays; i++) { // Gunakan '<' agar tidak menyertakan hari ini
+      final dateToSync = lastRecordDate.add(Duration(days: i));
+      
+      // Dapatkan data per jam untuk hari yang hilang
+      await _fetchHourlyStepData(dateToSync);
+      
+      if (hourlySteps.isNotEmpty) {
+        allMissingRecords.addAll(_prepareRecordsFromHourlyData(dateToSync, hourlySteps));
+      }
+    }
+
+    if (allMissingRecords.isNotEmpty) {
+      try {
+        await _recordActivityService.syncDailyRecord(records: allMissingRecords);
+        _logService.log.i("Successfully synced ${allMissingRecords.length} missing hourly records.");
+      } catch (e, s) {
+        _logService.log.e("Failed to sync missing daily records", error: e, stackTrace: s);
+      }
+    }
+  }
+
+  /// ✨ KUNCI #4: Helper untuk mengubah data per jam menjadi List<RecordDailyMiniModel>.
+  List<RecordDailyMiniModel> _prepareRecordsFromHourlyData(DateTime date, Map<int, int> hourlyData) {
+    List<RecordDailyMiniModel> records = [];
+    hourlyData.forEach((hour, steps) {
+      final timestamp = DateTime(date.year, date.month, date.day, hour);
+      records.add(
+        RecordDailyMiniModel(
+          step: steps,
+          timestamp: timestamp,
+          time: _estimateActiveTime(steps),
+          calorie: 0, // Anda bisa menambahkan logika kalori di sini
+        ),
+      );
+    });
+    return records;
+  }
+
+  /// Memulai timer untuk sinkronisasi berkala HANYA untuk data hari ini.
   void _startPeriodicSync() {
-    _logService.log.i(
-        "Starting periodic sync timer every ${_syncInterval.inMinutes} mins.");
+    _logService.log.i("Starting periodic sync timer for today's data every ${_syncInterval.inMinutes} mins.");
     _syncTimer = Timer.periodic(_syncInterval, (timer) async {
-      await syncDailyRecord();
+      await _syncTodaysData();
     });
   }
 
@@ -286,89 +289,70 @@ class HomeController extends GetxController {
     );
   }
 
-  Future<void> _syncMissingDailyRecords() async {
-    _logService.log.i("Checking for missing daily records to sync...");
+  Future<void> _fetchHourlyStepData(DateTime date) async {
+    _logService.log.i("Starting hourly step data fetch for ${DateFormat('yyyy-MM-dd').format(date)}");
+    hourlySteps.clear(); // Bersihkan data lama
 
-    // 1. Dapatkan tanggal record terakhir dari server
-    final records = await _recordActivityService.getDailyRecord(limit: 1);
-    if (records.data.isEmpty) {
-      _logService.log.w("No last record date found. Skipping catch-up sync.");
-      return;
-    }
+    final startTime = DateTime(date.year, date.month, date.day);
+    final endTime = DateTime(date.year, date.month, date.day, 23, 59, 59);
 
-    final lastRecordDate = records.data.first.date ?? DateTime.now();
+    // Memulai proses rekursif dari rentang satu hari penuh
+    await _recursiveStepFetch(startTime, endTime);
 
-    // 2. Hitung selisih hari dengan hari ini
-    final today = DateTime.now();
-    final differenceInDays = today.difference(lastRecordDate).inDays;
+    _logService.log.i("Hourly step data fetched: $hourlySteps");
+    update(); // Memicu update UI
+  }
 
-    if (differenceInDays <= 0) {
-      _logService.log.i("Data is up to date. No catch-up sync needed.");
-      return;
-    }
-
-    _logService.log.w(
-        "$differenceInDays day(s) of data are missing. Starting catch-up sync...");
-
-    List<RecordDailyMiniModel> recordDailyToSync = [];
-
-    // 3. Lakukan perulangan untuk setiap hari yang hilang
-    for (int i = 1; i <= differenceInDays; i++) {
-      final dateToSync = lastRecordDate.add(Duration(days: i));
-
-      // Jangan sync untuk hari ini, karena akan ditangani oleh periodic sync
-      if (isSameDay(dateToSync, today)) continue;
-
-      try {
-        // Tentukan rentang waktu untuk hari yang hilang
-        final startTime =
-            DateTime(dateToSync.year, dateToSync.month, dateToSync.day);
-        final endTime = DateTime(
-            dateToSync.year, dateToSync.month, dateToSync.day, 23, 59, 59);
-
-        // 4. Ambil data langkah dari Pedometer
-        // COMMENTED
-        // final stepsForDay =
-        //     await Pedometer().getStepCount(from: startTime, to: endTime);
-
-        // COMMENTED
-        // if (stepsForDay > 0) {
-        //   _logService.log.i(
-        //       "Syncing data for ${DateFormat('yyyy-MM-dd').format(dateToSync)}: $stepsForDay steps.");
-
-        //   // 5. Kirim ke backend dengan tanggal yang spesifik
-        //   recordDailyToSync.add(
-        //     RecordDailyMiniModel(
-        //       step: stepsForDay,
-        //       timestamp: dateToSync,
-        //       time: 0,
-        //       calorie: 0,
-        //     ),
-        //   );
-        // }
-      } catch (e, s) {
-        _logService.log.e(
-            "Failed to sync data for day ${DateFormat('yyyy-MM-dd').format(dateToSync)}",
-            error: e,
-            stackTrace: s);
-        // Lanjutkan ke hari berikutnya meskipun ada error
-        continue;
+  /// Fungsi rekursif untuk "menyelam" ke dalam rentang waktu.
+  Future<void> _recursiveStepFetch(DateTime start, DateTime end) async {
+    // Kondisi berhenti: jika rentang sudah 1 jam atau kurang
+    if (end.difference(start).inHours < 1) {
+      // Jika rentang di bawah satu jam, kita asumsikan ini adalah data per jam
+      final int steps = await _getStepsForPeriod(start, end);
+      if (steps > 0) {
+        // Simpan data ke dalam map dengan jam sebagai kuncinya
+        hourlySteps[start.hour] = (hourlySteps[start.hour] ?? 0) + steps;
       }
+      return;
     }
 
     try {
-      if (recordDailyToSync.isNotEmpty) {
-        await _recordActivityService.syncDailyRecord(
-          records: recordDailyToSync,
-        );
+      final int stepsInPeriod = await _getStepsForPeriod(start, end);
+      // Jika ada langkah di dalam rentang waktu ini, "selami" lebih dalam
+      if (stepsInPeriod > 0) {
+        // Bagi rentang waktu menjadi dua
+        final Duration halfDuration = end.difference(start) ~/ 2;
+        final DateTime midPoint = start.add(halfDuration);
 
-        _logService.log.i("Successfully synced missing daily records.");
+        // Panggil rekursif untuk kedua paruh waktu
+        await _recursiveStepFetch(start, midPoint);
+        await _recursiveStepFetch(midPoint.add(const Duration(seconds: 1)), end);
       }
     } catch (e) {
-      _logService.log.e("Failed to sync missing daily records", error: e);
+      _logService.log.e("Error during recursive step fetch for $start - $end", error: e);
     }
+  }
 
-    _logService.log.i("Catch-up sync finished.");
+  /// Fungsi helper untuk mengambil langkah dari Pedometer dengan aman.
+  Future<int> _getStepsForPeriod(DateTime from, DateTime to) async {
+    try {
+      return await Pedometer().getStepCount(from: from, to: to);
+    } catch (e) {
+      _logService.log.e("Pedometer failed for period $from - $to", error: e);
+      return 0;
+    }
+  }
+
+  /// Estimasi waktu aktif dalam hitungan detik berdasarkan jumlah langkah.
+  ///
+  /// Rumus yang digunakan adalah 0.05 menit per langkah.
+  ///
+  /// Contoh:
+  /// - 1000 langkah => 50 menit => 3000 detik
+  /// - 500 langkah => 25 menit => 1500 detik
+  int _estimateActiveTime(int steps) {
+    final minutes = (steps * 0.05).ceil();
+    return minutes * 60;
   }
 
   // ✨ --- FUNGSI BARU UNTUK MENGELOLA ANTRIAN POPUP --- ✨
@@ -508,5 +492,19 @@ class HomeController extends GetxController {
         staminaRecoveryCountdown.value = "$hours:$minutes:$seconds";
       }
     });
+  }
+
+  /// ✨ Fungsi baru untuk memeriksa dan mengarahkan jika ada aktivitas ✨
+  Future<void> _checkForOngoingActivity() async {
+    final service = FlutterBackgroundService();
+    final isRunning = await service.isRunning();
+
+    if (isRunning) {
+      _logService.log.w("Ongoing activity detected. Redirecting to RecordActivityView.");
+
+      WidgetsBinding.instance.addPostFrameCallback((_) {
+        Get.toNamed(AppRoutes.activityRecord);
+      });
+    }
   }
 }

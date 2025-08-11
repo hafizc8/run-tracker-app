@@ -6,6 +6,7 @@ import 'package:zest_mobile/app/core/models/forms/update_user_form.dart';
 import 'package:zest_mobile/app/core/models/interface/pagination_response_model.dart';
 import 'package:zest_mobile/app/core/models/model/chat_model_model.dart';
 import 'package:zest_mobile/app/core/models/model/home_page_data_model.dart';
+import 'package:zest_mobile/app/core/models/model/notification_model.dart';
 import 'package:zest_mobile/app/core/models/model/stamina_requirement_model.dart';
 import 'package:zest_mobile/app/core/models/model/user_detail_model.dart';
 import 'package:zest_mobile/app/core/models/model/user_mini_model.dart';
@@ -223,6 +224,51 @@ class UserService {
           data: {
             if (ids != null) 'ids': ids,
           });
+
+      return response.data['success'];
+    } catch (e) {
+      rethrow;
+    }
+  }
+
+  Future<PaginatedDataResponse<NotificationModel>> getNotification({
+    required int page,
+    int limit = 15,
+  }) async {
+    try {
+      final response = await _apiService.request<FormData>(
+        path: AppConstants.notification,
+        method: HttpMethod.get,
+        queryParams: {
+          'page': page.toString(),
+          'limit': limit.toString(),
+        },
+      );
+
+      if (response.statusCode != 200) {
+        throw Exception('Failed to load notification list');
+      }
+
+      return PaginatedDataResponse<NotificationModel>.fromJson(
+        response.data['data'],
+        (json) => NotificationModel.fromJson(json),
+      );
+    } catch (e) {
+      rethrow;
+    }
+  }
+
+  Future<bool> readNotification({
+    String? notificationId
+  }) async {
+    try {
+      final response = await _apiService.request(
+        path: AppConstants.notificationRead,
+        method: HttpMethod.put,
+        queryParams: {
+          if (notificationId != null) 'id': notificationId
+        }
+      );
 
       return response.data['success'];
     } catch (e) {

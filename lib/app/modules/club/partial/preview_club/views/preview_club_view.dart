@@ -280,7 +280,7 @@ class PreviewClubView extends GetView<PreviewClubController> {
                   children: <TextSpan>[
                     TextSpan(text: '${NumberHelper().formatNumberToK(club?.challengeCount ?? 0)} '),
                     TextSpan(
-                      text: 'Challanges Created',
+                      text: 'Challenges Created',
                       style: Theme.of(context).textTheme.bodySmall?.copyWith(
                         fontWeight: FontWeight.w400,
                         fontSize: 13,

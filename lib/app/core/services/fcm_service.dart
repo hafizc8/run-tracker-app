@@ -62,8 +62,6 @@ class FcmService {
     // 2. Dapatkan FCM Token
     final fcmToken = await _firebaseMessaging.getToken();
     print("FCM Token: $fcmToken");
-    // TODO: Kirim token ini ke server Anda untuk disimpan
-
     // 3. Atur listener untuk notifikasi
     _initPushNotifications();
   }

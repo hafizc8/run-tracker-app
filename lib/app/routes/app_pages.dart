@@ -71,8 +71,21 @@ import 'package:zest_mobile/app/modules/main_profile/views/main_profile_view.dar
 import 'package:zest_mobile/app/modules/main_profile/views/settings_view.dart';
 import 'package:zest_mobile/app/modules/notification/bindings/notification_binding.dart';
 import 'package:zest_mobile/app/modules/notification/views/notification_view.dart';
+
 import 'package:zest_mobile/app/modules/privacy_policy/bindings/privacy_policy_binding.dart';
 import 'package:zest_mobile/app/modules/privacy_policy/views/privacy_policy_view.dart';
+
+import 'package:zest_mobile/app/modules/share/activity/bindings/share_activity_binding.dart';
+import 'package:zest_mobile/app/modules/share/activity/views/share_activity_view.dart';
+import 'package:zest_mobile/app/modules/share/challenge/bindings/share_challenge_binding.dart';
+import 'package:zest_mobile/app/modules/share/challenge/views/share_challenge_view.dart';
+import 'package:zest_mobile/app/modules/share/club/bindings/share_club_binding.dart';
+import 'package:zest_mobile/app/modules/share/club/views/share_club_view.dart';
+import 'package:zest_mobile/app/modules/share/event/bindings/share_event_binding.dart';
+import 'package:zest_mobile/app/modules/share/event/views/share_event_view.dart';
+import 'package:zest_mobile/app/modules/share/profile/bindings/share_profile_binding.dart';
+import 'package:zest_mobile/app/modules/share/profile/views/share_profile_view.dart';
+
 import 'package:zest_mobile/app/modules/social/bindings/social_binding.dart';
 import 'package:zest_mobile/app/modules/social/views/partial/for_you_tab/chat_event/bindings/event_chat_binding.dart';
 import 'package:zest_mobile/app/modules/social/views/partial/for_you_tab/chat_event/views/event_chat_view.dart';
@@ -376,6 +389,7 @@ class AppPages {
       binding: NotificationBinding(),
     ),
 
+
     GetPage(
       name: AppRoutes.tnc,
       page: () => const TncView(),
@@ -386,6 +400,32 @@ class AppPages {
       name: AppRoutes.privacyPolicy,
       page: () => const PrivacyPolicyView(),
       binding: PrivacyPolicyBinding(),
+    ),
+    // Share
+    GetPage(
+      name: AppRoutes.shareProfile,
+      page: () => const ShareProfileView(),
+      binding: ShareProfileBinding(),
+    ),
+    GetPage(
+      name: AppRoutes.shareClub,
+      page: () => const ShareClubView(),
+      binding: ShareClubBinding(),
+    ),
+    GetPage(
+      name: AppRoutes.shareActivity,
+      page: () => const ShareActivityView(),
+      binding: ShareActivityBinding(),
+    ),
+    GetPage(
+      name: AppRoutes.shareEvent,
+      page: () => const ShareEventView(),
+      binding: ShareEventBinding(),
+    ),
+    GetPage(
+      name: AppRoutes.shareChallenge,
+      page: () => const ShareChallengeView(),
+      binding: ShareChallengeBinding(),
     ),
   ];
 }

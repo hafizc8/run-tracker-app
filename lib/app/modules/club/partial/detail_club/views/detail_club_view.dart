@@ -396,7 +396,7 @@ class DetailClubView extends GetView<DetailClubController> {
               PopupMenuItem<String>(
                 value: 'create_a_challange',
                 child: Text(
-                  'Create a Challange',
+                  'Create a Challenge',
                   style: Theme.of(context)
                       .textTheme
                       .bodyMedium

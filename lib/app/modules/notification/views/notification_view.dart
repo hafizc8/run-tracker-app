@@ -12,7 +12,6 @@ class NotificationView extends GetView<NotificationController> {
   @override
   Widget build(BuildContext context) {
     Get.put(NotificationController());
-    final theme = Theme.of(context);
     
     return Scaffold(
       appBar: AppBar(
@@ -36,53 +35,89 @@ class NotificationView extends GetView<NotificationController> {
           ),
         ),
       ),
-      body: Obx(() {
-        if (controller.isLoading.value) {
-          // TODO: Ganti ini dengan shimmer effect kustom jika diinginkan
-          return const Center(child: CircularProgressIndicator());
-        }
-        
-        return ListView(
-          padding: EdgeInsets.symmetric(horizontal: 16.w, vertical: 8.h),
-          children: [
-            // Header
-            Padding(
-              padding: EdgeInsets.symmetric(vertical: 8.h),
-              child: Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                children: [
-                  Text(
-                    'Notifications (${controller.notifications.length})',
-                    style: GoogleFonts.poppins(
-                      fontSize: 12.sp,
-                      fontWeight: FontWeight.w700,
-                      color: darkColorScheme.primary,
-                    ),
-                  ),
-                  TextButton(
-                    onPressed: () {
-                      // TODO: Tambahkan fungsi untuk membaca semua notifikasi
-                    },
-                    child: Text(
-                      'Read all',
-                      style: GoogleFonts.poppins(
-                        fontSize: 12.sp,
-                        fontWeight: FontWeight.w700,
-                        color: darkColorScheme.primary,
+      body: RefreshIndicator(
+        onRefresh: () async {
+          controller.fetchNotifications(refresh: true);
+        },
+        child: SingleChildScrollView(
+          controller: controller.notificationScrollController,
+          child: Container(
+            padding: EdgeInsets.symmetric(horizontal: 16.w, vertical: 8.h),
+            child: Column(
+              children: [
+                // Header
+                Obx(
+                  () {
+                    return Padding(
+                      padding: EdgeInsets.symmetric(vertical: 8.h),
+                      child: Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                        children: [
+                          Text(
+                            'Notifications (${controller.notificationCount.value})',
+                            style: GoogleFonts.poppins(
+                              fontSize: 12.sp,
+                              fontWeight: FontWeight.w700,
+                              color: darkColorScheme.primary,
+                            ),
+                          ),
+                          (controller.isLoadingReadAll.value)
+                          ? const CircularProgressIndicator()
+                          : TextButton(
+                            onPressed: () {
+                              controller.readNotification();
+                            },
+                            child: Text(
+                              'Read all',
+                              style: GoogleFonts.poppins(
+                                fontSize: 12.sp,
+                                fontWeight: FontWeight.w700,
+                                color: darkColorScheme.primary,
+                              ),
+                            ),
+                          ),
+                        ],
                       ),
-                    ),
-                  ),
-                ],
-              ),
+                    );
+                  }
+                ),
+                
+                Obx(
+                  () {
+                    return ListView.separated(
+                      shrinkWrap: true,
+                      physics: const NeverScrollableScrollPhysics(),
+                      itemBuilder: (context, index) {
+                        if (index == controller.notifications.length) {
+                          return const Center(
+                            child: CircularProgressIndicator(),
+                          );
+                        }
+                        final notification = controller.notifications[index];
+                        return GestureDetector(
+                          onTap: () {
+                            controller.readNotification(notification: notification);
+                          },
+                          child: Container(
+                            color: darkColorScheme.background,
+                            child: NotificationItem(
+                              notification: notification,
+                            ),
+                          ),
+                        );
+                      },
+                      separatorBuilder: (context, index) => SizedBox(
+                        height: 0.h,
+                      ),
+                      itemCount: controller.notifications.length + (controller.hasReacheMaxNotification.value ? 0 : 1),
+                    );
+                  }
+                ),
+              ],
             ),
-            
-            // Daftar Notifikasi
-            ...controller.notifications.map((notification) {
-              return NotificationItem(notification: notification);
-            }).toList(),
-          ],
-        );
-      }),
+          ),
+        ),
+      ),
     );
   }
 }

@@ -95,7 +95,7 @@ class RecordActivityController extends GetxController {
     _listenToBackgroundService();
 
     WidgetsBinding.instance.addPostFrameCallback((_) {
-      _loadStaminaConfigAndShowDialog();
+      _initializeSession();
       loadMarkerIcons();
     });
 
@@ -109,6 +109,57 @@ class RecordActivityController extends GetxController {
     _paceUpdateTimer?.cancel();
     _coinAnimationTimer?.cancel();
     super.onClose();
+  }
+
+  Future<void> _initializeSession() async {
+    final isRunning = await _service.isRunning();
+    
+    if (isRunning) {
+      // Jika service sudah berjalan, berarti kita melanjutkan sesi.
+      _logService.log.i("Service is running. Attempting to resume UI state.");
+      
+      // Ambil data terakhir yang disimpan oleh service
+      final unsyncedSession = await _localDb.getUnsyncedSession();
+      final unsyncedPoints = await _localDb.getAllDataPoints();
+      
+      if (unsyncedSession != null) {
+        // Pulihkan UI dari data yang tersimpan
+        _resumeActivityFromLocal(unsyncedSession, unsyncedPoints);
+      } else {
+        // Kasus langka: service berjalan tapi tidak ada data. Mulai baru.
+        await _loadStaminaConfigAndShowDialog();
+      }
+    } else {
+      // Jika service tidak berjalan, mulai alur aktivitas baru.
+      _logService.log.i("Service is not running. Starting new activity flow.");
+      await _loadStaminaConfigAndShowDialog();
+    }
+  }
+
+  // ✨ Fungsi ini sekarang digunakan untuk memulihkan UI ✨
+  void _resumeActivityFromLocal(Map<String, dynamic> sessionData, List<ActivityDataPoint> points) {
+    _logService.log.i("Resuming activity from local storage. Session ID: ${sessionData['id']}");
+    _recordActivityId = sessionData['id'];
+    elapsedTimeInSeconds.value = sessionData['elapsedTime'] ?? 0;
+    currentDistanceInMeters.value = (sessionData['distance'] as num?)?.toDouble() ?? 0.0;
+    stepsInSession.value = sessionData['steps'] ?? 0;
+
+    currentPath.assignAll(points.map((p) => LocationPoint(
+          latitude: p.latitude, longitude: p.longitude, timestamp: p.timestamp))
+        .toList());
+    
+    isTracking.value = true;
+    // isPaused mungkin perlu state sendiri yang disimpan, untuk sekarang kita anggap tidak paused
+    isPaused.value = false; 
+
+    // Mulai pace updater
+    _startPaceUpdater();
+    
+    Get.snackbar("Activity Resumed", "Continuing your ongoing activity.",
+      snackPosition: SnackPosition.BOTTOM,
+      backgroundColor: Colors.blueGrey,
+    );
+    WidgetsBinding.instance.addPostFrameCallback((_) => _updateCameraForRoute());
   }
 
   void _listenToBackgroundService() {

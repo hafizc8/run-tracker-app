@@ -81,9 +81,20 @@ abstract class AppRoutes {
 
   // notification
   static const notification = '/notification';
+
   static const userChat = '/chat';
 
   static const tnc = '/terms-and-conditions';
 
   static const privacyPolicy = '/privacy-policy';
+
+  // Share
+  static const shareBadges = '/share/badges';
+  static const shareDailyGoals = '/share/daily-goals';
+  static const shareLevelUp = '/share/level-up';
+  static const shareChallenge = '/share/challenge';
+  static const shareEvent = '/share/event';
+  static const shareProfile = '/share/profile';
+  static const shareClub = '/share/club';
+  static const shareActivity = '/share/activity';
 }

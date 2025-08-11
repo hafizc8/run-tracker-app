@@ -17,7 +17,7 @@ import 'package:zest_mobile/app/modules/home/widgets/achieve_streak_dialog.dart'
 import 'package:zest_mobile/app/modules/home/widgets/leveled_up_dialog.dart';
 import 'package:zest_mobile/app/modules/home/widgets/set_daily_goals_dialog.dart';
 import 'dart:math';
-// import 'package:pedometer_2/pedometer_2.dart';
+import 'package:pedometer_2/pedometer_2.dart';
 import 'package:intl/intl.dart';
 import 'package:zest_mobile/app/routes/app_routes.dart';
 

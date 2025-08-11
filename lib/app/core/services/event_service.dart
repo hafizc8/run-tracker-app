@@ -2,6 +2,7 @@ import 'package:dio/dio.dart';
 import 'package:zest_mobile/app/core/models/enums/http_method_enum.dart';
 import 'package:zest_mobile/app/core/models/forms/store_event_form.dart';
 import 'package:zest_mobile/app/core/models/interface/pagination_response_model.dart';
+import 'package:zest_mobile/app/core/models/model/chat_model_model.dart';
 import 'package:zest_mobile/app/core/models/model/club_mini_model.dart';
 import 'package:zest_mobile/app/core/models/model/event_activity_model.dart';
 import 'package:zest_mobile/app/core/models/model/event_location_model.dart';
@@ -180,6 +181,50 @@ class EventService {
         response.data['data'],
         (json) => EventUserModel.fromJson(json),
       );
+    } catch (e) {
+      rethrow;
+    }
+  }
+
+  Future<PaginatedDataResponse<ChatModel>> getEventChat({
+    required String eventId,
+    int page = 1,
+  }) async {
+    try {
+      final response = await _apiService.request(
+        path: AppConstants.eventChat(eventId),
+        method: HttpMethod.get,
+        queryParams: {
+          'page': page.toString(),
+        },
+      );
+
+      return PaginatedDataResponse<ChatModel>.fromJson(
+        response.data['data'],
+        (json) => ChatModel.fromJson(json),
+      );
+    } catch (e) {
+      rethrow;
+    }
+  }
+
+  Future<ChatModel?> storeEventChat({
+    required String eventId,
+    required String message,
+  }) async {
+    try {
+      final response = await _apiService.request(
+          path: AppConstants.eventChat(eventId),
+          method: HttpMethod.post,
+          data: {
+            'message': message,
+          });
+
+      if (response.statusCode != 200) {
+        throw Exception('Failed to store chat event');
+      }
+
+      return ChatModel.fromJson(response.data['data']);
     } catch (e) {
       rethrow;
     }

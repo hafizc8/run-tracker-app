@@ -262,6 +262,8 @@ class ProfileView extends GetView<ProfileController> {
                                             InkWell(
                                               onTap: () => Get.toNamed(
                                                 AppRoutes.userChat,
+                                                arguments:
+                                                    controller.user.value?.id,
                                               ),
                                               child: SvgPicture.asset(
                                                 'assets/icons/msg.svg',

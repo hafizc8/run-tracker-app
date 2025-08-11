@@ -81,11 +81,11 @@ class SocialForYouEventDetailView extends GetView<EventDetailController> {
         if (controller.event.value?.isJoined == 1) ...[
           InkWell(
             onTap: () {
-              Get.toNamed(AppRoutes.eventChat);
+              Get.toNamed(AppRoutes.eventChat,
+                  arguments: controller.event.value?.id);
             },
             child: SvgPicture.asset(
               'assets/icons/msg.svg',
-              color: Theme.of(context).colorScheme.onBackground,
             ),
           ),
           const SizedBox(width: 16),

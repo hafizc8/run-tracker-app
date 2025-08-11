@@ -4,6 +4,7 @@ import 'package:zest_mobile/app/core/di/service_locator.dart';
 import 'package:zest_mobile/app/core/models/enums/http_method_enum.dart';
 import 'package:zest_mobile/app/core/models/forms/update_user_form.dart';
 import 'package:zest_mobile/app/core/models/interface/pagination_response_model.dart';
+import 'package:zest_mobile/app/core/models/model/chat_model_model.dart';
 import 'package:zest_mobile/app/core/models/model/home_page_data_model.dart';
 import 'package:zest_mobile/app/core/models/model/stamina_requirement_model.dart';
 import 'package:zest_mobile/app/core/models/model/user_detail_model.dart';
@@ -32,6 +33,50 @@ class UserService {
       }
 
       return response.data['success'];
+    } catch (e) {
+      rethrow;
+    }
+  }
+
+  Future<PaginatedDataResponse<ChatModel>> getChats({
+    required String userId,
+    int page = 1,
+  }) async {
+    try {
+      final response = await _apiService.request(
+        path: AppConstants.userChat(userId),
+        method: HttpMethod.get,
+        queryParams: {
+          'page': page.toString(),
+        },
+      );
+
+      return PaginatedDataResponse<ChatModel>.fromJson(
+        response.data['data'],
+        (json) => ChatModel.fromJson(json),
+      );
+    } catch (e) {
+      rethrow;
+    }
+  }
+
+  Future<ChatModel?> storeChat({
+    required String userId,
+    required String message,
+  }) async {
+    try {
+      final response = await _apiService.request(
+          path: AppConstants.userChat(userId),
+          method: HttpMethod.post,
+          data: {
+            'message': message,
+          });
+
+      if (response.statusCode != 200) {
+        throw Exception('Failed to store chat user');
+      }
+
+      return ChatModel.fromJson(response.data['data']);
     } catch (e) {
       rethrow;
     }
@@ -159,7 +204,10 @@ class UserService {
         method: HttpMethod.get,
       );
 
-      return response.data['data'].map<StaminaRequirementModel>((e) => StaminaRequirementModel.fromJson(e)).toList();
+      return response.data['data']
+          .map<StaminaRequirementModel>(
+              (e) => StaminaRequirementModel.fromJson(e))
+          .toList();
     } catch (e) {
       rethrow;
     }
@@ -170,12 +218,11 @@ class UserService {
   }) async {
     try {
       final response = await _apiService.request(
-        path: AppConstants.readPopupNotification,
-        method: HttpMethod.put,
-        data: {
-          if (ids != null) 'ids': ids,
-        }
-      );
+          path: AppConstants.readPopupNotification,
+          method: HttpMethod.put,
+          data: {
+            if (ids != null) 'ids': ids,
+          });
 
       return response.data['success'];
     } catch (e) {

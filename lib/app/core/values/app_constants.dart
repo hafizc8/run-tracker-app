@@ -16,6 +16,12 @@ class AppConstants {
   // Link Share
   static const String baseUrlShareLink = "https://dev.zestplus.app/link";
 
+  // Tnc & Privacy
+  static const String baseUrlTnc =
+      "https://dev.zestplus.app/term-and-condition";
+  static const String baseUrlPrivacy =
+      "https://dev.zestplus.app/privacy-policy";
+
   // Auth
   static const String login = "/login";
   static const String register = "/register";
@@ -60,6 +66,10 @@ class AppConstants {
   static String eventInviteFriend(String id) => "/event/$id/invite";
   static String eventUsers(String id) => "/event/$id/user";
   static String event([String? id]) => id != null ? "/event/$id" : "/event";
+
+  // notif
+  static String eventChat(String id) => "/chat/event/$id";
+  static String userChat(String id) => "/chat/user/$id";
 
   // Challenge
   static String challenge({String? id}) =>
@@ -106,11 +116,11 @@ class AppConstants {
   // popup-notification
   static const String readPopupNotification = "/popup-notification";
 
-
-
-
   // Share Link
-  static String shareProfileLink(String id) => "$baseUrlShareLink/share-profile?user=$id";
-  static String shareClubLink(String id) => "$baseUrlShareLink/share-club?club=$id";
-  static String shareEventLink(String id) => "$baseUrlShareLink/share-event?event=$id";
+  static String shareProfileLink(String id) =>
+      "$baseUrlShareLink/share-profile?user=$id";
+  static String shareClubLink(String id) =>
+      "$baseUrlShareLink/share-club?club=$id";
+  static String shareEventLink(String id) =>
+      "$baseUrlShareLink/share-event?event=$id";
 }

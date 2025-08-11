@@ -6,7 +6,6 @@ import 'package:zest_mobile/app/core/di/service_locator.dart';
 import 'package:zest_mobile/app/core/exception/app_exception.dart';
 import 'package:zest_mobile/app/core/exception/handler/app_exception_handler_info.dart';
 import 'package:zest_mobile/app/core/services/auth_service.dart';
-import 'package:zest_mobile/app/core/shared/components/privacy_policy.dart';
 import 'package:zest_mobile/app/core/shared/widgets/custom_circular_progress_indicator.dart';
 import 'package:zest_mobile/app/core/shared/widgets/gradient_elevated_button.dart';
 import 'package:zest_mobile/app/core/shared/widgets/gradient_outlined_button.dart';
@@ -284,19 +283,6 @@ class SettingsController extends GetxController {
           ],
         ),
       ),
-    );
-  }
-
-  void showPrivacyPolicyDialog(BuildContext context) {
-    showDialog(
-      context: context,
-      barrierDismissible: false,
-      builder: (context) {
-        return Dialog.fullscreen(
-          backgroundColor: Theme.of(context).colorScheme.background,
-          child: const PrivacyPolicyComponent(),
-        );
-      },
     );
   }
 }

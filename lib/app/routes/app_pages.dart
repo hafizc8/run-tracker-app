@@ -31,6 +31,8 @@ import 'package:zest_mobile/app/modules/challenge/views/edit_challenge_team_view
 import 'package:zest_mobile/app/modules/challenge/views/edit_challenge_view.dart';
 import 'package:zest_mobile/app/modules/choose_location/bindings/choose_location_binding.dart';
 import 'package:zest_mobile/app/modules/choose_location/views/choose_location_view.dart';
+import 'package:zest_mobile/app/modules/club/partial/chat_club/bindings/club_chat_binding.dart';
+import 'package:zest_mobile/app/modules/club/partial/chat_club/views/club_chat_view.dart';
 import 'package:zest_mobile/app/modules/club/partial/create_club/bindings/create_club_binding.dart';
 import 'package:zest_mobile/app/modules/club/partial/create_club/views/create_club_view.dart';
 import 'package:zest_mobile/app/modules/club/partial/detail_club/bindings/detail_club_binding.dart';
@@ -69,6 +71,10 @@ import 'package:zest_mobile/app/modules/main_profile/views/main_profile_view.dar
 import 'package:zest_mobile/app/modules/main_profile/views/settings_view.dart';
 import 'package:zest_mobile/app/modules/notification/bindings/notification_binding.dart';
 import 'package:zest_mobile/app/modules/notification/views/notification_view.dart';
+
+import 'package:zest_mobile/app/modules/privacy_policy/bindings/privacy_policy_binding.dart';
+import 'package:zest_mobile/app/modules/privacy_policy/views/privacy_policy_view.dart';
+
 import 'package:zest_mobile/app/modules/share/activity/bindings/share_activity_binding.dart';
 import 'package:zest_mobile/app/modules/share/activity/views/share_activity_view.dart';
 import 'package:zest_mobile/app/modules/share/challenge/bindings/share_challenge_binding.dart';
@@ -79,7 +85,10 @@ import 'package:zest_mobile/app/modules/share/event/bindings/share_event_binding
 import 'package:zest_mobile/app/modules/share/event/views/share_event_view.dart';
 import 'package:zest_mobile/app/modules/share/profile/bindings/share_profile_binding.dart';
 import 'package:zest_mobile/app/modules/share/profile/views/share_profile_view.dart';
+
 import 'package:zest_mobile/app/modules/social/bindings/social_binding.dart';
+import 'package:zest_mobile/app/modules/social/views/partial/for_you_tab/chat_event/bindings/event_chat_binding.dart';
+import 'package:zest_mobile/app/modules/social/views/partial/for_you_tab/chat_event/views/event_chat_view.dart';
 import 'package:zest_mobile/app/modules/social/views/partial/for_you_tab/choose_location_event/bindings/choose_location_event_binding.dart';
 import 'package:zest_mobile/app/modules/social/views/partial/for_you_tab/choose_location_event/views/choose_location_event_view.dart';
 import 'package:zest_mobile/app/modules/social/views/partial/for_you_tab/event/bindings/event_detail_binding.dart';
@@ -96,6 +105,10 @@ import 'package:zest_mobile/app/modules/social/views/partial/your_page_tab/socia
 import 'package:zest_mobile/app/modules/social/views/social_view.dart';
 import 'package:zest_mobile/app/modules/splash/bindings/splash_binding.dart';
 import 'package:zest_mobile/app/modules/splash/views/splash_view.dart';
+import 'package:zest_mobile/app/modules/tnc/bindings/tnc_binding.dart';
+import 'package:zest_mobile/app/modules/tnc/views/tnc_view.dart';
+import 'package:zest_mobile/app/modules/user_chat/bindings/user_chat_binding.dart';
+import 'package:zest_mobile/app/modules/user_chat/views/user_chat_view.dart';
 
 import '../modules/home/bindings/home_binding.dart';
 import '../modules/home/views/home_view.dart';
@@ -252,11 +265,26 @@ class AppPages {
       name: AppRoutes.eventCreate,
       page: () => const EventCreateView(),
     ),
+    GetPage(
+      name: AppRoutes.eventChat,
+      page: () => EventChatView(),
+      binding: EventChatBinding(),
+    ),
+    GetPage(
+      name: AppRoutes.userChat,
+      page: () => UserChatView(),
+      binding: UserChatBinding(),
+    ),
     // club
     GetPage(
       name: AppRoutes.createClub,
       page: () => const CreateClubView(),
       binding: CreateClubBinding(),
+    ),
+    GetPage(
+      name: AppRoutes.clubChat,
+      page: () => ClubChatView(),
+      binding: ClubChatBinding(),
     ),
     GetPage(
       name: AppRoutes.detailClub,
@@ -361,6 +389,18 @@ class AppPages {
       binding: NotificationBinding(),
     ),
 
+
+    GetPage(
+      name: AppRoutes.tnc,
+      page: () => const TncView(),
+      binding: TncBinding(),
+    ),
+
+    GetPage(
+      name: AppRoutes.privacyPolicy,
+      page: () => const PrivacyPolicyView(),
+      binding: PrivacyPolicyBinding(),
+    ),
     // Share
     GetPage(
       name: AppRoutes.shareProfile,

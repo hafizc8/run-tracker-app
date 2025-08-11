@@ -4,6 +4,7 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
 import 'package:loader_overlay/loader_overlay.dart';
 import 'package:zest_mobile/app/core/di/service_locator.dart';
+import 'package:zest_mobile/app/core/services/app_link_service.dart';
 import 'package:zest_mobile/app/core/services/storage_service.dart';
 import 'package:zest_mobile/app/core/shared/theme/app_theme.dart';
 import 'package:zest_mobile/app/core/shared/theme/color_schemes.dart';
@@ -21,57 +22,56 @@ class App extends StatefulWidget {
 
 class _AppState extends State<App> {
   final _appLinks = AppLinks();
+  final _appLinkService = sl<AppLinkService>();
+  
   @override
   void initState() {
     super.initState();
-    _listenDynamicLinks();
+    // Proses link awal saat aplikasi pertama kali dibuka
+    _handleAppLink(_appLinkService.initialUri); 
+    // Terus dengarkan link baru saat aplikasi sudah berjalan
+    _appLinks.uriLinkStream.listen((uri) => _handleAppLink(uri));
   }
 
-  void _listenDynamicLinks() {
+  // ✨ Buat satu fungsi terpusat untuk menangani semua link ✨
+  void _handleAppLink(Uri? uri) {
+    if (uri == null) return;
     
-    _appLinks.uriLinkStream.listen((Uri? uri) {
-      if (uri != null && uri.scheme == "devzestplus") {
-        final token = sl<StorageService>().read(StorageKeys.token);
+    final token = sl<StorageService>().read(StorageKeys.token);
 
-        if (uri.host == "email-verified" &&
-            uri.queryParameters['verified'] == 'true') {
-          Get.offAllNamed(AppRoutes.registerVerifyEmailSuccess);
-        } else if (uri.host == "reset-password" &&
-            uri.queryParameters['token'] != null &&
-            uri.queryParameters['email'] != null) {
-          Get.offAllNamed(AppRoutes.forgotPasswordSetNew, arguments: {
-            'token': uri.queryParameters['token'],
-            'email': uri.queryParameters['email']
-          });
-        } else {
-          // Start - Share Link
-          if (
-              uri.host == "share-club" &&
-              uri.queryParameters['club'] != null &&
-              token != null
-          ) {
-            // wait home page loaded
-            Future.delayed(const Duration(seconds: 2));
-            Get.toNamed(AppRoutes.detailClub, arguments: uri.queryParameters['club']);
-          } else if (
-              uri.host == "share-profile" &&
-              uri.queryParameters['user'] != null &&
-              token != null
-          ) {
-            // wait home page loaded
-            Future.delayed(const Duration(seconds: 2));
-            Get.toNamed(AppRoutes.profileUser, arguments: uri.queryParameters['user']);
-          } else if (
-              uri.host == "share-event" &&
-              uri.queryParameters['event'] != null &&
-              token != null
-          ) {
-            // wait home page loaded
-            Future.delayed(const Duration(seconds: 2));
-            Get.toNamed(AppRoutes.socialYourPageEventDetail, arguments: {'eventId': uri.queryParameters['event']});
-          }
-        }
-        // End - Share Link
+    // Tangani navigasi non-auth terlebih dahulu
+    if (uri.host == "email-verified" && uri.queryParameters['verified'] == 'true') {
+      Get.offAllNamed(AppRoutes.registerVerifyEmailSuccess);
+      return;
+
+    } else if (uri.host == "reset-password" && uri.queryParameters['token'] != null && uri.queryParameters['email'] != null) {
+      Get.offAllNamed(AppRoutes.forgotPasswordSetNew, arguments: {
+        'token': uri.queryParameters['token'],
+        'email': uri.queryParameters['email']
+      });
+      return;
+    }
+    
+    // Jika user belum login, jangan lanjutkan ke halaman share
+    if (token == null) {
+      // Arahkan ke login jika mencoba membuka link share tanpa token
+      Get.offAllNamed(AppRoutes.login);
+      return;
+    }
+
+    // Navigasi ke halaman home terlebih dahulu, lalu ke halaman detail
+    // Ini memastikan halaman detail memiliki "induk" yang benar.
+    Get.offAllNamed(AppRoutes.mainHome);
+    
+    // Gunakan Future.delayed(Duration.zero) untuk memastikan navigasi
+    // detail terjadi setelah navigasi home selesai.
+    Future.delayed(Duration.zero, () {
+      if (uri.host == "share-club" && uri.queryParameters['club'] != null) {
+        Get.toNamed(AppRoutes.detailClub, arguments: uri.queryParameters['club']);
+      } else if (uri.host == "share-profile" && uri.queryParameters['user'] != null) {
+        Get.toNamed(AppRoutes.profileUser, arguments: uri.queryParameters['user']);
+      } else if (uri.host == "share-event" && uri.queryParameters['event'] != null) {
+        Get.toNamed(AppRoutes.socialYourPageEventDetail, arguments: {'eventId': uri.queryParameters['event']});
       }
     });
   }

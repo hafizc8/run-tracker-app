@@ -2,6 +2,7 @@ import 'package:get_it/get_it.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:zest_mobile/app/core/dio/dio_client.dart';
 import 'package:zest_mobile/app/core/services/api_service.dart';
+import 'package:zest_mobile/app/core/services/app_link_service.dart';
 import 'package:zest_mobile/app/core/services/auth_service.dart';
 import 'package:zest_mobile/app/core/services/badge_service.dart';
 import 'package:zest_mobile/app/core/services/challenge_service.dart';
@@ -35,5 +36,5 @@ Future<void> setupServiceLocator() async {
     return await SharedPreferences.getInstance();
   });
   sl.registerSingletonAsync<LogService>(() => LogService().init());
-
+  sl.registerSingletonAsync<AppLinkService>(() => AppLinkService().init());
 }

@@ -193,19 +193,21 @@ class MainProfileView extends GetView<ProfileMainController> {
                             ),
                             Row(
                               children: [
-                                GestureDetector(
+                                (controller.user.value != null)
+                                ? GestureDetector(
                                   onTap: () {
                                     // share profile
-                                    Share.share(
-                                      '[Zest+] Check out my profile here: ${AppConstants.shareProfileLink(controller.user.value?.id)}',
-                                    );
+                                    // Share.share(
+                                    //   '[Zest+] Check out my profile here: ${AppConstants.shareProfileLink(controller.user.value?.id)}',
+                                    // );
+                                    Get.toNamed(AppRoutes.shareProfile, arguments: controller.user.value);
                                   },
                                   child: SvgPicture.asset(
                                     'assets/icons/ic_share-2.svg',
                                     height: 22.h,
                                     width: 27.w,
                                   ),
-                                ),
+                                ) : const SizedBox.shrink(),
                                 SizedBox(width: 8.w),
                                 IconButton(
                                   icon: const Icon(Icons.settings_outlined),

@@ -71,12 +71,18 @@ import 'package:zest_mobile/app/modules/notification/bindings/notification_bindi
 import 'package:zest_mobile/app/modules/notification/views/notification_view.dart';
 import 'package:zest_mobile/app/modules/share/activity/bindings/share_activity_binding.dart';
 import 'package:zest_mobile/app/modules/share/activity/views/share_activity_view.dart';
+import 'package:zest_mobile/app/modules/share/badges/bindings/share_badges_binding.dart';
+import 'package:zest_mobile/app/modules/share/badges/views/share_badges_view.dart';
 import 'package:zest_mobile/app/modules/share/challenge/bindings/share_challenge_binding.dart';
 import 'package:zest_mobile/app/modules/share/challenge/views/share_challenge_view.dart';
 import 'package:zest_mobile/app/modules/share/club/bindings/share_club_binding.dart';
 import 'package:zest_mobile/app/modules/share/club/views/share_club_view.dart';
+import 'package:zest_mobile/app/modules/share/daily_streak/bindings/share_daily_streak_binding.dart';
+import 'package:zest_mobile/app/modules/share/daily_streak/views/share_daily_streak_view.dart';
 import 'package:zest_mobile/app/modules/share/event/bindings/share_event_binding.dart';
 import 'package:zest_mobile/app/modules/share/event/views/share_event_view.dart';
+import 'package:zest_mobile/app/modules/share/levelup/bindings/share_levelup_binding.dart';
+import 'package:zest_mobile/app/modules/share/levelup/views/share_levelup_view.dart';
 import 'package:zest_mobile/app/modules/share/profile/bindings/share_profile_binding.dart';
 import 'package:zest_mobile/app/modules/share/profile/views/share_profile_view.dart';
 import 'package:zest_mobile/app/modules/social/bindings/social_binding.dart';
@@ -386,6 +392,21 @@ class AppPages {
       name: AppRoutes.shareChallenge,
       page: () => const ShareChallengeView(),
       binding: ShareChallengeBinding(),
+    ),
+    GetPage(
+      name: AppRoutes.shareBadges,
+      page: () => const ShareBadgesView(),
+      binding: ShareBadgesBinding(),
+    ),
+    GetPage(
+      name: AppRoutes.shareDailyGoals,
+      page: () => const ShareDailyStreakView(),
+      binding: ShareDailyStreakBinding(),
+    ),
+    GetPage(
+      name: AppRoutes.shareLevelUp,
+      page: () => const ShareLevelUpView(),
+      binding: ShareLevelUpBinding(),
     ),
   ];
 }

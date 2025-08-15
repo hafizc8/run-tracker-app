@@ -25,6 +25,8 @@ class ChallengeInviteController extends GetxController {
 
   final _debouncer = Debouncer(milliseconds: 500);
 
+  var ids = <String?>[].obs;
+
   // Search
   var search = ''.obs;
   var resultSearchEmpty = false.obs;
@@ -32,7 +34,9 @@ class ChallengeInviteController extends GetxController {
   @override
   void onInit() {
     super.onInit();
-
+    if (Get.arguments != null && Get.arguments['ids'] != null) {
+      ids.value = Get.arguments['ids'];
+    }
     loadFriends();
     debounce(
       search,
@@ -85,7 +89,8 @@ class ChallengeInviteController extends GetxController {
               response.pagination.next == '') ||
           response.pagination.total < 20) hasReacheMaxFriend.value = true;
 
-      friends.value += response.data;
+      friends.value +=
+          response.data.where((element) => !ids.contains(element.id)).toList();
     } catch (e) {
       Get.snackbar(
         'Error',
@@ -119,7 +124,8 @@ class ChallengeInviteController extends GetxController {
               response.pagination.next == '') ||
           response.pagination.total < 20) hasReacheMaxFriend.value = true;
 
-      friends.value += response.data;
+      friends.value +=
+          response.data.where((element) => !ids.contains(element.id)).toList();
     } catch (e) {
       Get.snackbar(
         'Error',

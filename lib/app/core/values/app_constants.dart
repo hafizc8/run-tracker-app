@@ -70,6 +70,8 @@ class AppConstants {
   // notif
   static String eventChat(String id) => "/chat/event/$id";
   static String userChat(String id) => "/chat/user/$id";
+  static String clubChat(String id) => "/chat/club/$id";
+  static String inboxChat() => "/chat";
 
   // Challenge
   static String challenge({String? id}) =>
@@ -117,9 +119,12 @@ class AppConstants {
   static const String readPopupNotification = "/popup-notification";
 
   // Share Link
-  static String shareProfileLink(String id) => "$baseUrlShareLink/share-profile?user=$id";
-  static String shareClubLink(String id) => "$baseUrlShareLink/share-club?club=$id";
-  static String shareEventLink(String id) => "$baseUrlShareLink/share-event?event=$id";
+  static String shareProfileLink(String id) =>
+      "$baseUrlShareLink/share-profile?user=$id";
+  static String shareClubLink(String id) =>
+      "$baseUrlShareLink/share-club?club=$id";
+  static String shareEventLink(String id) =>
+      "$baseUrlShareLink/share-event?event=$id";
 
   // Notification
   static const String notification = '/notification';

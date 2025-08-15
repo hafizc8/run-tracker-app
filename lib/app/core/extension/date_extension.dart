@@ -26,6 +26,10 @@ extension DateFormatting on DateTime {
     return DateFormat('d MMM').format(this);
   }
 
+  String toEEEddMMMyyyy() {
+    return DateFormat('EEE, dd MMM yyyy').format(this);
+  }
+
   String toMMMddyyyyhhmmaString() {
     return DateFormat("MMM, dd yyyy hh:mm a").format(this);
   }

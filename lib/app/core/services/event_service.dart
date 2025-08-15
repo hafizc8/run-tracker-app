@@ -133,6 +133,7 @@ class EventService {
     String? search,
     String? user,
     String? order,
+    String? completed,
   }) async {
     try {
       final response = await _apiService.request(
@@ -150,6 +151,7 @@ class EventService {
           if (search != null) 'search': search,
           if (user != null) 'user': user,
           if (order != null) 'order': order,
+          if (completed != null) 'include_completed': completed,
         },
       );
 
@@ -189,6 +191,7 @@ class EventService {
   Future<PaginatedDataResponse<ChatModel>> getEventChat({
     required String eventId,
     int page = 1,
+    DateTime? date,
   }) async {
     try {
       final response = await _apiService.request(
@@ -196,6 +199,7 @@ class EventService {
         method: HttpMethod.get,
         queryParams: {
           'page': page.toString(),
+          if (date != null) 'start_datetime': date.toString(),
         },
       );
 

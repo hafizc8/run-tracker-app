@@ -54,6 +54,8 @@ import 'package:zest_mobile/app/modules/detail_challenge/views/detail_challenge_
 import 'package:zest_mobile/app/modules/detail_challenge/views/detail_challenge_view.dart';
 import 'package:zest_mobile/app/modules/home/bindings/main_home_binding.dart';
 import 'package:zest_mobile/app/modules/home/views/main_home_view.dart';
+import 'package:zest_mobile/app/modules/inbox/bindings/inbox_binding.dart';
+import 'package:zest_mobile/app/modules/inbox/views/inbox_view.dart';
 import 'package:zest_mobile/app/modules/leaderboard/bindings/leaderboard_binding.dart';
 import 'package:zest_mobile/app/modules/leaderboard/views/leaderboard_view.dart';
 import 'package:zest_mobile/app/modules/main_profile/bindings/badges_binding.dart';
@@ -395,7 +397,6 @@ class AppPages {
       binding: NotificationBinding(),
     ),
 
-
     GetPage(
       name: AppRoutes.tnc,
       page: () => const TncView(),
@@ -447,6 +448,12 @@ class AppPages {
       name: AppRoutes.shareLevelUp,
       page: () => const ShareLevelUpView(),
       binding: ShareLevelUpBinding(),
+    ),
+
+    GetPage(
+      name: AppRoutes.inbox,
+      page: () => InboxView(),
+      binding: InboxBinding(),
     ),
   ];
 }

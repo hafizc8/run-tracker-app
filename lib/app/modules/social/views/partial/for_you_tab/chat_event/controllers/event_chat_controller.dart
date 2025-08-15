@@ -1,5 +1,6 @@
 import 'dart:async';
 
+import 'package:collection/collection.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:zest_mobile/app/core/di/service_locator.dart';
@@ -12,70 +13,157 @@ import 'package:zest_mobile/app/core/services/auth_service.dart';
 import 'package:zest_mobile/app/core/services/event_service.dart';
 
 class EventChatController extends GetxController {
+  final chats = <ChatModel>[].obs;
   final _eventService = sl<EventService>();
   final _authService = sl<AuthService>();
+  UserModel get user => _authService.user!;
 
   TextEditingController messageController = TextEditingController();
-
-  UserModel get user => _authService.user!;
-  var chats = <ChatModel>[].obs;
+  var message = ''.obs;
   var id = "".obs;
+  var title = "".obs;
   int page = 1;
   var hasReacheMax = false.obs;
   var isLoading = false.obs;
   var isLoadingStore = false.obs;
 
   Timer? _timer;
+  DateTime? lastMessageTime;
 
-  final scrollController = ScrollController();
+  final scrollController = ScrollController(
+    initialScrollOffset: double.maxFinite,
+  );
 
   @override
   void onInit() {
     super.onInit();
     if (Get.arguments == null) return;
-    id.value = Get.arguments as String;
-    startChat();
-    scrollController.addListener(() {
-      final position = scrollController.position;
 
-      bool isNearBottom = position.pixels >= position.maxScrollExtent - 200;
-      if (isNearBottom && !isLoading.value && !hasReacheMax.value) {
-        startChat();
+    id.value = Get.arguments['id'] as String;
+    title.value = Get.arguments['title'] as String;
+    getChat(initialLoad: true);
+
+    _timer = Timer.periodic(const Duration(seconds: 3), (timer) {
+      getNewChat();
+    });
+    scrollController.addListener(() {
+      // Scroll ke atas untuk load older messages
+      if (scrollController.position.pixels <= 50) {
+        final beforeMaxExtent = scrollController.position.maxScrollExtent;
+        if (!isLoading.value && !hasReacheMax.value) {
+          loadOlderChats().then((_) {
+            WidgetsBinding.instance.addPostFrameCallback((_) {
+              final afterMaxExtent = scrollController.position.maxScrollExtent;
+              final offset = scrollController.position.pixels +
+                  (afterMaxExtent - beforeMaxExtent);
+              scrollController.jumpTo(offset);
+            });
+          });
+        }
       }
     });
   }
 
   void startChat() {
-    _timer = Timer.periodic(const Duration(seconds: 3), (timer) => getChat());
+    _timer = Timer.periodic(const Duration(seconds: 3), (timer) {
+      getNewChat();
+    });
   }
 
   @override
   void onClose() {
-    super.onClose();
-    id.value = "";
-    page = 1;
-    hasReacheMax.value = false;
-    isLoading.value = false;
     _timer?.cancel();
-    messageController.clear();
+    messageController.dispose();
+    chats.clear();
+    super.onClose();
   }
 
-  Future<void> getChat() async {
+  Future<void> loadOlderChats() async {
     if (isLoading.value || hasReacheMax.value) return;
     isLoading.value = true;
     try {
       PaginatedDataResponse<ChatModel> response =
-          await _eventService.getEventChat(page: page, eventId: id.value);
+          await _eventService.getEventChat(
+        page: page,
+        eventId: id.value,
+      );
 
       if ((response.pagination.next == null ||
-              response.pagination.next == '') ||
-          response.pagination.total < 20) hasReacheMax.value = true;
+              response.pagination.next!.isEmpty) ||
+          response.pagination.total < 20) {
+        hasReacheMax.value = true;
+      }
 
-      chats.value += response.data;
+      chats.insertAll(0, response.data); // prepend older messages
+      page++;
+    } on AppException catch (e) {
+      AppExceptionHandlerInfo.handle(e);
+    } catch (e) {
+      Get.snackbar('Error', e.toString());
+    } finally {
+      isLoading.value = false;
+    }
+  }
+
+  Future<void> getChat({bool initialLoad = false}) async {
+    if (isLoading.value) return;
+    isLoading.value = true;
+    try {
+      PaginatedDataResponse<ChatModel> response =
+          await _eventService.getEventChat(
+        page: page,
+        eventId: id.value,
+      );
+
+      if (response.data.isNotEmpty) {
+        lastMessageTime = response.data.first.createdAt;
+      }
+      chats.insertAll(0, response.data);
+
+      if (initialLoad) {
+        WidgetsBinding.instance.addPostFrameCallback((_) {
+          if (scrollController.hasClients) {
+            scrollController.animateTo(
+              scrollController.position.maxScrollExtent,
+              duration: const Duration(milliseconds: 300),
+              curve: Curves.easeOut,
+            );
+          }
+        });
+      }
 
       page++;
     } on AppException catch (e) {
-      // show error snackbar, toast, etc
+      AppExceptionHandlerInfo.handle(e);
+    } catch (e) {
+      Get.snackbar('Error', e.toString());
+    } finally {
+      isLoading.value = false;
+    }
+  }
+
+  Future<void> getNewChat() async {
+    if (isLoading.value || chats.isEmpty) return;
+    isLoading.value = true;
+    try {
+      PaginatedDataResponse<ChatModel> response = await _eventService
+          .getEventChat(eventId: id.value, date: lastMessageTime);
+
+      if (response.data.isNotEmpty) {
+        lastMessageTime = response.data.first.createdAt;
+        chats.addAll(response.data);
+
+        WidgetsBinding.instance.addPostFrameCallback((_) {
+          if (scrollController.hasClients) {
+            scrollController.animateTo(
+              scrollController.position.maxScrollExtent,
+              duration: const Duration(milliseconds: 300),
+              curve: Curves.easeOut,
+            );
+          }
+        });
+      }
+    } on AppException catch (e) {
       AppExceptionHandlerInfo.handle(e);
     } catch (e) {
       Get.snackbar('Error', e.toString());
@@ -87,12 +175,25 @@ class EventChatController extends GetxController {
   Future<void> storeChat() async {
     isLoadingStore.value = true;
     try {
-      print('id event: ${id.value}');
       ChatModel? response = await _eventService.storeEventChat(
           eventId: id.value, message: messageController.text);
       if (response != null) {
         messageController.clear();
-        chats.add(response);
+        message.value = '';
+        _timer?.cancel();
+        lastMessageTime = response.createdAt;
+        chats.add(response); // newest di bawah
+        WidgetsBinding.instance.addPostFrameCallback((_) {
+          scrollController.animateTo(
+            scrollController.position.maxScrollExtent,
+            duration: const Duration(milliseconds: 300),
+            curve: Curves.easeOut,
+          );
+        });
+
+        if (!(_timer?.isActive ?? false)) {
+          startChat();
+        }
       }
     } on AppException catch (e) {
       // show error snackbar, toast, etc
@@ -102,5 +203,20 @@ class EventChatController extends GetxController {
     } finally {
       isLoadingStore.value = false;
     }
+  }
+
+  Map<DateTime, List<ChatModel>> get groupedMessages {
+    // oldest → newest
+    var sorted = [...chats]
+      ..sort((a, b) => a.createdAt!.compareTo(b.createdAt!));
+
+    return groupBy(
+      sorted,
+      (ChatModel msg) => DateTime(
+        msg.createdAt!.year,
+        msg.createdAt!.month,
+        msg.createdAt!.day,
+      ),
+    );
   }
 }

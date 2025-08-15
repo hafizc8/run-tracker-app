@@ -1,4 +1,14 @@
 import 'package:flutter/material.dart';
+import 'package:intl/intl.dart';
+
+extension Iso8601TimeOnly on DateTime {
+  /// Mengubah ISO 8601 UTC (Z) ke jam & menit lokal
+  String toLocalHourMinute() {
+    final utcDateTime = toUtc();
+    final localDateTime = utcDateTime.toLocal(); // Ubah ke lokal
+    return DateFormat('HH:mm').format(localDateTime); // Format jam:menit
+  }
+}
 
 extension TimeOfDayExtension on String {
   /// Format yang didukung: "HH:mm", misalnya "14:30"

@@ -3,6 +3,7 @@ import 'package:zest_mobile/app/core/models/enums/http_method_enum.dart';
 import 'package:zest_mobile/app/core/models/forms/create_club_form.dart';
 import 'package:zest_mobile/app/core/models/forms/update_club_form.dart';
 import 'package:zest_mobile/app/core/models/interface/pagination_response_model.dart';
+import 'package:zest_mobile/app/core/models/model/chat_model_model.dart';
 import 'package:zest_mobile/app/core/models/model/club_activities_model.dart';
 import 'package:zest_mobile/app/core/models/model/club_member_model.dart';
 import 'package:zest_mobile/app/core/models/model/club_model.dart';
@@ -212,6 +213,52 @@ class ClubService {
         response.data['data'],
         (json) => ClubActivitiesModel.fromJson(json),
       );
+    } catch (e) {
+      rethrow;
+    }
+  }
+
+  Future<PaginatedDataResponse<ChatModel>> getClubChat({
+    required String clubId,
+    int page = 1,
+    DateTime? date,
+  }) async {
+    try {
+      final response = await _apiService.request(
+        path: AppConstants.clubChat(clubId),
+        method: HttpMethod.get,
+        queryParams: {
+          'page': page.toString(),
+          if (date != null) 'start_datetime': date.toString(),
+        },
+      );
+
+      return PaginatedDataResponse<ChatModel>.fromJson(
+        response.data['data'],
+        (json) => ChatModel.fromJson(json),
+      );
+    } catch (e) {
+      rethrow;
+    }
+  }
+
+  Future<ChatModel?> storeClubChat({
+    required String clubId,
+    required String message,
+  }) async {
+    try {
+      final response = await _apiService.request(
+          path: AppConstants.clubChat(clubId),
+          method: HttpMethod.post,
+          data: {
+            'message': message,
+          });
+
+      if (response.statusCode != 200) {
+        throw Exception('Failed to store chat club');
+      }
+
+      return ChatModel.fromJson(response.data['data']);
     } catch (e) {
       rethrow;
     }

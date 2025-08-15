@@ -7,6 +7,7 @@ import 'package:get/get.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:share_plus/share_plus.dart';
 import 'package:zest_mobile/app/core/extension/initial_profile_empty.dart';
+import 'package:zest_mobile/app/core/models/model/user_mini_model.dart';
 import 'package:zest_mobile/app/core/shared/theme/color_schemes.dart';
 import 'package:zest_mobile/app/core/shared/widgets/gradient_outlined_button.dart';
 import 'package:zest_mobile/app/core/shared/widgets/shimmer_loading_circle.dart';
@@ -263,14 +264,17 @@ class ProfileView extends GetView<ProfileController> {
                                             InkWell(
                                               onTap: () => Get.toNamed(
                                                 AppRoutes.userChat,
-                                                arguments:
-                                                    controller.user.value?.id,
+                                                arguments: UserMiniModel(
+                                                    id: controller
+                                                        .user.value?.id,
+                                                    name: controller
+                                                            .user.value?.name ??
+                                                        '-',
+                                                    imageUrl: controller
+                                                        .user.value?.imageUrl),
                                               ),
                                               child: SvgPicture.asset(
                                                 'assets/icons/msg.svg',
-                                                color: Theme.of(context)
-                                                    .colorScheme
-                                                    .onBackground,
                                               ),
                                             ),
                                           ],
@@ -793,13 +797,12 @@ class ProfileView extends GetView<ProfileController> {
                         }
                         final postActivity = controller.posts[index];
                         return CardActivityProfile(
-                          postData: postActivity,
-                          onTap: () {
-                            controller.goToDetailPost(
-                              post: postActivity,
-                            );
-                          }
-                        );
+                            postData: postActivity,
+                            onTap: () {
+                              controller.goToDetailPost(
+                                post: postActivity,
+                              );
+                            });
                       },
                       separatorBuilder: (context, index) => const SizedBox(
                         height: 0,

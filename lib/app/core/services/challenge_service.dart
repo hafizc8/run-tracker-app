@@ -18,6 +18,7 @@ class ChallengeService {
     int limit = 20,
     String? search,
     String? status,
+    String? completed,
   }) async {
     try {
       final response = await _apiService.request(
@@ -29,6 +30,7 @@ class ChallengeService {
             if (limit != 20) 'limit': limit.toString(),
             if (search != null) 'search': search,
             if (status != null) 'join_status': status,
+            if (completed != null) 'include_completed': completed
           });
 
       return PaginatedDataResponse<ChallengeModel>.fromJson(

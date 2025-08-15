@@ -12,7 +12,8 @@ class ShareFooter extends StatelessWidget {
       left: 0,
       right: 0,
       child: Container(
-        height: 52.h,
+        margin: EdgeInsets.symmetric(horizontal: 14.w, vertical: 14.h),
+        height: 48.h,
         decoration: BoxDecoration(
           gradient: const LinearGradient(
             begin: Alignment.centerLeft,
@@ -20,7 +21,7 @@ class ShareFooter extends StatelessWidget {
             colors: [Color(0xFFA2FF00), Color(0xFF00FF7F)],
           ),
           // Border radius hanya di sudut bawah
-          borderRadius: BorderRadius.circular(15.r),
+          borderRadius: BorderRadius.circular(20.r),
         ),
         child: Row(
           mainAxisAlignment: MainAxisAlignment.center,

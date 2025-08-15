@@ -27,6 +27,7 @@ class UserDetailModel extends Model {
     required this.badges,
     required this.overallMileage,
     this.currentUserXp,
+    this.recordActivitiesCount,
   });
 
   final dynamic id;
@@ -49,6 +50,7 @@ class UserDetailModel extends Model {
   final int? followingCount;
   final int? clubsCount;
   final int? badgesCount;
+  final int? recordActivitiesCount;
   final List<BadgeModel> badges;
   final int? overallMileage;
   final CurrentUserXpModel? currentUserXp;
@@ -78,6 +80,7 @@ class UserDetailModel extends Model {
     List<BadgeModel>? badges,
     int? overallMileage,
     CurrentUserXpModel? currentUserXp,
+    int? recordActivitiesCount,
   }) {
     return UserDetailModel(
       id: id ?? this.id,
@@ -103,6 +106,7 @@ class UserDetailModel extends Model {
       badges: badges ?? this.badges,
       overallMileage: overallMileage ?? this.overallMileage,
       currentUserXp: currentUserXp ?? this.currentUserXp,
+      recordActivitiesCount: recordActivitiesCount ?? this.recordActivitiesCount,
     );
   }
 
@@ -136,6 +140,7 @@ class UserDetailModel extends Model {
       currentUserXp: json["current_user_xp"] == null
           ? null
           : CurrentUserXpModel.fromJson(json["current_user_xp"]),
+      recordActivitiesCount: json["record_activities_count"],
     );
   }
 
@@ -190,5 +195,6 @@ class UserDetailModel extends Model {
         badges,
         overallMileage,
         currentUserXp,
+        recordActivitiesCount,
       ];
 }

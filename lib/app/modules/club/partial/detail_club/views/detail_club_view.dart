@@ -125,10 +125,7 @@ class DetailClubView extends GetView<DetailClubController> {
               right: 0,
               child: InkWell(
                 onTap: () {
-                  // share club
-                  Share.share(
-                    '[Zest+] Check out club ${club?.name} here: ${AppConstants.shareClubLink(club?.id ?? '')}',
-                  );
+                  Get.toNamed(AppRoutes.shareClub, arguments: club);
                 },
                 child: SvgPicture.asset(
                   'assets/icons/ic_share-2.svg',

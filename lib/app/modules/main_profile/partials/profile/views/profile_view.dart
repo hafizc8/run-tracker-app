@@ -5,19 +5,16 @@ import 'package:flutter_svg/flutter_svg.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:get/get.dart';
 import 'package:google_fonts/google_fonts.dart';
-import 'package:share_plus/share_plus.dart';
 import 'package:zest_mobile/app/core/extension/initial_profile_empty.dart';
 import 'package:zest_mobile/app/core/shared/theme/color_schemes.dart';
 import 'package:zest_mobile/app/core/shared/widgets/gradient_outlined_button.dart';
 import 'package:zest_mobile/app/core/shared/widgets/shimmer_loading_circle.dart';
-import 'package:zest_mobile/app/core/values/app_constants.dart';
 import 'package:zest_mobile/app/modules/main_profile/partials/profile/controllers/profile_controller.dart';
 import 'package:zest_mobile/app/modules/main_profile/partials/profile/views/card_activity_profile.dart';
 import 'package:zest_mobile/app/modules/main_profile/partials/social_info/controllers/social_info_clubs.dart';
 import 'package:zest_mobile/app/modules/main_profile/partials/social_info/controllers/social_info_controller.dart';
 import 'package:zest_mobile/app/modules/main_profile/partials/social_info/controllers/social_info_followers.dart';
 import 'package:zest_mobile/app/modules/main_profile/partials/social_info/controllers/social_info_following.dart';
-import 'package:zest_mobile/app/modules/main_profile/widgets/card_activity/card_activity.dart';
 import 'package:zest_mobile/app/routes/app_routes.dart';
 
 class ProfileView extends GetView<ProfileController> {
@@ -290,10 +287,7 @@ class ProfileView extends GetView<ProfileController> {
                         right: 20,
                         child: InkWell(
                           onTap: () {
-                            // share profile
-                            Share.share(
-                              '[Zest+] Check out ${controller.user.value?.name} profile here: ${AppConstants.shareProfileLink(controller.user.value?.id)}',
-                            );
+                            Get.toNamed(AppRoutes.shareProfile, arguments: controller.user.value);
                           },
                           child: SvgPicture.asset(
                             'assets/icons/ic_share-2.svg',

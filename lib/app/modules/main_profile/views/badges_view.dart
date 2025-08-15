@@ -3,7 +3,6 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:shimmer/shimmer.dart';
 import 'package:zest_mobile/app/core/shared/widgets/shimmer_loading_circle.dart';
-import 'package:zest_mobile/app/core/shared/widgets/shimmer_loading_list.dart';
 import 'package:zest_mobile/app/modules/main_profile/controllers/badges_controller.dart';
 
 class BadgesView extends GetView<BadgesController> {

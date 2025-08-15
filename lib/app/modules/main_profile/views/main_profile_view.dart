@@ -4,10 +4,8 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:get/get.dart';
 import 'package:google_fonts/google_fonts.dart';
-import 'package:share_plus/share_plus.dart';
 import 'package:zest_mobile/app/core/extension/initial_profile_empty.dart';
 import 'package:zest_mobile/app/core/shared/widgets/shimmer_loading_circle.dart';
-import 'package:zest_mobile/app/core/values/app_constants.dart';
 import 'package:zest_mobile/app/modules/main_profile/widgets/custom_tab_bar/views/custom_tab_bar_view.dart';
 import 'package:zest_mobile/app/routes/app_routes.dart';
 
@@ -196,10 +194,6 @@ class MainProfileView extends GetView<ProfileMainController> {
                                 (controller.user.value != null)
                                 ? GestureDetector(
                                   onTap: () {
-                                    // share profile
-                                    // Share.share(
-                                    //   '[Zest+] Check out my profile here: ${AppConstants.shareProfileLink(controller.user.value?.id)}',
-                                    // );
                                     Get.toNamed(AppRoutes.shareProfile, arguments: controller.user.value);
                                   },
                                   child: SvgPicture.asset(

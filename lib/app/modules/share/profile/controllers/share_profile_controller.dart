@@ -1,10 +1,16 @@
 import 'dart:io';
 
 import 'package:appinio_social_share/appinio_social_share.dart';
+import 'package:flutter/services.dart';
 import 'package:get/get.dart';
 import 'package:path_provider/path_provider.dart';
+import 'package:permission_handler/permission_handler.dart';
 import 'package:zest_mobile/app/core/models/model/user_detail_model.dart';
 import 'package:screenshot/screenshot.dart';
+import 'package:image_gallery_saver/image_gallery_saver.dart';
+import 'package:zest_mobile/app/core/values/app_constants.dart';
+import 'package:zest_mobile/app/modules/share/profile/views/share_profile_card.dart';
+import 'package:zest_mobile/app/modules/share/widgets/share_image_wrapper.dart';
 
 class ShareProfileController extends GetxController {
   final UserDetailModel userDetailModel;
@@ -29,20 +35,29 @@ class ShareProfileController extends GetxController {
     } finally {
       isLoading.value = false;
     }
+
+    _requestPermissions();
+  }
+
+  Future<void> _requestPermissions() async {
+    // Minta Izin Activity Recognition
+    await [
+      Permission.storage,
+      Permission.manageExternalStorage,
+      Permission.photos,
+    ].request();
   }
 
   /// ✨ FUNGSI UTAMA: Menangkap gambar dan membagikannya
   Future<void> shareTo(String platform) async {
     // 1. Tangkap widget sebagai gambar (dalam format Uint8List)
-    final imageBytes = await screenshotController.capture(
-      delay: const Duration(milliseconds: 20), // Beri sedikit jeda
-      pixelRatio: 2.0, // Tingkatkan kualitas gambar
+    final imageBytes = await screenshotController.captureFromWidget(
+      ShareImageWrapper(
+        shareCard: ShareProfileCard(userDetailModel: userDetailModel),
+        backgroundImagePath: 'assets/images/background_share-2.png',
+      ),
+      pixelRatio: 8.0,
     );
-
-    if (imageBytes == null) {
-      Get.snackbar('Error', 'Could not capture image to share.');
-      return;
-    }
 
     // 2. Simpan gambar ke file sementara
     final directory = await getTemporaryDirectory();
@@ -50,26 +65,36 @@ class ShareProfileController extends GetxController {
     final file = await File(imagePath).create();
     await file.writeAsBytes(imageBytes);
 
-    // 3. Bagikan ke platform yang dipilih
-    // Pesan ini akan menyertai gambar saat dibagikan
-    const String message = "Check out my profile on Zest+!";
+    String message = AppConstants.shareProfileLink(userDetailModel.id);
 
     switch (platform.toLowerCase()) {
       case 'whatsapp':
         await socialShare.android.shareToWhatsapp(message, imagePath);
         break;
+
       case 'instagram':
-        // Instagram memiliki opsi story atau feed
-        // await socialShare.android.shareToInstagramDirect(stickerImage: imagePath);
+        await socialShare.android.shareToInstagramDirect(message);
         break;
-      case 'telegram':
-        await socialShare.android.shareToTelegram(message, imagePath);
+
+      case 'x':
+        await socialShare.android.shareToTwitter(message, imagePath);
         break;
-      // TODO: Tambahkan case untuk platform lain (Messenger, Twitter, dll.)
+
+      case 'link':
+        await Clipboard.setData(ClipboardData(text: message));
+        Get.snackbar('Success', 'Link copied to clipboard.');
+        break;
+
       case 'download':
-        // TODO: Implementasi logika download (mungkin perlu package 'image_gallery_saver')
-        Get.snackbar('Success', 'Image saved to gallery!');
+        final result = await ImageGallerySaver.saveImage(imageBytes.buffer.asUint8List());
+        
+        if (result['isSuccess'] == false) {
+          Get.snackbar('Error', 'Failed to save image to gallery.');
+        } else {
+          Get.snackbar('Success', 'Image saved to gallery.');
+        }
         break;
+
       default:
         print("Unknown share platform: $platform");
     }

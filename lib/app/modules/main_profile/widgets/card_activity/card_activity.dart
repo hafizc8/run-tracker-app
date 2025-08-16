@@ -3,11 +3,13 @@ import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:get/get.dart';
+import 'package:share_plus/share_plus.dart';
 import 'package:zest_mobile/app/core/models/model/post_model.dart';
 import 'package:zest_mobile/app/core/models/model/record_activity_model.dart';
 import 'package:zest_mobile/app/core/shared/helpers/number_helper.dart';
 import 'package:zest_mobile/app/core/shared/theme/color_schemes.dart';
 import 'package:zest_mobile/app/core/shared/widgets/shimmer_loading_circle.dart';
+import 'package:zest_mobile/app/core/values/app_constants.dart';
 import 'package:zest_mobile/app/modules/club/partial/detail_club/partial/tab_bar_club/views/widgets/participants_avatars.dart';
 import 'package:zest_mobile/app/modules/main_profile/controllers/main_profile_controller.dart';
 import 'package:zest_mobile/app/modules/social/controllers/post_controller.dart';
@@ -486,8 +488,15 @@ class ActivityCard extends StatelessWidget {
                 color: darkColorScheme.onBackground,
               ),
               label: 'Share',
-              onTap: () =>
-                  Get.snackbar('Coming soon', 'Feature is coming soon'),
+              onTap: () {
+                if ((postData.isOwner ?? false) && postData.recordActivity != null) {
+                  Get.toNamed(AppRoutes.shareActivity, arguments: postData);
+                } else {
+                  Share.share(
+                    AppConstants.sharePostLink(postData.id!),
+                  );
+                }
+              },
             ),
           ),
         ),

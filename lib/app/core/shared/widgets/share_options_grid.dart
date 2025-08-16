@@ -17,7 +17,6 @@ class ShareOptionsGrid extends StatelessWidget {
       {'icon': 'assets/icons/ic_share_x.svg', 'label': 'X'},
       {'icon': 'assets/icons/ic_share_link.svg', 'label': 'Link'},
       {'icon': 'assets/icons/ic_share_download.svg', 'label': 'Download'},
-      // Tambahkan opsi lain di sini jika perlu
     ];
 
     return Column(

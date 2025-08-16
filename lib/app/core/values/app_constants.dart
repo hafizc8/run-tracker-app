@@ -120,6 +120,7 @@ class AppConstants {
   static String shareProfileLink(String id) => "$baseUrlShareLink/share-profile?user=$id";
   static String shareClubLink(String id) => "$baseUrlShareLink/share-club?club=$id";
   static String shareEventLink(String id) => "$baseUrlShareLink/share-event?event=$id";
+  static String sharePostLink(String id) => "$baseUrlShareLink/share-post?post=$id";
 
   // Notification
   static const String notification = '/notification';

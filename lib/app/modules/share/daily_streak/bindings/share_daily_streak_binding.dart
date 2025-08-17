@@ -5,8 +5,10 @@ import '../controllers/share_daily_streak_controller.dart';
 class ShareDailyStreakBinding extends Bindings {
   @override
   void dependencies() {
-    Get.lazyPut<ShareDailyStreakController>(
-      () => ShareDailyStreakController(),
-    );
+    Get.put(ShareDailyStreakController(
+      title: Get.arguments['title'],
+      description: Get.arguments['description'],
+      imageUrl: Get.arguments['imageUrl'],
+    ));
   }
 }

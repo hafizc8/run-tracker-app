@@ -11,13 +11,15 @@ class StepsTrackerWidget extends StatelessWidget {
   final double progressValue; // Nilai progress antara 0.0 dan 1.0
   final int currentSteps;
   final int maxSteps;
+  final bool? showIconShoes;
 
   const StepsTrackerWidget({
-    Key? key,
+    super.key,
     required this.progressValue,
     required this.currentSteps,
     this.maxSteps = 30000,
-  }) : super(key: key);
+    this.showIconShoes = true,
+  });
 
   @override
   Widget build(BuildContext context) {
@@ -36,10 +38,11 @@ class StepsTrackerWidget extends StatelessWidget {
             size: Size.infinite, // Mengisi ruang yang tersedia
           ),
           // Ikon di tengah
-          SvgPicture.asset(
+          (showIconShoes ?? true)
+          ? SvgPicture.asset(
             'assets/icons/ic_shoes_3.svg',
             height: 0.15.sh,
-          ),
+          ) : Container(),
           // Teks nilai di bawah
           Positioned(
             bottom: 10.0, // Sesuaikan posisi

@@ -11,19 +11,19 @@ import 'package:zest_mobile/app/core/di/service_locator.dart';
 import 'package:zest_mobile/app/core/models/model/user_model.dart';
 import 'package:zest_mobile/app/core/services/auth_service.dart';
 import 'package:zest_mobile/app/core/values/app_constants.dart';
-import 'package:zest_mobile/app/modules/share/badges/views/share_badges_card.dart';
+import 'package:zest_mobile/app/modules/share/daily_step_progress/views/share_daily_step_progress_card.dart';
 import 'package:zest_mobile/app/modules/share/widgets/share_image_wrapper.dart';
 
-class ShareBadgesController extends GetxController {
+class ShareDailyStepProgressController extends GetxController {
 
-  final String title;
-  final String description;
-  final String imageUrl;
+  final double progressValue;
+  final int currentSteps;
+  final int maxSteps;
 
-  ShareBadgesController({
-    required this.title,
-    required this.description,
-    required this.imageUrl,
+  ShareDailyStepProgressController({
+    required this.progressValue,
+    required this.currentSteps,
+    required this.maxSteps,
   });
 
   final ScreenshotController screenshotController = ScreenshotController();
@@ -54,10 +54,10 @@ class ShareBadgesController extends GetxController {
     // 1. Tangkap widget sebagai gambar (dalam format Uint8List)
     final imageBytes = await screenshotController.captureFromWidget(
       ShareImageWrapper(
-        shareCard: ShareBadgesCard(
-          title: title,
-          description: description,
-          imageUrl: imageUrl,
+        shareCard: ShareDailyStepProgressCard(
+          progressValue: progressValue,
+          currentSteps: currentSteps,
+          maxSteps: maxSteps
         ),
         backgroundImagePath: 'assets/images/background_share-2.png',
       ),
@@ -66,7 +66,7 @@ class ShareBadgesController extends GetxController {
 
     // 2. Simpan gambar ke file sementara
     final directory = await getTemporaryDirectory();
-    final imagePath = '${directory.path}/shared_badges_${DateTime.now().millisecondsSinceEpoch}.png';
+    final imagePath = '${directory.path}/shared_daily_step_progress_${DateTime.now().millisecondsSinceEpoch}.png';
     final file = await File(imagePath).create();
     await file.writeAsBytes(imageBytes);
 

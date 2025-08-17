@@ -5,8 +5,12 @@ import '../controllers/share_levelup_controller.dart';
 class ShareLevelUpBinding extends Bindings {
   @override
   void dependencies() {
-    Get.lazyPut<ShareLevelUpController>(
-      () => ShareLevelUpController(),
+    Get.put(
+      ShareLevelUpController(
+        title: Get.arguments['title'],
+        description: Get.arguments['description'],
+        imageUrl: Get.arguments['imageUrl'],
+      ),
     );
   }
 }

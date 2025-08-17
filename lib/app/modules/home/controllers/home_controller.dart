@@ -156,6 +156,7 @@ class HomeController extends GetxController {
   /// ✨ KUNCI #3: Fungsi ini sekarang menggunakan logika per jam untuk mengisi hari yang hilang.
   Future<void> _syncMissingDailyRecords() async {
     _logService.log.i("Checking for missing daily records to sync...");
+    // TODO: get last record date from Endpoint "Get all daily record"
     final lastRecordDate = homePageData.value?.recordDaily?.date;
     if (lastRecordDate == null) return;
 

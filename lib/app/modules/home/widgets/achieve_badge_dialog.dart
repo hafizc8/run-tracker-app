@@ -6,6 +6,7 @@ import 'package:google_fonts/google_fonts.dart';
 import 'package:zest_mobile/app/core/models/model/popup_notification_model.dart';
 import 'package:zest_mobile/app/core/shared/widgets/gradient_elevated_button.dart';
 import 'package:zest_mobile/app/core/shared/widgets/gradient_outlined_button.dart';
+import 'package:zest_mobile/app/routes/app_routes.dart';
 
 class AchieveBadgeDialog extends StatelessWidget {
   final PopupNotificationModel notification;
@@ -92,8 +93,14 @@ class AchieveBadgeDialog extends StatelessWidget {
                           ),
                         ),
                         onPressed: () {
-                          // TODO: Implement Share logic
-                          Get.back(result: 'share');
+                          Get.offAndToNamed(
+                            AppRoutes.shareBadges,
+                            arguments: {
+                              'title': notification.data['title'],
+                              'description': notification.data['description'],
+                              'imageUrl': notification.imageUrl,
+                            }
+                          );
                         },
                         // ✨ Bangun child tombol secara dinamis
                         child: Text(

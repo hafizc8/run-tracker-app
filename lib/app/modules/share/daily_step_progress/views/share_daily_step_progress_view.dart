@@ -3,11 +3,11 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
 import 'package:zest_mobile/app/core/shared/theme/color_schemes.dart';
 import 'package:zest_mobile/app/core/shared/widgets/share_options_grid.dart';
-import 'package:zest_mobile/app/modules/share/daily_streak/controllers/share_daily_streak_controller.dart';
-import 'package:zest_mobile/app/modules/share/daily_streak/views/share_daily_streak_card.dart';
+import 'package:zest_mobile/app/modules/share/daily_step_progress/controllers/share_daily_step_progress_controller.dart';
+import 'package:zest_mobile/app/modules/share/daily_step_progress/views/share_daily_step_progress_card.dart';
 
-class ShareDailyStreakView extends GetView<ShareDailyStreakController> {
-  const ShareDailyStreakView({super.key});
+class ShareDailyStepProgressView extends GetView<ShareDailyStepProgressController> {
+  const ShareDailyStepProgressView({super.key});
 
   @override
   Widget build(BuildContext context) {
@@ -25,10 +25,10 @@ class ShareDailyStreakView extends GetView<ShareDailyStreakController> {
         
             return Column(
               children: [
-                ShareDailySteakCard(
-                  title: controller.title,
-                  description: controller.description,
-                  imageUrl: controller.imageUrl,
+                ShareDailyStepProgressCard(
+                  progressValue: controller.progressValue, 
+                  currentSteps: controller.currentSteps,
+                  maxSteps: controller.maxSteps,
                 ),
             
                 SizedBox(height: 24.h),

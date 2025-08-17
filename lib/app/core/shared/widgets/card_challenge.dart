@@ -2,10 +2,13 @@ import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_svg/flutter_svg.dart';
+import 'package:get/get.dart';
 import 'package:zest_mobile/app/core/extension/date_extension.dart';
 import 'package:zest_mobile/app/core/models/enums/challenge_enum.dart';
 import 'package:zest_mobile/app/core/models/model/challenge_model.dart';
+import 'package:zest_mobile/app/core/shared/helpers/number_helper.dart';
 import 'package:zest_mobile/app/core/shared/widgets/gradient_outlined_button.dart';
+import 'package:zest_mobile/app/routes/app_routes.dart';
 
 class CardChallenge extends StatelessWidget {
   const CardChallenge({super.key, required this.challengeModel});
@@ -69,10 +72,15 @@ class CardChallenge extends StatelessWidget {
                   ),
                 ],
                 const Spacer(),
-                SvgPicture.asset(
-                  'assets/icons/ic_share-2.svg',
-                  height: 24.r,
-                  width: 24.r,
+                InkWell(
+                  onTap: () {
+                    Get.toNamed(AppRoutes.shareChallenge, arguments: challengeModel);
+                  },
+                  child: SvgPicture.asset(
+                    'assets/icons/ic_share-2.svg',
+                    height: 24.r,
+                    width: 24.r,
+                  ),
                 ),
               ],
             ),
@@ -144,7 +152,7 @@ class CardChallenge extends StatelessWidget {
                                 ),
                           ),
                           Text(
-                            challengeModel.target.toString(),
+                            NumberHelper().formatNumberToKWithComma(challengeModel.target),
                             maxLines: 1,
                             overflow: TextOverflow.ellipsis,
                             style: Theme.of(context)

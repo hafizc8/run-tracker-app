@@ -61,7 +61,7 @@ class ShareActivityController extends GetxController {
 
     // 2. Simpan gambar ke file sementara
     final directory = await getTemporaryDirectory();
-    final imagePath = '${directory.path}/shared_club_${DateTime.now().millisecondsSinceEpoch}.png';
+    final imagePath = '${directory.path}/shared_activity_${DateTime.now().millisecondsSinceEpoch}.png';
     final file = await File(imagePath).create();
     await file.writeAsBytes(imageBytes);
 

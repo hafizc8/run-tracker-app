@@ -234,6 +234,7 @@ class ProfileMainController extends GetxController {
         page: pageEvent,
         order: 'upcoming',
         status: 'joined',
+        completed: '1',
       );
 
       if ((response.pagination.next == null ||
@@ -269,6 +270,7 @@ class ProfileMainController extends GetxController {
         page: pageChallenge,
         status: 'joined',
         limit: 10,
+        completed: '1',
       );
 
       if ((response.pagination.next == null ||
@@ -333,25 +335,25 @@ class ProfileMainController extends GetxController {
     final postController = Get.find<PostController>();
     postController.postDetail.value = post;
 
-    postController.goToDetail(postId: post!.id!, isFocusComment: isFocusComment);
+    postController.goToDetail(
+        postId: post!.id!, isFocusComment: isFocusComment);
   }
 
-  Future<void> confirmAndDeletePost({required String postId, bool isPostDetail = false}) async {
-    Get.dialog(
-      CustomDialogConfirmation(
-        title: 'Delete Post',
-        subtitle: 'Are you sure to delete this post?',
-        labelConfirm: 'Yes, delete',
-        onConfirm: () {
-          if (isPostDetail) {
-            Get.back(closeOverlays: true); // close detail page
-          }
-          Get.back(closeOverlays: true);
-          _deletePost(postId: postId);
-        },
-        onCancel: () => Get.back(),
-      )
-    );
+  Future<void> confirmAndDeletePost(
+      {required String postId, bool isPostDetail = false}) async {
+    Get.dialog(CustomDialogConfirmation(
+      title: 'Delete Post',
+      subtitle: 'Are you sure to delete this post?',
+      labelConfirm: 'Yes, delete',
+      onConfirm: () {
+        if (isPostDetail) {
+          Get.back(closeOverlays: true); // close detail page
+        }
+        Get.back(closeOverlays: true);
+        _deletePost(postId: postId);
+      },
+      onCancel: () => Get.back(),
+    ));
   }
 
   Future<void> _deletePost({required String postId}) async {
@@ -368,9 +370,7 @@ class ProfileMainController extends GetxController {
     }
   }
 
-  Future<void> likePost(
-      {required String postId,
-      int isDislike = 0}) async {
+  Future<void> likePost({required String postId, int isDislike = 0}) async {
     try {
       bool resp =
           await _postService.likeDislike(postId: postId, isDislike: isDislike);

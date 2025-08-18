@@ -30,7 +30,7 @@ class HomeView extends GetView<HomeController> {
             if (controller.isLoadingGetUserData.value) {
               return const HomeShimmerEffect();
             }
-        
+
             return RefreshIndicator(
               onRefresh: controller.refreshData,
               child: SingleChildScrollView(
@@ -38,7 +38,8 @@ class HomeView extends GetView<HomeController> {
                   children: [
                     // Widget Profile
                     Container(
-                      margin: EdgeInsets.only(top: 16.h, left: 16.w, right: 16.w),
+                      margin:
+                          EdgeInsets.only(top: 16.h, left: 16.w, right: 16.w),
                       child: Row(
                         children: [
                           Expanded(
@@ -90,10 +91,7 @@ class HomeView extends GetView<HomeController> {
                           SizedBox(width: 12.w),
                           InkWell(
                             onTap: () {
-                              Get.snackbar(
-                                  'Coming Soon', 'Feature will be added soon',
-                                  backgroundColor: Colors.green,
-                                  colorText: Colors.white);
+                              Get.toNamed(AppRoutes.inbox);
                             },
                             child: Container(
                               decoration: const BoxDecoration(
@@ -111,7 +109,7 @@ class HomeView extends GetView<HomeController> {
                         ],
                       ),
                     ),
-            
+
                     // Level
                     Container(
                       margin: EdgeInsets.only(left: 16.w, top: 10.h),
@@ -125,10 +123,11 @@ class HomeView extends GetView<HomeController> {
                           SizedBox(
                             width: MediaQuery.of(context).size.width * 0.3,
                             child: CustomExpProgressBar(
-                              currentExp:
-                                  controller.user.value?.currentUserXp?.currentAmount ??
-                                      0,
-                              maxExp: controller.user.value?.currentUserXp?.levelDetail?.xpNeeded ??
+                              currentExp: controller.user.value?.currentUserXp
+                                      ?.currentAmount ??
+                                  0,
+                              maxExp: controller.user.value?.currentUserXp
+                                      ?.levelDetail?.xpNeeded ??
                                   0,
                               height: 15,
                             ),
@@ -136,10 +135,11 @@ class HomeView extends GetView<HomeController> {
                         ],
                       ),
                     ),
-            
+
                     // coin & energy
                     Container(
-                      margin: EdgeInsets.only(left: 16.w, top: 14.h, bottom: 10.h),
+                      margin:
+                          EdgeInsets.only(left: 16.w, top: 14.h, bottom: 10.h),
                       child: Row(
                         children: [
                           Row(
@@ -194,7 +194,7 @@ class HomeView extends GetView<HomeController> {
                         ],
                       ),
                     ),
-            
+
                     // Widget Step Tracker
                     Obx(() {
                       return Container(
@@ -202,8 +202,9 @@ class HomeView extends GetView<HomeController> {
                         child: StepsTrackerWidget(
                           progressValue: controller.progressValue,
                           currentSteps: controller.validatedSteps.value,
-                          maxSteps:
-                              controller.user.value?.userPreference?.dailyStepGoals ?? 0,
+                          maxSteps: controller
+                                  .user.value?.userPreference?.dailyStepGoals ??
+                              0,
                         ),
                       );
                     }),
@@ -215,7 +216,10 @@ class HomeView extends GetView<HomeController> {
                           margin: EdgeInsets.only(bottom: 8.h),
                           child: Text(
                             controller.error,
-                            style: Theme.of(context).textTheme.titleSmall?.copyWith(
+                            style: Theme.of(context)
+                                .textTheme
+                                .titleSmall
+                                ?.copyWith(
                                   color: Colors.red.shade400,
                                   fontSize: 13.sp,
                                   fontStyle: FontStyle.italic,
@@ -253,7 +257,7 @@ class HomeView extends GetView<HomeController> {
                                           0) {
                                         return const SizedBox();
                                       }
-            
+
                                       return Positioned(
                                         right: 0,
                                         bottom: 0,
@@ -285,9 +289,12 @@ class HomeView extends GetView<HomeController> {
                               children: [
                                 Obx(() {
                                   // Ambil nilai dari controller
-                                  final goal = controller.user.value?.userPreference?.dailyStepGoals ?? 0;
-                                  final current = controller.validatedSteps.value;
-            
+                                  final goal = controller.user.value
+                                          ?.userPreference?.dailyStepGoals ??
+                                      0;
+                                  final current =
+                                      controller.validatedSteps.value;
+
                                   // ✨ KUNCI PERBAIKAN: Logika Kondisional ✨
                                   if (current >= goal) {
                                     // --- TAMPILAN JIKA GOAL TERCAPAI ---
@@ -308,10 +315,12 @@ class HomeView extends GetView<HomeController> {
                                     // --- TAMPILAN JIKA GOAL BELUM TERCAPAI ---
                                     // Hitung sisa langkah
                                     final stepsLeft = goal - current;
-            
+
                                     return Text(
                                       'Just ${NumberHelper().formatNumberToKWithComma(stepsLeft)} steps left to crush your goal!',
-                                      style: Theme.of(context).textTheme.titleSmall,
+                                      style: Theme.of(context)
+                                          .textTheme
+                                          .titleSmall,
                                       textAlign: TextAlign.center,
                                     );
                                   }
@@ -381,9 +390,9 @@ class HomeView extends GetView<HomeController> {
                         ],
                       ),
                     ),
-            
+
                     SizedBox(height: 24.h),
-            
+
                     Column(
                       crossAxisAlignment: CrossAxisAlignment
                           .start, // Agar judul "Top Walkers" rata kiri
@@ -405,21 +414,22 @@ class HomeView extends GetView<HomeController> {
                             final leaderboards =
                                 controller.homePageData.value?.leaderboards;
                             final currentUser = controller.user.value;
-            
+
                             // Tampilkan container kosong jika data belum siap
                             if (leaderboards == null ||
                                 leaderboards.isEmpty ||
                                 currentUser == null) {
                               return const SizedBox(height: 145);
                             }
-            
+
                             // Cari data dan indeks peringkat dari pengguna yang sedang login
                             final currentUserLeaderboardData =
                                 leaderboards.firstWhereOrNull(
                                     (leader) => leader.id == currentUser.id);
-                            final currentUserRankIndex = leaderboards.indexWhere(
-                                (leader) => leader.id == currentUser.id);
-            
+                            final currentUserRankIndex =
+                                leaderboards.indexWhere(
+                                    (leader) => leader.id == currentUser.id);
+
                             /// Widget untuk tombol "See More"
                             Widget buildSeeMoreButton() {
                               return GestureDetector(
@@ -435,7 +445,8 @@ class HomeView extends GetView<HomeController> {
                                   child: Column(
                                     mainAxisAlignment: MainAxisAlignment.center,
                                     children: [
-                                      const Icon(Icons.arrow_forward_ios, size: 24),
+                                      const Icon(Icons.arrow_forward_ios,
+                                          size: 24),
                                       SizedBox(height: 8.h),
                                       Text(
                                         "See more",
@@ -449,7 +460,7 @@ class HomeView extends GetView<HomeController> {
                                 ),
                               );
                             }
-            
+
                             return Container(
                               width: 398.w,
                               decoration: BoxDecoration(
@@ -458,7 +469,8 @@ class HomeView extends GetView<HomeController> {
                               ),
                               margin: EdgeInsets.symmetric(horizontal: 16.w),
                               child: Row(
-                                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                mainAxisAlignment:
+                                    MainAxisAlignment.spaceBetween,
                                 crossAxisAlignment: CrossAxisAlignment.start,
                                 children: [
                                   // ✨ KUNCI: Gunakan kondisi untuk menentukan widget yang akan di-render ✨
@@ -485,7 +497,7 @@ class HomeView extends GetView<HomeController> {
                                     Expanded(
                                       child: buildSeeMoreButton(),
                                     ),
-            
+
                                   if (currentUserRankIndex == -1 ||
                                       currentUserRankIndex >= 3)
                                     // --- TAMPILAN JIKA USER BUKAN TOP 3 ---
@@ -496,12 +508,14 @@ class HomeView extends GetView<HomeController> {
                                           .toList();
                                       final top3OtherWalkers =
                                           otherWalkers.take(3).toList();
-                                      final walkersToShow = [...top3OtherWalkers];
+                                      final walkersToShow = [
+                                        ...top3OtherWalkers
+                                      ];
                                       if (currentUserLeaderboardData != null) {
                                         walkersToShow
                                             .add(currentUserLeaderboardData);
                                       }
-            
+
                                       return walkersToShow.map((walker) {
                                         final bool isCurrentUser =
                                             walker.id == currentUser.id;
@@ -530,9 +544,9 @@ class HomeView extends GetView<HomeController> {
                         ),
                       ],
                     ),
-            
+
                     SizedBox(height: 12.h),
-            
+
                     GestureDetector(
                       onTap: () async {
                         var res = await Get.toNamed(AppRoutes.challengeCreate);
@@ -547,10 +561,10 @@ class HomeView extends GetView<HomeController> {
                           color: darkColorScheme.surface,
                           borderRadius: BorderRadius.circular(12),
                         ),
-                        margin:
-                            EdgeInsets.symmetric(horizontal: 16.w, vertical: 12.h),
-                        padding:
-                            EdgeInsets.symmetric(horizontal: 20.w, vertical: 12.h),
+                        margin: EdgeInsets.symmetric(
+                            horizontal: 16.w, vertical: 12.h),
+                        padding: EdgeInsets.symmetric(
+                            horizontal: 20.w, vertical: 12.h),
                         child: Row(
                           children: [
                             Text(
@@ -567,7 +581,7 @@ class HomeView extends GetView<HomeController> {
                         ),
                       ),
                     ),
-            
+
                     SizedBox(height: 36.h),
                   ],
                 ),
@@ -591,9 +605,7 @@ class HomeView extends GetView<HomeController> {
                 Positioned.fill(
                   child: GestureDetector(
                     onTap: controller.hideStaminaPopup,
-                    child: Container(
-                      color: Colors.transparent
-                    ),
+                    child: Container(color: Colors.transparent),
                   ),
                 ),
                 // Popup Anda akan diposisikan dengan benar di atasnya

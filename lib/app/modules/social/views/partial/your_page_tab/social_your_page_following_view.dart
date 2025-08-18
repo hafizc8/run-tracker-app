@@ -127,14 +127,14 @@ class SocialYourPageFollowingView extends GetView<SocialFollowingController> {
       leading: ClipOval(
         child: CachedNetworkImage(
           imageUrl: user.imageUrl ?? '',
-          width: 50.r,
-          height: 50.r,
+          width: 37.r,
+          height: 37.r,
           fit: BoxFit.cover,
           placeholder: (context, url) => ShimmerLoadingCircle(
-            size: 50.r,
+            size: 43.r,
           ),
           errorWidget: (context, url, error) => CircleAvatar(
-            radius: 32.r,
+            radius: 37.r,
             backgroundColor: Theme.of(context).colorScheme.onBackground,
             child: Text(
               user.name.toInitials(),
@@ -161,12 +161,10 @@ class SocialYourPageFollowingView extends GetView<SocialFollowingController> {
                 visible: user.id == controller.userId.value,
                 replacement: Visibility(
                   visible: user.isFollowing == 0,
-                  replacement: GestureDetector(
+                  replacement: InkWell(
                     onTap: () => Get.toNamed(
                       AppRoutes.userChat,
-                      arguments: {
-                        'id': user.id,
-                      },
+                      arguments: user,
                     ),
                     child: SvgPicture.asset(
                       'assets/icons/msg.svg',

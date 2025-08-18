@@ -88,6 +88,8 @@ abstract class AppRoutes {
 
   static const privacyPolicy = '/privacy-policy';
 
+  static const inbox = '/inbox';
+
   // Share
   static const shareBadges = '/share/badges';
   static const shareDailyGoals = '/share/daily-goals';

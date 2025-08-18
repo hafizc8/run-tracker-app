@@ -81,8 +81,10 @@ class SocialForYouEventDetailView extends GetView<EventDetailController> {
         if (controller.event.value?.isJoined == 1) ...[
           InkWell(
             onTap: () {
-              Get.toNamed(AppRoutes.eventChat,
-                  arguments: controller.event.value?.id);
+              Get.toNamed(AppRoutes.eventChat, arguments: {
+                'id': controller.event.value?.id,
+                'title': controller.event.value?.activity,
+              });
             },
             child: SvgPicture.asset(
               'assets/icons/msg.svg',
@@ -198,7 +200,15 @@ class SocialForYouEventDetailView extends GetView<EventDetailController> {
                       onPressed: () async {
                         var res = await Get.toNamed(
                             AppRoutes.socialYourPageEventDetailInviteFriend,
-                            arguments: {'eventId': controller.event.value?.id});
+                            arguments: {
+                              'eventId': controller.event.value?.id,
+                              'ids': [
+                                ...controller.usersInvites
+                                    .map((e) => e.user?.id),
+                                ...controller.usersWaitings
+                                    .map((e) => e.user?.id)
+                              ]
+                            });
                         if (res != null && res) {
                           controller.init();
                         }

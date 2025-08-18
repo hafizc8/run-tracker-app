@@ -4,6 +4,7 @@ import 'package:zest_mobile/app/core/di/service_locator.dart';
 import 'package:zest_mobile/app/core/models/enums/http_method_enum.dart';
 import 'package:zest_mobile/app/core/models/forms/update_user_form.dart';
 import 'package:zest_mobile/app/core/models/interface/pagination_response_model.dart';
+import 'package:zest_mobile/app/core/models/model/chat_inbox_model.dart';
 import 'package:zest_mobile/app/core/models/model/chat_model_model.dart';
 import 'package:zest_mobile/app/core/models/model/home_page_data_model.dart';
 import 'package:zest_mobile/app/core/models/model/notification_model.dart';
@@ -42,6 +43,7 @@ class UserService {
   Future<PaginatedDataResponse<ChatModel>> getChats({
     required String userId,
     int page = 1,
+    DateTime? date,
   }) async {
     try {
       final response = await _apiService.request(
@@ -49,12 +51,36 @@ class UserService {
         method: HttpMethod.get,
         queryParams: {
           'page': page.toString(),
+          if (date != null) 'start_datetime': date.toString(),
         },
       );
 
       return PaginatedDataResponse<ChatModel>.fromJson(
         response.data['data'],
         (json) => ChatModel.fromJson(json),
+      );
+    } catch (e) {
+      rethrow;
+    }
+  }
+
+  Future<PaginatedDataResponse<ChatInboxModel>> getInboxChats({
+    int page = 1,
+    String? relatedType,
+  }) async {
+    try {
+      final response = await _apiService.request(
+        path: AppConstants.inboxChat(),
+        method: HttpMethod.get,
+        queryParams: {
+          'page': page.toString(),
+          if (relatedType != null) 'relateable_type': relatedType,
+        },
+      );
+
+      return PaginatedDataResponse<ChatInboxModel>.fromJson(
+        response.data['data'],
+        (json) => ChatInboxModel.fromJson(json),
       );
     } catch (e) {
       rethrow;
@@ -258,17 +284,12 @@ class UserService {
     }
   }
 
-  Future<bool> readNotification({
-    String? notificationId
-  }) async {
+  Future<bool> readNotification({String? notificationId}) async {
     try {
       final response = await _apiService.request(
-        path: AppConstants.notificationRead,
-        method: HttpMethod.put,
-        queryParams: {
-          if (notificationId != null) 'id': notificationId
-        }
-      );
+          path: AppConstants.notificationRead,
+          method: HttpMethod.put,
+          queryParams: {if (notificationId != null) 'id': notificationId});
 
       return response.data['success'];
     } catch (e) {

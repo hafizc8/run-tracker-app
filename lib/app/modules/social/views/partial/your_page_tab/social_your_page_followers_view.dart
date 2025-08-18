@@ -154,12 +154,10 @@ class SocialYourPageFollowersView extends GetView<SocialFollowersController> {
                 visible: user.id == controller.userId.value,
                 replacement: Visibility(
                   visible: user.isFollowing == 0,
-                  replacement: GestureDetector(
+                  replacement: InkWell(
                     onTap: () => Get.toNamed(
                       AppRoutes.userChat,
-                      arguments: {
-                        'id': user.id,
-                      },
+                      arguments: user,
                     ),
                     child: SvgPicture.asset(
                       'assets/icons/msg.svg',

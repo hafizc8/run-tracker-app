@@ -149,6 +149,12 @@ class EventDetailController extends GetxController {
 
         event.value = event.value!.copyWith(
           isJoined: leave != null ? 0 : 1,
+          userOnEventsCount:
+              (leave != null && res.status == 1 || res.status == 3)
+                  ? (event.value?.userOnEventsCount ?? 0) - 1
+                  : (res.status == 1 || res.status == 3)
+                      ? (event.value?.userOnEventsCount ?? 0) + 1
+                      : null,
         );
         eventLastUpdated.value = event.value?.copyWith(
           userOnEvents: usersInvites,

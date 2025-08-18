@@ -205,8 +205,14 @@ class ChallengeCreateTeamView extends GetView<ChallangeCreateController> {
                             }
 
                             var res = await Get.toNamed(
-                              AppRoutes.challengeInviteFriend,
-                            );
+                                AppRoutes.challengeInviteFriend,
+                                arguments: {
+                                  'ids': controller.form.value.teams
+                                      ?.expand((team) => team.members ?? [])
+                                      .map((member) => member.id)
+                                      .whereType<String>()
+                                      .toList()
+                                });
                             if (res != null) {
                               controller.addMembersToTeam(
                                   index, res as List<User>);

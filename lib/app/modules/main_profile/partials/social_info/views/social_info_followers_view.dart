@@ -123,11 +123,11 @@ class SocialInfoFollowersView extends GetView<SocialInfoFollowersController> {
       leading: ClipOval(
         child: CachedNetworkImage(
           imageUrl: user.imageUrl ?? '',
-          width: 50.r,
-          height: 50.r,
+          width: 37.r,
+          height: 37.r,
           fit: BoxFit.cover,
           placeholder: (context, url) => ShimmerLoadingCircle(
-            size: 50.r,
+            size: 37.r,
           ),
           errorWidget: (context, url, error) => CircleAvatar(
             radius: 32.r,

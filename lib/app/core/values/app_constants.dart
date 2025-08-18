@@ -70,6 +70,8 @@ class AppConstants {
   // notif
   static String eventChat(String id) => "/chat/event/$id";
   static String userChat(String id) => "/chat/user/$id";
+  static String clubChat(String id) => "/chat/club/$id";
+  static String inboxChat() => "/chat";
 
   // Challenge
   static String challenge({String? id}) =>

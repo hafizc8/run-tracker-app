@@ -88,7 +88,7 @@ class DetailClubView extends GetView<DetailClubController> {
               ),
               SliverPersistentHeader(
                 delegate: _SliverTabBarDelegate(
-                  tabBar: _buildCustomTabBar(context),
+                  tabBar: _buildCustomTabBar(context, customTabBarHeight),
                   tabBarHeight: customTabBarHeight,
                 ),
                 pinned: true,
@@ -230,7 +230,7 @@ class DetailClubView extends GetView<DetailClubController> {
                           ? TextOverflow.visible
                           : TextOverflow.ellipsis,
                       style: Theme.of(context).textTheme.bodyMedium?.copyWith(
-                            fontSize: 12,
+                            fontSize: 12.sp,
                           ),
                     ),
                   ),
@@ -316,14 +316,25 @@ class DetailClubView extends GetView<DetailClubController> {
                         ),
                       ),
                     ),
-                    const SizedBox(width: 16),
-                    InkWell(
-                      onTap: () {
-                        Get.toNamed(AppRoutes.clubChat, arguments: club?.id);
-                      },
-                      child: SvgPicture.asset(
-                        'assets/icons/msg.svg',
-                        color: Theme.of(context).colorScheme.onBackground,
+                    Visibility(
+                      visible: club?.isJoined ?? false,
+                      child: Row(
+                        children: [
+                          const SizedBox(width: 16),
+                          InkWell(
+                            onTap: () {
+                              Get.toNamed(AppRoutes.clubChat, arguments: {
+                                'id': club?.id ?? '',
+                                'title': club?.name ?? '',
+                                'imgUrl': club?.imageUrl ?? '',
+                              });
+                            },
+                            child: SvgPicture.asset(
+                              'assets/icons/msg.svg',
+                              color: Theme.of(context).colorScheme.onBackground,
+                            ),
+                          ),
+                        ],
                       ),
                     ),
                     const SizedBox(width: 12),
@@ -363,7 +374,7 @@ class DetailClubView extends GetView<DetailClubController> {
             shape: BoxShape.circle,
           ),
           child: Padding(
-            padding: EdgeInsets.all(15.0.w),
+            padding: EdgeInsets.all(15.0),
             child: SvgPicture.asset(
               'assets/icons/ic_edit_2.svg',
             ),
@@ -529,7 +540,7 @@ class DetailClubView extends GetView<DetailClubController> {
     );
   }
 
-  Widget _buildCustomTabBar(BuildContext context) {
+  Widget _buildCustomTabBar(BuildContext context, double customTabBarHeight) {
     return Obx(() {
       BorderRadiusGeometry indicatorBorderRadius;
 
@@ -549,17 +560,17 @@ class DetailClubView extends GetView<DetailClubController> {
 
       return Container(
         margin: const EdgeInsets.symmetric(horizontal: 16),
-        padding: EdgeInsets.all(1.w), // Lebar border
+        padding: const EdgeInsets.all(1), // Lebar border
         decoration: BoxDecoration(
           gradient: const LinearGradient(
             colors: [Color(0xFFA2FF00), Color(0xFF00FF7F)],
             begin: Alignment.centerLeft,
             end: Alignment.centerRight,
           ),
-          borderRadius: BorderRadius.circular(12.r),
+          borderRadius: BorderRadius.circular(12),
         ),
         child: Container(
-          height: 38.h,
+          height: customTabBarHeight,
           decoration: BoxDecoration(
             // border: Border.all(color: Theme.of(context).colorScheme.primary),
             borderRadius: BorderRadius.circular(12),

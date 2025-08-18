@@ -59,7 +59,6 @@ class BadgesView extends GetView<BadgesController> {
         return GridView.builder(
           padding: const EdgeInsets.all(16),
           shrinkWrap: true,
-          physics: const NeverScrollableScrollPhysics(),
           gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
             crossAxisCount: 3,
             mainAxisSpacing: 12,

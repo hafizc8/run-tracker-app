@@ -1,28 +1,35 @@
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
-import 'package:zest_mobile/app/core/extension/date_extension.dart';
 import 'package:zest_mobile/app/core/extension/initial_profile_empty.dart';
+import 'package:zest_mobile/app/core/extension/time_extension.dart';
 import 'package:zest_mobile/app/core/models/model/chat_model_model.dart';
 import 'package:zest_mobile/app/core/shared/widgets/shimmer_loading_circle.dart';
 
 class ChatBubble extends StatelessWidget {
-  const ChatBubble({super.key, this.isSender = false, this.chat});
+  const ChatBubble({
+    super.key,
+    this.isSender = false,
+    this.chat,
+    this.showUserInfo = true, // tambahkan parameter baru
+  });
+
   final bool isSender;
   final ChatModel? chat;
+  final bool showUserInfo;
 
   Widget _buildAvatar() {
     return ClipOval(
       child: CachedNetworkImage(
         imageUrl: chat?.user?.imageUrl ?? '',
-        width: 50.r,
-        height: 50.r,
+        width: 27.r,
+        height: 27.r,
         fit: BoxFit.cover,
         placeholder: (context, url) => ShimmerLoadingCircle(
-          size: 50.r,
+          size: 27.r,
         ),
         errorWidget: (context, url, error) => CircleAvatar(
-          radius: 32.r,
+          radius: 17.r,
           backgroundColor: Theme.of(context).colorScheme.onBackground,
           child: Text(
             (chat?.user?.name ?? '-').toInitials(),
@@ -32,73 +39,163 @@ class ChatBubble extends StatelessWidget {
     );
   }
 
-  Widget _buildMessage(BuildContext context) {
-    return Container(
-      constraints: BoxConstraints(
-        maxWidth:
-            MediaQuery.of(context).size.width * 0.7, // 70% of screen width
-      ),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          // Name + Date
-          Row(
-            children: [
-              Flexible(
-                child: Text(
-                  chat?.user?.name ?? "-",
-                  maxLines: 1,
-                  overflow: TextOverflow.ellipsis,
-                  style: Theme.of(context).textTheme.bodyMedium?.copyWith(
-                        fontSize: 13.sp,
-                        color: const Color(0xFFA5A5A5),
-                      ),
-                ),
+  Widget _buildMsgIsSender(
+      BuildContext buildContext, Color bgColor, Color textColor) {
+    return Row(
+      children: [
+        Text(
+          chat?.createdAt != null ? chat!.createdAt!.toLocalHourMinute() : '',
+          style: TextStyle(
+            color: Color(0xFF707070),
+            fontSize: 10.sp,
+          ),
+        ),
+        const SizedBox(width: 12),
+        Container(
+          constraints: BoxConstraints(
+              maxWidth: MediaQuery.of(buildContext).size.width * 0.7),
+          padding: EdgeInsets.symmetric(horizontal: 12.w, vertical: 8.h),
+          decoration: BoxDecoration(
+            color: bgColor,
+            borderRadius: BorderRadius.circular(10.r),
+          ),
+          child: Text(
+            chat?.message ?? '',
+            style: TextStyle(
+              color: textColor,
+              fontSize: 14.sp,
+            ),
+          ),
+        ),
+      ],
+    );
+  }
+
+  Widget _buildMsgIsNotSender(
+      BuildContext buildContext, Color bgColor, Color textColor) {
+    // Kalau showUserInfo == false, sembunyikan avatar dan nama, tapi beri padding agar rata
+    if (!showUserInfo) {
+      return Padding(
+        padding: EdgeInsets.only(left: 28.w),
+        child: Row(
+          children: [
+            Container(
+              constraints: BoxConstraints(
+                  maxWidth: MediaQuery.of(buildContext).size.width * 0.7),
+              padding: EdgeInsets.symmetric(horizontal: 12.w, vertical: 8.h),
+              decoration: BoxDecoration(
+                color: bgColor,
+                borderRadius: BorderRadius.circular(10.r),
               ),
-              const SizedBox(width: 5),
-              Text(
-                chat?.createdAt!.todMMMString() ?? "-",
-                style: Theme.of(context).textTheme.bodyMedium?.copyWith(
+              child: Text(
+                chat?.message ?? '',
+                style: Theme.of(buildContext).textTheme.bodyMedium?.copyWith(
+                      color: Color(0xFFA5A5A5),
                       fontSize: 13.sp,
-                      color: const Color(0xFF616161),
+                      fontWeight: FontWeight.w400,
                     ),
               ),
-            ],
-          ),
-          const SizedBox(height: 4),
+            ),
+            const SizedBox(width: 12),
+            Text(
+              chat?.createdAt != null
+                  ? chat!.createdAt!.toLocalHourMinute()
+                  : '',
+              style: TextStyle(
+                color: Color(0xFF707070),
+                fontSize: 10.sp,
+              ),
+            ),
+          ],
+        ),
+      );
+    }
 
-          // Message text
-          Text(
-            chat?.message ?? "-",
-            style: Theme.of(context).textTheme.bodyMedium?.copyWith(
-                  fontSize: 13.sp,
-                  color: const Color(0xFFA5A5A5),
+    // Jika showUserInfo == true, tampilkan avatar dan nama seperti biasa
+    return Row(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        _buildAvatar(),
+        const SizedBox(width: 16),
+        Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Text(
+              chat?.user?.name ?? '',
+              style: Theme.of(buildContext).textTheme.bodyMedium?.copyWith(
+                    color: Color(0xFFA5A5A5),
+                    fontSize: 13.sp,
+                    fontWeight: FontWeight.w700,
+                  ),
+            ),
+            const SizedBox(height: 8),
+            Row(
+              children: [
+                Container(
+                  constraints: BoxConstraints(
+                      maxWidth: MediaQuery.of(buildContext).size.width * 0.7),
+                  padding:
+                      EdgeInsets.symmetric(horizontal: 12.w, vertical: 8.h),
+                  decoration: BoxDecoration(
+                    color: bgColor,
+                    borderRadius: BorderRadius.circular(10.r),
+                  ),
+                  child: Text(
+                    chat?.message ?? '',
+                    style:
+                        Theme.of(buildContext).textTheme.bodyMedium?.copyWith(
+                              color: Color(0xFFA5A5A5),
+                              fontSize: 13.sp,
+                              fontWeight: FontWeight.w400,
+                            ),
+                  ),
                 ),
-          ),
-        ],
-      ),
+                const SizedBox(width: 12),
+                Text(
+                  chat?.createdAt != null
+                      ? chat!.createdAt!.toLocalHourMinute()
+                      : '',
+                  style: TextStyle(
+                    color: Color(0xFF707070),
+                    fontSize: 10.sp,
+                  ),
+                ),
+              ],
+            ),
+          ],
+        ),
+      ],
     );
   }
 
   @override
   Widget build(BuildContext context) {
-    return Row(
-      mainAxisAlignment:
-          isSender ? MainAxisAlignment.end : MainAxisAlignment.start,
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: isSender
-          ? [
-              // Bubble pesan (kanan)
-              _buildMessage(context),
-              SizedBox(width: 8.w),
-              _buildAvatar(),
-            ]
-          : [
-              // Avatar dulu (kiri)
-              _buildAvatar(),
-              SizedBox(width: 8.w),
-              _buildMessage(context),
-            ],
-    );
+    final bgColor =
+        isSender ? const Color(0xFFbfff00) : const Color(0xFF393939);
+    final textColor = isSender ? Colors.black : Colors.white;
+
+    switch (chat?.type) {
+      case 3:
+        return Row(
+          mainAxisAlignment:
+              isSender ? MainAxisAlignment.end : MainAxisAlignment.start,
+          crossAxisAlignment: CrossAxisAlignment.end,
+          children: [
+            isSender
+                ? _buildMsgIsSender(context, bgColor, textColor)
+                : _buildMsgIsNotSender(context, bgColor, textColor),
+          ],
+        );
+      default:
+        return Text(
+          chat?.message ?? '',
+          textAlign: TextAlign.center,
+          style: Theme.of(context).textTheme.bodyMedium?.copyWith(
+                color: const Color(0xFFA5A5A5),
+                fontSize: 13.sp,
+                fontWeight: FontWeight.w400,
+              ),
+        );
+    }
   }
 }

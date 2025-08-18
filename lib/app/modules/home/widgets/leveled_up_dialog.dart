@@ -8,6 +8,7 @@ import 'package:zest_mobile/app/core/models/model/popup_notification_model.dart'
 import 'package:zest_mobile/app/core/shared/theme/color_schemes.dart';
 import 'package:zest_mobile/app/core/shared/widgets/gradient_elevated_button.dart';
 import 'package:zest_mobile/app/core/shared/widgets/gradient_outlined_button.dart';
+import 'package:zest_mobile/app/routes/app_routes.dart';
 
 class LeveledUpDialog extends StatelessWidget {
   final PopupNotificationModel notification;
@@ -113,7 +114,6 @@ class LeveledUpDialog extends StatelessWidget {
                           ),
                         ),
                         onPressed: () {
-                          // TODO: Implement Share logic
                           Get.back(result: 'share');
                         },
                         // ✨ Bangun child tombol secara dinamis

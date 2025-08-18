@@ -141,10 +141,7 @@ class EventCard extends StatelessWidget {
                   children: [
                     GestureDetector(
                       onTap: () {
-                        // share event
-                        Share.share(
-                          '[Zest+] Check out event ${eventModel?.title} here: ${AppConstants.shareEventLink(eventModel?.id ?? '')}',
-                        );
+                        Get.toNamed(AppRoutes.shareEvent, arguments: eventModel);
                       },
                       child: SvgPicture.asset(
                         'assets/icons/ic_share-2.svg',

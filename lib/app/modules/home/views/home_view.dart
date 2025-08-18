@@ -369,9 +369,18 @@ class HomeView extends GetView<HomeController> {
                                       ],
                                     ),
                                     SizedBox(width: 20.w),
-                                    SvgPicture.asset(
-                                      'assets/icons/ic_share_3.svg',
-                                      width: 21.w,
+                                    InkWell(
+                                      onTap: () {
+                                        Get.toNamed(AppRoutes.shareDailyStepProgress, arguments: {
+                                          'progressValue': controller.progressValue,
+                                          'currentSteps': controller.validatedSteps.value,
+                                          'maxSteps': controller.user.value?.userPreference?.dailyStepGoals ?? 0,
+                                        });
+                                      },
+                                      child: SvgPicture.asset(
+                                        'assets/icons/ic_share_3.svg',
+                                        width: 21.w,
+                                      ),
                                     ),
                                   ],
                                 ),

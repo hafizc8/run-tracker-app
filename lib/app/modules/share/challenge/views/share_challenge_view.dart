@@ -1,13 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
-import 'package:flutter_svg/flutter_svg.dart';
 import 'package:get/get.dart';
-import 'package:google_fonts/google_fonts.dart';
-import 'package:zest_mobile/app/core/shared/helpers/number_helper.dart';
 import 'package:zest_mobile/app/core/shared/theme/color_schemes.dart';
-import 'package:zest_mobile/app/core/shared/widgets/share_footer.dart';
 import 'package:zest_mobile/app/core/shared/widgets/share_options_grid.dart';
 import 'package:zest_mobile/app/modules/share/challenge/controllers/share_challenge_controller.dart';
+import 'package:zest_mobile/app/modules/share/challenge/views/share_challenge_card.dart';
 
 class ShareChallengeView extends GetView<ShareChallengeController> {
   const ShareChallengeView({super.key});
@@ -18,160 +15,30 @@ class ShareChallengeView extends GetView<ShareChallengeController> {
       appBar: _buildAppBar(context),
       backgroundColor: darkColorScheme.surface,
       body: SingleChildScrollView(
-        child: Column(
-          children: [
-            Stack(
-              alignment: Alignment.center,
+        child: Obx(
+          () {
+            if (controller.isLoading.value) {
+              return const Center(
+                child: CircularProgressIndicator(),
+              );
+            }
+        
+            return Column(
               children: [
-                // Lapisan 1: Container utama dengan border dan background SVG
-                Container(
-                  margin: EdgeInsets.symmetric(horizontal: 16.w),
-                  decoration: BoxDecoration(
-                    border: Border.all(color: darkColorScheme.primary, width: 1),
-                    borderRadius: BorderRadius.circular(18.r),
-                    color: darkColorScheme.surface,
-                  ),
-                  child: ClipRRect(
-                    borderRadius: BorderRadius.circular(18.r),
-                    child: Stack(
-                      children: [
-                        Positioned.fill(
-                          child: SvgPicture.asset(
-                            'assets/images/background_share.svg',
-                            fit: BoxFit.cover,
-                          ),
-                        ),
-                        
-                        // Lapisan Konten di atas background
-                        Padding(
-                          padding: EdgeInsets.fromLTRB(16.w, 16.h, 16.w, 82.h),
-                          child: Column(
-                            children: [
-                              SizedBox(
-                                width: double.infinity,
-                                child: Align(
-                                  alignment: Alignment.centerRight,
-                                  child: SvgPicture.asset(
-                                    'assets/images/zest_green.svg',
-                                    height: 25.h,
-                                  ),
-                                ),
-                              ),
-                              SizedBox(height: 42.h),
-
-                              Container(
-                                padding: EdgeInsets.symmetric(horizontal: 8.w, vertical: 4.h),
-                                decoration: BoxDecoration(
-                                  color: const Color(0xFF5E5E5E),
-                                  borderRadius: BorderRadius.circular(9.r),
-                                ),
-                                child: Row(
-                                  mainAxisAlignment: MainAxisAlignment.center,
-                                  mainAxisSize: MainAxisSize.min,
-                                  children: [
-                                    SvgPicture.asset(
-                                      'assets/icons/ic_team.svg',
-                                    ),
-                                    SizedBox(width: 4.w),
-                                    Text(
-                                      'Team', // TODO: Ganti dengan tipe tantangan
-                                      style: Theme.of(context).textTheme.bodySmall?.copyWith(
-                                        fontWeight: FontWeight.w400,
-                                        fontSize: 12.sp,
-                                        color: const Color(0xFFDCDCDC),
-                                      ),
-                                    ),
-                                  ],
-                                ),
-                              ),
-                              SizedBox(height: 16.h),
-
-                              ShaderMask(
-                                shaderCallback: (bounds) => const LinearGradient(
-                                  begin: Alignment.centerLeft,
-                                  end: Alignment.centerRight,
-                                  colors: [Color(0xFFA2FF00), Color(0xFF00FF7F)],
-                                ).createShader(Rect.fromLTWH(0, 0, bounds.width, bounds.height)),
-                                child: Text(
-                                  'March Walk 50K Challenge',
-                                  maxLines: 2,
-                                  overflow: TextOverflow.ellipsis,
-                                  style: GoogleFonts.poppins(
-                                    fontSize: 17.sp,
-                                    fontWeight: FontWeight.w700,
-                                    color: Colors.white, // Teks harus putih agar shader terlihat
-                                  ),
-                                ),
-                              ),
-                              SizedBox(height: 4.h),
-
-                              Text(
-                                'FIRST TO FINISH CHALLENGE', // TODO: Ganti dengan tipe tantangan
-                                style: Theme.of(context).textTheme.bodySmall?.copyWith(
-                                  fontWeight: FontWeight.w400,
-                                  fontSize: 12.sp,
-                                  color: const Color(0xFFB6B6B6),
-                                ),
-                              ),
-                              SizedBox(height: 24.h),
-
-                              Row(
-                                mainAxisAlignment: MainAxisAlignment.spaceAround,
-                                children: [
-                                  _buildPlaceholder(
-                                    context: context,
-                                    title: 'Start Date',
-                                    svgIconPath: 'assets/icons/uil_calendar.svg',
-                                    text: '31 May 2025',
-                                  ),
-                                  _buildPlaceholder(
-                                    context: context,
-                                    title: 'Target',
-                                    svgIconPath: 'assets/icons/mingcute_target-line.svg',
-                                    text: NumberHelper().formatNumberToKWithComma(50000),
-                                  ),
-                                ],
-                              ),
-
-                              SizedBox(height: 125.h),
-                            ],
-                          ),
-                        ),
-
-                        Positioned(
-                          bottom: 20.h,
-                          left: 0,
-                          right: 0,
-                          child: Container(
-                            height: 165.h,
-                            // color: Colors.amber,
-                            child: SvgPicture.asset(
-                              'assets/icons/ic_challenge_static.svg',
-                              width: double.infinity,
-                              fit: BoxFit.fitWidth,
-                            ),
-                          ),
-                        ),
-
-                        // Container "Powered by" di bagian bawah
-                        const ShareFooter(),
-                      ],
-                    ),
-                  ),
+                ShareChallengeCard(
+                  challengeModel: controller.challengeData.value!,
                 ),
+            
+                SizedBox(height: 24.h),
+                ShareOptionsGrid(
+                  onOptionTap: (String label) {
+                    controller.shareTo(label);
+                  },
+                ),
+                SizedBox(height: 24.h),
               ],
-            ),
-
-            SizedBox(height: 24.h),
-            ShareOptionsGrid(
-              onOptionTap: (String label) {
-                // Panggil fungsi di controller Anda
-                // controller.shareTo(label);
-                print("Sharing to: $label");
-              },
-            ),
-            SizedBox(height: 24.h),
-          ],
+            );
+          }
         ),
       ),
     );
@@ -199,46 +66,6 @@ class ShareChallengeView extends GetView<ShareChallengeController> {
       shadowColor: Colors.black.withOpacity(0.3),
       surfaceTintColor: darkColorScheme.surface,
       backgroundColor: darkColorScheme.surface,
-    );
-  }
-
-  Widget _buildPlaceholder({
-    required BuildContext context, 
-    required String title,
-    required String svgIconPath, 
-    required String text,
-  }) {
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.center,
-      children: [
-        Text(
-          title,
-          style: GoogleFonts.poppins(
-            fontSize: 12.sp,
-            fontWeight: FontWeight.w400,
-            color: const Color(0xFFB6B6B6), // Teks harus putih agar shader terlihat
-          ),
-        ),
-        const SizedBox(height: 6),
-        Row(
-          children: [
-            SvgPicture.asset(
-              svgIconPath,
-              height: 20.h,
-              color: Colors.white,
-            ),
-            const SizedBox(width: 8),
-            Text(
-              text,
-              style: GoogleFonts.poppins(
-                fontSize: 12.sp,
-                fontWeight: FontWeight.w500,
-                color: const Color(0xFFDCDCDC), // Teks harus putih agar shader terlihat
-              ),
-            ),
-          ],
-        )
-      ],
     );
   }
 }

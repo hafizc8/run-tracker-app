@@ -1,10 +1,11 @@
 <?xml version="1.0" encoding="utf-8"?>
-<paths>
-    <external-path
-        name="external_files"
-        path="." />
+<paths xmlns:android="http://schemas.android.com/apk/res/android">
+    <!-- Izin untuk mengakses direktori cache internal aplikasi -->
+    <cache-path name="cache" path="." />
+    
+    <!-- Izin untuk mengakses direktori files internal aplikasi -->
+    <files-path name="files" path="." />
 
-    <cache-path
-        name="cache"
-        path="." />
+    <!-- (Opsional) Izin untuk mengakses penyimpanan eksternal jika diperlukan -->
+    <external-path name="external_files" path="." />
 </paths>

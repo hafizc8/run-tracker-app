@@ -9,6 +9,7 @@ import 'package:zest_mobile/app/core/shared/helpers/number_helper.dart';
 import 'package:zest_mobile/app/core/shared/theme/color_schemes.dart';
 import 'package:zest_mobile/app/core/shared/widgets/gradient_elevated_button.dart';
 import 'package:zest_mobile/app/core/shared/widgets/gradient_outlined_button.dart';
+import 'package:zest_mobile/app/routes/app_routes.dart';
 
 class AchieveStreakDialog extends StatelessWidget {
   final PopupNotificationModel notification;
@@ -114,7 +115,14 @@ class AchieveStreakDialog extends StatelessWidget {
                           ),
                         ),
                         onPressed: () {
-                          // TODO: Implement Share logic
+                          // Get.toNamed(
+                          //   AppRoutes.shareDailyGoals,
+                          //   arguments: {
+                          //     'title': notification.data['title'],
+                          //     'description': notification.data['description'],
+                          //     'imageUrl': notification.imageUrl,
+                          //   }
+                          // );
                           Get.back(result: 'share');
                         },
                         // ✨ Bangun child tombol secara dinamis

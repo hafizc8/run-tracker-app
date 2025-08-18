@@ -32,7 +32,9 @@
         android:label="Zest+"
         android:name="${applicationName}"
         android:icon="@mipmap/ic_launcher"
-        android:launchMode="singleTask">
+        android:launchMode="singleTask"
+        android:requestLegacyExternalStorage="true"
+        android:enableOnBackInvokedCallback="true">
 
         <!-- Google Api Key -->
         <meta-data
@@ -99,22 +101,20 @@
                     android:scheme="devzestplus"
                     android:host="share-event" />
             </intent-filter>
+            <intent-filter>
+                <action android:name="android.intent.action.VIEW" />
+                <category android:name="android.intent.category.DEFAULT" />
+                <category android:name="android.intent.category.BROWSABLE" />
+                <data
+                    android:scheme="devzestplus"
+                    android:host="share-post" />
+            </intent-filter>
 
         </activity>
         <activity
             android:name="com.yalantis.ucrop.UCropActivity"
             android:screenOrientation="portrait"
             android:theme="@style/Theme.AppCompat.Light.NoActionBar"/>
-
-        <provider
-            android:name="androidx.core.content.FileProvider"
-            android:authorities="${applicationId}.flutter_share_provider"
-            android:exported="false"
-            android:grantUriPermissions="true">
-            <meta-data
-                android:name="android.support.FILE_PROVIDER_PATHS"
-                android:resource="@xml/flutter_share_file_paths"/>
-        </provider>
 
         <provider android:name="androidx.core.content.FileProvider" 
             android:authorities="${applicationId}.provider"

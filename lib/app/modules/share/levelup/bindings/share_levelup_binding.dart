@@ -7,8 +7,8 @@ class ShareLevelUpBinding extends Bindings {
   void dependencies() {
     Get.put(
       ShareLevelUpController(
-        title: Get.arguments['title'],
-        description: Get.arguments['description'],
+        title: Get.arguments['title'].toString().isEmpty ? 'Level Up!' : Get.arguments['title'],
+        description: Get.arguments['description'].toString().isEmpty ? 'Who\'s leveling up next?' : Get.arguments['description'],
         imageUrl: Get.arguments['imageUrl'],
       ),
     );

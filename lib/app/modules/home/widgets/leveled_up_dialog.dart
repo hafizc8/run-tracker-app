@@ -114,14 +114,7 @@ class LeveledUpDialog extends StatelessWidget {
                           ),
                         ),
                         onPressed: () {
-                          Get.offAndToNamed(
-                            AppRoutes.shareLevelUp,
-                            arguments: {
-                              'title': notification.data['title'],
-                              'description': notification.data['description'],
-                              'imageUrl': notification.imageUrl,
-                            }
-                          );
+                          Get.back(result: 'share');
                         },
                         // ✨ Bangun child tombol secara dinamis
                         child: Text(

@@ -3,7 +3,9 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 
 class ShareFooter extends StatelessWidget {
-  const ShareFooter({super.key});
+  const ShareFooter({super.key, this.withShadow = false});
+
+  final bool withShadow;
 
   @override
   Widget build(BuildContext context) {
@@ -22,6 +24,13 @@ class ShareFooter extends StatelessWidget {
           ),
           // Border radius hanya di sudut bawah
           borderRadius: BorderRadius.circular(20.r),
+          boxShadow: withShadow ? [
+            BoxShadow(
+              color: Colors.black.withOpacity(0.25),
+              blurRadius: 2,
+              offset: const Offset(0, 3),
+            ),
+          ] : null,
         ),
         child: Row(
           mainAxisAlignment: MainAxisAlignment.center,

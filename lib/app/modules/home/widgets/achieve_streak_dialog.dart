@@ -115,14 +115,15 @@ class AchieveStreakDialog extends StatelessWidget {
                           ),
                         ),
                         onPressed: () {
-                          Get.offAndToNamed(
-                            AppRoutes.shareDailyGoals,
-                            arguments: {
-                              'title': notification.data['title'],
-                              'description': notification.data['description'],
-                              'imageUrl': notification.imageUrl,
-                            }
-                          );
+                          // Get.toNamed(
+                          //   AppRoutes.shareDailyGoals,
+                          //   arguments: {
+                          //     'title': notification.data['title'],
+                          //     'description': notification.data['description'],
+                          //     'imageUrl': notification.imageUrl,
+                          //   }
+                          // );
+                          Get.back(result: 'share');
                         },
                         // ✨ Bangun child tombol secara dinamis
                         child: Text(

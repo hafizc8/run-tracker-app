@@ -613,10 +613,17 @@ class DetailChallengeView extends GetView<DetailChallangeController> {
                                   ),
                             ),
                             const Spacer(),
-                            SvgPicture.asset(
-                              'assets/icons/ic_share-2.svg',
-                              height: 24.r,
-                              width: 24.r,
+                            InkWell(
+                              onTap: () {
+                                if (controller.detailChallenge.value?.type == 0) {
+                                  Get.toNamed(AppRoutes.shareChallengeProgressIndividual, arguments:controller.detailChallenge.value);
+                                }
+                              },
+                              child: SvgPicture.asset(
+                                'assets/icons/ic_share-2.svg',
+                                height: 24.r,
+                                width: 24.r,
+                              ),
                             ),
                           ],
                         ),

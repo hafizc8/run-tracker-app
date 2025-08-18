@@ -71,10 +71,8 @@ class HomeController extends GetxController {
       // ✨ KUNCI #1: Alur inisialisasi yang baru dan lebih efisien ✨
       
       // 1. Jalankan tugas yang tidak saling bergantung secara paralel
-      await Future.wait([
-        _requestPermissions(),
-        refreshData(),
-      ]);
+      _requestPermissions();
+      refreshData();
 
       // 2. Sinkronkan hari-hari yang terlewat terlebih dahulu
       await _syncMissingDailyRecords();
@@ -156,9 +154,13 @@ class HomeController extends GetxController {
   /// ✨ KUNCI #3: Fungsi ini sekarang menggunakan logika per jam untuk mengisi hari yang hilang.
   Future<void> _syncMissingDailyRecords() async {
     _logService.log.i("Checking for missing daily records to sync...");
-    // TODO: get last record date from Endpoint "Get all daily record"
-    final lastRecordDate = homePageData.value?.recordDaily?.date;
+
+    final lastRecordDate = await _recordActivityService.getDailyRecord(limit: 1).then((value) => value.data.firstOrNull?.date);
     if (lastRecordDate == null) return;
+
+    print('lastRecordDate: $lastRecordDate');
+    print('lastRecordDate: $lastRecordDate');
+    print('lastRecordDate: $lastRecordDate');
 
     final today = DateTime.now();
     final differenceInDays = today.difference(lastRecordDate).inDays;
@@ -388,6 +390,42 @@ class HomeController extends GetxController {
       } catch (e, s) {
         _logService.log
             .e("Failed to mark notification as read.", error: e, stackTrace: s);
+      }
+
+      if (result == 'share') {
+        Future.delayed(
+          const Duration(seconds: 2),
+          () {
+            if (notification.typeText == 'AchieveStreak') {
+              Get.toNamed(
+                AppRoutes.shareDailyGoals,
+                arguments: {
+                  'title': notification.title ?? '',
+                  'description': notification.data['description'] ?? '',
+                  'imageUrl': notification.imageUrl ?? '',
+                }
+              );
+            } else if (notification.typeText == 'LevelUp') {
+              Get.toNamed(
+                AppRoutes.shareLevelUp,
+                arguments: {
+                  'title': notification.title ?? '',
+                  'description': notification.data['description'] ?? '',
+                  'imageUrl': notification.imageUrl ?? '',
+                }
+              );
+            } else if (notification.typeText == 'AchieveBadge') {
+              Get.toNamed(
+                AppRoutes.shareBadges,
+                arguments: {
+                  'title': notification.title ?? '',
+                  'description': notification.data['description'] ?? '',
+                  'imageUrl': notification.imageUrl ?? '',
+                }
+              );
+            }
+          }
+        );
       }
     }
 

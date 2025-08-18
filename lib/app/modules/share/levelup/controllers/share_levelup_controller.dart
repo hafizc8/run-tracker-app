@@ -61,7 +61,7 @@ class ShareLevelUpController extends GetxController {
         ),
         backgroundImagePath: 'assets/images/background_share-2.png',
       ),
-      pixelRatio: 8.0,
+      pixelRatio: 3.0,
     );
 
     // 2. Simpan gambar ke file sementara
@@ -72,16 +72,30 @@ class ShareLevelUpController extends GetxController {
 
     String message = AppConstants.shareProfileLink(user?.id ?? '');
 
+    final installedApps = await socialShare.getInstalledApps();
+
     switch (platform.toLowerCase()) {
       case 'whatsapp':
+        if (installedApps['whatsapp'] == false) {
+          Get.snackbar('Error', 'WhatsApp is not installed on this device.');
+          return;
+        }
         await socialShare.android.shareToWhatsapp(message, imagePath);
         break;
 
       case 'instagram':
+        if (installedApps['instagram'] == false) {
+          Get.snackbar('Error', 'Instagram is not installed on this device.');
+          return;
+        }
         await socialShare.android.shareToInstagramDirect(message);
         break;
 
       case 'x':
+        if (installedApps['twitter'] == false) {
+          Get.snackbar('Error', 'X is not installed on this device.');
+          return;
+        }
         await socialShare.android.shareToTwitter(message, imagePath);
         break;
 

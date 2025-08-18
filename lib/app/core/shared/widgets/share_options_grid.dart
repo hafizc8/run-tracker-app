@@ -14,7 +14,7 @@ class ShareOptionsGrid extends StatelessWidget {
     final List<Map<String, String>> shareOptions = [
       {'icon': 'assets/icons/ic_share_whatsapp.svg', 'label': 'Whatsapp'},
       {'icon': 'assets/icons/ic_share_instagram.svg', 'label': 'Instagram'},
-      {'icon': 'assets/icons/ic_share_x_logo.svg', 'label': 'X'},
+      {'icon': 'assets/icons/Twitter-X-Icon-PNG.svg', 'label': 'X'},
       {'icon': 'assets/icons/ic_share_link.svg', 'label': 'Link'},
       {'icon': 'assets/icons/ic_share_download.svg', 'label': 'Download'},
     ];

@@ -16,6 +16,7 @@ class DailyRecordModel extends Model<DailyRecordModel> {
     this.xpRecordActivity,
     this.xpSpecialEvent,
     this.updatedAt,
+    this.lastTimestamp,
   });
 
   final String? id;
@@ -31,6 +32,7 @@ class DailyRecordModel extends Model<DailyRecordModel> {
   final int? xpRecordActivity;
   final int? xpSpecialEvent;
   final DateTime? updatedAt;
+  final DateTime? lastTimestamp;
 
   @override
   DailyRecordModel copyWith({
@@ -47,6 +49,7 @@ class DailyRecordModel extends Model<DailyRecordModel> {
     int? xpRecordActivity,
     int? xpSpecialEvent,
     DateTime? updatedAt,
+    DateTime? lastTimestamp,
   }) {
     return DailyRecordModel(
       id: id ?? this.id,
@@ -62,6 +65,7 @@ class DailyRecordModel extends Model<DailyRecordModel> {
       xpRecordActivity: xpRecordActivity ?? this.xpRecordActivity,
       xpSpecialEvent: xpSpecialEvent ?? this.xpSpecialEvent,
       updatedAt: updatedAt ?? this.updatedAt,
+      lastTimestamp: lastTimestamp ?? this.lastTimestamp,
     );
   }
 
@@ -80,6 +84,7 @@ class DailyRecordModel extends Model<DailyRecordModel> {
       xpRecordActivity: json["xp_record_activity"],
       xpSpecialEvent: json["xp_special_event"],
       updatedAt: DateTime.tryParse(json["updated_at"] ?? ""),
+      lastTimestamp: DateTime.tryParse(json["last_timestamp"] ?? ""),
     );
   }
 
@@ -115,5 +120,6 @@ class DailyRecordModel extends Model<DailyRecordModel> {
         xpRecordActivity,
         xpSpecialEvent,
         updatedAt,
+        lastTimestamp
       ];
 }

@@ -85,6 +85,8 @@ import 'package:zest_mobile/app/modules/share/challenge/bindings/share_challenge
 import 'package:zest_mobile/app/modules/share/challenge/views/share_challenge_view.dart';
 import 'package:zest_mobile/app/modules/share/challenge_progress_individual/bindings/share_challenge_progress_individual_binding.dart';
 import 'package:zest_mobile/app/modules/share/challenge_progress_individual/views/share_challenge_progress_individual_view.dart';
+import 'package:zest_mobile/app/modules/share/challenge_progress_team/bindings/share_challenge_progress_team_binding.dart';
+import 'package:zest_mobile/app/modules/share/challenge_progress_team/views/share_challenge_progress_team_view.dart';
 import 'package:zest_mobile/app/modules/share/club/bindings/share_club_binding.dart';
 import 'package:zest_mobile/app/modules/share/club/views/share_club_view.dart';
 import 'package:zest_mobile/app/modules/share/daily_step_progress/bindings/share_daily_step_progress_binding.dart';
@@ -467,6 +469,11 @@ class AppPages {
       name: AppRoutes.shareChallengeProgressIndividual,
       page: () => const ShareChallengeProgressIndividualView(),
       binding: ShareChallengeProgressIndividualBinding(),
+    ),
+    GetPage(
+      name: AppRoutes.shareChallengeProgressTeam,
+      page: () => const ShareChallengeProgressTeamView(),
+      binding: ShareChallengeProgressTeamBinding(),
     ),
   ];
 }

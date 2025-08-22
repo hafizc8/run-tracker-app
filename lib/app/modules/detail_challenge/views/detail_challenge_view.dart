@@ -617,6 +617,11 @@ class DetailChallengeView extends GetView<DetailChallangeController> {
                               onTap: () {
                                 if (controller.detailChallenge.value?.type == 0) {
                                   Get.toNamed(AppRoutes.shareChallengeProgressIndividual, arguments:controller.detailChallenge.value);
+                                } else {
+                                  Get.toNamed(AppRoutes.shareChallengeProgressTeam, arguments: {
+                                    'detailChallenge': controller.detailChallenge.value,
+                                    'team': controller.teams.value
+                                  });
                                 }
                               },
                               child: SvgPicture.asset(

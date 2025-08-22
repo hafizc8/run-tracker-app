@@ -42,6 +42,16 @@ class AppInterceptor extends Interceptor {
       case AppExceptionType.emptyProfile:
         g.Get.offAllNamed(AppRoutes.registerCreateProfile);
         break;
+      case AppExceptionType.notFound:
+        // get.back and show message with snackbar
+        Get.back();
+        Get.snackbar(
+          'Not Found',
+          appEx.message,
+          backgroundColor: Theme.of(Get.context!).colorScheme.error,
+          colorText: Theme.of(Get.context!).colorScheme.onError,
+        );
+        break;
       case AppExceptionType.serverError:
         Get.snackbar(
           'Error',

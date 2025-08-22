@@ -1,5 +1,5 @@
 import 'dart:async';
-import 'package:disable_battery_optimization/disable_battery_optimization.dart';
+// import 'package:disable_battery_optimization/disable_battery_optimization.dart';
 import 'package:geolocator/geolocator.dart';
 import 'package:get/get.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
@@ -54,26 +54,26 @@ class StartActivityController extends GetxController {
       return false;
     }
 
-    bool? isBatteryOptimizationDisabled = await DisableBatteryOptimization.isBatteryOptimizationDisabled;
-    if (isBatteryOptimizationDisabled == false) {
-      bool? isBatteryOptimizationDisabled = await DisableBatteryOptimization.showDisableBatteryOptimizationSettings();
-      if (isBatteryOptimizationDisabled == false) {
-        Get.snackbar("Battery Optimizations Disabled", "Please enable battery optimizations for accurate tracking.");
-        return false;
-      }
-    }
+    // bool? isBatteryOptimizationDisabled = await DisableBatteryOptimization.isBatteryOptimizationDisabled;
+    // if (isBatteryOptimizationDisabled == false) {
+    //   bool? isBatteryOptimizationDisabled = await DisableBatteryOptimization.showDisableBatteryOptimizationSettings();
+    //   if (isBatteryOptimizationDisabled == false) {
+    //     Get.snackbar("Battery Optimizations Disabled", "Please enable battery optimizations for accurate tracking.");
+    //     return false;
+    //   }
+    // }
 
-    bool? isManBatteryOptimizationDisabled = await DisableBatteryOptimization.isManufacturerBatteryOptimizationDisabled;
-    if (isManBatteryOptimizationDisabled == false) {
-      bool? isManBatteryOptimizationDisabled = await DisableBatteryOptimization.showDisableManufacturerBatteryOptimizationSettings(
-        "Your device has additional battery optimization",
-        "Follow the steps and disable the optimizations to allow smooth functioning of this app",
-      );
-      if (isManBatteryOptimizationDisabled == false) {
-        Get.snackbar("Manufacturer Battery Optimizations Disabled", "Please enable manufacturer battery optimizations for accurate tracking.");
-        return false;
-      }
-    }
+    // bool? isManBatteryOptimizationDisabled = await DisableBatteryOptimization.isManufacturerBatteryOptimizationDisabled;
+    // if (isManBatteryOptimizationDisabled == false) {
+    //   bool? isManBatteryOptimizationDisabled = await DisableBatteryOptimization.showDisableManufacturerBatteryOptimizationSettings(
+    //     "Your device has additional battery optimization",
+    //     "Follow the steps and disable the optimizations to allow smooth functioning of this app",
+    //   );
+    //   if (isManBatteryOptimizationDisabled == false) {
+    //     Get.snackbar("Manufacturer Battery Optimizations Disabled", "Please enable manufacturer battery optimizations for accurate tracking.");
+    //     return false;
+    //   }
+    // }
     
     return true;
   }

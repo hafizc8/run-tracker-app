@@ -46,8 +46,8 @@ class ShareChallengeProgressIndividualView extends GetView<ShareChallengeProgres
             
                 SizedBox(height: 24.h),
                 ShareOptionsGrid(
-                  onOptionTap: (String label) {
-                    controller.shareTo(label);
+                  onOptionTap: (String label) async {
+                    await controller.shareTo(label);
                   },
                 ),
                 SizedBox(height: 24.h),

@@ -1,9 +1,6 @@
 import 'dart:io';
-
 import 'package:appinio_social_share/appinio_social_share.dart';
-import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
 import 'package:image_gallery_saver/image_gallery_saver.dart';
 import 'package:path_provider/path_provider.dart';
@@ -11,8 +8,6 @@ import 'package:permission_handler/permission_handler.dart';
 import 'package:screenshot/screenshot.dart';
 import 'package:zest_mobile/app/core/models/model/challenge_detail_model.dart';
 import 'package:zest_mobile/app/core/values/app_constants.dart';
-import 'package:zest_mobile/app/modules/share/challenge_progress_individual/views/share_challenge_progress_individual_card.dart';
-import 'package:zest_mobile/app/modules/share/widgets/share_image_wrapper.dart';
 
 class ShareChallengeProgressIndividualController extends GetxController {
   
@@ -62,7 +57,7 @@ class ShareChallengeProgressIndividualController extends GetxController {
     final file = await File(imagePath).create();
     await file.writeAsBytes(imageBytes);
 
-    String message = AppConstants.sharePostLink(challengeModel.id!);
+    String message = AppConstants.shareChallengeLink(challengeModel.id!);
 
     final installedApps = await socialShare.getInstalledApps();
 

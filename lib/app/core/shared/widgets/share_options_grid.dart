@@ -2,23 +2,30 @@ import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 
-class ShareOptionsGrid extends StatelessWidget {
-  // Callback yang akan dipanggil saat salah satu opsi ditekan,
-  // membawa label dari opsi tersebut (misal: "Whatsapp").
-  final Function(String label) onOptionTap;
+class ShareOptionsGrid extends StatefulWidget {
+  // ✨ Ubah tipe callback menjadi Future<void> untuk menangani async
+  final Future<void> Function(String label) onOptionTap;
 
   const ShareOptionsGrid({super.key, required this.onOptionTap});
 
   @override
-  Widget build(BuildContext context) {
-    final List<Map<String, String>> shareOptions = [
-      {'icon': 'assets/icons/ic_share_whatsapp.svg', 'label': 'Whatsapp'},
-      {'icon': 'assets/icons/ic_share_instagram.svg', 'label': 'Instagram'},
-      {'icon': 'assets/icons/Twitter-X-Icon-PNG.svg', 'label': 'X'},
-      {'icon': 'assets/icons/ic_share_link.svg', 'label': 'Link'},
-      {'icon': 'assets/icons/ic_share_download.svg', 'label': 'Download'},
-    ];
+  State<ShareOptionsGrid> createState() => _ShareOptionsGridState();
+}
 
+class _ShareOptionsGridState extends State<ShareOptionsGrid> {
+  // ✨ State untuk melacak platform mana yang sedang loading
+  String? _loadingPlatform;
+
+  final List<Map<String, String>> shareOptions = [
+    {'icon': 'assets/icons/ic_share_whatsapp.svg', 'label': 'Whatsapp'},
+    {'icon': 'assets/icons/ic_share_instagram.svg', 'label': 'Instagram'},
+    {'icon': 'assets/icons/Twitter-X-Icon-PNG.svg', 'label': 'X'},
+    {'icon': 'assets/icons/ic_share_link.svg', 'label': 'Link'},
+    {'icon': 'assets/icons/ic_share_download.svg', 'label': 'Download'},
+  ];
+
+  @override
+  Widget build(BuildContext context) {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
@@ -46,9 +53,34 @@ class ShareOptionsGrid extends StatelessWidget {
           itemCount: shareOptions.length,
           itemBuilder: (context, index) {
             final option = shareOptions[index];
+            final label = option['label']!;
+            
+            // Cek apakah item ini yang sedang loading
+            final bool isLoading = _loadingPlatform == label;
+
             return GestureDetector(
-              onTap: () => onOptionTap(option['label']!),
-              child: _buildShareIcon(context, option['icon']!, option['label']!),
+              onTap: () async {
+                // Jangan lakukan apa-apa jika sudah ada proses yang berjalan
+                if (_loadingPlatform != null) return;
+                
+                // ✨ 2. Atur state loading saat ditekan
+                setState(() {
+                  _loadingPlatform = label;
+                });
+                
+                try {
+                  // Jalankan fungsi share yang async
+                  await widget.onOptionTap(label);
+                } finally {
+                  // ✨ 3. Hentikan state loading setelah selesai (baik berhasil maupun gagal)
+                  if (mounted) {
+                    setState(() {
+                      _loadingPlatform = null;
+                    });
+                  }
+                }
+              },
+              child: _buildShareIcon(context, option['icon']!, label, isLoading),
             );
           },
         ),
@@ -56,18 +88,52 @@ class ShareOptionsGrid extends StatelessWidget {
     );
   }
 
-  Widget _buildShareIcon(BuildContext context, String iconAsset, String label) {
+  Widget _buildShareIcon(BuildContext context, String iconAsset, String label, bool isLoading) {
+    print('label: $label, isLoading: $isLoading');
     return Column(
       mainAxisAlignment: MainAxisAlignment.center,
       children: [
-        SvgPicture.asset(iconAsset, width: 36.w, height: 36.h),
+        Container(
+          width: 52.r,
+          height: 52.r,
+          decoration: BoxDecoration(
+            color: const Color(0xFF393939),
+            borderRadius: BorderRadius.circular(12.r),
+          ),
+          child: Stack(
+            alignment: Alignment.center,
+            children: [
+              // Lapisan 1: Ikon SVG (selalu ada, menjadi transparan saat loading)
+              AnimatedOpacity(
+                duration: const Duration(milliseconds: 200),
+                opacity: isLoading ? 0.0 : 1.0,
+                child: Padding(
+                  padding: EdgeInsets.all(10.r),
+                  child: SvgPicture.asset(
+                    iconAsset,
+                  ),
+                ),
+              ),
+              
+              // Lapisan 2: Loading Indicator (hanya terlihat saat isLoading)
+              if (isLoading)
+                Padding(
+                  padding: EdgeInsets.all(12.r),
+                  child: const CircularProgressIndicator(
+                    strokeWidth: 2.5,
+                    color: Colors.white,
+                  ),
+                ),
+            ],
+          ),
+        ),
         SizedBox(height: 8.h),
         Text(
           label,
           style: Theme.of(context).textTheme.bodySmall?.copyWith(
-            fontSize: 11.sp,
-            color: const Color(0xFF9B9B9B),
-          ),
+                fontSize: 12.sp,
+                color: const Color(0xFF9B9B9B),
+              ),
           textAlign: TextAlign.center,
         ),
       ],

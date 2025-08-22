@@ -1,13 +1,14 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
+import 'package:screenshot/screenshot.dart';
 import 'package:zest_mobile/app/core/shared/theme/color_schemes.dart';
 import 'package:zest_mobile/app/core/shared/widgets/share_options_grid.dart';
-import 'package:zest_mobile/app/modules/share/levelup/controllers/share_levelup_controller.dart';
-import 'package:zest_mobile/app/modules/share/levelup/views/share_levelup_card.dart';
+import 'package:zest_mobile/app/modules/share/challenge_progress_team/controllers/share_challenge_progress_team_controller.dart';
+import 'package:zest_mobile/app/modules/share/challenge_progress_team/views/share_challenge_progress_team_card.dart';
 
-class ShareLevelUpView extends GetView<ShareLevelUpController> {
-  const ShareLevelUpView({super.key});
+class ShareChallengeProgressTeamView extends GetView<ShareChallengeProgressTeamController> {
+  const ShareChallengeProgressTeamView({super.key});
 
   @override
   Widget build(BuildContext context) {
@@ -25,10 +26,23 @@ class ShareLevelUpView extends GetView<ShareLevelUpController> {
         
             return Column(
               children: [
-                ShareLevelupCard(
-                  title: controller.title,
-                  description: controller.description,
-                  imageUrl: controller.imageUrl,
+                Container(
+                  margin: EdgeInsets.symmetric(horizontal: 16.w),
+                  decoration: BoxDecoration(
+                    border: Border.all(color: darkColorScheme.primary, width: 1),
+                    borderRadius: BorderRadius.circular(18.r),
+                    color: darkColorScheme.surface,
+                  ),
+                  child: ClipRRect(
+                    borderRadius: BorderRadius.circular(18.r),
+                    child: Screenshot(
+                      controller: controller.screenshotController,
+                      child: ShareChallengeProgressTeamCard(
+                        challengeModel: controller.challengeData.value!,
+                        team: controller.team,
+                      ),
+                    ),
+                  ),
                 ),
             
                 SizedBox(height: 24.h),

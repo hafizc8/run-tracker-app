@@ -1,5 +1,4 @@
 import 'dart:io';
-
 import 'package:appinio_social_share/appinio_social_share.dart';
 import 'package:flutter/services.dart';
 import 'package:get/get.dart';
@@ -7,18 +6,18 @@ import 'package:image_gallery_saver/image_gallery_saver.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:permission_handler/permission_handler.dart';
 import 'package:screenshot/screenshot.dart';
-import 'package:zest_mobile/app/core/models/model/challenge_model.dart';
+import 'package:zest_mobile/app/core/models/model/challenge_detail_model.dart';
+import 'package:zest_mobile/app/core/models/model/challenge_team_model.dart';
 import 'package:zest_mobile/app/core/values/app_constants.dart';
-import 'package:zest_mobile/app/modules/share/challenge/views/share_challenge_card.dart';
-import 'package:zest_mobile/app/modules/share/widgets/share_image_wrapper.dart';
 
-class ShareChallengeController extends GetxController {
+class ShareChallengeProgressTeamController extends GetxController {
   
-  final ChallengeModel challengeModel;
+  final ChallengeDetailModel challengeModel;
+  final Map<String, List<ChallengeTeamsModel>> team;
 
-  ShareChallengeController({required this.challengeModel});
+  ShareChallengeProgressTeamController({required this.challengeModel, required this.team});
 
-  Rx<ChallengeModel?> challengeData = Rx<ChallengeModel?>(null);
+  Rx<ChallengeDetailModel?> challengeData = Rx<ChallengeDetailModel?>(null);
   RxBool isLoading = RxBool(true);
 
   final ScreenshotController screenshotController = ScreenshotController();
@@ -52,17 +51,11 @@ class ShareChallengeController extends GetxController {
   /// ✨ FUNGSI UTAMA: Menangkap gambar dan membagikannya
   Future<void> shareTo(String platform) async {
     // 1. Tangkap widget sebagai gambar (dalam format Uint8List)
-    final imageBytes = await screenshotController.captureFromWidget(
-      ShareImageWrapper(
-        shareCard: ShareChallengeCard(challengeModel: challengeModel),
-        backgroundImagePath: 'assets/images/background_share-2.png',
-      ),
-      pixelRatio: 3.0,
-    );
+    final imageBytes = await screenshotController.capture(pixelRatio: 3).then((image) => image!.buffer.asUint8List());
 
     // 2. Simpan gambar ke file sementara
     final directory = await getTemporaryDirectory();
-    final imagePath = '${directory.path}/shared_challenge_${DateTime.now().millisecondsSinceEpoch}.png';
+    final imagePath = '${directory.path}/shared_challenge_team_progress_${DateTime.now().millisecondsSinceEpoch}.png';
     final file = await File(imagePath).create();
     await file.writeAsBytes(imageBytes);
 
@@ -89,7 +82,7 @@ class ShareChallengeController extends GetxController {
 
       case 'x':
         if (installedApps['twitter'] == false) {
-          Get.snackbar('Error', 'X is not installed on this device.');
+          Get.snackbar('Error', 'Twitter or X is not installed on this device.');
           return;
         }
         await socialShare.android.shareToTwitter(message, imagePath);

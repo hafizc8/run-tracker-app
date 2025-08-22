@@ -49,6 +49,9 @@ class AppConstants {
   static String userFollow(String id) => "/follow/$id";
   static String userUnFollow(String id) => "/unfollow/$id";
 
+  // shop
+  static String shop = "/shop";
+
   // Post
   static const String postGetAll = "/post";
   static const String postCreate = "/post";
@@ -119,10 +122,14 @@ class AppConstants {
   static const String readPopupNotification = "/popup-notification";
 
   // Share Link
-  static String shareProfileLink(String id) => "$baseUrlShareLink/share-profile?user=$id";
-  static String shareClubLink(String id) => "$baseUrlShareLink/share-club?club=$id";
-  static String shareEventLink(String id) => "$baseUrlShareLink/share-event?event=$id";
-  static String sharePostLink(String id) => "$baseUrlShareLink/share-post?post=$id";
+  static String shareProfileLink(String id) =>
+      "$baseUrlShareLink/share-profile?user=$id";
+  static String shareClubLink(String id) =>
+      "$baseUrlShareLink/share-club?club=$id";
+  static String shareEventLink(String id) =>
+      "$baseUrlShareLink/share-event?event=$id";
+  static String sharePostLink(String id) =>
+      "$baseUrlShareLink/share-post?post=$id";
 
   // Notification
   static const String notification = '/notification';

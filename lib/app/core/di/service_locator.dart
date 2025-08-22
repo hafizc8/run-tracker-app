@@ -13,6 +13,7 @@ import 'package:zest_mobile/app/core/services/location_service.dart';
 import 'package:zest_mobile/app/core/services/log_service.dart';
 import 'package:zest_mobile/app/core/services/post_service.dart';
 import 'package:zest_mobile/app/core/services/record_activity_service.dart';
+import 'package:zest_mobile/app/core/services/shop_service.dart';
 import 'package:zest_mobile/app/core/services/storage_service.dart';
 import 'package:zest_mobile/app/core/services/user_service.dart';
 
@@ -30,6 +31,7 @@ Future<void> setupServiceLocator() async {
   sl.registerLazySingleton(() => EventService(sl<ApiService>()));
   sl.registerLazySingleton(() => ClubService(sl<ApiService>()));
   sl.registerLazySingleton(() => BadgeService(sl<ApiService>()));
+  sl.registerLazySingleton(() => ShopService(sl<ApiService>()));
   sl.registerLazySingleton(() => ChallengeService(sl<ApiService>()));
   sl.registerLazySingleton(() => RecordActivityService(sl<ApiService>()));
   sl.registerSingletonAsync<SharedPreferences>(() async {

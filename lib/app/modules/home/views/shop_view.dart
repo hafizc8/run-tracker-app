@@ -2,9 +2,12 @@ import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:get/get.dart';
+import 'package:zest_mobile/app/core/models/model/shop_provider_model.dart';
 import 'package:zest_mobile/app/core/shared/theme/input_decoration_theme.dart';
+import 'package:zest_mobile/app/core/shared/widgets/shimmer_loading_list.dart';
+import 'package:zest_mobile/app/modules/home/controllers/shop_controller.dart';
 
-class ShopView extends StatelessWidget {
+class ShopView extends GetView<ShopController> {
   const ShopView({super.key});
 
   @override
@@ -12,22 +15,72 @@ class ShopView extends StatelessWidget {
     return Scaffold(
       appBar: AppBar(
         title: SvgPicture.asset(
-          'assets/icons/ic_shop_provider.svg',
+          'assets/icons/svgviewer-output.svg',
         ),
         automaticallyImplyLeading: false,
-        centerTitle: true,
         elevation: 4,
-        leading: Padding(
-          padding: EdgeInsets.only(left: 8.w),
-          child: GestureDetector(
-            onTap: () => Get.back(),
-            child: const Icon(
-              Icons.chevron_left,
-              color: Color(0xFFA5A5A5),
-            ),
-          ),
-        ),
       ),
+      body: Obx(() {
+        if (controller.isLoading.value) {
+          return const Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              ShimmerLoadingList(
+                itemCount: 1,
+                itemHeight: 200,
+              ),
+              ShimmerLoadingList(
+                itemCount: 3,
+                itemHeight: 100,
+              ),
+            ],
+          );
+        }
+        return SingleChildScrollView(
+          padding: const EdgeInsets.symmetric(horizontal: 16),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Text(
+                'Visit Our Store',
+                style: Theme.of(context).textTheme.bodyMedium?.copyWith(
+                      fontWeight: FontWeight.w400,
+                      fontSize: 15.sp,
+                      color: Color(0xFFA5A5A5),
+                    ),
+              ),
+              const SizedBox(
+                height: 32,
+              ),
+              ListView.separated(
+                  shrinkWrap: true,
+                  physics: const NeverScrollableScrollPhysics(),
+                  itemBuilder: ((context, index) {
+                    Link? link =
+                        controller.shopProviderModel.value?.links[index];
+                    return Container(
+                      padding: const EdgeInsets.all(16),
+                      decoration: BoxDecoration(
+                        color: Color(0xFF2E2E2E),
+                        borderRadius: BorderRadius.circular(15),
+                      ),
+                      child: Row(
+                        children: [
+                          Flexible(child: Text('data')),
+                          Flexible(child: Text('data')),
+                        ],
+                      ),
+                    );
+                  }),
+                  separatorBuilder: (context, index) => const SizedBox(
+                        height: 16,
+                      ),
+                  itemCount:
+                      controller.shopProviderModel.value?.links.length ?? 0),
+            ],
+          ),
+        );
+      }),
     );
   }
 }

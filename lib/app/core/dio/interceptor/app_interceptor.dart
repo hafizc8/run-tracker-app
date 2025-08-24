@@ -44,13 +44,7 @@ class AppInterceptor extends Interceptor {
         break;
       case AppExceptionType.notFound:
         // get.back and show message with snackbar
-        Get.back();
-        Get.snackbar(
-          'Not Found',
-          appEx.message,
-          backgroundColor: Theme.of(Get.context!).colorScheme.error,
-          colorText: Theme.of(Get.context!).colorScheme.onError,
-        );
+        Get.back(closeOverlays: true);
         break;
       case AppExceptionType.serverError:
         Get.snackbar(

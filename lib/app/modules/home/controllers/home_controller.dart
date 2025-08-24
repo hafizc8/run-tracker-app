@@ -10,6 +10,7 @@ import 'package:zest_mobile/app/core/models/model/popup_notification_model.dart'
 import 'package:zest_mobile/app/core/models/model/record_daily_mini_model.dart';
 import 'package:zest_mobile/app/core/models/model/user_model.dart';
 import 'package:zest_mobile/app/core/services/auth_service.dart';
+import 'package:zest_mobile/app/core/services/fcm_service.dart';
 import 'package:zest_mobile/app/core/services/log_service.dart';
 import 'package:zest_mobile/app/core/services/record_activity_service.dart';
 import 'package:zest_mobile/app/core/services/user_service.dart';
@@ -95,6 +96,13 @@ class HomeController extends GetxController {
     } finally {
       isLoadingGetUserData.value = false;
     }
+  }
+
+  @override
+  void onReady() {
+    super.onReady();
+    _logService.log.i("HomeController: onReady.");
+    FcmService.markAppAsReady(); 
   }
 
   @override

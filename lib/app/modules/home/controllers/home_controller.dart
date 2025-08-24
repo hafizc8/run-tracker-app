@@ -47,7 +47,7 @@ class HomeController extends GetxController {
   static const _syncInterval = Duration(minutes: 3);
 
   Timer? _syncTimerRefreshStepUI;
-  static const _syncIntervalRefreshStepUI = Duration(seconds: 3);
+  static const _syncIntervalRefreshStepUI = Duration(seconds: 5);
   
   // ✨ --- State baru untuk menampung data langkah per jam --- ✨
   var hourlySteps = <int, int>{}.obs; // Map<Jam, Jumlah_Langkah>
@@ -76,8 +76,6 @@ class HomeController extends GetxController {
     try {
       // ✨ KUNCI #1: Alur inisialisasi yang baru dan lebih efisien ✨
       
-      // 1. Jalankan tugas yang tidak saling bergantung secara paralel
-      _requestPermissions();
       await refreshData();
 
       // 2. Sinkronkan hari-hari yang terlewat terlebih dahulu
@@ -112,9 +110,9 @@ class HomeController extends GetxController {
   Future<void> _requestPermissions() async {
     // Minta Izin Activity Recognition
     var activityStatus = await Permission.activityRecognition.request();
+
     if (!activityStatus.isGranted) {
-      Get.snackbar(
-          "Permission Denied", "Activity sensor permission is required.");
+      Get.snackbar("Permission Denied", "Activity sensor permission is required.");
       _logService.log.w("Activity Recognition permission denied.");
       return;
     }
@@ -128,6 +126,8 @@ class HomeController extends GetxController {
 
   /// ✨ KUNCI #2: Fungsi baru untuk menyinkronkan data hari ini berdasarkan data per jam.
   Future<void> _syncTodaysData() async {
+    await _requestPermissions();
+    
     _logService.log.i("Syncing today's hourly step data...");
     final today = DateTime.now();
     
@@ -172,6 +172,8 @@ class HomeController extends GetxController {
 
   /// ✨ KUNCI #3: Fungsi ini sekarang menggunakan logika per jam untuk mengisi hari yang hilang.
   Future<void> _syncMissingDailyRecords() async {
+    await _requestPermissions();
+
     _logService.log.i("Checking for missing daily records to sync...");
 
     if (lastRecord.value == null) return;

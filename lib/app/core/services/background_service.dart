@@ -50,23 +50,28 @@ void onStart(ServiceInstance service) async {
   // =========================================================================
 
   pedometerSubscription = Pedometer().stepCountStream().listen((steps) {
+    _log(service, LogLevel.verbose, "Pedometer raw event: $steps steps.");
+
     if (!isRecording || isPaused) {
       // Jika tidak merekam, cukup simpan state terakhir untuk perhitungan nanti
       totalStepsAtPause = steps;
+      _log(service, LogLevel.verbose, "!isRecording || isPaused, totalStepsAtPause: $totalStepsAtPause steps.");
       return;
     }
 
-    _log(service, LogLevel.verbose, "Pedometer raw event: $steps steps.");
 
     // Jika baru saja resume dari pause
     if (totalStepsAtPause > 0) {
       int stepsDuringPause = steps - totalStepsAtPause;
-      totalStepsAtStart +=
-          stepsDuringPause; // Tambahkan langkah saat pause ke offset
+      totalStepsAtStart += stepsDuringPause; // Tambahkan langkah saat pause ke offset
       totalStepsAtPause = 0; // Reset
+      _log(service, LogLevel.info, "Total steps at start: $totalStepsAtStart steps.");
     }
 
     stepsInSession = steps - totalStepsAtStart;
+    _log(service, LogLevel.info, "Pedometer step count: $stepsInSession steps.");
+  }, onError: (error) {
+    _log(service, LogLevel.error, "Pedometer error: $error");
   });
 
   // --- Listener Geolocator (Selalu Aktif) ---
@@ -134,20 +139,18 @@ void onStart(ServiceInstance service) async {
           "startRecording called, but a session is already active.");
       return;
     }
+    
+
+    // // Ambil total langkah saat ini sebagai titik awal (offset)
+    totalStepsAtStart = totalStepsAtPause;
+    _log(service, LogLevel.info, "[New!] Initial step count captured: $totalStepsAtStart");
+
     // Reset semua state sesi
     elapsedTimeInSeconds = 0;
     stepsInSession = 0;
     currentDistanceInMeters = 0.0;
     currentPath.clear();
     isPaused = false;
-    totalStepsAtPause = 0;
-
-    // Ambil total langkah saat ini sebagai titik awal (offset)
-    Pedometer()
-        .stepCountStream()
-        .first
-        .then((value) => totalStepsAtStart = value);
-
     isRecording = true;
 
     // Mulai Timer yang mengirim update ke UI & Notifikasi
@@ -161,6 +164,7 @@ void onStart(ServiceInstance service) async {
         elapsedTimeInSeconds++;
       }
       // Kirim update ke UI
+      _log(service, LogLevel.verbose, "Sending update to UI: stepsInSession = $stepsInSession");
       service.invoke('update', {
         "elapsedTime": elapsedTimeInSeconds,
         "steps": stepsInSession,

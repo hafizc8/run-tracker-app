@@ -1,3 +1,4 @@
+import 'package:google_sign_in/google_sign_in.dart';
 import 'package:zest_mobile/app/core/di/service_locator.dart';
 import 'package:zest_mobile/app/core/models/enums/http_method_enum.dart';
 import 'package:zest_mobile/app/core/models/forms/forgot_password_form.dart';
@@ -158,6 +159,36 @@ class AuthService {
         await sl<StorageService>().remove(StorageKeys.token);
         await sl<StorageService>().remove(StorageKeys.user);
       }
+
+      return response.data['success'];
+    } catch (e) {
+      rethrow;
+    }
+  }
+
+  Future<bool> loginWithGoogle() async {
+    try {
+      final GoogleSignInAccount? googleUser = await GoogleSignIn().signIn();
+      if (googleUser == null) return false; // batal login
+
+      final GoogleSignInAuthentication googleAuth =
+          await googleUser.authentication;
+
+      final String accessToken = googleAuth.accessToken!;
+      final fcmToken = await _fcmService.getFcmToken();
+
+      final response = await _apiService.request(
+        path: AppConstants.loginWithGoogle,
+        method: HttpMethod.post,
+        data: {
+          'access_token': accessToken,
+          'fcm_token': fcmToken ?? '',
+        },
+      );
+
+      // store token to local
+      await sl<StorageService>()
+          .write(StorageKeys.token, response.data['data']['token']);
 
       return response.data['success'];
     } catch (e) {

@@ -24,6 +24,7 @@ class AppConstants {
 
   // Auth
   static const String login = "/login";
+  static const String loginWithGoogle = "/auth/google";
   static const String register = "/register";
   static const String logout = "/logout";
   static const String forgotPassword = "/forgot-password";

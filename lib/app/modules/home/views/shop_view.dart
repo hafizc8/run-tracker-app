@@ -1,7 +1,11 @@
+import 'package:cached_network_image/cached_network_image.dart';
+import 'package:carousel_slider/carousel_slider.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/widgets.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:get/get.dart';
+import 'package:shimmer/shimmer.dart';
 import 'package:zest_mobile/app/core/models/model/shop_provider_model.dart';
 import 'package:zest_mobile/app/core/shared/theme/input_decoration_theme.dart';
 import 'package:zest_mobile/app/core/shared/widgets/shimmer_loading_list.dart';
@@ -30,7 +34,7 @@ class ShopView extends GetView<ShopController> {
                 itemHeight: 200,
               ),
               ShimmerLoadingList(
-                itemCount: 3,
+                itemCount: 1,
                 itemHeight: 100,
               ),
             ],
@@ -41,6 +45,22 @@ class ShopView extends GetView<ShopController> {
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
+              CarouselSlider(
+                options: CarouselOptions(
+                  autoPlay: true,
+                  aspectRatio: 2.0,
+                  enlargeCenterPage: true,
+                ),
+                items: controller.shopProviderModel.value?.sliders.map((e) {
+                      return GradientBorderImageCard(
+                        imageUrl: e,
+                      );
+                    }).toList() ??
+                    [],
+              ),
+              const SizedBox(
+                height: 32,
+              ),
               Text(
                 'Visit Our Store',
                 style: Theme.of(context).textTheme.bodyMedium?.copyWith(
@@ -58,17 +78,103 @@ class ShopView extends GetView<ShopController> {
                   itemBuilder: ((context, index) {
                     Link? link =
                         controller.shopProviderModel.value?.links[index];
-                    return Container(
-                      padding: const EdgeInsets.all(16),
-                      decoration: BoxDecoration(
-                        color: Color(0xFF2E2E2E),
-                        borderRadius: BorderRadius.circular(15),
-                      ),
-                      child: Row(
-                        children: [
-                          Flexible(child: Text('data')),
-                          Flexible(child: Text('data')),
-                        ],
+                    return GestureDetector(
+                      onTap: () => controller.openLink(link?.link ?? ''),
+                      child: Container(
+                        decoration: BoxDecoration(
+                          color: Color(0xFF2E2E2E),
+                          borderRadius: BorderRadius.circular(15),
+                        ),
+                        child: Row(
+                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                          children: [
+                            Expanded(
+                              child: Container(
+                                padding: const EdgeInsets.all(16),
+                                decoration: const BoxDecoration(
+                                  color: Color(0xFF3B3B3B),
+                                  borderRadius: BorderRadius.only(
+                                    topLeft: Radius.circular(15),
+                                    bottomLeft: Radius.circular(15),
+                                  ),
+                                ),
+                                child: CachedNetworkImage(
+                                  imageUrl: link?.imageUrl ?? '',
+                                  fit: BoxFit.cover,
+                                  placeholder: (context, url) =>
+                                      Shimmer.fromColors(
+                                    baseColor: Colors.grey.shade800,
+                                    highlightColor: Colors.grey.shade700,
+                                    child: const SizedBox.shrink(),
+                                  ),
+                                  errorWidget: (context, url, error) => Center(
+                                    child: Column(
+                                      mainAxisAlignment:
+                                          MainAxisAlignment.center,
+                                      children: [
+                                        Icon(Icons.image,
+                                            size: 64.r, color: Colors.grey),
+                                        SizedBox(height: 8.h),
+                                        const Text('Image Placeholder',
+                                            style:
+                                                TextStyle(color: Colors.grey)),
+                                      ],
+                                    ),
+                                  ),
+                                ),
+                              ),
+                            ),
+                            Expanded(
+                                child: Container(
+                              padding: const EdgeInsets.all(16),
+                              child: Row(
+                                children: [
+                                  ShaderMask(
+                                    shaderCallback: (bounds) =>
+                                        const LinearGradient(
+                                      begin: Alignment.centerLeft,
+                                      end: Alignment.centerRight,
+                                      colors: [
+                                        Color(0xFFA2FF00),
+                                        Color(0xFF00FF7F),
+                                      ],
+                                    ).createShader(Rect.fromLTWH(
+                                            0, 0, bounds.width, bounds.height)),
+                                    child: Text(
+                                      'Buy On Website',
+                                      style: Theme.of(context)
+                                          .textTheme
+                                          .bodyMedium
+                                          ?.copyWith(
+                                            color: Colors.white,
+                                            fontWeight: FontWeight.w400,
+                                            fontSize: 13.sp,
+                                          ),
+                                    ),
+                                  ),
+                                  ShaderMask(
+                                    shaderCallback: (bounds) =>
+                                        const LinearGradient(
+                                      begin: Alignment.topCenter,
+                                      end: Alignment.bottomCenter,
+                                      colors: [
+                                        Color(0xFFA2FF00),
+                                        Color(0xFF00FF7F),
+                                      ],
+                                    ).createShader(
+                                      Rect.fromLTWH(
+                                          0, 0, bounds.width, bounds.height),
+                                    ),
+                                    child: Icon(
+                                      Icons.chevron_right,
+                                      size: 25.h,
+                                    ),
+                                  ),
+                                ],
+                              ),
+                            )),
+                          ],
+                        ),
                       ),
                     );
                   }),
@@ -89,9 +195,9 @@ class GradientBorderImageCard extends StatelessWidget {
   const GradientBorderImageCard({
     super.key,
     required this.imageUrl,
-    this.borderWidth = 3,
+    this.borderWidth = 1,
     this.borderRadius = 16,
-    this.height = 200,
+    this.height = 176,
   });
 
   final String imageUrl;
@@ -109,33 +215,23 @@ class GradientBorderImageCard extends StatelessWidget {
           end: Alignment.bottomRight,
           colors: kDefaultGradientBorderColors,
         ),
-        borderRadius: BorderRadius.circular(borderRadius),
+        borderRadius: BorderRadius.circular(borderRadius.r),
       ),
-      padding: EdgeInsets.all(borderWidth), // lebar border
+      padding: EdgeInsets.all(borderWidth.w), // lebar border
       child: ClipRRect(
-        borderRadius: BorderRadius.circular(borderRadius - borderWidth),
-        child: Container(
-          height: height,
-          // BACKGROUND IMAGE
-          decoration: BoxDecoration(
-            image: DecorationImage(
-              image: NetworkImage(imageUrl),
-              fit: BoxFit.cover,
-            ),
+        borderRadius: BorderRadius.circular(borderRadius.r + borderWidth.w),
+        child: CachedNetworkImage(
+          imageUrl: imageUrl,
+          fit: BoxFit.cover,
+          placeholder: (context, url) => Container(
+            color: Colors.grey[300],
+            child: const Center(child: CircularProgressIndicator()),
           ),
-          // OPTIONAL: gradient overlay supaya teks kebaca
-          foregroundDecoration: const BoxDecoration(
-            gradient: LinearGradient(
-              begin: Alignment.bottomCenter,
-              end: Alignment.topCenter,
-              colors: [Colors.black54, Colors.transparent],
+          errorWidget: (context, url, error) => Container(
+            color: Colors.grey[300],
+            child: const Center(
+              child: Icon(Icons.broken_image, color: Colors.red),
             ),
-          ),
-          alignment: Alignment.bottomLeft,
-          padding: const EdgeInsets.all(12),
-          child: const Text(
-            'Judul di atas gambar',
-            style: TextStyle(color: Colors.white, fontWeight: FontWeight.w700),
           ),
         ),
       ),

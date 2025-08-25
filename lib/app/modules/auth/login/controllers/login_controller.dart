@@ -12,6 +12,7 @@ class LoginController extends GetxController {
   Rx<LoginFormModel> form = LoginFormModel().obs;
   var isVisiblePassword = true.obs;
   var isLoading = false.obs;
+  var isLoadingGoogle = false.obs;
   final _authService = sl<AuthService>();
 
   Future<void> login(BuildContext context) async {
@@ -34,6 +35,26 @@ class LoginController extends GetxController {
       Get.snackbar('Error', e.toString());
     } finally {
       isLoading.value = false;
+    }
+  }
+
+  Future<void> loginWithGoogle() async {
+    isLoadingGoogle.value = true;
+    form.value = form.value.clearErrors();
+    try {
+      bool resp = await _authService.loginWithGoogle();
+      if (resp) Get.offAllNamed(AppRoutes.mainHome);
+    } on AppException catch (e) {
+      if (e.type == AppExceptionType.validation) {
+        form.value = form.value.setErrors(e.errors!);
+        return;
+      }
+      // show error snackbar, toast, etc
+      AppExceptionHandlerInfo.handle(e);
+    } catch (e) {
+      Get.snackbar('Error', e.toString());
+    } finally {
+      isLoadingGoogle.value = false;
     }
   }
 }

@@ -17,7 +17,7 @@ import 'package:zest_mobile/app/modules/home/widgets/achieve_streak_dialog.dart'
 import 'package:zest_mobile/app/modules/home/widgets/leveled_up_dialog.dart';
 import 'package:zest_mobile/app/modules/home/widgets/set_daily_goals_dialog.dart';
 import 'dart:math';
-import 'package:pedometer_2/pedometer_2.dart';
+// import 'package:pedometer_2/pedometer_2.dart';
 import 'package:intl/intl.dart';
 import 'package:zest_mobile/app/routes/app_routes.dart';
 
@@ -44,7 +44,7 @@ class HomeController extends GetxController {
 
   Timer? _syncTimer;
   static const _syncInterval = Duration(seconds: 10);
-  
+
   // ✨ --- State baru untuk menampung data langkah per jam --- ✨
   var hourlySteps = <int, int>{}.obs; // Map<Jam, Jumlah_Langkah>
 
@@ -69,7 +69,7 @@ class HomeController extends GetxController {
     isLoadingGetUserData.value = true;
     try {
       // ✨ KUNCI #1: Alur inisialisasi yang baru dan lebih efisien ✨
-      
+
       // 1. Jalankan tugas yang tidak saling bergantung secara paralel
       _requestPermissions();
       refreshData();
@@ -79,14 +79,14 @@ class HomeController extends GetxController {
 
       // 3. Lakukan sinkronisasi pertama untuk HARI INI menggunakan metode per jam
       await _syncTodaysData();
-      
+
       // 4. Setelah semua data siap, baru mulai proses latar belakang
       _startPeriodicSync();
       _startStaminaRecoveryTimer();
       _showPopupNotifications();
-
     } catch (e, s) {
-      _logService.log.e("Critical error during HomeController init.", error: e, stackTrace: s);
+      _logService.log.e("Critical error during HomeController init.",
+          error: e, stackTrace: s);
     } finally {
       isLoadingGetUserData.value = false;
     }
@@ -112,18 +112,21 @@ class HomeController extends GetxController {
     }
   }
 
-  double get progressValue => (validatedSteps.value / (user.value?.userPreference?.dailyStepGoals ?? 0)).clamp(0.0, 1.0);
+  double get progressValue =>
+      (validatedSteps.value / (user.value?.userPreference?.dailyStepGoals ?? 0))
+          .clamp(0.0, 1.0);
 
   /// ✨ KUNCI #2: Fungsi baru untuk menyinkronkan data hari ini berdasarkan data per jam.
   Future<void> _syncTodaysData() async {
     _logService.log.i("Syncing today's hourly step data...");
     final today = DateTime.now();
-    
+
     // Dapatkan data per jam untuk hari ini
     await _fetchHourlyStepData(today);
-    
-    final localTotalSteps = hourlySteps.values.fold(0, (sum, item) => sum + item);
-    
+
+    final localTotalSteps =
+        hourlySteps.values.fold(0, (sum, item) => sum + item);
+
     // Rekonsiliasi dengan data backend
     final backendSteps = homePageData.value?.recordDaily?.step ?? 0;
     final authoritativeSteps = max(backendSteps, localTotalSteps);
@@ -144,9 +147,11 @@ class HomeController extends GetxController {
     if (recordsToSync.isNotEmpty) {
       try {
         await _recordActivityService.syncDailyRecord(records: recordsToSync);
-        _logService.log.i("Successfully synced today's hourly data (${recordsToSync.length} records).");
+        _logService.log.i(
+            "Successfully synced today's hourly data (${recordsToSync.length} records).");
       } catch (e, s) {
-        _logService.log.e("Failed to sync today's hourly data.", error: e, stackTrace: s);
+        _logService.log
+            .e("Failed to sync today's hourly data.", error: e, stackTrace: s);
       }
     }
   }
@@ -155,7 +160,9 @@ class HomeController extends GetxController {
   Future<void> _syncMissingDailyRecords() async {
     _logService.log.i("Checking for missing daily records to sync...");
 
-    final lastRecordDate = await _recordActivityService.getDailyRecord(limit: 1).then((value) => value.data.firstOrNull?.date);
+    final lastRecordDate = await _recordActivityService
+        .getDailyRecord(limit: 1)
+        .then((value) => value.data.firstOrNull?.date);
     if (lastRecordDate == null) return;
 
     print('lastRecordDate: $lastRecordDate');
@@ -166,33 +173,40 @@ class HomeController extends GetxController {
     final differenceInDays = today.difference(lastRecordDate).inDays;
 
     if (differenceInDays <= 0) return;
-    _logService.log.w("$differenceInDays day(s) of data are missing. Starting catch-up sync...");
+    _logService.log.w(
+        "$differenceInDays day(s) of data are missing. Starting catch-up sync...");
 
     List<RecordDailyMiniModel> allMissingRecords = [];
 
-    for (int i = 1; i < differenceInDays; i++) { // Gunakan '<' agar tidak menyertakan hari ini
+    for (int i = 1; i < differenceInDays; i++) {
+      // Gunakan '<' agar tidak menyertakan hari ini
       final dateToSync = lastRecordDate.add(Duration(days: i));
-      
+
       // Dapatkan data per jam untuk hari yang hilang
       await _fetchHourlyStepData(dateToSync);
-      
+
       if (hourlySteps.isNotEmpty) {
-        allMissingRecords.addAll(_prepareRecordsFromHourlyData(dateToSync, hourlySteps));
+        allMissingRecords
+            .addAll(_prepareRecordsFromHourlyData(dateToSync, hourlySteps));
       }
     }
 
     if (allMissingRecords.isNotEmpty) {
       try {
-        await _recordActivityService.syncDailyRecord(records: allMissingRecords);
-        _logService.log.i("Successfully synced ${allMissingRecords.length} missing hourly records.");
+        await _recordActivityService.syncDailyRecord(
+            records: allMissingRecords);
+        _logService.log.i(
+            "Successfully synced ${allMissingRecords.length} missing hourly records.");
       } catch (e, s) {
-        _logService.log.e("Failed to sync missing daily records", error: e, stackTrace: s);
+        _logService.log
+            .e("Failed to sync missing daily records", error: e, stackTrace: s);
       }
     }
   }
 
   /// ✨ KUNCI #4: Helper untuk mengubah data per jam menjadi List<RecordDailyMiniModel>.
-  List<RecordDailyMiniModel> _prepareRecordsFromHourlyData(DateTime date, Map<int, int> hourlyData) {
+  List<RecordDailyMiniModel> _prepareRecordsFromHourlyData(
+      DateTime date, Map<int, int> hourlyData) {
     List<RecordDailyMiniModel> records = [];
     hourlyData.forEach((hour, steps) {
       final timestamp = DateTime(date.year, date.month, date.day, hour);
@@ -210,7 +224,8 @@ class HomeController extends GetxController {
 
   /// Memulai timer untuk sinkronisasi berkala HANYA untuk data hari ini.
   void _startPeriodicSync() {
-    _logService.log.i("Starting periodic sync timer for today's data every ${_syncInterval.inMinutes} mins.");
+    _logService.log.i(
+        "Starting periodic sync timer for today's data every ${_syncInterval.inMinutes} mins.");
     _syncTimer = Timer.periodic(_syncInterval, (timer) async {
       await _syncTodaysData();
     });
@@ -293,7 +308,8 @@ class HomeController extends GetxController {
   }
 
   Future<void> _fetchHourlyStepData(DateTime date) async {
-    _logService.log.i("Starting hourly step data fetch for ${DateFormat('yyyy-MM-dd').format(date)}");
+    _logService.log.i(
+        "Starting hourly step data fetch for ${DateFormat('yyyy-MM-dd').format(date)}");
     hourlySteps.clear(); // Bersihkan data lama
 
     final startTime = DateTime(date.year, date.month, date.day);
@@ -311,40 +327,42 @@ class HomeController extends GetxController {
     // Kondisi berhenti: jika rentang sudah 1 jam atau kurang
     if (end.difference(start).inHours < 1) {
       // Jika rentang di bawah satu jam, kita asumsikan ini adalah data per jam
-      final int steps = await _getStepsForPeriod(start, end);
-      if (steps > 0) {
-        // Simpan data ke dalam map dengan jam sebagai kuncinya
-        hourlySteps[start.hour] = (hourlySteps[start.hour] ?? 0) + steps;
-      }
+      // final int steps = await _getStepsForPeriod(start, end);
+      // if (steps > 0) {
+      //   // Simpan data ke dalam map dengan jam sebagai kuncinya
+      //   hourlySteps[start.hour] = (hourlySteps[start.hour] ?? 0) + steps;
+      // }
       return;
     }
 
-    try {
-      final int stepsInPeriod = await _getStepsForPeriod(start, end);
-      // Jika ada langkah di dalam rentang waktu ini, "selami" lebih dalam
-      if (stepsInPeriod > 0) {
-        // Bagi rentang waktu menjadi dua
-        final Duration halfDuration = end.difference(start) ~/ 2;
-        final DateTime midPoint = start.add(halfDuration);
+    // try {
+    //   final int stepsInPeriod = await _getStepsForPeriod(start, end);
+    //   // Jika ada langkah di dalam rentang waktu ini, "selami" lebih dalam
+    //   if (stepsInPeriod > 0) {
+    //     // Bagi rentang waktu menjadi dua
+    //     final Duration halfDuration = end.difference(start) ~/ 2;
+    //     final DateTime midPoint = start.add(halfDuration);
 
-        // Panggil rekursif untuk kedua paruh waktu
-        await _recursiveStepFetch(start, midPoint);
-        await _recursiveStepFetch(midPoint.add(const Duration(seconds: 1)), end);
-      }
-    } catch (e) {
-      _logService.log.e("Error during recursive step fetch for $start - $end", error: e);
-    }
+    //     // Panggil rekursif untuk kedua paruh waktu
+    //     await _recursiveStepFetch(start, midPoint);
+    //     await _recursiveStepFetch(
+    //         midPoint.add(const Duration(seconds: 1)), end);
+    //   }
+    // } catch (e) {
+    //   _logService.log
+    //       .e("Error during recursive step fetch for $start - $end", error: e);
+    // }
   }
 
   /// Fungsi helper untuk mengambil langkah dari Pedometer dengan aman.
-  Future<int> _getStepsForPeriod(DateTime from, DateTime to) async {
-    try {
-      return await Pedometer().getStepCount(from: from, to: to);
-    } catch (e) {
-      _logService.log.e("Pedometer failed for period $from - $to", error: e);
-      return 0;
-    }
-  }
+  // Future<int> _getStepsForPeriod(DateTime from, DateTime to) async {
+  //   try {
+  //     return await Pedometer().getStepCount(from: from, to: to);
+  //   } catch (e) {
+  //     _logService.log.e("Pedometer failed for period $from - $to", error: e);
+  //     return 0;
+  //   }
+  // }
 
   /// Estimasi waktu aktif dalam hitungan detik berdasarkan jumlah langkah.
   ///
@@ -393,39 +411,27 @@ class HomeController extends GetxController {
       }
 
       if (result == 'share') {
-        Future.delayed(
-          const Duration(seconds: 2),
-          () {
-            if (notification.typeText == 'AchieveStreak') {
-              Get.toNamed(
-                AppRoutes.shareDailyGoals,
-                arguments: {
-                  'title': notification.title ?? '',
-                  'description': notification.data['description'] ?? '',
-                  'imageUrl': notification.imageUrl ?? '',
-                }
-              );
-            } else if (notification.typeText == 'LevelUp') {
-              Get.toNamed(
-                AppRoutes.shareLevelUp,
-                arguments: {
-                  'title': notification.title ?? '',
-                  'description': notification.data['description'] ?? '',
-                  'imageUrl': notification.imageUrl ?? '',
-                }
-              );
-            } else if (notification.typeText == 'AchieveBadge') {
-              Get.toNamed(
-                AppRoutes.shareBadges,
-                arguments: {
-                  'title': notification.title ?? '',
-                  'description': notification.data['description'] ?? '',
-                  'imageUrl': notification.imageUrl ?? '',
-                }
-              );
-            }
+        Future.delayed(const Duration(seconds: 2), () {
+          if (notification.typeText == 'AchieveStreak') {
+            Get.toNamed(AppRoutes.shareDailyGoals, arguments: {
+              'title': notification.title ?? '',
+              'description': notification.data['description'] ?? '',
+              'imageUrl': notification.imageUrl ?? '',
+            });
+          } else if (notification.typeText == 'LevelUp') {
+            Get.toNamed(AppRoutes.shareLevelUp, arguments: {
+              'title': notification.title ?? '',
+              'description': notification.data['description'] ?? '',
+              'imageUrl': notification.imageUrl ?? '',
+            });
+          } else if (notification.typeText == 'AchieveBadge') {
+            Get.toNamed(AppRoutes.shareBadges, arguments: {
+              'title': notification.title ?? '',
+              'description': notification.data['description'] ?? '',
+              'imageUrl': notification.imageUrl ?? '',
+            });
           }
-        );
+        });
       }
     }
 
@@ -539,7 +545,8 @@ class HomeController extends GetxController {
     final isRunning = await service.isRunning();
 
     if (isRunning) {
-      _logService.log.w("Ongoing activity detected. Redirecting to RecordActivityView.");
+      _logService.log
+          .w("Ongoing activity detected. Redirecting to RecordActivityView.");
 
       WidgetsBinding.instance.addPostFrameCallback((_) {
         Get.toNamed(AppRoutes.activityRecord);

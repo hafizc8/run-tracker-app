@@ -16,8 +16,10 @@ import 'package:zest_mobile/app/core/services/auth_service.dart';
 import 'package:zest_mobile/app/core/services/challenge_service.dart';
 import 'package:zest_mobile/app/core/services/event_service.dart';
 import 'package:zest_mobile/app/core/services/post_service.dart';
+import 'package:zest_mobile/app/core/services/storage_service.dart';
 import 'package:zest_mobile/app/core/services/user_service.dart';
 import 'package:zest_mobile/app/core/shared/widgets/custom_dialog_confirmation.dart';
+import 'package:zest_mobile/app/core/values/storage_keys.dart';
 import 'package:zest_mobile/app/modules/main_profile/widgets/custom_tab_bar/controllers/custom_tab_bar_controller.dart';
 import 'package:zest_mobile/app/modules/social/controllers/post_controller.dart';
 import 'package:zest_mobile/app/modules/social/views/partial/for_you_tab/widget/confirmation.dart';
@@ -73,7 +75,15 @@ class ProfileMainController extends GetxController {
 
   Future<void> getDetailUser() async {
     try {
-      user.value = await _userService.detailUser(_authService.user!.id!);
+      final storedUser = sl<StorageService>().read(StorageKeys.detailUser);
+
+      if (storedUser != null) {
+        // Load from local storage
+        user.value = UserDetailModel.fromJson(storedUser);
+      } else {
+        // Fetch from server
+        user.value = await _userService.detailUser(_authService.user!.id!);
+      }
     } on AppException catch (e) {
       // show error snackbar, toast, etc
       AppExceptionHandlerInfo.handle(e);

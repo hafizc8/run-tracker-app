@@ -17,7 +17,7 @@ import 'package:zest_mobile/app/modules/home/widgets/achieve_streak_dialog.dart'
 import 'package:zest_mobile/app/modules/home/widgets/leveled_up_dialog.dart';
 import 'package:zest_mobile/app/modules/home/widgets/set_daily_goals_dialog.dart';
 import 'dart:math';
-// import 'package:pedometer_2/pedometer_2.dart';
+import 'package:pedometer_2/pedometer_2.dart';
 import 'package:intl/intl.dart';
 import 'package:zest_mobile/app/routes/app_routes.dart';
 
@@ -327,42 +327,42 @@ class HomeController extends GetxController {
     // Kondisi berhenti: jika rentang sudah 1 jam atau kurang
     if (end.difference(start).inHours < 1) {
       // Jika rentang di bawah satu jam, kita asumsikan ini adalah data per jam
-      // final int steps = await _getStepsForPeriod(start, end);
-      // if (steps > 0) {
-      //   // Simpan data ke dalam map dengan jam sebagai kuncinya
-      //   hourlySteps[start.hour] = (hourlySteps[start.hour] ?? 0) + steps;
-      // }
+      final int steps = await _getStepsForPeriod(start, end);
+      if (steps > 0) {
+        // Simpan data ke dalam map dengan jam sebagai kuncinya
+        hourlySteps[start.hour] = (hourlySteps[start.hour] ?? 0) + steps;
+      }
       return;
     }
 
-    // try {
-    //   final int stepsInPeriod = await _getStepsForPeriod(start, end);
-    //   // Jika ada langkah di dalam rentang waktu ini, "selami" lebih dalam
-    //   if (stepsInPeriod > 0) {
-    //     // Bagi rentang waktu menjadi dua
-    //     final Duration halfDuration = end.difference(start) ~/ 2;
-    //     final DateTime midPoint = start.add(halfDuration);
+    try {
+      final int stepsInPeriod = await _getStepsForPeriod(start, end);
+      // Jika ada langkah di dalam rentang waktu ini, "selami" lebih dalam
+      if (stepsInPeriod > 0) {
+        // Bagi rentang waktu menjadi dua
+        final Duration halfDuration = end.difference(start) ~/ 2;
+        final DateTime midPoint = start.add(halfDuration);
 
-    //     // Panggil rekursif untuk kedua paruh waktu
-    //     await _recursiveStepFetch(start, midPoint);
-    //     await _recursiveStepFetch(
-    //         midPoint.add(const Duration(seconds: 1)), end);
-    //   }
-    // } catch (e) {
-    //   _logService.log
-    //       .e("Error during recursive step fetch for $start - $end", error: e);
-    // }
+        // Panggil rekursif untuk kedua paruh waktu
+        await _recursiveStepFetch(start, midPoint);
+        await _recursiveStepFetch(
+            midPoint.add(const Duration(seconds: 1)), end);
+      }
+    } catch (e) {
+      _logService.log
+          .e("Error during recursive step fetch for $start - $end", error: e);
+    }
   }
 
   /// Fungsi helper untuk mengambil langkah dari Pedometer dengan aman.
-  // Future<int> _getStepsForPeriod(DateTime from, DateTime to) async {
-  //   try {
-  //     return await Pedometer().getStepCount(from: from, to: to);
-  //   } catch (e) {
-  //     _logService.log.e("Pedometer failed for period $from - $to", error: e);
-  //     return 0;
-  //   }
-  // }
+  Future<int> _getStepsForPeriod(DateTime from, DateTime to) async {
+    try {
+      return await Pedometer().getStepCount(from: from, to: to);
+    } catch (e) {
+      _logService.log.e("Pedometer failed for period $from - $to", error: e);
+      return 0;
+    }
+  }
 
   /// Estimasi waktu aktif dalam hitungan detik berdasarkan jumlah langkah.
   ///

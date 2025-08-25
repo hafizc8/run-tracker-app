@@ -23,7 +23,7 @@ void main() async {
   await Firebase.initializeApp();
 
   // ✨ Panggil inisialisasi FCM setelah Firebase siap
-  // await FcmService().initNotifications();
+  await FcmService().initNotifications();
 
   // 2. Inisialisasi service lain yang tidak bergantung pada Firebase
   // bisa tetap di sini jika ada.

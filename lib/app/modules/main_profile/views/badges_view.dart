@@ -60,7 +60,7 @@ class BadgesView extends GetView<BadgesController> {
           padding: const EdgeInsets.all(16),
           shrinkWrap: true,
           gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
-            crossAxisCount: 3,
+            crossAxisCount: 4,
             mainAxisSpacing: 12,
             crossAxisSpacing: 12,
           ),

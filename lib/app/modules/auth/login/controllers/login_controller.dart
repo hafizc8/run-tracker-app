@@ -40,19 +40,27 @@ class LoginController extends GetxController {
 
   Future<void> loginWithGoogle() async {
     isLoadingGoogle.value = true;
-    form.value = form.value.clearErrors();
     try {
-      bool resp = await _authService.loginWithGoogle();
-      if (resp) Get.offAllNamed(AppRoutes.mainHome);
-    } on AppException catch (e) {
-      if (e.type == AppExceptionType.validation) {
-        form.value = form.value.setErrors(e.errors!);
-        return;
+      final success = await _authService.loginWithGoogle();
+      if (success) {
+        Get.snackbar('Success', 'Logged in successfully!');
+      } else {
+        Get.snackbar('Error', 'Login failed');
       }
-      // show error snackbar, toast, etc
-      AppExceptionHandlerInfo.handle(e);
     } catch (e) {
-      Get.snackbar('Error', e.toString());
+      // Map exception messages into friendly text
+      String message;
+      if (e.toString().contains("cancelled_by_user")) {
+        message = "Login cancelled by user.";
+      } else if (e.toString().contains("firebase_")) {
+        message = "Firebase Auth error: ${e.toString().split('_').last}";
+      } else if (e.toString().contains("platform_")) {
+        message = "Google sign-in error: ${e.toString().split('_').last}";
+      } else {
+        message = "Unexpected error: $e";
+      }
+      print(e.toString());
+      Get.snackbar('Auth Error', message);
     } finally {
       isLoadingGoogle.value = false;
     }

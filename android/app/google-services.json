@@ -12,7 +12,28 @@
           "package_name": "app.zestplus.mobile"
         }
       },
-      "oauth_client": [],
+      "oauth_client": [
+        {
+          "client_id": "567284478969-kgidqfm0ni82vhljft7gupdg2arrrvte.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "app.zestplus.mobile",
+            "certificate_hash": "e80ebe775668b72b3a5df8ae956df2f2fa0ae08a"
+          }
+        },
+        {
+          "client_id": "567284478969-mi8pb6t0m4g2dsr0ic12fpehgmm2isb9.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "app.zestplus.mobile",
+            "certificate_hash": "8c58d1787834073a06e459a10ed81aaa0728faa6"
+          }
+        },
+        {
+          "client_id": "567284478969-jjoeaom00gls3n79mf7h2dg8ld6m640v.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
       "api_key": [
         {
           "current_key": "AIzaSyCf7Amnn3xRjB65Y_z_UVwRtky95jl0hnM"
@@ -20,7 +41,19 @@
       ],
       "services": {
         "appinvite_service": {
-          "other_platform_oauth_client": []
+          "other_platform_oauth_client": [
+            {
+              "client_id": "567284478969-jjoeaom00gls3n79mf7h2dg8ld6m640v.apps.googleusercontent.com",
+              "client_type": 3
+            },
+            {
+              "client_id": "567284478969-t8beerh4hd1cdvcdhqauiudn3m0ep6t2.apps.googleusercontent.com",
+              "client_type": 2,
+              "ios_info": {
+                "bundle_id": "com.example.zestMobile"
+              }
+            }
+          ]
         }
       }
     },
@@ -31,7 +64,12 @@
           "package_name": "com.example.zest_mobile"
         }
       },
-      "oauth_client": [],
+      "oauth_client": [
+        {
+          "client_id": "567284478969-jjoeaom00gls3n79mf7h2dg8ld6m640v.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
       "api_key": [
         {
           "current_key": "AIzaSyCf7Amnn3xRjB65Y_z_UVwRtky95jl0hnM"
@@ -39,7 +77,19 @@
       ],
       "services": {
         "appinvite_service": {
-          "other_platform_oauth_client": []
+          "other_platform_oauth_client": [
+            {
+              "client_id": "567284478969-jjoeaom00gls3n79mf7h2dg8ld6m640v.apps.googleusercontent.com",
+              "client_type": 3
+            },
+            {
+              "client_id": "567284478969-t8beerh4hd1cdvcdhqauiudn3m0ep6t2.apps.googleusercontent.com",
+              "client_type": 2,
+              "ios_info": {
+                "bundle_id": "com.example.zestMobile"
+              }
+            }
+          ]
         }
       }
     }

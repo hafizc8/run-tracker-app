@@ -1,3 +1,5 @@
+import 'package:firebase_auth/firebase_auth.dart';
+import 'package:flutter/services.dart';
 import 'package:google_sign_in/google_sign_in.dart';
 import 'package:zest_mobile/app/core/di/service_locator.dart';
 import 'package:zest_mobile/app/core/models/enums/http_method_enum.dart';
@@ -158,6 +160,7 @@ class AuthService {
       if (response.data['success']) {
         await sl<StorageService>().remove(StorageKeys.token);
         await sl<StorageService>().remove(StorageKeys.user);
+        await sl<StorageService>().remove(StorageKeys.detailUser);
       }
 
       return response.data['success'];
@@ -169,30 +172,38 @@ class AuthService {
   Future<bool> loginWithGoogle() async {
     try {
       final GoogleSignInAccount? googleUser = await GoogleSignIn().signIn();
-      if (googleUser == null) return false; // batal login
+      if (googleUser == null) throw Exception("cancelled_by_user");
 
-      final GoogleSignInAuthentication googleAuth =
-          await googleUser.authentication;
+      final googleAuth = await googleUser.authentication;
 
-      final String accessToken = googleAuth.accessToken!;
+      final credential = GoogleAuthProvider.credential(
+        accessToken: googleAuth.accessToken,
+        idToken: googleAuth.idToken,
+      );
+      final userCred =
+          await FirebaseAuth.instance.signInWithCredential(credential);
+
+      final idToken = await userCred.user!.getIdToken();
       final fcmToken = await _fcmService.getFcmToken();
 
       final response = await _apiService.request(
         path: AppConstants.loginWithGoogle,
         method: HttpMethod.post,
-        data: {
-          'access_token': accessToken,
-          'fcm_token': fcmToken ?? '',
-        },
+        data: {"access_token": idToken, "fcm_token": fcmToken ?? ''},
       );
 
-      // store token to local
-      await sl<StorageService>()
-          .write(StorageKeys.token, response.data['data']['token']);
+      await sl<StorageService>().write(
+        StorageKeys.token,
+        response.data['data']['token'],
+      );
 
-      return response.data['success'];
+      return response.data['success'] ?? false;
+    } on FirebaseAuthException catch (e) {
+      throw Exception("firebase_${e.code}");
+    } on PlatformException catch (e) {
+      throw Exception("platform_${e.code}");
     } catch (e) {
-      rethrow;
+      throw Exception("unknown_${e.toString()}");
     }
   }
 }

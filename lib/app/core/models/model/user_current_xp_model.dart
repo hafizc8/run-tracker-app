@@ -1,4 +1,6 @@
-class LevelDetailModel {
+import 'package:equatable/equatable.dart';
+
+class LevelDetailModel extends Equatable {
   LevelDetailModel({
     required this.level,
     required this.animal,
@@ -38,9 +40,21 @@ class LevelDetailModel {
         "stamina_replenish_rate": staminaReplenishRate,
         "image_url": imageUrl,
       };
+
+  @override
+  // TODO: implement props
+  List<Object?> get props => [
+        level,
+        animal,
+        xpNeeded,
+        baseSweatEarned,
+        staminaIncreaseTotal,
+        staminaReplenishRate,
+        imageUrl,
+      ];
 }
 
-class CurrentUserXpModel {
+class CurrentUserXpModel extends Equatable {
   CurrentUserXpModel({
     required this.currentLevel,
     required this.currentAmount,
@@ -57,8 +71,12 @@ class CurrentUserXpModel {
     return CurrentUserXpModel(
       currentLevel: json["current_level"],
       currentAmount: json["current_amount"],
-      updatedAt: json["updated_at"] != null ? DateTime.tryParse(json["updated_at"]) : null,
-      levelDetail: json["level_detail"] != null ? LevelDetailModel.fromJson(json["level_detail"]) : null,
+      updatedAt: json["updated_at"] != null
+          ? DateTime.tryParse(json["updated_at"])
+          : null,
+      levelDetail: json["level_detail"] != null
+          ? LevelDetailModel.fromJson(json["level_detail"])
+          : null,
     );
   }
 
@@ -68,4 +86,13 @@ class CurrentUserXpModel {
         "updated_at": updatedAt?.toIso8601String(),
         "level_detail": levelDetail?.toJson(),
       };
+
+  @override
+  // TODO: implement props
+  List<Object?> get props => [
+        currentLevel,
+        currentAmount,
+        updatedAt,
+        levelDetail,
+      ];
 }

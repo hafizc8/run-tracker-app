@@ -192,16 +192,18 @@ class MainProfileView extends GetView<ProfileMainController> {
                             Row(
                               children: [
                                 (controller.user.value != null)
-                                ? GestureDetector(
-                                  onTap: () {
-                                    Get.toNamed(AppRoutes.shareProfile, arguments: controller.user.value);
-                                  },
-                                  child: SvgPicture.asset(
-                                    'assets/icons/ic_share-2.svg',
-                                    height: 22.h,
-                                    width: 27.w,
-                                  ),
-                                ) : const SizedBox.shrink(),
+                                    ? GestureDetector(
+                                        onTap: () {
+                                          Get.toNamed(AppRoutes.shareProfile,
+                                              arguments: controller.user.value);
+                                        },
+                                        child: SvgPicture.asset(
+                                          'assets/icons/ic_share-2.svg',
+                                          height: 22.h,
+                                          width: 27.w,
+                                        ),
+                                      )
+                                    : const SizedBox.shrink(),
                                 SizedBox(width: 8.w),
                                 IconButton(
                                   icon: const Icon(Icons.settings_outlined),
@@ -506,58 +508,58 @@ class MainProfileView extends GetView<ProfileMainController> {
                 ),
                 SizedBox(height: 16.h),
                 Obx(
-                  () => Row(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    children: (controller.user.value?.badges ?? [])
-                        .map(
-                          (e) => Flexible(
-                            child: Container(
-                              margin: EdgeInsets.symmetric(horizontal: 5.w),
-                              padding: EdgeInsets.only(
-                                left: 12.w,
-                                right: 12.w,
-                                bottom: 12.h,
-                              ),
-                              decoration: const BoxDecoration(
-                                borderRadius:
-                                    BorderRadius.all(Radius.circular(10)),
-                                color: Color(0xFF2E2E2E),
-                              ),
-                              child: Column(
-                                mainAxisAlignment: MainAxisAlignment.center,
-                                children: [
-                                  ClipOval(
-                                    child: CachedNetworkImage(
-                                      imageUrl: e.badgeIconUrl ?? '',
-                                      width: 50.r,
-                                      height: 50.r,
-                                      fit: BoxFit.cover,
-                                      placeholder: (context, url) =>
-                                          ShimmerLoadingCircle(size: 50.r),
-                                      errorWidget: (context, url, error) =>
-                                          CircleAvatar(
-                                        radius: 32.r,
-                                        backgroundImage: const AssetImage(
-                                            'assets/images/empty_profile.png'),
-                                      ),
+                  () {
+                    final badges = controller.user.value?.badges ?? [];
+
+                    return SizedBox(
+                      height: 200, // adjust for two rows of badges
+                      child: GridView.count(
+                        crossAxisCount: 1, // number of rows
+                        scrollDirection: Axis.horizontal,
+                        mainAxisSpacing: 12,
+                        crossAxisSpacing: 12,
+                        childAspectRatio: 1, // adjust to make square-ish badges
+                        children: badges.map((badge) {
+                          return Container(
+                            padding: const EdgeInsets.all(8),
+                            decoration: const BoxDecoration(
+                              borderRadius:
+                                  BorderRadius.all(Radius.circular(10)),
+                              color: Color(0xFF2E2E2E),
+                            ),
+                            child: Column(
+                              mainAxisSize: MainAxisSize.min,
+                              children: [
+                                ClipOval(
+                                  child: CachedNetworkImage(
+                                    imageUrl: badge.badgeIconUrl ?? '',
+                                    width: 50,
+                                    height: 50,
+                                    fit: BoxFit.cover,
+                                    placeholder: (context, url) =>
+                                        const ShimmerLoadingCircle(size: 50),
+                                    errorWidget: (context, url, error) =>
+                                        const CircleAvatar(
+                                      radius: 32,
+                                      backgroundImage: AssetImage(
+                                          'assets/images/empty_profile.png'),
                                     ),
                                   ),
-                                  SizedBox(height: 5.h),
-                                  Text(
-                                    e.badgeName ?? '-',
-                                    maxLines: 1,
-                                    overflow: TextOverflow.ellipsis,
-                                    textAlign: TextAlign.center,
-                                    style:
-                                        Theme.of(context).textTheme.bodyMedium,
-                                  ),
-                                ],
-                              ),
+                                ),
+                                const SizedBox(height: 5),
+                                Text(
+                                  badge.badgeName ?? '-',
+                                  maxLines: 1,
+                                  overflow: TextOverflow.ellipsis,
+                                  textAlign: TextAlign.center,
+                                ),
+                              ],
                             ),
-                          ),
-                        )
-                        .toList(),
-                  ),
+                          );
+                        }).toList(),
+                      ),
+                    );
+                  },
                 ),
                 SizedBox(height: 16.h),
                 Container(

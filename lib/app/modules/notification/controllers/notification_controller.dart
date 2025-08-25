@@ -159,7 +159,7 @@ class NotificationController extends GetxController {
       Get.toNamed(AppRoutes.profileUser, arguments: notification?.data?['user']['id']);
     
     } else if (notification?.type == NotificationTypeEnum.clubInvite.name) {
-      Get.toNamed(AppRoutes.detailClub, arguments: notification?.data?['club']['id']);
+      Get.toNamed(AppRoutes.previewClub, arguments: notification?.data?['club']['id']);
     
     } else if (notification?.type == NotificationTypeEnum.challangeInvite.name) {
       Get.toNamed(AppRoutes.challengedetails, arguments: {"challengeId": notification?.data?['challange']['id']});

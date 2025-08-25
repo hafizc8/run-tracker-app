@@ -96,9 +96,12 @@ abstract class AppRoutes {
   static const shareLevelUp = '/share/level-up';
   static const shareChallenge = '/share/challenge';
   static const shareChallengeProgressIndividual = '/share/challenge/progress-individual';
+  static const shareChallengeProgressTeam = '/share/challenge/progress-team';
   static const shareEvent = '/share/event';
   static const shareProfile = '/share/profile';
   static const shareClub = '/share/club';
   static const shareActivity = '/share/activity';
   static const shareDailyStepProgress = '/share/daily-step-progress';
+
+  static const allBadges = '/badges/all';
 }

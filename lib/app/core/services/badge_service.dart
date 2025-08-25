@@ -25,4 +25,19 @@ class BadgeService {
       rethrow;
     }
   }
+
+  Future<List<BadgeModel>> getAllBadges() async {
+    try {
+      final response = await _apiService.request(
+        path: AppConstants.allBadges,
+        method: HttpMethod.get,
+      );
+
+      return List.from(response.data['data'])
+          .map<BadgeModel>((e) => BadgeModel.fromJson(e))
+          .toList();
+    } catch (e) {
+      rethrow;
+    }
+  }
 }

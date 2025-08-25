@@ -39,6 +39,8 @@ class ShareChallengeProgressIndividualView extends GetView<ShareChallengeProgres
                       controller: controller.screenshotController,
                       child: ShareChallengeProgressIndividualCard(
                         challengeModel: controller.challengeData.value!,
+                        list4TopWalker: controller.getUsersToShow(),
+                        currentUser: controller.user!,
                       ),
                     ),
                   ),
@@ -46,8 +48,8 @@ class ShareChallengeProgressIndividualView extends GetView<ShareChallengeProgres
             
                 SizedBox(height: 24.h),
                 ShareOptionsGrid(
-                  onOptionTap: (String label) {
-                    controller.shareTo(label);
+                  onOptionTap: (String label) async {
+                    await controller.shareTo(label);
                   },
                 ),
                 SizedBox(height: 24.h),

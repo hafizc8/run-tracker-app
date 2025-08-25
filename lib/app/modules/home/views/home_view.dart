@@ -9,6 +9,7 @@ import 'package:zest_mobile/app/core/shared/theme/color_schemes.dart';
 import 'package:zest_mobile/app/core/shared/widgets/step_tracker_widget.dart';
 import 'package:zest_mobile/app/modules/home/widgets/home_shimmer_layout.dart';
 import 'package:zest_mobile/app/modules/home/widgets/custom_exp_progress_bar.dart';
+import 'package:zest_mobile/app/modules/home/widgets/last_challenge_card.dart';
 import 'package:zest_mobile/app/modules/home/widgets/stamina_recovery_popup.dart';
 import 'package:zest_mobile/app/modules/home/widgets/walker_profile.dart';
 import 'package:zest_mobile/app/routes/app_routes.dart';
@@ -199,12 +200,16 @@ class HomeView extends GetView<HomeController> {
                     Obx(() {
                       return Container(
                         margin: EdgeInsets.symmetric(horizontal: 32.w),
-                        child: StepsTrackerWidget(
-                          progressValue: controller.progressValue,
-                          currentSteps: controller.validatedSteps.value,
-                          maxSteps: controller
-                                  .user.value?.userPreference?.dailyStepGoals ??
-                              0,
+                        child: InkWell(
+                          splashColor: Colors.transparent,
+                          onTap: () {
+                            Get.toNamed(AppRoutes.allBadges);
+                          },
+                          child: StepsTrackerWidget(
+                            progressValue: controller.progressValue,
+                            currentSteps: controller.validatedSteps.value,
+                            maxSteps: controller.user.value?.userPreference?.dailyStepGoals ?? 0,
+                          ),
                         ),
                       );
                     }),
@@ -358,7 +363,7 @@ class HomeView extends GetView<HomeController> {
                                         ),
                                         SizedBox(width: 8.w),
                                         Text(
-                                          '0 Cal',
+                                          '${NumberHelper().formatNumberToKWithComma(controller.totalCaloriesBurned)} Cal',
                                           style: Theme.of(context)
                                               .textTheme
                                               .titleSmall
@@ -580,6 +585,10 @@ class HomeView extends GetView<HomeController> {
                           ],
                         ),
                       ),
+                    ),
+
+                    LastChallengeCard(
+                      challenge: controller.homePageData.value?.challenge,
                     ),
 
                     SizedBox(height: 36.h),

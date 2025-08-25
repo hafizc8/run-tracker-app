@@ -42,6 +42,10 @@ class AppInterceptor extends Interceptor {
       case AppExceptionType.emptyProfile:
         g.Get.offAllNamed(AppRoutes.registerCreateProfile);
         break;
+      case AppExceptionType.notFound:
+        // get.back and show message with snackbar
+        Get.back(closeOverlays: true);
+        break;
       case AppExceptionType.serverError:
         Get.snackbar(
           'Error',

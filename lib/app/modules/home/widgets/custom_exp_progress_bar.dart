@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:zest_mobile/app/core/shared/helpers/number_helper.dart';
 
 class CustomExpProgressBar extends StatelessWidget {
   /// Nilai EXP saat ini.
@@ -58,7 +59,7 @@ class CustomExpProgressBar extends StatelessWidget {
             // Center memastikan teks berada tepat di tengah
             Center(
               child: Text(
-                '$currentExp / $maxExp',
+                '${NumberHelper().formatNumberToKWithComma(currentExp)} / ${NumberHelper().formatNumberToKWithComma(maxExp)}',
                 style: GoogleFonts.poppins(
                   fontWeight: FontWeight.w700,
                   fontSize: 10,

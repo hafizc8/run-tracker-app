@@ -45,6 +45,7 @@ class AppConstants {
   static const String updateProfile = "/user";
   static const String updateUserPreference = "/user/preference";
   static String badge(String id) => "/user/$id/badge";
+  static const String allBadges = "/badge";
   static String user(String id) => "/user/$id";
   static String follow(String id) => "/follow/$id";
   static String userFollow(String id) => "/follow/$id";
@@ -123,14 +124,11 @@ class AppConstants {
   static const String readPopupNotification = "/popup-notification";
 
   // Share Link
-  static String shareProfileLink(String id) =>
-      "$baseUrlShareLink/share-profile?user=$id";
-  static String shareClubLink(String id) =>
-      "$baseUrlShareLink/share-club?club=$id";
-  static String shareEventLink(String id) =>
-      "$baseUrlShareLink/share-event?event=$id";
-  static String sharePostLink(String id) =>
-      "$baseUrlShareLink/share-post?post=$id";
+  static String shareProfileLink(String id) => "$baseUrlShareLink/share-profile?user=$id";
+  static String shareClubLink(String id) => "$baseUrlShareLink/share-club?club=$id";
+  static String shareEventLink(String id) => "$baseUrlShareLink/share-event?event=$id";
+  static String sharePostLink(String id) => "$baseUrlShareLink/share-post?post=$id";
+  static String shareChallengeLink(String id) => "$baseUrlShareLink/share-challenge?challenge=$id";
 
   // Notification
   static const String notification = '/notification';

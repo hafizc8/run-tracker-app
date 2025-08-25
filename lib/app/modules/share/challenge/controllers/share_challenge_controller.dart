@@ -66,7 +66,7 @@ class ShareChallengeController extends GetxController {
     final file = await File(imagePath).create();
     await file.writeAsBytes(imageBytes);
 
-    String message = AppConstants.sharePostLink(challengeModel.id!);
+    String message = AppConstants.shareChallengeLink(challengeModel.id!);
 
     final installedApps = await socialShare.getInstalledApps();
 

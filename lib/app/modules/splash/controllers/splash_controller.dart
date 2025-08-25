@@ -67,6 +67,8 @@ class SplashController extends GetxController {
       } else if (uri.host == "share-post" && uri.queryParameters['post'] != null) {
         final postController = Get.put(PostController());
         postController.goToDetail(postId: uri.queryParameters['post'] ?? '', isFocusComment: false);
+      } else if (uri.host == "share-challenge" && uri.queryParameters['challenge'] != null) {
+        Get.toNamed(AppRoutes.challengedetails, arguments: {"challengeId": uri.queryParameters['challenge']});
       }
     });
   }

@@ -5,6 +5,8 @@ import 'package:zest_mobile/app/modules/activity/record_activity/bindings/record
 import 'package:zest_mobile/app/modules/activity/record_activity/views/record_activity_view.dart';
 import 'package:zest_mobile/app/modules/activity/start_activity/bindings/start_activity_binding.dart';
 import 'package:zest_mobile/app/modules/activity/start_activity/views/start_activity_view.dart';
+import 'package:zest_mobile/app/modules/all_badges/bindings/all_badges_binding.dart';
+import 'package:zest_mobile/app/modules/all_badges/views/all_badges_view.dart';
 import 'package:zest_mobile/app/modules/auth/forgot_password/bindings/forgot_password_binding.dart';
 import 'package:zest_mobile/app/modules/auth/forgot_password/views/forgot_password_email_sent_view.dart';
 import 'package:zest_mobile/app/modules/auth/forgot_password/views/forgot_password_password_updated_view.dart';
@@ -85,6 +87,8 @@ import 'package:zest_mobile/app/modules/share/challenge/bindings/share_challenge
 import 'package:zest_mobile/app/modules/share/challenge/views/share_challenge_view.dart';
 import 'package:zest_mobile/app/modules/share/challenge_progress_individual/bindings/share_challenge_progress_individual_binding.dart';
 import 'package:zest_mobile/app/modules/share/challenge_progress_individual/views/share_challenge_progress_individual_view.dart';
+import 'package:zest_mobile/app/modules/share/challenge_progress_team/bindings/share_challenge_progress_team_binding.dart';
+import 'package:zest_mobile/app/modules/share/challenge_progress_team/views/share_challenge_progress_team_view.dart';
 import 'package:zest_mobile/app/modules/share/club/bindings/share_club_binding.dart';
 import 'package:zest_mobile/app/modules/share/club/views/share_club_view.dart';
 import 'package:zest_mobile/app/modules/share/daily_step_progress/bindings/share_daily_step_progress_binding.dart';
@@ -467,6 +471,16 @@ class AppPages {
       name: AppRoutes.shareChallengeProgressIndividual,
       page: () => const ShareChallengeProgressIndividualView(),
       binding: ShareChallengeProgressIndividualBinding(),
+    ),
+    GetPage(
+      name: AppRoutes.shareChallengeProgressTeam,
+      page: () => const ShareChallengeProgressTeamView(),
+      binding: ShareChallengeProgressTeamBinding(),
+    ),
+    GetPage(
+      name: AppRoutes.allBadges,
+      page: () => const AllBadgesView(),
+      binding: AllBadgesBinding(),
     ),
   ];
 }

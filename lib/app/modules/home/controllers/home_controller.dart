@@ -4,11 +4,13 @@ import 'package:flutter_background_service/flutter_background_service.dart';
 import 'package:get/get.dart';
 import 'package:permission_handler/permission_handler.dart';
 import 'package:zest_mobile/app/core/di/service_locator.dart';
+import 'package:zest_mobile/app/core/models/model/daily_record_model.dart';
 import 'package:zest_mobile/app/core/models/model/home_page_data_model.dart';
 import 'package:zest_mobile/app/core/models/model/popup_notification_model.dart';
 import 'package:zest_mobile/app/core/models/model/record_daily_mini_model.dart';
 import 'package:zest_mobile/app/core/models/model/user_model.dart';
 import 'package:zest_mobile/app/core/services/auth_service.dart';
+import 'package:zest_mobile/app/core/services/fcm_service.dart';
 import 'package:zest_mobile/app/core/services/log_service.dart';
 import 'package:zest_mobile/app/core/services/record_activity_service.dart';
 import 'package:zest_mobile/app/core/services/user_service.dart';
@@ -35,6 +37,9 @@ class HomeController extends GetxController {
   final RxInt _totalActiveTimeInSeconds = 0.obs;
   int get totalActiveTimeInSeconds => _totalActiveTimeInSeconds.value;
 
+  final RxInt _totalCaloriesBurned = 0.obs;
+  int get totalCaloriesBurned => _totalCaloriesBurned.value;
+
   final RxString _error = ''.obs;
   String get error => _error.value;
 
@@ -43,8 +48,11 @@ class HomeController extends GetxController {
   Rx<HomePageDataModel?> homePageData = Rx<HomePageDataModel?>(null);
 
   Timer? _syncTimer;
-  static const _syncInterval = Duration(seconds: 10);
+  static const _syncInterval = Duration(minutes: 3);
 
+  Timer? _syncTimerRefreshStepUI;
+  static const _syncIntervalRefreshStepUI = Duration(seconds: 5);
+  
   // ✨ --- State baru untuk menampung data langkah per jam --- ✨
   var hourlySteps = <int, int>{}.obs; // Map<Jam, Jumlah_Langkah>
 
@@ -58,6 +66,8 @@ class HomeController extends GetxController {
   // Variabel reaktif untuk menampilkan sisa waktu di UI
   var staminaRecoveryCountdown = "--:--:--".obs;
 
+  Rx<DailyRecordModel?> lastRecord = Rx<DailyRecordModel?>(null);
+
   @override
   void onInit() async {
     super.onInit();
@@ -69,10 +79,7 @@ class HomeController extends GetxController {
     isLoadingGetUserData.value = true;
     try {
       // ✨ KUNCI #1: Alur inisialisasi yang baru dan lebih efisien ✨
-
-      // 1. Jalankan tugas yang tidak saling bergantung secara paralel
-      _requestPermissions();
-      refreshData();
+      await refreshData();
 
       // 2. Sinkronkan hari-hari yang terlewat terlebih dahulu
       await _syncMissingDailyRecords();
@@ -84,6 +91,7 @@ class HomeController extends GetxController {
       _startPeriodicSync();
       _startStaminaRecoveryTimer();
       _showPopupNotifications();
+      _refreshStepUI();
     } catch (e, s) {
       _logService.log.e("Critical error during HomeController init.",
           error: e, stackTrace: s);
@@ -93,8 +101,16 @@ class HomeController extends GetxController {
   }
 
   @override
+  void onReady() {
+    super.onReady();
+    _logService.log.i("HomeController: onReady.");
+    FcmService.markAppAsReady(); 
+  }
+
+  @override
   void onClose() {
     _syncTimer?.cancel();
+    _syncTimerRefreshStepUI?.cancel();
     _popupTimer?.cancel();
     _staminaRecoveryTimer?.cancel();
     _logService.log.i("HomeController: onClose.");
@@ -104,9 +120,9 @@ class HomeController extends GetxController {
   Future<void> _requestPermissions() async {
     // Minta Izin Activity Recognition
     var activityStatus = await Permission.activityRecognition.request();
+
     if (!activityStatus.isGranted) {
-      Get.snackbar(
-          "Permission Denied", "Activity sensor permission is required.");
+      Get.snackbar("Permission Denied", "Activity sensor permission is required.");
       _logService.log.w("Activity Recognition permission denied.");
       return;
     }
@@ -116,8 +132,14 @@ class HomeController extends GetxController {
       (validatedSteps.value / (user.value?.userPreference?.dailyStepGoals ?? 0))
           .clamp(0.0, 1.0);
 
+  Future<void> _getLastRecord() async {
+    lastRecord.value = await _recordActivityService.getDailyRecord(limit: 1).then((value) => value.data.firstOrNull);
+  }
+
   /// ✨ KUNCI #2: Fungsi baru untuk menyinkronkan data hari ini berdasarkan data per jam.
   Future<void> _syncTodaysData() async {
+    await _requestPermissions();
+    
     _logService.log.i("Syncing today's hourly step data...");
     final today = DateTime.now();
 
@@ -134,14 +156,22 @@ class HomeController extends GetxController {
     // Perbarui UI dengan nilai yang paling benar
     validatedSteps.value = authoritativeSteps;
     _totalActiveTimeInSeconds.value = _estimateActiveTime(authoritativeSteps);
+    _totalCaloriesBurned.value = _estimateCalories(authoritativeSteps);
 
-    if (hourlySteps.isEmpty && backendSteps == 0) {
+    if (hourlySteps.isEmpty && localTotalSteps == 0) {
       _logService.log.i("No steps recorded today to sync.");
       return;
     }
 
+    if (backendSteps == localTotalSteps) {
+      _logService.log.i("Today's data already synced.");
+      return;
+    }
+
+    final lastSyncedTimestamp = lastRecord.value?.lastTimestamp;
+
     // Konversi data per jam menjadi format yang bisa dikirim ke API
-    final recordsToSync = _prepareRecordsFromHourlyData(today, hourlySteps);
+    final recordsToSync = _prepareRecordsFromHourlyData(today, hourlySteps, after: lastSyncedTimestamp);
 
     // Hanya kirim jika ada data untuk disinkronkan
     if (recordsToSync.isNotEmpty) {
@@ -158,19 +188,14 @@ class HomeController extends GetxController {
 
   /// ✨ KUNCI #3: Fungsi ini sekarang menggunakan logika per jam untuk mengisi hari yang hilang.
   Future<void> _syncMissingDailyRecords() async {
+    await _requestPermissions();
+
     _logService.log.i("Checking for missing daily records to sync...");
 
-    final lastRecordDate = await _recordActivityService
-        .getDailyRecord(limit: 1)
-        .then((value) => value.data.firstOrNull?.date);
-    if (lastRecordDate == null) return;
-
-    print('lastRecordDate: $lastRecordDate');
-    print('lastRecordDate: $lastRecordDate');
-    print('lastRecordDate: $lastRecordDate');
+    if (lastRecord.value == null) return;
 
     final today = DateTime.now();
-    final differenceInDays = today.difference(lastRecordDate).inDays;
+    final differenceInDays = today.difference(lastRecord.value?.date ?? today).inDays;
 
     if (differenceInDays <= 0) return;
     _logService.log.w(
@@ -178,10 +203,9 @@ class HomeController extends GetxController {
 
     List<RecordDailyMiniModel> allMissingRecords = [];
 
-    for (int i = 1; i < differenceInDays; i++) {
-      // Gunakan '<' agar tidak menyertakan hari ini
-      final dateToSync = lastRecordDate.add(Duration(days: i));
-
+    for (int i = 1; i < differenceInDays; i++) { // Gunakan '<' agar tidak menyertakan hari ini
+      final dateToSync = lastRecord.value?.date?.add(Duration(days: i)) ?? today;
+      
       // Dapatkan data per jam untuk hari yang hilang
       await _fetchHourlyStepData(dateToSync);
 
@@ -205,19 +229,21 @@ class HomeController extends GetxController {
   }
 
   /// ✨ KUNCI #4: Helper untuk mengubah data per jam menjadi List<RecordDailyMiniModel>.
-  List<RecordDailyMiniModel> _prepareRecordsFromHourlyData(
-      DateTime date, Map<int, int> hourlyData) {
+  List<RecordDailyMiniModel> _prepareRecordsFromHourlyData(DateTime date, Map<int, int> hourlyData, {DateTime? after}) {
     List<RecordDailyMiniModel> records = [];
     hourlyData.forEach((hour, steps) {
       final timestamp = DateTime(date.year, date.month, date.day, hour);
-      records.add(
-        RecordDailyMiniModel(
-          step: steps,
-          timestamp: timestamp,
-          time: _estimateActiveTime(steps),
-          calorie: 0, // Anda bisa menambahkan logika kalori di sini
-        ),
-      );
+
+      if (after == null || !timestamp.isBefore(after)) {
+        records.add(
+          RecordDailyMiniModel(
+            step: steps,
+            timestamp: timestamp,
+            time: _estimateActiveTime(steps),
+            calorie: _estimateCalories(steps),
+          ),
+        );
+      }
     });
     return records;
   }
@@ -228,6 +254,19 @@ class HomeController extends GetxController {
         "Starting periodic sync timer for today's data every ${_syncInterval.inMinutes} mins.");
     _syncTimer = Timer.periodic(_syncInterval, (timer) async {
       await _syncTodaysData();
+    });
+  }
+
+  void _refreshStepUI() {
+    _syncTimerRefreshStepUI = Timer.periodic(_syncIntervalRefreshStepUI, (timer) async {
+      // Get from pedometer for step today and update UI
+      final steps = await Pedometer().getStepCount(
+        from: DateTime(DateTime.now().year, DateTime.now().month, DateTime.now().day),
+        to: DateTime.now(),
+      );
+
+      // Update UI
+      validatedSteps.value = steps;
     });
   }
 
@@ -272,6 +311,7 @@ class HomeController extends GetxController {
       await Future.wait([
         _loadMe(),
         _loadHomePageData(),
+        _getLastRecord(),
       ]).then((value) {
         _startStaminaRecoveryTimer();
       });
@@ -364,16 +404,17 @@ class HomeController extends GetxController {
     }
   }
 
-  /// Estimasi waktu aktif dalam hitungan detik berdasarkan jumlah langkah.
-  ///
-  /// Rumus yang digunakan adalah 0.05 menit per langkah.
-  ///
-  /// Contoh:
-  /// - 1000 langkah => 50 menit => 3000 detik
-  /// - 500 langkah => 25 menit => 1500 detik
+  /// Kalori = steps * 0.04
+  int _estimateCalories(int steps) {
+    if (steps <= 0) return 0;
+    return (steps * 0.04).round();
+  }
+
+  /// Active Time = 95 steps / 1 menit
   int _estimateActiveTime(int steps) {
-    final minutes = (steps * 0.05).ceil();
-    return minutes * 60;
+    if (steps <= 0) return 0;
+    final double minutes = steps / 95.0;
+    return (minutes * 60).round();
   }
 
   // ✨ --- FUNGSI BARU UNTUK MENGELOLA ANTRIAN POPUP --- ✨

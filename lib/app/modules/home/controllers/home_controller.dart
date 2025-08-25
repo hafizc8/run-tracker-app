@@ -37,6 +37,9 @@ class HomeController extends GetxController {
   final RxInt _totalActiveTimeInSeconds = 0.obs;
   int get totalActiveTimeInSeconds => _totalActiveTimeInSeconds.value;
 
+  final RxInt _totalCaloriesBurned = 0.obs;
+  int get totalCaloriesBurned => _totalCaloriesBurned.value;
+
   final RxString _error = ''.obs;
   String get error => _error.value;
 
@@ -151,6 +154,7 @@ class HomeController extends GetxController {
     // Perbarui UI dengan nilai yang paling benar
     validatedSteps.value = authoritativeSteps;
     _totalActiveTimeInSeconds.value = _estimateActiveTime(authoritativeSteps);
+    _totalCaloriesBurned.value = _estimateCalories(authoritativeSteps);
 
     if (hourlySteps.isEmpty && localTotalSteps == 0) {
       _logService.log.i("No steps recorded today to sync.");
@@ -227,7 +231,7 @@ class HomeController extends GetxController {
             step: steps,
             timestamp: timestamp,
             time: _estimateActiveTime(steps),
-            calorie: 0,
+            calorie: _estimateCalories(steps),
           ),
         );
       }
@@ -387,16 +391,17 @@ class HomeController extends GetxController {
     }
   }
 
-  /// Estimasi waktu aktif dalam hitungan detik berdasarkan jumlah langkah.
-  ///
-  /// Rumus yang digunakan adalah 0.05 menit per langkah.
-  ///
-  /// Contoh:
-  /// - 1000 langkah => 50 menit => 3000 detik
-  /// - 500 langkah => 25 menit => 1500 detik
+  /// Kalori = steps * 0.04
+  int _estimateCalories(int steps) {
+    if (steps <= 0) return 0;
+    return (steps * 0.04).round();
+  }
+
+  /// Active Time = 95 steps / 1 menit
   int _estimateActiveTime(int steps) {
-    final minutes = (steps * 0.05).ceil();
-    return minutes * 60;
+    if (steps <= 0) return 0;
+    final double minutes = steps / 95.0;
+    return (minutes * 60).round();
   }
 
   // ✨ --- FUNGSI BARU UNTUK MENGELOLA ANTRIAN POPUP --- ✨

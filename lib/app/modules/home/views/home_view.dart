@@ -359,7 +359,7 @@ class HomeView extends GetView<HomeController> {
                                         ),
                                         SizedBox(width: 8.w),
                                         Text(
-                                          '0 Cal',
+                                          '${NumberHelper().formatNumberToKWithComma(controller.totalCaloriesBurned)} Cal',
                                           style: Theme.of(context)
                                               .textTheme
                                               .titleSmall

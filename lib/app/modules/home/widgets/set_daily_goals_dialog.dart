@@ -107,8 +107,10 @@ class _CustomSliderTickMarkShape extends SliderTickMarkShape {
 
 
 class SetDailyGoalDialog extends StatefulWidget {
-  const SetDailyGoalDialog({super.key, required this.onSave});
+  const SetDailyGoalDialog({super.key, required this.onSave, this.isChangeDailyGoals = false, this.initialCurrentDailyGoals});
   final Function(int selectedGoal) onSave;
+  final bool isChangeDailyGoals;
+  final int? initialCurrentDailyGoals;
 
   @override
   State<SetDailyGoalDialog> createState() => _SetDailyGoalDialogState();
@@ -118,6 +120,22 @@ class _SetDailyGoalDialogState extends State<SetDailyGoalDialog> {
   final List<int> _goalSteps = [5000, 7500, 10000, 12500, 15000];
   double _currentSliderIndex = 0.0;
   bool _isSaving = false;
+
+  @override
+  void initState() {
+    super.initState();
+    
+    // Cek apakah ada nilai awal yang diberikan dari backend
+    if (widget.initialCurrentDailyGoals != null) {
+      // Cari indeks dari nilai goal yang cocok di dalam daftar _goalSteps
+      int index = _goalSteps.indexOf(widget.initialCurrentDailyGoals!);
+      
+      // Jika ditemukan (indeks bukan -1), atur posisi slider
+      if (index != -1) {
+        _currentSliderIndex = index.toDouble();
+      }
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -196,7 +214,7 @@ class _SetDailyGoalDialogState extends State<SetDailyGoalDialog> {
               colors: [Color(0xFFA2FF00), Color(0xFF00FF7F)],
             ).createShader(Rect.fromLTWH(0, 0, bounds.width, bounds.height)),
             child: Text(
-              'Welcome to ZEST+', 
+              (widget.isChangeDailyGoals) ? 'Change Your Daily Goals' : 'Welcome to ZEST+', 
               style: GoogleFonts.poppins(
                 fontSize: 20,
                 fontWeight: FontWeight.w700,
@@ -206,7 +224,7 @@ class _SetDailyGoalDialogState extends State<SetDailyGoalDialog> {
         ),
         const SizedBox(height: 4),
         Text(
-          'Set your daily goals to begin', 
+          (widget.isChangeDailyGoals) ? 'Warning: This action will reset your streak.' : 'Set your daily goals to begin', 
           textAlign: TextAlign.center, 
           style: Theme.of(context).textTheme.bodySmall?.copyWith(
             fontWeight: FontWeight.w400,

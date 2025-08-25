@@ -200,12 +200,16 @@ class HomeView extends GetView<HomeController> {
                     Obx(() {
                       return Container(
                         margin: EdgeInsets.symmetric(horizontal: 32.w),
-                        child: StepsTrackerWidget(
-                          progressValue: controller.progressValue,
-                          currentSteps: controller.validatedSteps.value,
-                          maxSteps: controller
-                                  .user.value?.userPreference?.dailyStepGoals ??
-                              0,
+                        child: InkWell(
+                          splashColor: Colors.transparent,
+                          onTap: () {
+                            Get.toNamed(AppRoutes.allBadges);
+                          },
+                          child: StepsTrackerWidget(
+                            progressValue: controller.progressValue,
+                            currentSteps: controller.validatedSteps.value,
+                            maxSteps: controller.user.value?.userPreference?.dailyStepGoals ?? 0,
+                          ),
                         ),
                       );
                     }),

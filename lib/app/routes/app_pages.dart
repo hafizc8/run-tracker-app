@@ -5,6 +5,8 @@ import 'package:zest_mobile/app/modules/activity/record_activity/bindings/record
 import 'package:zest_mobile/app/modules/activity/record_activity/views/record_activity_view.dart';
 import 'package:zest_mobile/app/modules/activity/start_activity/bindings/start_activity_binding.dart';
 import 'package:zest_mobile/app/modules/activity/start_activity/views/start_activity_view.dart';
+import 'package:zest_mobile/app/modules/all_badges/bindings/all_badges_binding.dart';
+import 'package:zest_mobile/app/modules/all_badges/views/all_badges_view.dart';
 import 'package:zest_mobile/app/modules/auth/forgot_password/bindings/forgot_password_binding.dart';
 import 'package:zest_mobile/app/modules/auth/forgot_password/views/forgot_password_email_sent_view.dart';
 import 'package:zest_mobile/app/modules/auth/forgot_password/views/forgot_password_password_updated_view.dart';
@@ -474,6 +476,11 @@ class AppPages {
       name: AppRoutes.shareChallengeProgressTeam,
       page: () => const ShareChallengeProgressTeamView(),
       binding: ShareChallengeProgressTeamBinding(),
+    ),
+    GetPage(
+      name: AppRoutes.allBadges,
+      page: () => const AllBadgesView(),
+      binding: AllBadgesBinding(),
     ),
   ];
 }

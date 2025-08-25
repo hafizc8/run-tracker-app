@@ -4,35 +4,43 @@ class BadgeModel extends Model {
   BadgeModel({
     required this.category,
     required this.categoryIcon,
+    required this.badgeKey,
     required this.badgeName,
     required this.badgeIconUrl,
     required this.criteria,
     required this.notes,
+    this.isLocked,
   });
 
   final String? category;
   final String? categoryIcon;
+  final String? badgeKey;
   final String? badgeName;
   final String? badgeIconUrl;
   final String? criteria;
   final String? notes;
+  final bool? isLocked;
 
   @override
   BadgeModel copyWith({
     String? category,
     String? categoryIcon,
+    String? badgeKey,
     String? badgeName,
     String? badgeIconUrl,
     String? criteria,
     String? notes,
+    bool? isLocked,
   }) {
     return BadgeModel(
       category: category ?? this.category,
       categoryIcon: categoryIcon ?? this.categoryIcon,
+      badgeKey: badgeKey ?? this.badgeKey,
       badgeName: badgeName ?? this.badgeName,
       badgeIconUrl: badgeIconUrl ?? this.badgeIconUrl,
       criteria: criteria ?? this.criteria,
       notes: notes ?? this.notes,
+      isLocked: isLocked ?? this.isLocked,
     );
   }
 
@@ -40,10 +48,12 @@ class BadgeModel extends Model {
     return BadgeModel(
       category: json["category"],
       categoryIcon: json["category_icon"],
+      badgeKey: json['badge_key'],
       badgeName: json["badge_name"],
       badgeIconUrl: json["badge_icon_url"],
       criteria: json["criteria"],
       notes: json["notes"],
+      isLocked: true,
     );
   }
 
@@ -51,6 +61,7 @@ class BadgeModel extends Model {
   Map<String, dynamic> toJson() => {
         "category": category,
         "category_icon": categoryIcon,
+        "badge_key": badgeKey,
         "badge_name": badgeName,
         "badge_icon_url": badgeIconUrl,
         "criteria": criteria,
@@ -61,9 +72,11 @@ class BadgeModel extends Model {
   List<Object?> get props => [
         category,
         categoryIcon,
+        badgeKey,
         badgeName,
         badgeIconUrl,
         criteria,
         notes,
+        isLocked,
       ];
 }

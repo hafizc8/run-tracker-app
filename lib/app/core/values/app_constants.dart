@@ -44,6 +44,7 @@ class AppConstants {
   static const String updateProfile = "/user";
   static const String updateUserPreference = "/user/preference";
   static String badge(String id) => "/user/$id/badge";
+  static const String allBadges = "/badge";
   static String user(String id) => "/user/$id";
   static String follow(String id) => "/follow/$id";
   static String userFollow(String id) => "/follow/$id";

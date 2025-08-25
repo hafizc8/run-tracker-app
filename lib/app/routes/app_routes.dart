@@ -102,4 +102,6 @@ abstract class AppRoutes {
   static const shareClub = '/share/club';
   static const shareActivity = '/share/activity';
   static const shareDailyStepProgress = '/share/daily-step-progress';
+
+  static const allBadges = '/badges/all';
 }

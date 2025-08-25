@@ -7,14 +7,17 @@ import 'package:intl/intl.dart';
 import 'package:zest_mobile/app/core/extension/date_extension.dart';
 import 'package:zest_mobile/app/core/extension/initial_profile_empty.dart';
 import 'package:zest_mobile/app/core/models/model/challenge_detail_model.dart';
+import 'package:zest_mobile/app/core/models/model/user_model.dart';
 import 'package:zest_mobile/app/core/shared/helpers/number_helper.dart';
 import 'package:zest_mobile/app/core/shared/widgets/share_footer.dart';
 import 'package:zest_mobile/app/core/shared/widgets/shimmer_loading_circle.dart';
 
 class ShareChallengeProgressIndividualCard extends StatelessWidget {
-  const ShareChallengeProgressIndividualCard({super.key, required this.challengeModel});
+  const ShareChallengeProgressIndividualCard({super.key, required this.challengeModel, required this.list4TopWalker, required this.currentUser});
 
   final ChallengeDetailModel challengeModel;
+  final List<LeaderboardUser> list4TopWalker;
+  final UserModel currentUser;
 
   @override
   Widget build(BuildContext context) {
@@ -99,7 +102,7 @@ class ShareChallengeProgressIndividualCard extends StatelessWidget {
                     Positioned(
                       top: 50.h,
                       right: 8.w,
-                      child: challengeModel.leaderboardUsers.length > 1
+                      child: challengeModel.leaderboardUsers.length > 2
                         ? _buildTop3Placeholder(context: context, leaderboardUser: challengeModel.leaderboardUsers[2])
                         : const SizedBox.shrink(),
                     ),
@@ -115,17 +118,12 @@ class ShareChallengeProgressIndividualCard extends StatelessWidget {
                 ),
                 height: 220.h,
                 child: ListView(
-                  children: challengeModel.leaderboardUsers
-                      .skip(3) // 1. Lewati 3 user pertama (peringkat 1, 2, 3)
-                      .take(5) // 2. Ambil maksimal 5 user berikutnya (peringkat 4-8)
-                      .toList()
-                      .asMap() // 3. Ubah menjadi map untuk mendapatkan index
-                      .entries
-                      .map((entry) {
-                        var user = entry.value;
+                  children: list4TopWalker
+                      .map((user) {
                         return _buildListTopWalker(
                           context: context,
                           leaderboardUser: user,
+                          isCurrentUser: user.user?.id == currentUser.id,
                         );
                       }).toList(),
                 ),
@@ -196,7 +194,8 @@ class ShareChallengeProgressIndividualCard extends StatelessWidget {
 
   Widget _buildListTopWalker({
     required BuildContext context,
-    required LeaderboardUser leaderboardUser
+    required LeaderboardUser leaderboardUser,
+    bool isCurrentUser = false
   }) {
     return Container(
       padding: EdgeInsets.symmetric(vertical: 8.h, horizontal: 16.w),
@@ -211,8 +210,8 @@ class ShareChallengeProgressIndividualCard extends StatelessWidget {
             ),
             child: Text(
               NumberHelper().formatRank(leaderboardUser.rank ?? 0),
-              style: Theme.of(context).textTheme.bodySmall?.copyWith(
-                fontWeight: FontWeight.w700,
+              style: GoogleFonts.poppins(
+                fontWeight: isCurrentUser ? FontWeight.w700 : FontWeight.w500,
                 color: const Color(0xFF272727),
                 fontSize: 11.sp,
               ),
@@ -244,8 +243,8 @@ class ShareChallengeProgressIndividualCard extends StatelessWidget {
             ),
             child: Text(
               leaderboardUser.user?.name ?? '',
-              style: Theme.of(context).textTheme.bodySmall?.copyWith(
-                fontWeight: FontWeight.normal,
+              style: GoogleFonts.poppins(
+                fontWeight: isCurrentUser ? FontWeight.w700 : FontWeight.w500,
                 color: const Color(0xFF272727),
                 fontSize: 11.sp,
               ),
@@ -256,8 +255,8 @@ class ShareChallengeProgressIndividualCard extends StatelessWidget {
           const Spacer(),
           Text(
             '${NumberFormat('#,###', 'id_ID').format(leaderboardUser.point)} Steps',
-            style: Theme.of(context).textTheme.bodySmall?.copyWith(
-              fontWeight: FontWeight.normal,
+            style: GoogleFonts.poppins(
+              fontWeight: isCurrentUser ? FontWeight.w700 : FontWeight.w500,
               color: const Color(0xFF272727),
               fontSize: 11.sp,
             ),

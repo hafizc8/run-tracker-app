@@ -6,7 +6,10 @@ import 'package:image_gallery_saver/image_gallery_saver.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:permission_handler/permission_handler.dart';
 import 'package:screenshot/screenshot.dart';
+import 'package:zest_mobile/app/core/di/service_locator.dart';
 import 'package:zest_mobile/app/core/models/model/challenge_detail_model.dart';
+import 'package:zest_mobile/app/core/models/model/user_model.dart';
+import 'package:zest_mobile/app/core/services/auth_service.dart';
 import 'package:zest_mobile/app/core/values/app_constants.dart';
 
 class ShareChallengeProgressIndividualController extends GetxController {
@@ -20,6 +23,9 @@ class ShareChallengeProgressIndividualController extends GetxController {
 
   final ScreenshotController screenshotController = ScreenshotController();
   final AppinioSocialShare socialShare = AppinioSocialShare();
+
+  final AuthService _authService = sl<AuthService>();
+  UserModel? get user => _authService.user;
   
   @override
   void onInit() {
@@ -105,6 +111,40 @@ class ShareChallengeProgressIndividualController extends GetxController {
       default:
         print("Unknown share platform: $platform");
     }
+  }
+
+  List<LeaderboardUser> getUsersToShow() {
+    final allUsers = challengeModel.leaderboardUsers;
+    
+    final String currentUserId = user?.id ?? '';
+
+    // 2. Ambil sisa peringkat (mulai dari peringkat 4)
+    final restOfUsers = allUsers.skip(3).toList();
+
+    // 3. Cari data pengguna yang sedang login di dalam sisa peringkat
+    final currentUserData = restOfUsers.firstWhereOrNull((user) => user.user?.id == currentUserId);
+
+    // 4. Buat daftar awal untuk ditampilkan (peringkat 4-8)
+    // Saring agar pengguna saat ini tidak muncul dua kali jika ia berada di peringkat 4-8
+    final List<LeaderboardUser> displayList = restOfUsers
+        .where((user) => user.user?.id != currentUserId)
+        .take(5) // Ambil 5 peringkat teratas dari sisa pengguna
+        .toList();
+        
+    // 5. Tambahkan pengguna saat ini di akhir daftar JIKA ia ada dan tidak termasuk dalam 5 besar
+    if (currentUserData != null) {
+      // Cek apakah currentUserData sudah ada di dalam displayList
+      bool isCurrentUserInList = displayList.any((user) => user.user?.id == currentUserId);
+      
+      if (!isCurrentUserInList) {
+        displayList.add(currentUserData);
+      }
+    }
+
+    // Atur ulang daftar berdasarkan peringkat
+    displayList.sort((a, b) => (a.rank ?? 0).compareTo(b.rank ?? 0));
+    
+    return displayList;
   }
 
 }

@@ -39,6 +39,8 @@ class ShareChallengeProgressIndividualView extends GetView<ShareChallengeProgres
                       controller: controller.screenshotController,
                       child: ShareChallengeProgressIndividualCard(
                         challengeModel: controller.challengeData.value!,
+                        list4TopWalker: controller.getUsersToShow(),
+                        currentUser: controller.user!,
                       ),
                     ),
                   ),

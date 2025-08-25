@@ -129,9 +129,9 @@ class FcmService {
 
     await FcmService.appIsReady;
 
-    print("App is ready, proceeding with navigation for data: ${message.data}");
+    // print("App is ready, proceeding with navigation for data: ${message.data}");
 
-    print("Handling a background message: $message");
+    // print("Handling a background message: $message");
 
     final data = message.data;
 
@@ -150,7 +150,7 @@ class FcmService {
             arguments: UserMiniModel(
               id: id,
               name: title,
-              imageUrl: '',
+              imageUrl: data['user_image_path'],
             ),
           );
           break;
@@ -158,7 +158,7 @@ class FcmService {
           Get.toNamed(AppRoutes.clubChat, arguments: {
             'id': id,
             'title': title,
-            'imgUrl': '',
+            'imgUrl': data['club_image_path'],
           });
           break;
         case 'event':

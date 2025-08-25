@@ -50,7 +50,7 @@ dependencies:
   flutter_typeahead: ^5.2.0
   loader_overlay: ^4.0.4+1
   pretty_dio_logger: ^1.4.0
-  font_awesome_flutter: ^10.8.0
+  font_awesome_flutter: ^10.5.0
   cached_network_image: ^3.4.0
   carousel_slider: ^5.0.0
   shimmer: ^3.0.0
@@ -85,12 +85,16 @@ dependencies:
   firebase_messaging: ^15.0.1
   appinio_social_share: ^0.3.2
   screenshot: ^2.5.0
-  image_gallery_saver: ^2.0.3
+  image_gallery_saver:
+    path: packages/image_gallery_saver
   webview_flutter: ^4.8.0
+  google_sign_in: ^6.2.2
+  firebase_auth: ^5.2.0
 
 dependency_overrides:
   # pedometer: 4.0.2
   image_cropper: ^8.0.1
+  font_awesome_flutter: 10.5.0
 
 dev_dependencies:
   flutter_test:

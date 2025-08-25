@@ -12,6 +12,7 @@ class LoginController extends GetxController {
   Rx<LoginFormModel> form = LoginFormModel().obs;
   var isVisiblePassword = true.obs;
   var isLoading = false.obs;
+  var isLoadingGoogle = false.obs;
   final _authService = sl<AuthService>();
 
   Future<void> login(BuildContext context) async {
@@ -34,6 +35,34 @@ class LoginController extends GetxController {
       Get.snackbar('Error', e.toString());
     } finally {
       isLoading.value = false;
+    }
+  }
+
+  Future<void> loginWithGoogle() async {
+    isLoadingGoogle.value = true;
+    try {
+      final success = await _authService.loginWithGoogle();
+      if (success) {
+        Get.snackbar('Success', 'Logged in successfully!');
+      } else {
+        Get.snackbar('Error', 'Login failed');
+      }
+    } catch (e) {
+      // Map exception messages into friendly text
+      String message;
+      if (e.toString().contains("cancelled_by_user")) {
+        message = "Login cancelled by user.";
+      } else if (e.toString().contains("firebase_")) {
+        message = "Firebase Auth error: ${e.toString().split('_').last}";
+      } else if (e.toString().contains("platform_")) {
+        message = "Google sign-in error: ${e.toString().split('_').last}";
+      } else {
+        message = "Unexpected error: $e";
+      }
+      print(e.toString());
+      Get.snackbar('Auth Error', message);
+    } finally {
+      isLoadingGoogle.value = false;
     }
   }
 }

@@ -116,7 +116,9 @@ class UserService {
         method: HttpMethod.get,
       );
 
-      return UserDetailModel.fromJson(response.data['data']);
+      UserDetailModel user = UserDetailModel.fromJson(response.data['data']);
+      await sl<StorageService>().write(StorageKeys.detailUser, user.toJson());
+      return user;
     } catch (e) {
       rethrow;
     }

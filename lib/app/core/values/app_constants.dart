@@ -24,6 +24,7 @@ class AppConstants {
 
   // Auth
   static const String login = "/login";
+  static const String loginWithGoogle = "/auth/google";
   static const String register = "/register";
   static const String logout = "/logout";
   static const String forgotPassword = "/forgot-password";
@@ -49,6 +50,9 @@ class AppConstants {
   static String follow(String id) => "/follow/$id";
   static String userFollow(String id) => "/follow/$id";
   static String userUnFollow(String id) => "/unfollow/$id";
+
+  // shop
+  static String shop = "/shop";
 
   // Post
   static const String postGetAll = "/post";

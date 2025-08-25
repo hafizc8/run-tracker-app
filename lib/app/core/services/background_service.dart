@@ -59,7 +59,6 @@ void onStart(ServiceInstance service) async {
       return;
     }
 
-
     // Jika baru saja resume dari pause
     if (totalStepsAtPause > 0) {
       int stepsDuringPause = steps - totalStepsAtPause;

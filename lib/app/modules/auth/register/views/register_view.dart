@@ -166,25 +166,37 @@ class RegisterView extends GetView<RegisterController> {
                         controlAffinity: ListTileControlAffinity.leading,
                         contentPadding: EdgeInsets.zero,
                         isError: form.errors?['is_agree'] != null,
-                        title: Wrap(
-                          children: [
-                            Text(
-                              'By signing up, you acknowledge and agree to our ',
-                              style: Theme.of(context).textTheme.bodySmall,
-                            ),
-                            GestureDetector(
-                              onTap: () => Get.toNamed(AppRoutes.tnc),
-                              child: const TextSpanWidget('Terms & Conditions'),
-                            ),
-                            Text(
-                              ' and ',
-                              style: Theme.of(context).textTheme.bodySmall,
-                            ),
-                            GestureDetector(
-                              onTap: () => Get.toNamed(AppRoutes.privacyPolicy),
-                              child: const TextSpanWidget('Privacy Policy'),
-                            ),
-                          ],
+                        title: RichText(
+                          text: TextSpan(
+                            style: Theme.of(context).textTheme.bodySmall,
+                            children: [
+                              const TextSpan(
+                                text:
+                                    'By signing up, you acknowledge and agree to our ',
+                              ),
+                              TextSpan(
+                                text: 'Terms & Conditions',
+                                style: const TextStyle(
+                                  color:
+                                      Colors.blue, // make it look like a link
+                                  decoration: TextDecoration.underline,
+                                ),
+                                recognizer: TapGestureRecognizer()
+                                  ..onTap = () => Get.toNamed(AppRoutes.tnc),
+                              ),
+                              const TextSpan(text: ' and '),
+                              TextSpan(
+                                text: 'Privacy Policy',
+                                style: const TextStyle(
+                                  color: Colors.blue,
+                                  decoration: TextDecoration.underline,
+                                ),
+                                recognizer: TapGestureRecognizer()
+                                  ..onTap = () =>
+                                      Get.toNamed(AppRoutes.privacyPolicy),
+                              ),
+                            ],
+                          ),
                         ),
                       ),
                       if (form.errors?['is_agree'] != null)

@@ -6,7 +6,9 @@ import 'package:zest_mobile/app/core/di/service_locator.dart';
 import 'package:zest_mobile/app/core/exception/app_exception.dart';
 import 'package:zest_mobile/app/core/exception/handler/app_exception_handler_info.dart';
 import 'package:zest_mobile/app/core/services/auth_service.dart';
+import 'package:zest_mobile/app/modules/home/controllers/shop_controller.dart';
 import 'package:zest_mobile/app/modules/home/views/home_view.dart';
+import 'package:zest_mobile/app/modules/home/views/shop_view.dart';
 import 'package:zest_mobile/app/modules/social/views/social_view.dart';
 import 'package:zest_mobile/app/modules/home/controllers/home_controller.dart';
 import 'package:zest_mobile/app/modules/main_profile/controllers/main_profile_controller.dart';
@@ -15,6 +17,7 @@ import 'package:zest_mobile/app/modules/main_profile/views/main_profile_view.dar
 class MainHomeController extends GetxController {
   MainHomeController() {
     Get.lazyPut<HomeController>(() => HomeController());
+    Get.lazyPut<ShopController>(() => ShopController());
     Get.lazyPut<ProfileMainController>(() => ProfileMainController());
   }
 
@@ -24,7 +27,7 @@ class MainHomeController extends GetxController {
   List<Widget> get pages => const [
         HomeView(),
         SocialView(),
-        SafeArea(child: Center(child: Text('Shop'))),
+        ShopView(),
         MainProfileView(),
       ];
   void changeTab(int index) {

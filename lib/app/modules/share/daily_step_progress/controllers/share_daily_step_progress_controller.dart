@@ -61,7 +61,7 @@ class ShareDailyStepProgressController extends GetxController {
         ),
         backgroundImagePath: 'assets/images/background_share-2.png',
       ),
-      pixelRatio: 3.0,
+      pixelRatio: 4.0,
     );
 
     // 2. Simpan gambar ke file sementara
@@ -83,12 +83,23 @@ class ShareDailyStepProgressController extends GetxController {
         await socialShare.android.shareToWhatsapp(message, imagePath);
         break;
 
-      case 'instagram':
+      case 'ig direct':
         if (installedApps['instagram'] == false) {
           Get.snackbar('Error', 'Instagram is not installed on this device.');
           return;
         }
         await socialShare.android.shareToInstagramDirect(message);
+        break;
+
+      case 'ig story':
+        if (installedApps['instagram'] == false) {
+          Get.snackbar('Error', 'Instagram is not installed on this device.');
+          return;
+        }
+        await socialShare.android.shareToInstagramStory(
+          AppConstants.facebookAppId, 
+          stickerImage: imagePath,
+        );
         break;
 
       case 'x':

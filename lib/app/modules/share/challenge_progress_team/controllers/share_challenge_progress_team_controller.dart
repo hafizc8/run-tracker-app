@@ -51,7 +51,7 @@ class ShareChallengeProgressTeamController extends GetxController {
   /// ✨ FUNGSI UTAMA: Menangkap gambar dan membagikannya
   Future<void> shareTo(String platform) async {
     // 1. Tangkap widget sebagai gambar (dalam format Uint8List)
-    final imageBytes = await screenshotController.capture(pixelRatio: 3).then((image) => image!.buffer.asUint8List());
+    final imageBytes = await screenshotController.capture(pixelRatio: 4).then((image) => image!.buffer.asUint8List());
 
     // 2. Simpan gambar ke file sementara
     final directory = await getTemporaryDirectory();
@@ -72,12 +72,23 @@ class ShareChallengeProgressTeamController extends GetxController {
         await socialShare.android.shareToWhatsapp(message, imagePath);
         break;
 
-      case 'instagram':
+      case 'ig direct':
         if (installedApps['instagram'] == false) {
           Get.snackbar('Error', 'Instagram is not installed on this device.');
           return;
         }
         await socialShare.android.shareToInstagramDirect(message);
+        break;
+
+      case 'ig story':
+        if (installedApps['instagram'] == false) {
+          Get.snackbar('Error', 'Instagram is not installed on this device.');
+          return;
+        }
+        await socialShare.android.shareToInstagramStory(
+          AppConstants.facebookAppId, 
+          stickerImage: imagePath,
+        );
         break;
 
       case 'x':

@@ -18,7 +18,8 @@ class _ShareOptionsGridState extends State<ShareOptionsGrid> {
 
   final List<Map<String, String>> shareOptions = [
     {'icon': 'assets/icons/ic_share_whatsapp.svg', 'label': 'Whatsapp'},
-    {'icon': 'assets/icons/ic_share_instagram.svg', 'label': 'Instagram'},
+    {'icon': 'assets/icons/ic_share_instagram.svg', 'label': 'IG Direct'},
+    {'icon': 'assets/icons/ic_share_instagram.svg', 'label': 'IG Story'},
     {'icon': 'assets/icons/Twitter-X-Icon-PNG.svg', 'label': 'X'},
     {'icon': 'assets/icons/ic_share_link.svg', 'label': 'Link'},
     {'icon': 'assets/icons/ic_share_download.svg', 'label': 'Download'},
@@ -91,7 +92,7 @@ class _ShareOptionsGridState extends State<ShareOptionsGrid> {
   Widget _buildShareIcon(BuildContext context, String iconAsset, String label, bool isLoading) {
     print('label: $label, isLoading: $isLoading');
     return Column(
-      mainAxisAlignment: MainAxisAlignment.center,
+      mainAxisAlignment: MainAxisAlignment.start,
       children: [
         Container(
           width: 52.r,

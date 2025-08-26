@@ -3,6 +3,7 @@ import 'package:flutter/widgets.dart';
 import 'package:flutter_background_service/flutter_background_service.dart';
 import 'package:get/get.dart';
 import 'package:permission_handler/permission_handler.dart';
+import 'package:table_calendar/table_calendar.dart';
 import 'package:zest_mobile/app/core/di/service_locator.dart';
 import 'package:zest_mobile/app/core/models/model/daily_record_model.dart';
 import 'package:zest_mobile/app/core/models/model/home_page_data_model.dart';
@@ -13,7 +14,9 @@ import 'package:zest_mobile/app/core/services/auth_service.dart';
 import 'package:zest_mobile/app/core/services/fcm_service.dart';
 import 'package:zest_mobile/app/core/services/log_service.dart';
 import 'package:zest_mobile/app/core/services/record_activity_service.dart';
+import 'package:zest_mobile/app/core/services/storage_service.dart';
 import 'package:zest_mobile/app/core/services/user_service.dart';
+import 'package:zest_mobile/app/core/values/storage_keys.dart';
 import 'package:zest_mobile/app/modules/home/widgets/achieve_badge_dialog.dart';
 import 'package:zest_mobile/app/modules/home/widgets/achieve_streak_dialog.dart';
 import 'package:zest_mobile/app/modules/home/widgets/leveled_up_dialog.dart';
@@ -143,11 +146,21 @@ class HomeController extends GetxController {
     _logService.log.i("Syncing today's hourly step data...");
     final today = DateTime.now();
 
-    // Dapatkan data per jam untuk hari ini
-    await _fetchHourlyStepData(today);
+    // Dapatkan timestamp login terakhir
+    final lastLoginString = await sl<StorageService>().read(StorageKeys.lastLoginTimeStamp);
+    final lastLoginTime = lastLoginString != null ? DateTime.parse(lastLoginString) : null;
 
-    final localTotalSteps =
-        hourlySteps.values.fold(0, (sum, item) => sum + item);
+    // Tentukan waktu mulai untuk "penyelaman": dari waktu login jika di hari yang sama,
+    // atau dari awal hari jika login terjadi di hari sebelumnya.
+    DateTime startTimeForFetch = DateTime(today.year, today.month, today.day);
+    if (lastLoginTime != null && isSameDay(lastLoginTime, today)) {
+      startTimeForFetch = lastLoginTime;
+    }
+
+    // Dapatkan data per jam untuk hari ini, dimulai dari waktu yang relevan
+    await _fetchHourlyStepData(today, startTime: startTimeForFetch);
+
+    final localTotalSteps = hourlySteps.values.fold(0, (sum, item) => sum + item);
 
     // Rekonsiliasi dengan data backend
     final backendSteps = homePageData.value?.recordDaily?.step ?? 0;
@@ -192,38 +205,50 @@ class HomeController extends GetxController {
 
     _logService.log.i("Checking for missing daily records to sync...");
 
-    if (lastRecord.value == null) return;
+    final lastRecordDate = lastRecord.value?.date;
+    final lastLoginString = await sl<StorageService>().read(StorageKeys.lastLoginTimeStamp);
+    final lastLoginTime = lastLoginString != null ? DateTime.parse(lastLoginString) : null;
+
+    if (lastRecordDate == null || lastLoginTime == null) {
+      _logService.log.w("No last record or login date found. Skipping catch-up sync.");
+      return;
+    }
+
+    DateTime effectiveStartDate = lastRecordDate.isAfter(lastLoginTime) ? lastRecordDate : lastLoginTime;
 
     final today = DateTime.now();
-    final differenceInDays = today.difference(lastRecord.value?.date ?? today).inDays;
+    final differenceInDays = today.difference(effectiveStartDate).inDays;
 
-    if (differenceInDays <= 0) return;
-    _logService.log.w(
-        "$differenceInDays day(s) of data are missing. Starting catch-up sync...");
+    if (differenceInDays <= 1) {
+      _logService.log.i("Data is up to date since last valid point. No catch-up sync needed.");
+      return;
+    }
+
+    _logService.log.w("${differenceInDays - 1} day(s) of valid data are missing. Starting catch-up sync...");
 
     List<RecordDailyMiniModel> allMissingRecords = [];
 
-    for (int i = 1; i < differenceInDays; i++) { // Gunakan '<' agar tidak menyertakan hari ini
-      final dateToSync = lastRecord.value?.date?.add(Duration(days: i)) ?? today;
-      
-      // Dapatkan data per jam untuk hari yang hilang
-      await _fetchHourlyStepData(dateToSync);
+    // Loop dari hari setelah effectiveStartDate sampai KEMARIN
+    for (int i = 1; i < differenceInDays; i++) {
+      final dateToSync = effectiveStartDate.add(Duration(days: i));
+
+      if (isSameDay(dateToSync, lastLoginTime)) {
+        await _fetchHourlyStepData(dateToSync, startTime: lastLoginTime);
+      } else {
+        await _fetchHourlyStepData(dateToSync);
+      }
 
       if (hourlySteps.isNotEmpty) {
-        allMissingRecords
-            .addAll(_prepareRecordsFromHourlyData(dateToSync, hourlySteps));
+        allMissingRecords.addAll(_prepareRecordsFromHourlyData(dateToSync, hourlySteps));
       }
     }
 
     if (allMissingRecords.isNotEmpty) {
       try {
-        await _recordActivityService.syncDailyRecord(
-            records: allMissingRecords);
-        _logService.log.i(
-            "Successfully synced ${allMissingRecords.length} missing hourly records.");
+        await _recordActivityService.syncDailyRecord(records: allMissingRecords);
+        _logService.log.i("Successfully synced ${allMissingRecords.length} missing hourly records.");
       } catch (e, s) {
-        _logService.log
-            .e("Failed to sync missing daily records", error: e, stackTrace: s);
+        _logService.log.e("Failed to sync missing daily records", error: e, stackTrace: s);
       }
     }
   }
@@ -347,16 +372,15 @@ class HomeController extends GetxController {
     );
   }
 
-  Future<void> _fetchHourlyStepData(DateTime date) async {
-    _logService.log.i(
-        "Starting hourly step data fetch for ${DateFormat('yyyy-MM-dd').format(date)}");
+  Future<void> _fetchHourlyStepData(DateTime date, {DateTime? startTime}) async {
+    _logService.log.i("Starting hourly step data fetch for ${DateFormat('yyyy-MM-dd').format(date)}");
     hourlySteps.clear(); // Bersihkan data lama
 
-    final startTime = DateTime(date.year, date.month, date.day);
-    final endTime = DateTime(date.year, date.month, date.day, 23, 59, 59);
+    final startOfDay = startTime ?? DateTime(date.year, date.month, date.day);
+    final endOfDay = DateTime(date.year, date.month, date.day, 23, 59, 59);
 
     // Memulai proses rekursif dari rentang satu hari penuh
-    await _recursiveStepFetch(startTime, endTime);
+    await _recursiveStepFetch(startOfDay, endOfDay);
 
     _logService.log.i("Hourly step data fetched: $hourlySteps");
     update(); // Memicu update UI

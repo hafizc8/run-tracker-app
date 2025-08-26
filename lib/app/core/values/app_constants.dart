@@ -7,6 +7,7 @@ class AppConstants {
   static const appName = "Zest Mobile";
   static const defaultLocale = "id_ID";
   static const googleApiKey = "AIzaSyD-ueM1nm0oVLA8c3ekfPu7rF2bD0NMD2w";
+  static const facebookAppId = "1027288366007207";
 
   // API
   static const apiVersion = "v1";

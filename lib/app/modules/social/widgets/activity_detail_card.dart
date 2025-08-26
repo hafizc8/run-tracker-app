@@ -64,7 +64,13 @@ class ActivityDetailCard extends StatelessWidget {
                   // when galleries is empty
                   child: Stack(
                     children: [
-                      _buildMapPlaceholder(postData?.recordActivity),
+                      Positioned(
+                        top: 0,
+                        bottom: 0,
+                        right: 0,
+                        left: 0,
+                        child: _buildMapPlaceholder(postData?.recordActivity),
+                      ),
                       Positioned(
                         bottom: 0,
                         right: 0,
@@ -362,6 +368,7 @@ class ActivityDetailCard extends StatelessWidget {
     return StaticRouteMap(
       activityLogs: recordActivity?.recordActivityLogs ?? [],
       height: 310.h,
+      isForDetail: true,
     );
   }
 
@@ -490,7 +497,8 @@ class ActivityDetailCard extends StatelessWidget {
               ),
               label: 'Share',
               onTap: () {
-                if ((postData?.isOwner ?? false) && postData?.recordActivity != null) {
+                final bool isOwner = controller.user?.id == postData?.user?.id;
+                if (isOwner && postData?.recordActivity != null) {
                   Get.toNamed(AppRoutes.shareActivity, arguments: postData);
                 } else {
                   Share.share(

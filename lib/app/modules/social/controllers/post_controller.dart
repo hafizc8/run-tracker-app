@@ -230,7 +230,7 @@ class PostController extends GetxController {
       commentTextController.clear();
 
       PostModel response = await _postService.getDetail(postId: postId);
-      postDetail.value = response;
+      postDetail.value = response.copyWith(isOwner: response.user?.id == user?.id);
     } on AppException catch (e) {
       // show error snackbar, toast, etc
       AppExceptionHandlerInfo.handle(e);

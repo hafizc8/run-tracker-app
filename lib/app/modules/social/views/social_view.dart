@@ -35,7 +35,7 @@ class SocialView extends GetView<SocialController> {
     return AppBar(
       title: Padding(
         padding: EdgeInsets.only(
-          left: 8.w,
+          left: 6.w,
           right: 8.w,
           top: 14.w,
           bottom: 14.w,
@@ -106,7 +106,7 @@ class SocialView extends GetView<SocialController> {
           child: Container(
             width: 36.r,
             height: 36.r,
-            padding: EdgeInsets.all(8.w),
+            padding: EdgeInsets.all(10.w),
             decoration: BoxDecoration(
               color: Theme.of(context).colorScheme.outline,
               shape: BoxShape.circle,
@@ -120,7 +120,7 @@ class SocialView extends GetView<SocialController> {
           ),
         ),
         Padding(
-          padding: EdgeInsets.only(right: 16.w, left: 10.w),
+          padding: EdgeInsets.only(right: 16.w, left: 12.w),
           child: GestureDetector(
             onTap: () => Get.toNamed(AppRoutes.socialSearch),
             child: Container(

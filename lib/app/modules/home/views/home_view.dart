@@ -40,7 +40,7 @@ class HomeView extends GetView<HomeController> {
                     // Widget Profile
                     Container(
                       margin:
-                          EdgeInsets.only(top: 16.h, left: 16.w, right: 16.w),
+                          EdgeInsets.only(top: 10.h, left: 16.w, right: 16.w),
                       child: Row(
                         children: [
                           Expanded(
@@ -81,7 +81,7 @@ class HomeView extends GetView<HomeController> {
                                 color: Color(0xFF494949),
                                 shape: BoxShape.circle,
                               ),
-                              padding: EdgeInsets.all(13.w),
+                              padding: EdgeInsets.all(10.w),
                               child: FaIcon(
                                 FontAwesomeIcons.solidBell,
                                 color: Colors.white,
@@ -99,11 +99,11 @@ class HomeView extends GetView<HomeController> {
                                 color: Color(0xFF494949),
                                 shape: BoxShape.circle,
                               ),
-                              padding: EdgeInsets.all(12.w),
+                              padding: EdgeInsets.all(10.w),
                               child: FaIcon(
                                 FontAwesomeIcons.solidEnvelope,
                                 color: Colors.white,
-                                size: 18.sp,
+                                size: 16.sp,
                               ),
                             ),
                           ),

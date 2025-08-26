@@ -17,6 +17,20 @@ import 'package:zest_mobile/app/routes/app_routes.dart';
 class EditActivityView extends GetView<EditActivityController> {
   const EditActivityView({super.key});
 
+  final String _mapStyle = '''
+  [
+    {
+      "featureType": "poi",
+      "elementType": "labels",
+      "stylers": [
+        {
+          "visibility": "off"
+        }
+      ]
+    }
+  ]
+  ''';
+
   @override
   Widget build(BuildContext context) {
     return PopScope(
@@ -183,7 +197,8 @@ class EditActivityView extends GetView<EditActivityController> {
                               anchor: const Offset(0.5, 1.0),
                             ),
                         ]
-                      }
+                      },
+                      style: _mapStyle,
                     ),
                   ),
                   const SizedBox(height: 24),

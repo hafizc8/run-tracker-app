@@ -268,16 +268,18 @@ class PostController extends GetxController {
         return;
       }
 
+      final content = commentTextController.text;
+      commentTextController.clear();
+
       PostModel resp = await _postService.commentReply(
         postId: postDetail.value!.id!,
-        content: commentTextController.text,
+        content: content,
         parentCommentId: (focusedComment.value != null)
             ? focusedComment.value?.id ?? ''
             : '',
       );
 
       focusedComment.value = null;
-      commentTextController.clear();
 
       postDetail.value = resp;
     } on AppException catch (e) {

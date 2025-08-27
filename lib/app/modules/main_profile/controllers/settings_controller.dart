@@ -6,6 +6,7 @@ import 'package:zest_mobile/app/core/di/service_locator.dart';
 import 'package:zest_mobile/app/core/exception/app_exception.dart';
 import 'package:zest_mobile/app/core/exception/handler/app_exception_handler_info.dart';
 import 'package:zest_mobile/app/core/services/auth_service.dart';
+import 'package:zest_mobile/app/core/services/user_service.dart';
 import 'package:zest_mobile/app/core/shared/widgets/custom_circular_progress_indicator.dart';
 import 'package:zest_mobile/app/core/shared/widgets/gradient_elevated_button.dart';
 import 'package:zest_mobile/app/core/shared/widgets/gradient_outlined_button.dart';
@@ -17,6 +18,7 @@ class SettingsController extends GetxController {
   var allowEmailnotif = false.obs;
   Rx<String?> appVersion = Rx(null);
   final _authService = sl<AuthService>();
+  final _userService = sl<UserService>();
 
   @override
   void onInit() async {
@@ -32,6 +34,21 @@ class SettingsController extends GetxController {
     isLoading.value = true;
     try {
       bool resp = await _authService.logout();
+      if (resp) Get.offAllNamed(AppRoutes.login);
+    } on AppException catch (e) {
+      // show error snackbar, toast, etc
+      AppExceptionHandlerInfo.handle(e);
+    } catch (e) {
+      Get.snackbar('Error', e.toString());
+    } finally {
+      isLoading.value = false;
+    }
+  }
+
+  void deleteAccount() async {
+    isLoading.value = true;
+    try {
+      bool resp = await _userService.deleteAccount();
       if (resp) Get.offAllNamed(AppRoutes.login);
     } on AppException catch (e) {
       // show error snackbar, toast, etc
@@ -157,6 +174,147 @@ class SettingsController extends GetxController {
                             onPressed: () => Get.back(),
                             child: Text(
                               'No, keep me here',
+                              style: Theme.of(context).textTheme.labelSmall,
+                            ),
+                          ),
+                        ),
+                      )
+                    ],
+                  ),
+                ],
+              ),
+            ),
+          ),
+        );
+      },
+    );
+  }
+
+  void showDeleteDialog(BuildContext context) {
+    showDialog(
+      context: context,
+      barrierDismissible: false,
+      builder: (context) {
+        return Dialog(
+          surfaceTintColor: Theme.of(context).colorScheme.onPrimary,
+          insetPadding: EdgeInsets.all(32.w),
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(15.r),
+          ),
+          child: Container(
+            decoration: BoxDecoration(
+              borderRadius: BorderRadius.circular(15.r),
+              gradient: const LinearGradient(
+                colors: [Color(0xFFA2FF00), Color(0xFF00FF7F)],
+                begin: Alignment.topCenter,
+                end: Alignment.bottomCenter,
+              ),
+            ),
+            child: Container(
+              margin: EdgeInsets.all(2.w),
+              padding: EdgeInsets.symmetric(
+                horizontal: 24.w,
+                vertical: 24.h,
+              ),
+              width: double.infinity,
+              decoration: BoxDecoration(
+                color: Theme.of(context).colorScheme.onPrimary,
+                borderRadius: BorderRadius.circular(14.r),
+              ),
+              child: Column(
+                mainAxisSize: MainAxisSize.min,
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  // Header
+                  Align(
+                    alignment: Alignment.topLeft,
+                    child: ShaderMask(
+                      shaderCallback: (bounds) => const LinearGradient(
+                        begin: Alignment.centerLeft,
+                        end: Alignment.centerRight,
+                        colors: [
+                          Color(0xFFA2FF00),
+                          Color(0xFF00FF7F),
+                        ],
+                      ).createShader(
+                        Rect.fromLTWH(0, 0, bounds.width, bounds.height),
+                      ),
+                      child: Text(
+                        'Are you sure you want to delete your account?',
+                        textAlign: TextAlign.center,
+                        style: TextStyle(
+                          fontSize: 17.sp,
+                          fontWeight: FontWeight.w700,
+                        ),
+                      ),
+                    ),
+                  ),
+                  SizedBox(height: 10.h),
+                  Text(
+                    'This action is permanent and will remove all your data, including activity history, rewards, and progress. You won’t be able to recover your account once it’s deleted.',
+                    textAlign: TextAlign.center,
+                    style: Theme.of(context).textTheme.bodySmall?.copyWith(
+                          fontWeight: FontWeight.w400,
+                        ),
+                  ),
+                  SizedBox(height: 30.h),
+
+                  // Buttons
+                  Row(
+                    children: [
+                      Expanded(
+                        flex: 2,
+                        child: SizedBox(
+                          height: 43.h,
+                          child: GradientOutlinedButton(
+                            gradient: const LinearGradient(
+                              colors: [
+                                Color(0xFFFF0000),
+                                Color(0xFFBA0000),
+                              ],
+                              begin: Alignment.centerLeft,
+                              end: Alignment.centerRight,
+                            ),
+                            style: ButtonStyle(
+                              shape: MaterialStateProperty.all(
+                                RoundedRectangleBorder(
+                                  borderRadius: BorderRadius.circular(8),
+                                ),
+                              ),
+                            ),
+                            child: Obx(
+                              () => Visibility(
+                                visible: !isLoading.value,
+                                replacement: CustomCircularProgressIndicator(),
+                                child: Text(
+                                  'Yes, Delete My Account',
+                                  style: Theme.of(context).textTheme.labelSmall,
+                                ),
+                              ),
+                            ),
+                            onPressed: () => deleteAccount(),
+                          ),
+                        ),
+                      ),
+                      SizedBox(width: 16.w),
+                      Expanded(
+                        flex: 1,
+                        child: SizedBox(
+                          height: 43.h,
+                          child: GradientElevatedButton(
+                            style: ButtonStyle(
+                              padding: MaterialStateProperty.all(
+                                EdgeInsets.zero,
+                              ),
+                              shape: MaterialStateProperty.all(
+                                RoundedRectangleBorder(
+                                  borderRadius: BorderRadius.circular(8),
+                                ),
+                              ),
+                            ),
+                            onPressed: () => Get.back(),
+                            child: Text(
+                              'Cancel',
                               style: Theme.of(context).textTheme.labelSmall,
                             ),
                           ),

@@ -74,7 +74,8 @@ class CardChallenge extends StatelessWidget {
                 const Spacer(),
                 InkWell(
                   onTap: () {
-                    Get.toNamed(AppRoutes.shareChallenge, arguments: challengeModel);
+                    Get.toNamed(AppRoutes.shareChallenge,
+                        arguments: challengeModel);
                   },
                   child: SvgPicture.asset(
                     'assets/icons/ic_share-2.svg',
@@ -152,7 +153,8 @@ class CardChallenge extends StatelessWidget {
                                 ),
                           ),
                           Text(
-                            NumberHelper().formatNumberToKWithComma(challengeModel.target),
+                            NumberHelper().formatNumberToKWithComma(
+                                challengeModel.target),
                             maxLines: 1,
                             overflow: TextOverflow.ellipsis,
                             style: Theme.of(context)
@@ -199,6 +201,7 @@ class CardChallenge extends StatelessWidget {
                           ),
                           Text(
                             (challengeModel.endDate ?? DateTime.now())
+                                .toLocal()
                                 .todMMMyyyyString(),
                             maxLines: 1,
                             overflow: TextOverflow.ellipsis,
@@ -246,6 +249,7 @@ class CardChallenge extends StatelessWidget {
                         ),
                         Text(
                           (challengeModel.startDate ?? DateTime.now())
+                              .toLocal()
                               .todMMMyyyyString(),
                           maxLines: 1,
                           overflow: TextOverflow.ellipsis,

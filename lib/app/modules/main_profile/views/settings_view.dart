@@ -3,6 +3,7 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 
 import 'package:get/get.dart';
+import 'package:zest_mobile/app/core/shared/widgets/gradient_outlined_button.dart';
 import 'package:zest_mobile/app/modules/debug/controllers/debug_controller.dart';
 import 'package:zest_mobile/app/modules/main_profile/controllers/settings_controller.dart';
 import 'package:zest_mobile/app/routes/app_routes.dart';
@@ -32,6 +33,38 @@ class SettingsView extends GetView<SettingsController> {
             child: const Icon(
               Icons.chevron_left,
               color: Color(0xFFA5A5A5),
+            ),
+          ),
+        ),
+      ),
+      bottomNavigationBar: Padding(
+        padding: EdgeInsets.all(16.0.w),
+        child: SizedBox(
+          height: 43.h,
+          child: GradientOutlinedButton(
+            style: OutlinedButton.styleFrom(
+              shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(9.r),
+              ),
+            ),
+            gradient: const LinearGradient(
+              colors: [
+                Color(0xFFFF0000),
+                Color(0xFFBA0000),
+              ],
+              begin: Alignment.centerLeft,
+              end: Alignment.centerRight,
+            ),
+            onPressed: () {
+              controller.showDeleteDialog(context);
+            },
+            child: Text(
+              'Delete Account',
+              style: Theme.of(context).textTheme.labelLarge?.copyWith(
+                    color: Theme.of(context).colorScheme.onBackground,
+                    fontSize: 15.sp,
+                    fontWeight: FontWeight.w700,
+                  ),
             ),
           ),
         ),

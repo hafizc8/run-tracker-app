@@ -12,38 +12,45 @@ class RegisterVerifyEmailController extends GetxController {
   final AuthService _authService = sl<AuthService>();
   UserModel? get user => _authService.user;
 
-  final resendCooldown = 30.obs;
-  final canResend = false.obs;
+  var resendCooldown = 30.obs;
+  var canResend = false.obs;
 
-  final isLoading = false.obs;
+  var isLoading = false.obs;
+  var isLoading1 = false.obs;
 
   Timer? _timer;
 
   @override
   void onInit() {
+    resetTimer();
     startTimer();
+    debugPrint("Controller onInit: $hashCode");
     super.onInit();
   }
 
   @override
   void onClose() {
-    _timer?.cancel();
+    resetTimer();
     super.onClose();
   }
 
   void startTimer() {
-    canResend.value = false;
-    resendCooldown.value = 30;
-
-    _timer?.cancel();
     _timer = Timer.periodic(const Duration(seconds: 1), (timer) {
+      if (resendCooldown.value > 0) {
+        resendCooldown.value--;
+        debugPrint(resendCooldown.value.toString());
+      }
       if (resendCooldown.value == 0) {
         canResend.value = true;
         timer.cancel();
-      } else {
-        resendCooldown.value--;
       }
     });
+  }
+
+  void resetTimer() {
+    resendCooldown.value = 30;
+    canResend.value = false;
+    _timer?.cancel();
   }
 
   Future<void> sendEmailVerify() async {
@@ -59,6 +66,7 @@ class RegisterVerifyEmailController extends GetxController {
           colorText: Colors.white,
         );
       }
+      resetTimer();
       startTimer();
     } on AppException catch (e) {
       // show error snackbar, toast, etc

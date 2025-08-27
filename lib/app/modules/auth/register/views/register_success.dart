@@ -15,6 +15,8 @@ class RegisterSuccessView extends StatelessWidget {
           child: Column(
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
+              Image.asset('assets/icons/ic_complete_profile_finish.png',
+                  height: 280.h),
               Text(
                 'You\'re In!',
                 style: Theme.of(context).textTheme.headlineMedium,

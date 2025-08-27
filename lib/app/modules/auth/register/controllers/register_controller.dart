@@ -11,6 +11,7 @@ import 'package:zest_mobile/app/routes/app_routes.dart';
 class RegisterController extends GetxController {
   Rx<RegisterFormModel> form = RegisterFormModel().obs;
   var isLoading = false.obs;
+  var isLoadingGoogle = false.obs;
   final _authService = sl<AuthService>();
 
   var isVisiblePassword = true.obs;
@@ -36,6 +37,30 @@ class RegisterController extends GetxController {
       Get.snackbar('Error', e.toString());
     } finally {
       isLoading.value = false;
+    }
+  }
+
+  Future<void> loginWithGoogle() async {
+    isLoadingGoogle.value = true;
+    try {
+      final resp = await _authService.loginWithGoogle();
+      if (resp) Get.offAllNamed(AppRoutes.mainHome);
+    } catch (e) {
+      // Map exception messages into friendly text
+      String message;
+      if (e.toString().contains("cancelled_by_user")) {
+        message = "Login cancelled by user.";
+      } else if (e.toString().contains("firebase_")) {
+        message = "Firebase Auth error: ${e.toString().split('_').last}";
+      } else if (e.toString().contains("platform_")) {
+        message = "Google sign-in error: ${e.toString().split('_').last}";
+      } else {
+        message = "Unexpected error: $e";
+      }
+
+      Get.snackbar('Auth Error', message);
+    } finally {
+      isLoadingGoogle.value = false;
     }
   }
 }

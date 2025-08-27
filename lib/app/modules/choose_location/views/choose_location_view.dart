@@ -1,9 +1,11 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_svg/flutter_svg.dart';
 import 'package:flutter_typeahead/flutter_typeahead.dart';
 import 'package:get/get.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:zest_mobile/app/core/models/model/location_model.dart';
 import 'package:zest_mobile/app/core/shared/widgets/gradient_elevated_button.dart';
+import 'package:zest_mobile/app/core/shared/widgets/gradient_outlined_button.dart';
 import 'package:zest_mobile/app/modules/choose_location/controllers/choose_location_controller.dart';
 
 class ChooseLocationView extends GetView<ChooseLocationController> {
@@ -31,11 +33,12 @@ class ChooseLocationView extends GetView<ChooseLocationController> {
         centerTitle: true,
       ),
       body: SingleChildScrollView(
+        padding: const EdgeInsets.symmetric(horizontal: 16),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+              padding: const EdgeInsets.symmetric(vertical: 12),
               child: TypeAheadField<LocationModel>(
                 builder: (context, controller, focusNode) {
                   return TextFormField(
@@ -102,31 +105,35 @@ class ChooseLocationView extends GetView<ChooseLocationController> {
               ),
             ),
             const SizedBox(height: 12),
-            Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 16),
-              child: OutlinedButton.icon(
-                style: OutlinedButton.styleFrom(
-                  minimumSize: const Size.fromHeight(40),
+            GradientOutlinedButton(
+              style: ButtonStyle(
+                shape: MaterialStateProperty.all<RoundedRectangleBorder>(
+                  RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(10.0),
+                  ),
                 ),
-                onPressed: () => controller.setCurrentLocation(),
-                icon: const Icon(Icons.my_location_outlined),
-                label: const Text('Use Current Location'),
               ),
+              child: Row(
+                children: [
+                  SvgPicture.asset('assets/icons/ic_loc.svg'),
+                  const SizedBox(width: 8),
+                  const Text('Use current location'),
+                ],
+              ),
+              onPressed: () {
+                controller.setCurrentLocation();
+              },
             ),
             const SizedBox(height: 12),
-            Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 16),
-              child: Obx(
-                () => Visibility(
-                  visible: !controller.isLoading.value,
-                  replacement: const Text('Load address...'),
-                  child: Visibility(
-                    visible: controller.address.value.isNotEmpty,
-                    replacement:
-                        const Text('Drag the map to move your location'),
-                    child: Text(
-                      controller.address.value,
-                    ),
+            Obx(
+              () => Visibility(
+                visible: !controller.isLoading.value,
+                replacement: const Text('Load address...'),
+                child: Visibility(
+                  visible: controller.address.value.isNotEmpty,
+                  replacement: const Text('Drag the map to move your location'),
+                  child: Text(
+                    controller.address.value,
                   ),
                 ),
               ),
@@ -139,6 +146,7 @@ class ChooseLocationView extends GetView<ChooseLocationController> {
         height: 55,
         child: Obx(
           () => GradientElevatedButton(
+            contentPadding: EdgeInsets.zero,
             onPressed: !controller.canUpdate
                 ? null
                 : () => Get.back(result: {

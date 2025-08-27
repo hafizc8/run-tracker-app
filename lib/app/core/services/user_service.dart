@@ -117,7 +117,7 @@ class UserService {
       );
 
       UserDetailModel user = UserDetailModel.fromJson(response.data['data']);
-      await sl<StorageService>().write(StorageKeys.detailUser, user.toJson());
+
       return user;
     } catch (e) {
       rethrow;
@@ -143,6 +143,29 @@ class UserService {
         path: AppConstants.userUnFollow(id),
         method: HttpMethod.post,
       );
+
+      return response.data['success'];
+    } catch (e) {
+      rethrow;
+    }
+  }
+
+  Future<bool> deleteAccount() async {
+    try {
+      final response = await _apiService.request(
+        path: AppConstants.userOther,
+        method: HttpMethod.delete,
+      );
+
+      if (response.statusCode != 200) {
+        throw Exception('Failed to delete account');
+      }
+
+      if (response.data['success']) {
+        await sl<StorageService>().remove(StorageKeys.token);
+        await sl<StorageService>().remove(StorageKeys.user);
+        await sl<StorageService>().remove(StorageKeys.detailUser);
+      }
 
       return response.data['success'];
     } catch (e) {

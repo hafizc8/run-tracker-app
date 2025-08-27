@@ -106,7 +106,8 @@ class UserDetailModel extends Model {
       badges: badges ?? this.badges,
       overallMileage: overallMileage ?? this.overallMileage,
       currentUserXp: currentUserXp ?? this.currentUserXp,
-      recordActivitiesCount: recordActivitiesCount ?? this.recordActivitiesCount,
+      recordActivitiesCount:
+          recordActivitiesCount ?? this.recordActivitiesCount,
     );
   }
 
@@ -167,6 +168,7 @@ class UserDetailModel extends Model {
         "clubs_count": clubsCount,
         "badges_count": badgesCount,
         "badges": badges.map((x) => x.toJson()).toList(),
+        "current_user_xp": currentUserXp?.toJson(),
         "overall_mileage": overallMileage,
       };
 

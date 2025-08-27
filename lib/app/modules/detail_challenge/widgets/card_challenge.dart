@@ -4,6 +4,7 @@ import 'package:flutter_svg/flutter_svg.dart';
 import 'package:zest_mobile/app/core/extension/date_extension.dart';
 import 'package:zest_mobile/app/core/models/enums/challenge_enum.dart';
 import 'package:zest_mobile/app/core/models/model/challenge_detail_model.dart';
+import 'package:zest_mobile/app/core/shared/helpers/number_helper.dart';
 import 'package:zest_mobile/app/modules/detail_challenge/views/detail_challenge_view.dart';
 
 class CardChallenge extends StatelessWidget {
@@ -168,7 +169,8 @@ class CardChallenge extends StatelessWidget {
                                 ),
                           ),
                           Text(
-                            challengeDetailModel.target.toString(),
+                            NumberHelper().formatCurrency(
+                                challengeDetailModel.target ?? 0),
                             maxLines: 1,
                             overflow: TextOverflow.ellipsis,
                             style: Theme.of(context)
@@ -215,6 +217,7 @@ class CardChallenge extends StatelessWidget {
                           ),
                           Text(
                             (challengeDetailModel.endDate ?? DateTime.now())
+                                .toLocal()
                                 .todMMMyyyyString(),
                             maxLines: 1,
                             overflow: TextOverflow.ellipsis,
@@ -262,6 +265,7 @@ class CardChallenge extends StatelessWidget {
                         ),
                         Text(
                           (challengeDetailModel.startDate ?? DateTime.now())
+                              .toLocal()
                               .todMMMyyyyString(),
                           maxLines: 1,
                           overflow: TextOverflow.ellipsis,

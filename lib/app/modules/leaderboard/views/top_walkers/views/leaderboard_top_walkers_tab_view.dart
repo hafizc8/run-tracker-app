@@ -31,6 +31,25 @@ class LeaderboardTopWalkersTabView extends GetView<LeaderboardTopWalkersControll
               children: [
                 _buildChipFilter(context),
                 const SizedBox(),
+                Obx(
+                  () {
+                    return Container(
+                      margin: EdgeInsets.only(top: 20.h, bottom: 0.h, right: 5.w),
+                      child: Align(
+                        alignment: Alignment.centerRight,
+                        child: Text(
+                          controller.areaFilter.value,
+                          style: Theme.of(context).textTheme.headlineSmall?.copyWith(
+                            color: const Color(0xFFA5A5A5),
+                            fontSize: 13.sp,
+                            fontWeight: FontWeight.w400,
+                          ),
+                          textAlign: TextAlign.right,
+                        ),
+                      ),
+                    );
+                  }
+                ),
                 _buildTopWalkersList(context),
                 SizedBox(height: 80.h),
               ],

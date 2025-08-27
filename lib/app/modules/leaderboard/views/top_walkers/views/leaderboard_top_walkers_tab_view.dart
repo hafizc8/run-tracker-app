@@ -33,6 +33,10 @@ class LeaderboardTopWalkersTabView extends GetView<LeaderboardTopWalkersControll
                 const SizedBox(),
                 Obx(
                   () {
+                    if (controller.areaFilter.value.isEmpty) {
+                      return const SizedBox();
+                    }
+
                     return Container(
                       margin: EdgeInsets.only(top: 20.h, bottom: 0.h, right: 5.w),
                       child: Align(

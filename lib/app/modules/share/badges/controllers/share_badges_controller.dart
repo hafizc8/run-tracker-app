@@ -102,6 +102,14 @@ class ShareBadgesController extends GetxController {
         );
         break;
 
+      case 'ig feed':
+        if (installedApps['instagram'] == false) {
+          Get.snackbar('Error', 'Instagram is not installed on this device.');
+          return;
+        }
+        await socialShare.android.shareToInstagramFeed(message, imagePath);
+        break;
+
       case 'x':
         if (installedApps['twitter'] == false) {
           Get.snackbar('Error', 'Twitter or X is not installed on this device.');

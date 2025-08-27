@@ -362,15 +362,17 @@ class HomeView extends GetView<HomeController> {
                                           width: 15.w,
                                         ),
                                         SizedBox(width: 8.w),
-                                        Text(
-                                          '${NumberHelper().formatNumberToKWithComma(controller.totalCaloriesBurned)} Cal',
-                                          style: Theme.of(context)
-                                              .textTheme
-                                              .titleSmall
-                                              ?.copyWith(
-                                                fontSize: 12.5.sp,
-                                              ),
-                                        ),
+                                        Obx(() {
+                                          return Text(
+                                            '${NumberHelper().formatNumberToKWithComma(controller.totalCaloriesBurned)} Cal',
+                                            style: Theme.of(context)
+                                                .textTheme
+                                                .titleSmall
+                                                ?.copyWith(
+                                                  fontSize: 12.5.sp,
+                                                ),
+                                          );
+                                        }),
                                       ],
                                     ),
                                     SizedBox(width: 20.w),

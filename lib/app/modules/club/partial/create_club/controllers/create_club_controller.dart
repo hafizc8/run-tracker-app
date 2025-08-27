@@ -1,9 +1,8 @@
 import 'dart:io';
-
-import 'package:file_picker/file_picker.dart';
 import 'package:flutter/widgets.dart';
 import 'package:get/get.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
+import 'package:image_picker/image_picker.dart';
 import 'package:zest_mobile/app/core/di/service_locator.dart';
 import 'package:zest_mobile/app/core/exception/app_exception.dart';
 import 'package:zest_mobile/app/core/exception/handler/app_exception_handler_info.dart';
@@ -44,13 +43,16 @@ class CreateClubController extends GetxController {
   }
 
   dynamic pickImage() async {
-    FilePickerResult? result = await FilePicker.platform.pickFiles(
-      type: FileType.image,
-      allowMultiple: false,
-    );
+    ImagePicker picker = ImagePicker();
+    XFile? result = await picker.pickImage(source: ImageSource.gallery);
 
     if (result != null) {
-      form.value = form.value.copyWith(image: File(result.files.single.path!));
+      try {
+        form.value = form.value.copyWith(image: File(result.path));
+      } catch (e) {
+        print("Error correcting image orientation: $e");
+        Get.snackbar('Error', 'Gagal mengambil file: ${e.toString()}');
+      }
     }
   }
 

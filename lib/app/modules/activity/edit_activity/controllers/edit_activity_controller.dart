@@ -1,8 +1,9 @@
 import 'dart:io';
-import 'package:file_picker/file_picker.dart';
+import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:get/get.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
+import 'package:image_picker/image_picker.dart';
 import 'package:zest_mobile/app/core/di/service_locator.dart';
 import 'package:zest_mobile/app/core/exception/app_exception.dart';
 import 'package:zest_mobile/app/core/exception/handler/app_exception_handler_info.dart';
@@ -16,7 +17,6 @@ import 'package:zest_mobile/app/core/shared/theme/color_schemes.dart';
 import 'package:zest_mobile/app/modules/home/controllers/main_home_controller.dart';
 import 'package:zest_mobile/app/modules/main_profile/controllers/main_profile_controller.dart';
 import 'package:zest_mobile/app/modules/main_profile/widgets/custom_tab_bar/controllers/custom_tab_bar_controller.dart';
-import 'package:zest_mobile/app/routes/app_routes.dart';
 import 'dart:ui' as ui;
 
 class EditActivityController extends GetxController {
@@ -128,17 +128,27 @@ class EditActivityController extends GetxController {
   }
 
   dynamic pickMultipleMedia() async {
-    FilePickerResult? result = await FilePicker.platform.pickFiles(
-      type: FileType.image,
-      allowMultiple: true,
+    ImagePicker picker = ImagePicker();
+    List<XFile> result = await picker.pickMultiImage(
+      limit: 5,
     );
 
-    print("result: $result");
+    if (result.isNotEmpty) {
+      try {
+        List<File> correctedFiles = [];
+        
+        for (final xFile in result) {
+          final File originalFile = File(xFile.path);
+          correctedFiles.add(originalFile);
+        }
 
-    if (result != null) {
-      editActivityForm.value = editActivityForm.value.copyWith(
-        newGalleries: result.xFiles.map((e) => File(e.path)).toList(),
-      );
+        editActivityForm.value = editActivityForm.value.copyWith(
+          newGalleries: correctedFiles
+        );
+      } catch (e) {
+        print("Error correcting image orientation: $e");
+        Get.snackbar('Error', 'Gagal mengambil file: ${e.toString()}');
+      }
     }
   }
 
@@ -205,6 +215,7 @@ class EditActivityController extends GetxController {
       AppExceptionHandlerInfo.handle(e);
     } 
     catch (e) {
+      print(e.toString());
       Get.snackbar('Error', e.toString());
     }
     finally {

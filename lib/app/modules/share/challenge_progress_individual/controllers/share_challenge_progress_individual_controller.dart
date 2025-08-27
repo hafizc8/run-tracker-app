@@ -126,6 +126,7 @@ class ShareChallengeProgressIndividualController extends GetxController {
 
   List<LeaderboardUser> getUsersToShow() {
     final allUsers = challengeModel.leaderboardUsers;
+    // 1. Ambil pengguna saat ini
     
     final String currentUserId = user?.id ?? '';
 

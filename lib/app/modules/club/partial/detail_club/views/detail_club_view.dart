@@ -1,22 +1,21 @@
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/widgets.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:get/get.dart';
-import 'package:share_plus/share_plus.dart';
 import 'package:zest_mobile/app/core/models/model/club_mini_model.dart';
 import 'package:zest_mobile/app/core/models/model/club_model.dart';
 import 'package:zest_mobile/app/core/models/model/event_model.dart';
 import 'package:zest_mobile/app/core/shared/helpers/number_helper.dart';
 import 'package:zest_mobile/app/core/shared/widgets/shimmer_loading_circle.dart';
 import 'package:zest_mobile/app/core/shared/widgets/shimmer_loading_list.dart';
-import 'package:zest_mobile/app/core/values/app_constants.dart';
 import 'package:zest_mobile/app/modules/club/partial/detail_club/controllers/detail_club_controller.dart';
 import 'package:zest_mobile/app/core/extension/date_extension.dart';
 import 'package:zest_mobile/app/modules/club/partial/detail_club/partial/tab_bar_club/controllers/club_activity_tab_controller.dart';
+import 'package:zest_mobile/app/modules/club/partial/detail_club/partial/tab_bar_club/controllers/club_leaderboard_tab_controller.dart';
 import 'package:zest_mobile/app/modules/club/partial/detail_club/partial/tab_bar_club/controllers/tab_bar_club_controller.dart';
 import 'package:zest_mobile/app/modules/club/partial/detail_club/partial/tab_bar_club/views/club_activity_tab_view.dart';
+import 'package:zest_mobile/app/modules/club/partial/detail_club/partial/tab_bar_club/views/club_leaderboard_tab_view.dart';
 import 'package:zest_mobile/app/modules/social/views/partial/for_you_tab/event/controllers/event_action_controller.dart';
 import 'package:zest_mobile/app/routes/app_routes.dart';
 
@@ -62,6 +61,7 @@ class DetailClubView extends GetView<DetailClubController> {
 
   final tabBarClubController = Get.find<TabBarClubController>();
   final clubActivityTabController = Get.find<ClubActivityTabController>();
+  final clubLeaderboardTabController = Get.find<ClubLeaderboardTabController>();
 
   @override
   Widget build(BuildContext context) {
@@ -79,7 +79,7 @@ class DetailClubView extends GetView<DetailClubController> {
         return NestedScrollView(
           controller: (tabBarClubController.selectedIndex.value == 0)
               ? clubActivityTabController.clubActivityScrollController
-              : null,
+              : clubLeaderboardTabController.clubLeaderboardScrollController,
           headerSliverBuilder: (BuildContext context, bool innerBoxIsScrolled) {
             return <Widget>[
               _buildSliverAppBar(context),
@@ -527,15 +527,7 @@ class DetailClubView extends GetView<DetailClubController> {
       controller: tabBarClubController.tabBarController,
       children: [
         ClubActivityTabView(),
-        const Padding(
-          padding: EdgeInsets.symmetric(horizontal: 16.0, vertical: 32.0),
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.center,
-            children: [
-              Text('leaderboard will be here'),
-            ],
-          ),
-        ),
+        ClubLeaderboardTabView(),
       ],
     );
   }

@@ -1,7 +1,6 @@
 import 'dart:io';
 
 import 'package:appinio_social_share/appinio_social_share.dart';
-import 'package:flutter/services.dart';
 import 'package:get/get.dart';
 import 'package:image_gallery_saver/image_gallery_saver.dart';
 import 'package:path_provider/path_provider.dart';
@@ -70,7 +69,7 @@ class ShareLevelUpController extends GetxController {
     final file = await File(imagePath).create();
     await file.writeAsBytes(imageBytes);
 
-    String message = AppConstants.shareProfileLink(user?.id ?? '');
+    String message = ''; //AppConstants.shareProfileLink(user?.id ?? '');
 
     final installedApps = await socialShare.getInstalledApps();
 
@@ -81,14 +80,6 @@ class ShareLevelUpController extends GetxController {
           return;
         }
         await socialShare.android.shareToWhatsapp(message, imagePath);
-        break;
-
-      case 'ig direct':
-        if (installedApps['instagram'] == false) {
-          Get.snackbar('Error', 'Instagram is not installed on this device.');
-          return;
-        }
-        await socialShare.android.shareToInstagramDirect(message);
         break;
 
       case 'ig story':
@@ -116,12 +107,6 @@ class ShareLevelUpController extends GetxController {
           return;
         }
         await socialShare.android.shareToTwitter(message, imagePath);
-        break;
-
-      case 'link':
-        // save message to clipboard
-        await Clipboard.setData(ClipboardData(text: message));
-        Get.snackbar('Success', 'Link copied to clipboard.');
         break;
 
       case 'download':

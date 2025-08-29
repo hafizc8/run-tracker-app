@@ -10,6 +10,7 @@ import 'package:zest_mobile/app/core/models/model/record_activity_model.dart';
 import 'package:zest_mobile/app/core/shared/helpers/number_helper.dart';
 import 'package:zest_mobile/app/core/shared/theme/color_schemes.dart';
 import 'package:zest_mobile/app/core/shared/widgets/shimmer_loading_circle.dart';
+import 'package:zest_mobile/app/core/shared/widgets/shimmer_loading_rectangle.dart';
 import 'package:zest_mobile/app/core/values/app_constants.dart';
 import 'package:zest_mobile/app/modules/club/partial/detail_club/partial/tab_bar_club/views/widgets/participants_avatars.dart';
 import 'package:zest_mobile/app/modules/social/controllers/post_controller.dart';
@@ -18,7 +19,6 @@ import 'package:zest_mobile/app/modules/social/widgets/social_action_button.dart
 import 'package:zest_mobile/app/modules/social/widgets/statistic_column.dart';
 import 'package:zest_mobile/app/core/extension/date_extension.dart';
 import 'package:zest_mobile/app/routes/app_routes.dart';
-import 'package:zest_mobile/app/modules/social/widgets/static_routes_map.dart';
 
 // ignore: must_be_immutable
 class ActivityDetailCard extends StatelessWidget {
@@ -60,7 +60,7 @@ class ActivityDetailCard extends StatelessWidget {
                 Visibility(
                   visible: (postData?.galleries ?? []).isEmpty,
                   // when galleries is not empty
-                  replacement: _buildMapPlaceholder(postData?.recordActivity),
+                  replacement: _buildMapPlaceholder(postData?.galleryMap),
                   // when galleries is empty
                   child: Stack(
                     children: [
@@ -69,7 +69,7 @@ class ActivityDetailCard extends StatelessWidget {
                         bottom: 0,
                         right: 0,
                         left: 0,
-                        child: _buildMapPlaceholder(postData?.recordActivity),
+                        child: _buildMapPlaceholder(postData?.galleryMap),
                       ),
                       Positioned(
                         bottom: 0,
@@ -364,11 +364,14 @@ class ActivityDetailCard extends StatelessWidget {
     );
   }
 
-  Widget _buildMapPlaceholder(RecordActivityModel? recordActivity) {
-    return StaticRouteMap(
-      activityLogs: recordActivity?.recordActivityLogs ?? [],
+  Widget _buildMapPlaceholder(Gallery? galleryMap) {
+    return CachedNetworkImage(
+      imageUrl: galleryMap?.url ?? '',
+      width: double.infinity,
       height: 310.h,
-      isForDetail: true,
+      fit: BoxFit.cover,
+      placeholder: (context, url) => ShimmerLoadingRectangle(height: 310.h),
+      errorWidget: (context, url, error) => _buildImagePlaceholder(),
     );
   }
 
@@ -385,8 +388,7 @@ class ActivityDetailCard extends StatelessWidget {
               children: [
                 Icon(Icons.image, size: 64.r, color: Colors.grey),
                 SizedBox(height: 8.h),
-                const Text('Image Placeholder',
-                    style: TextStyle(color: Colors.grey)),
+                const Text('Maps not available', style: TextStyle(color: Colors.grey)),
               ],
             ),
           ),

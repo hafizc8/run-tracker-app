@@ -468,9 +468,9 @@ class DetailClubView extends GetView<DetailClubController> {
           onSelected: (value) async {
             // Handle the selection
             if (value == 'share_club') {
-              Get.snackbar('Coming soon', 'Feature is coming soon');
+              await Get.toNamed(AppRoutes.shareClub, arguments: controller.club.value);
             } else if (value == 'mute_club') {
-              Get.snackbar('Coming soon', 'Feature is coming soon');
+              await controller.confirmMuteClub(isMuted: controller.club.value?.isMuted ?? false);
             } else if (value == 'leave_club') {
               await controller.confirmCancelEvent();
             }
@@ -491,7 +491,7 @@ class DetailClubView extends GetView<DetailClubController> {
               PopupMenuItem<String>(
                 value: 'mute_club',
                 child: Text(
-                  'Mute Club',
+                  controller.club.value?.isMuted ?? false ? 'Unmute Club' : 'Mute Club',
                   style: Theme.of(context)
                       .textTheme
                       .bodyMedium

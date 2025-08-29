@@ -2,11 +2,34 @@ import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 
+enum ShareOption {
+  whatsapp,
+  igDirect,
+  igStory,
+  igFeed,
+  x,
+  link,
+  download,
+}
+
 class ShareOptionsGrid extends StatefulWidget {
   // ✨ Ubah tipe callback menjadi Future<void> untuk menangani async
   final Future<void> Function(String label) onOptionTap;
+  final List<ShareOption> options;
 
-  const ShareOptionsGrid({super.key, required this.onOptionTap});
+  const ShareOptionsGrid({
+    super.key, 
+    required this.onOptionTap, 
+    this.options = const [
+      ShareOption.whatsapp,
+      ShareOption.igDirect,
+      ShareOption.igStory,
+      ShareOption.igFeed,
+      ShareOption.x,
+      ShareOption.link,
+      ShareOption.download
+    ]
+  });
 
   @override
   State<ShareOptionsGrid> createState() => _ShareOptionsGridState();
@@ -16,18 +39,22 @@ class _ShareOptionsGridState extends State<ShareOptionsGrid> {
   // ✨ State untuk melacak platform mana yang sedang loading
   String? _loadingPlatform;
 
-  final List<Map<String, String>> shareOptions = [
-    {'icon': 'assets/icons/ic_share_whatsapp.svg', 'label': 'Whatsapp'},
-    {'icon': 'assets/icons/ic_share_instagram.svg', 'label': 'IG Direct'},
-    {'icon': 'assets/icons/ic_share_instagram.svg', 'label': 'IG Story'},
-    {'icon': 'assets/icons/ic_share_instagram.svg', 'label': 'IG Feed'},
-    {'icon': 'assets/icons/Twitter-X-Icon-PNG.svg', 'label': 'X'},
-    {'icon': 'assets/icons/ic_share_link.svg', 'label': 'Link'},
-    {'icon': 'assets/icons/ic_share_download.svg', 'label': 'Download'},
-  ];
+  static final Map<ShareOption, Map<String, String>> _allOptionsConfig = {
+    ShareOption.whatsapp: {'icon': 'assets/icons/ic_share_whatsapp.svg', 'label': 'Whatsapp'},
+    ShareOption.igDirect: {'icon': 'assets/icons/ic_share_instagram.svg', 'label': 'IG Direct'},
+    ShareOption.igStory: {'icon': 'assets/icons/ic_share_instagram.svg', 'label': 'IG Story'},
+    ShareOption.igFeed: {'icon': 'assets/icons/ic_share_instagram.svg', 'label': 'IG Feed'},
+    ShareOption.x: {'icon': 'assets/icons/Twitter-X-Icon-PNG.svg', 'label': 'X'},
+    ShareOption.link: {'icon': 'assets/icons/ic_share_link.svg', 'label': 'Link'},
+    ShareOption.download: {'icon': 'assets/icons/ic_share_download.svg', 'label': 'Download'},
+  };
 
   @override
   Widget build(BuildContext context) {
+    final List<Map<String, String>> activeOptions = widget.options
+        .map((optionEnum) => _allOptionsConfig[optionEnum]!)
+        .toList();
+
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
@@ -52,9 +79,9 @@ class _ShareOptionsGridState extends State<ShareOptionsGrid> {
             mainAxisSpacing: 8.h,
             childAspectRatio: 0.8,
           ),
-          itemCount: shareOptions.length,
+          itemCount: activeOptions.length,
           itemBuilder: (context, index) {
-            final option = shareOptions[index];
+            final option = activeOptions[index];
             final label = option['label']!;
             
             // Cek apakah item ini yang sedang loading

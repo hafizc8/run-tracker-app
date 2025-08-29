@@ -103,6 +103,7 @@ class AppConstants {
   static String clubInviteFollowersToClub(String clubId) =>
       "/club/$clubId/invite";
   static String clubGetActivity(String clubId) => "/club/$clubId/activity";
+  static String clubMute(String clubId) => "/club/$clubId/mute";
 
   // Record Activity
   static const String recordActivityCreateSession = "/record-activity/create";

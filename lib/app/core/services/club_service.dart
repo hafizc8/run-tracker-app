@@ -263,4 +263,21 @@ class ClubService {
       rethrow;
     }
   }
+
+  Future<bool> muteClub(
+      {required String clubId, bool? unmute}) async {
+    try {
+      final response = await _apiService.request(
+        path: AppConstants.clubMute(clubId),
+        method: HttpMethod.post,
+        queryParams: {
+          if (unmute != null && unmute == true) 'unmute': 1,
+        },
+      );
+
+      return response.data['success'];
+    } catch (e) {
+      rethrow;
+    }
+  }
 }

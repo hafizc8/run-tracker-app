@@ -19,7 +19,8 @@ class PostModel extends Model<PostModel> {
         this.isOwner = false,
         this.comments,
         this.likes,
-        this.recordActivity
+        this.recordActivity,
+        this.galleryMap
     });
 
     final String? id;
@@ -37,6 +38,7 @@ class PostModel extends Model<PostModel> {
     bool? isLiked;
     List<UserMiniModel>? likes;
     RecordActivityModel? recordActivity;
+    Gallery? galleryMap;
 
     @override
   PostModel copyWith({
@@ -54,7 +56,8 @@ class PostModel extends Model<PostModel> {
         bool? isOwner,
         List<Comment>? comments,
         List<UserMiniModel>? likes,
-        RecordActivityModel? recordActivity
+        RecordActivityModel? recordActivity,
+        Gallery? galleryMap
     }) {
         return PostModel(
             id: id ?? this.id,
@@ -71,7 +74,8 @@ class PostModel extends Model<PostModel> {
             comments: comments ?? this.comments,
             isOwner: isOwner ?? this.isOwner,
             likes: likes ?? this.likes,
-            recordActivity: recordActivity ?? this.recordActivity
+            recordActivity: recordActivity ?? this.recordActivity,
+            galleryMap: galleryMap ?? this.galleryMap
         );
     }
 
@@ -92,6 +96,7 @@ class PostModel extends Model<PostModel> {
             isOwner: false,
             likes: json["likes"] == null ? [] : List<UserMiniModel>.from(json["likes"]!.map((x) => UserMiniModel.fromJson(x['user']))),
             recordActivity: json["record_activity"] == null ? null : RecordActivityModel.fromJson(json["record_activity"]),
+            galleryMap: json["gallery_map"] == null ? null : Gallery.fromJson(json["gallery_map"])
         );
     }
 
@@ -111,14 +116,14 @@ class PostModel extends Model<PostModel> {
 
     @override
     List<Object?> get props => [
-    id, title, content, district, likesCount, commentsCount, createdAt, updatedAt, user, galleries, comments, isLiked, isOwner, likes, recordActivity];
+    id, title, content, district, likesCount, commentsCount, createdAt, updatedAt, user, galleries, comments, isLiked, isOwner, likes, recordActivity, galleryMap];
 }
 
 class Gallery extends Model<Gallery> {
     Gallery({
         required this.id,
         required this.type,
-        required this.path,
+        this.path,
         required this.url,
     });
 

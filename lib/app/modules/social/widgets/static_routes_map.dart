@@ -1,9 +1,7 @@
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:zest_mobile/app/core/models/model/record_activity_model.dart';
 import 'package:zest_mobile/app/core/shared/theme/color_schemes.dart';
-import 'dart:ui' as ui;
 
 class StaticRouteMap extends StatefulWidget {
   final List<RecordActivityLogModel> activityLogs;

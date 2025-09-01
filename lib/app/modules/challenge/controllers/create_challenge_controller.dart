@@ -1,3 +1,4 @@
+import 'package:currency_text_input_formatter/currency_text_input_formatter.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:intl/intl.dart';
@@ -22,6 +23,21 @@ class ChallangeCreateController extends GetxController {
   final _authService = sl<AuthService>();
   final _challengeService = sl<ChallengeService>();
   String get userId => _authService.user?.id ?? ''; // userId
+
+  @override
+  onInit() {
+    super.onInit();
+    targetController.text = CurrencyTextInputFormatter.currency(
+      locale: "id_ID",
+      symbol: '',
+      decimalDigits: 0,
+    )
+        .formatEditUpdate(
+          const TextEditingValue(text: '0'),
+          TextEditingValue(text: (50000).toString()),
+        )
+        .text;
+  }
 
   Future<void> selectDate(BuildContext context, bool isStartDate) async {
     if (isStartDate == false && form.value.startDate == null) {

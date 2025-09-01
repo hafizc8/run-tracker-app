@@ -17,6 +17,7 @@ class ChallengeDetailModel extends Model {
     required this.challangeUsersCount,
     required this.cancelledAt,
     required this.createdAt,
+    required this.completedAt,
     required this.isJoined,
     required this.isOwner,
     required this.isPendingJoin,
@@ -44,6 +45,7 @@ class ChallengeDetailModel extends Model {
   final int? challangeUsersCount;
   final dynamic cancelledAt;
   final DateTime? createdAt;
+  final DateTime? completedAt;
   final int? isJoined;
   final int? isOwner;
   final int? isPendingJoin;
@@ -72,6 +74,7 @@ class ChallengeDetailModel extends Model {
     int? challangeUsersCount,
     dynamic? cancelledAt,
     DateTime? createdAt,
+    DateTime? completedAt,
     int? isJoined,
     int? isOwner,
     int? isPendingJoin,
@@ -99,6 +102,7 @@ class ChallengeDetailModel extends Model {
       challangeUsersCount: challangeUsersCount ?? this.challangeUsersCount,
       cancelledAt: cancelledAt ?? this.cancelledAt,
       createdAt: createdAt ?? this.createdAt,
+      completedAt: completedAt ?? this.completedAt,
       isJoined: isJoined ?? this.isJoined,
       isOwner: isOwner ?? this.isOwner,
       isPendingJoin: isPendingJoin ?? this.isPendingJoin,
@@ -129,6 +133,7 @@ class ChallengeDetailModel extends Model {
       challangeUsersCount: json["challange_users_count"],
       cancelledAt: json["cancelled_at"],
       createdAt: DateTime.tryParse(json["created_at"] ?? ""),
+      completedAt: DateTime.tryParse(json["completed_at"] ?? ""),
       isJoined: json["is_joined"],
       isOwner: json["is_owner"],
       isPendingJoin: json["is_pending_join"],
@@ -172,6 +177,7 @@ class ChallengeDetailModel extends Model {
         "challange_users_count": challangeUsersCount,
         "cancelled_at": cancelledAt,
         "created_at": createdAt?.toIso8601String(),
+        "completed_at": completedAt?.toIso8601String(),
         "is_joined": isJoined,
         "is_owner": isOwner,
         "is_pending_join": isPendingJoin,
@@ -186,7 +192,7 @@ class ChallengeDetailModel extends Model {
 
   @override
   String toString() {
-    return "$id, $type, $typeText, $title, $mode, $modeText, $startDate, $endDate, $clubId, $target, $teamSize, $challangeUsersCount, $cancelledAt, $createdAt, $isJoined, $isOwner, $isPendingJoin, $teams, $friendsTotal, $friendsNames, $leaderboardUsers, $leaderboardTeams, $userProgress, $teamProgress, ";
+    return "$id, $type, $typeText, $title, $mode, $modeText, $startDate, $endDate, $clubId, $target, $teamSize, $challangeUsersCount, $cancelledAt, $createdAt, $completedAt, $isJoined, $isOwner, $isPendingJoin, $teams, $friendsTotal, $friendsNames, $leaderboardUsers, $leaderboardTeams, $userProgress, $teamProgress, ";
   }
 
   @override
@@ -205,6 +211,7 @@ class ChallengeDetailModel extends Model {
         challangeUsersCount,
         cancelledAt,
         createdAt,
+        completedAt,
         isJoined,
         isOwner,
         isPendingJoin,

@@ -124,6 +124,52 @@ class CardChallenge extends StatelessWidget {
             // Target dan Start Date
             Row(
               children: [
+                Row(
+                  children: [
+                    SvgPicture.asset(
+                      'assets/icons/ic_date.svg',
+                      color: Theme.of(context).colorScheme.onBackground,
+                      height: 22.h,
+                      width: 27.w,
+                    ),
+                    const SizedBox(width: 5),
+                    Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Text(
+                          'Start Date',
+                          maxLines: 1,
+                          overflow: TextOverflow.ellipsis,
+                          style: Theme.of(context)
+                              .textTheme
+                              .bodyMedium
+                              ?.copyWith(
+                                color:
+                                    Theme.of(context).colorScheme.onBackground,
+                                fontWeight: FontWeight.w400,
+                                fontSize: 12.sp,
+                              ),
+                        ),
+                        Text(
+                          (challengeModel.startDate ?? DateTime.now())
+                              .toLocal()
+                              .todMMMyyyyString(),
+                          maxLines: 1,
+                          overflow: TextOverflow.ellipsis,
+                          style: Theme.of(context)
+                              .textTheme
+                              .bodyMedium
+                              ?.copyWith(
+                                color:
+                                    Theme.of(context).colorScheme.onBackground,
+                                fontWeight: FontWeight.bold,
+                              ),
+                        ),
+                      ],
+                    ),
+                  ],
+                ),
+                const SizedBox(width: 32),
                 if (challengeModel.mode == 0) ...[
                   Row(
                     children: [
@@ -220,54 +266,9 @@ class CardChallenge extends StatelessWidget {
                     ],
                   ),
                 ],
-                const SizedBox(width: 32),
-                Row(
-                  children: [
-                    SvgPicture.asset(
-                      'assets/icons/ic_date.svg',
-                      color: Theme.of(context).colorScheme.onBackground,
-                      height: 22.h,
-                      width: 27.w,
-                    ),
-                    const SizedBox(width: 5),
-                    Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        Text(
-                          'Start Date',
-                          maxLines: 1,
-                          overflow: TextOverflow.ellipsis,
-                          style: Theme.of(context)
-                              .textTheme
-                              .bodyMedium
-                              ?.copyWith(
-                                color:
-                                    Theme.of(context).colorScheme.onBackground,
-                                fontWeight: FontWeight.w400,
-                                fontSize: 12.sp,
-                              ),
-                        ),
-                        Text(
-                          (challengeModel.startDate ?? DateTime.now())
-                              .toLocal()
-                              .todMMMyyyyString(),
-                          maxLines: 1,
-                          overflow: TextOverflow.ellipsis,
-                          style: Theme.of(context)
-                              .textTheme
-                              .bodyMedium
-                              ?.copyWith(
-                                color:
-                                    Theme.of(context).colorScheme.onBackground,
-                                fontWeight: FontWeight.bold,
-                              ),
-                        ),
-                      ],
-                    ),
-                  ],
-                ),
               ],
             ),
+
             if (challengeModel.cancelledAt != null) ...[
               const SizedBox(height: 16),
               GradientOutlinedButton(

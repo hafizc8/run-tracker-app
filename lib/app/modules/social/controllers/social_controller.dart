@@ -19,7 +19,7 @@ class SocialController extends GetxController
 
   late var tabBarController;
 
-  final RxInt selectedIndex = 0.obs;
+  final RxInt selectedIndex = 1.obs;
 
   void changeTabIndex(int index) {
     selectedIndex.value = index;
@@ -28,7 +28,7 @@ class SocialController extends GetxController
   @override
   void onInit() {
     super.onInit();
-    tabBarController = TabController(length: 2, vsync: this);
+    tabBarController = TabController(length: 2, vsync: this, initialIndex: 1);
     tabBarController.addListener(() {
       changeTabIndex(tabBarController.index);
     });

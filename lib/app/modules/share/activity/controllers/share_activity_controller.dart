@@ -1,7 +1,6 @@
 import 'dart:io';
 
 import 'package:appinio_social_share/appinio_social_share.dart';
-import 'package:flutter/services.dart';
 import 'package:get/get.dart';
 import 'package:image_gallery_saver/image_gallery_saver.dart';
 import 'package:path_provider/path_provider.dart';
@@ -56,7 +55,7 @@ class ShareActivityController extends GetxController {
         shareCard: ShareActivityCard(postModel: postModel),
         backgroundImagePath: 'assets/images/background_share-2.png',
       ),
-      pixelRatio: 3.0,
+      pixelRatio: 4.0,
     );
 
     // 2. Simpan gambar ke file sementara
@@ -65,7 +64,7 @@ class ShareActivityController extends GetxController {
     final file = await File(imagePath).create();
     await file.writeAsBytes(imageBytes);
 
-    String message = AppConstants.sharePostLink(postModel.id!);
+    String message = ''; //AppConstants.sharePostLink(postModel.id!);
 
     final installedApps = await socialShare.getInstalledApps();
 
@@ -78,12 +77,23 @@ class ShareActivityController extends GetxController {
         await socialShare.android.shareToWhatsapp(message, imagePath);
         break;
 
-      case 'instagram':
+      case 'ig story':
         if (installedApps['instagram'] == false) {
           Get.snackbar('Error', 'Instagram is not installed on this device.');
           return;
         }
-        await socialShare.android.shareToInstagramDirect(message);
+        await socialShare.android.shareToInstagramStory(
+          AppConstants.facebookAppId, 
+          stickerImage: imagePath,
+        );
+        break;
+
+      case 'ig feed':
+        if (installedApps['instagram'] == false) {
+          Get.snackbar('Error', 'Instagram is not installed on this device.');
+          return;
+        }
+        await socialShare.android.shareToInstagramFeed(message, imagePath);
         break;
 
       case 'x':
@@ -92,12 +102,6 @@ class ShareActivityController extends GetxController {
           return;
         }
         await socialShare.android.shareToTwitter(message, imagePath);
-        break;
-
-      case 'link':
-        // save message to clipboard
-        await Clipboard.setData(ClipboardData(text: message));
-        Get.snackbar('Success', 'Link copied to clipboard.');
         break;
 
       case 'download':

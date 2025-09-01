@@ -5,28 +5,21 @@ import 'package:visibility_detector/visibility_detector.dart';
 import 'package:zest_mobile/app/core/models/enums/leaderboard_top_walkers_page_enum.dart';
 import 'package:zest_mobile/app/core/models/model/leaderboard_user_model.dart';
 import 'package:zest_mobile/app/core/shared/widgets/custom_toggle_button.dart';
-import 'package:zest_mobile/app/modules/leaderboard/views/top_walkers/controllers/leaderboard_top_walkers_controller.dart';
-import 'package:zest_mobile/app/modules/leaderboard/views/top_walkers/views/widgets/leaderboard_shimmer_layout.dart';
+import 'package:zest_mobile/app/modules/club/partial/detail_club/partial/tab_bar_club/controllers/club_leaderboard_tab_controller.dart';
 import 'package:zest_mobile/app/modules/leaderboard/views/top_walkers/views/widgets/others_walkers.dart';
 import 'package:zest_mobile/app/modules/leaderboard/views/top_walkers/views/widgets/top_3_walkers_list.dart';
 
-class LeaderboardTopWalkersTabView extends GetView<LeaderboardTopWalkersController> {
-  LeaderboardTopWalkersTabView({super.key});
-
-  @override
-  final controller = Get.put(LeaderboardTopWalkersController());
+class ClubLeaderboardTabView extends GetView<ClubLeaderboardTabController> {
+  const ClubLeaderboardTabView({super.key});
 
   @override
   Widget build(BuildContext context) {
-    return Stack(
-      children: [
-        RefreshIndicator(
-          onRefresh: () async {
-            controller.refreshLeaderboard();
-          },
-          child: SingleChildScrollView(
-            controller: controller.leaderboardScrollController,
-            child: Column(
+    return SingleChildScrollView(
+      child: Container(
+        margin: const EdgeInsets.symmetric(horizontal: 16.0, vertical: 24.0),
+        child: Stack(
+          children: [
+            Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 _buildChipFilter(context),
@@ -36,7 +29,7 @@ class LeaderboardTopWalkersTabView extends GetView<LeaderboardTopWalkersControll
                     if (controller.areaFilter.value.isEmpty) {
                       return const SizedBox();
                     }
-
+            
                     return Container(
                       margin: EdgeInsets.only(top: 20.h, bottom: 0.h, right: 5.w),
                       child: Align(
@@ -58,19 +51,18 @@ class LeaderboardTopWalkersTabView extends GetView<LeaderboardTopWalkersControll
                 SizedBox(height: 80.h),
               ],
             ),
-          ),
+            Obx(
+              () {
+                if (controller.isLoadingGetLeaderboard.value && controller.pageLeaderboard.value == 1) {
+                  return const SizedBox();
+                }
+        
+                return _buildFloatingRank(context);
+              }
+            ),
+          ],
         ),
-
-        Obx(
-          () {
-            if (controller.isLoadingGetLeaderboard.value && controller.pageLeaderboard.value == 1) {
-              return const SizedBox();
-            }
-
-            return _buildFloatingRank(context);
-          }
-        ),
-      ],
+      ),
     );
   }
 
@@ -204,7 +196,8 @@ class LeaderboardTopWalkersTabView extends GetView<LeaderboardTopWalkersControll
     return Obx(
       () {
         if (controller.isLoadingGetLeaderboard.value && controller.pageLeaderboard.value == 1) {
-          return const LeaderboardShimmerEffect();
+          // return const LeaderboardShimmerEffect();
+          return const SizedBox();
         }
 
         LeaderboardUserModel? me = controller.me.value;

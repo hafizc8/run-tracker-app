@@ -531,7 +531,7 @@ class RecordActivityController extends GetxController {
     _staminaTimer?.cancel();
     _paceUpdateTimer?.cancel();
 
-    Get.snackbar("Syncing", "Finalizing your activity...");
+    // Get.snackbar("Syncing", "Finalizing your activity...");
 
     _service.invoke("stopRecording");
 

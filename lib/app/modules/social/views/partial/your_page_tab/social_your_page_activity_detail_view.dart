@@ -121,7 +121,7 @@ class SocialYourPageActivityDetailView extends GetView<PostController> {
         ),
       ),
       centerTitle: true,
-      actions: [
+      actions: (controller.postDetail.value?.user?.id == controller.user?.id) ? [
         PopupMenuButton<String>(
           onSelected: (value) {
             // Handle the selection
@@ -169,7 +169,7 @@ class SocialYourPageActivityDetailView extends GetView<PostController> {
             ];
           },
         ),
-      ],
+      ] : null,
     );
   }
 }

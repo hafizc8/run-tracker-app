@@ -34,6 +34,13 @@ class ShareActivityView extends GetView<ShareActivityController> {
                   onOptionTap: (String label) async {
                     await controller.shareTo(label);
                   },
+                  options: const [
+                    ShareOption.whatsapp,
+                    ShareOption.igStory,
+                    ShareOption.igFeed,
+                    ShareOption.x,
+                    ShareOption.download,
+                  ],
                 ),
                 SizedBox(height: 24.h),
               ],

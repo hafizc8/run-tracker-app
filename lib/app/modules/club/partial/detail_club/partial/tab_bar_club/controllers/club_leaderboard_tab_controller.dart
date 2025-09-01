@@ -11,7 +11,7 @@ import 'package:zest_mobile/app/core/services/auth_service.dart';
 import 'package:zest_mobile/app/core/services/leaderboard_service.dart';
 import 'package:zest_mobile/app/core/shared/helpers/debouncer.dart';
 
-class LeaderboardTopWalkersController extends GetxController {
+class ClubLeaderboardTabController extends GetxController {
   Rx<LeaderboardTopWalkersPageEnum> selectedChip = LeaderboardTopWalkersPageEnum.global.obs;
 
   RxBool isFriendsOnly = false.obs;
@@ -24,7 +24,7 @@ class LeaderboardTopWalkersController extends GetxController {
   Rx<LeaderboardUserModel?> me = Rx<LeaderboardUserModel?>(null);
   RxString areaFilter = ''.obs;
 
-  final leaderboardScrollController = ScrollController();
+  final clubLeaderboardScrollController = ScrollController();
   final _debouncer = Debouncer(milliseconds: 500);
 
   // ✨ --- State Baru untuk Floating Widget --- ✨
@@ -37,14 +37,17 @@ class LeaderboardTopWalkersController extends GetxController {
   final AuthService _authService = sl<AuthService>();
   UserModel? get user => _authService.user;
 
+  var clubId = ''.obs;
+
 
   @override
   void onInit() {
     super.onInit();
+    clubId.value = Get.arguments as String;
     getLeaderboard();
 
-    leaderboardScrollController.addListener(() {
-      final position = leaderboardScrollController.position;
+    clubLeaderboardScrollController.addListener(() {
+      final position = clubLeaderboardScrollController.position;
 
       bool isNearBottom = position.pixels >= position.maxScrollExtent - 200;
 
@@ -61,7 +64,7 @@ class LeaderboardTopWalkersController extends GetxController {
 
   @override
   void onClose() {
-    leaderboardScrollController.dispose();
+    clubLeaderboardScrollController.dispose();
     super.onClose();
   }
 
@@ -100,6 +103,7 @@ class LeaderboardTopWalkersController extends GetxController {
         page: pageLeaderboard.value,
         locationLevel: selectedChip.value.value,
         friendOnly: isFriendsOnly.value,
+        clubId: clubId.value,
       );
 
       // Deteksi akhir halaman dengan lebih akurat

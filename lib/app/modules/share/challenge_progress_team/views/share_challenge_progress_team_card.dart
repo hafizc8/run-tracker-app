@@ -75,7 +75,7 @@ class ShareChallengeProgressTeamCard extends StatelessWidget {
                   totalSteps: e.point ?? 0,
                   memberImageUrls: // find all user image url in team
                     team[e.team]?.map((team) => team.user?.imageUrl ?? '').toList() ?? [],
-                  teamColor: _getColorFromTeamName(e.team ?? ''),
+                  // teamColor: _getColorFromTeamName(e.team ?? ''),
                 );
               }),
             ],

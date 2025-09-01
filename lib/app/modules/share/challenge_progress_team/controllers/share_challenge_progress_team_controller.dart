@@ -1,6 +1,5 @@
 import 'dart:io';
 import 'package:appinio_social_share/appinio_social_share.dart';
-import 'package:flutter/services.dart';
 import 'package:get/get.dart';
 import 'package:image_gallery_saver/image_gallery_saver.dart';
 import 'package:path_provider/path_provider.dart';
@@ -51,7 +50,7 @@ class ShareChallengeProgressTeamController extends GetxController {
   /// ✨ FUNGSI UTAMA: Menangkap gambar dan membagikannya
   Future<void> shareTo(String platform) async {
     // 1. Tangkap widget sebagai gambar (dalam format Uint8List)
-    final imageBytes = await screenshotController.capture(pixelRatio: 3).then((image) => image!.buffer.asUint8List());
+    final imageBytes = await screenshotController.capture(pixelRatio: 4).then((image) => image!.buffer.asUint8List());
 
     // 2. Simpan gambar ke file sementara
     final directory = await getTemporaryDirectory();
@@ -59,7 +58,7 @@ class ShareChallengeProgressTeamController extends GetxController {
     final file = await File(imagePath).create();
     await file.writeAsBytes(imageBytes);
 
-    String message = AppConstants.shareChallengeLink(challengeModel.id!);
+    String message = ''; //AppConstants.shareChallengeLink(challengeModel.id!);
 
     final installedApps = await socialShare.getInstalledApps();
 
@@ -72,12 +71,23 @@ class ShareChallengeProgressTeamController extends GetxController {
         await socialShare.android.shareToWhatsapp(message, imagePath);
         break;
 
-      case 'instagram':
+      case 'ig story':
         if (installedApps['instagram'] == false) {
           Get.snackbar('Error', 'Instagram is not installed on this device.');
           return;
         }
-        await socialShare.android.shareToInstagramDirect(message);
+        await socialShare.android.shareToInstagramStory(
+          AppConstants.facebookAppId, 
+          stickerImage: imagePath,
+        );
+        break;
+
+      case 'ig feed':
+        if (installedApps['instagram'] == false) {
+          Get.snackbar('Error', 'Instagram is not installed on this device.');
+          return;
+        }
+        await socialShare.android.shareToInstagramFeed(message, imagePath);
         break;
 
       case 'x':
@@ -86,12 +96,6 @@ class ShareChallengeProgressTeamController extends GetxController {
           return;
         }
         await socialShare.android.shareToTwitter(message, imagePath);
-        break;
-
-      case 'link':
-        // save message to clipboard
-        await Clipboard.setData(ClipboardData(text: message));
-        Get.snackbar('Success', 'Link copied to clipboard.');
         break;
 
       case 'download':

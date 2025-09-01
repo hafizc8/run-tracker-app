@@ -305,7 +305,11 @@ class RecordActivityController extends GetxController {
           Get.back(); // Tutup loading overlay
 
           // Jika berhasil, langsung tampilkan dialog
-          await chooseStamina();
+          var isRunning = await _service.isRunning();
+          if (!isRunning) {
+            await chooseStamina();
+          }
+
           return; // Hentikan eksekusi agar tidak memanggil API
         } catch (e) {
           _logService.log.e("Failed to parse stamina config from cache. Fetching from API instead.", error: e);
@@ -327,7 +331,10 @@ class RecordActivityController extends GetxController {
 
       Get.back(); // Tutup loading overlay
       
-      await chooseStamina();
+      var isRunning = await _service.isRunning();
+      if (!isRunning) {
+        await chooseStamina();
+      }
 
     } catch (e, s) {
       _logService.log.e("Failed to load stamina requirements.", error: e, stackTrace: s);

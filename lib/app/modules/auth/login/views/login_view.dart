@@ -172,16 +172,6 @@ class LoginView extends GetView<LoginController> {
                         ),
                       ),
                     ),
-                    SizedBox(width: 20.w),
-                    SvgPicture.asset(
-                      'assets/icons/ic_fb.svg',
-                      width: 36.w,
-                      colorFilter: const ColorFilter.mode(
-                        Colors.white, // Warna yang diinginkan
-                        BlendMode
-                            .srcIn, // BlendMode ini akan menerapkan warna ke SVG
-                      ),
-                    ),
                   ],
                 ),
                 SizedBox(height: 24.h),

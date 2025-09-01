@@ -92,8 +92,8 @@ class _PodiumWalkerProfile extends StatelessWidget {
                 child: ClipOval(
                   child: CachedNetworkImage(
                     imageUrl: walker.imageUrl ?? '',
-                    width: avatarSize - 8,
-                    height: avatarSize - 8,
+                    width: avatarSize - 3,
+                    height: avatarSize - 3,
                     fit: BoxFit.cover,
                     placeholder: (context, url) => ShimmerLoadingCircle(size: avatarSize - 8),
                     errorWidget: (context, url, error) => CircleAvatar(

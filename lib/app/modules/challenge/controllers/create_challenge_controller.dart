@@ -1,3 +1,4 @@
+import 'package:currency_text_input_formatter/currency_text_input_formatter.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:intl/intl.dart';
@@ -16,11 +17,27 @@ import 'package:zest_mobile/app/routes/app_routes.dart';
 class ChallangeCreateController extends GetxController {
   final TextEditingController startDateController = TextEditingController();
   final TextEditingController endDateController = TextEditingController();
+  final TextEditingController targetController = TextEditingController();
   var isLoading = false.obs;
   var form = CreateChallengeFormModel().obs;
   final _authService = sl<AuthService>();
   final _challengeService = sl<ChallengeService>();
   String get userId => _authService.user?.id ?? ''; // userId
+
+  @override
+  onInit() {
+    super.onInit();
+    targetController.text = CurrencyTextInputFormatter.currency(
+      locale: "id_ID",
+      symbol: '',
+      decimalDigits: 0,
+    )
+        .formatEditUpdate(
+          const TextEditingValue(text: '0'),
+          TextEditingValue(text: (50000).toString()),
+        )
+        .text;
+  }
 
   Future<void> selectDate(BuildContext context, bool isStartDate) async {
     if (isStartDate == false && form.value.startDate == null) {
@@ -62,7 +79,9 @@ class ChallangeCreateController extends GetxController {
   Future<void> storeChallenge({bool isTeam = false}) async {
     isLoading.value = true;
     try {
-      ChallengeModel? res = await _challengeService.storeChallenge(form.value);
+      ChallengeModel? res = await _challengeService.storeChallenge(form.value
+          .copyWith(
+              target: int.tryParse(targetController.text.replaceAll('.', ''))));
       if (res != null) {
         if (isTeam) {
           Get.back();

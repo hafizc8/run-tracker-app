@@ -141,7 +141,7 @@ class ShopView extends GetView<ShopController> {
                                     ).createShader(Rect.fromLTWH(
                                             0, 0, bounds.width, bounds.height)),
                                     child: Text(
-                                      'Buy On Website',
+                                      'Buy On ${link?.title ?? ''}',
                                       style: Theme.of(context)
                                           .textTheme
                                           .bodyMedium

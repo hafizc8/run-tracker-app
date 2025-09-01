@@ -234,12 +234,25 @@ class RegisterView extends GetView<RegisterController> {
                 Row(
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
-                    SvgPicture.asset(
-                      'assets/icons/ic_google.svg',
-                      width: 36.w,
-                      colorFilter: const ColorFilter.mode(
-                        Colors.white,
-                        BlendMode.srcIn,
+                    Obx(
+                      () => Visibility(
+                        visible: controller.isLoadingGoogle.value,
+                        replacement: InkWell(
+                          onTap: () => controller.loginWithGoogle(),
+                          child: SvgPicture.asset(
+                            'assets/icons/ic_google.svg',
+                            width: 36.w,
+                            colorFilter: const ColorFilter.mode(
+                              Colors.white, // Warna yang diinginkan
+                              BlendMode
+                                  .srcIn, // BlendMode ini akan menerapkan warna ke SVG
+                            ),
+                          ),
+                        ),
+                        child: Padding(
+                          padding: const EdgeInsets.all(8.0),
+                          child: CustomCircularProgressIndicator(),
+                        ),
                       ),
                     ),
                     SizedBox(width: 20.w),

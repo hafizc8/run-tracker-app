@@ -29,7 +29,7 @@ class ProfileMainController extends GetxController {
   var pageEvent = 0;
   var isLoadingEvent = false.obs;
   var isLoadingActionEvent = false.obs;
-  var isLoadingUpComingEvent = false.obs;
+  var isLoadingUser = false.obs;
   var hasReacheMaxEvent = false.obs;
   ScrollController eventController = ScrollController();
 
@@ -74,6 +74,7 @@ class ProfileMainController extends GetxController {
   }
 
   Future<void> getDetailUser() async {
+    isLoadingUser.value = true;
     try {
       final storedUser = sl<StorageService>().read(StorageKeys.detailUser);
 
@@ -83,6 +84,8 @@ class ProfileMainController extends GetxController {
       } else {
         // Fetch from server
         user.value = await _userService.detailUser(_authService.user!.id!);
+        await sl<StorageService>()
+            .write(StorageKeys.detailUser, user.value!.toJson());
       }
     } on AppException catch (e) {
       // show error snackbar, toast, etc
@@ -94,6 +97,8 @@ class ProfileMainController extends GetxController {
         backgroundColor: Colors.red,
         colorText: Colors.white,
       );
+    } finally {
+      isLoadingUser.value = false;
     }
   }
 

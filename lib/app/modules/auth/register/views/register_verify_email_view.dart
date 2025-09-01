@@ -43,29 +43,22 @@ class RegisterVerifyEmailView extends GetView<RegisterVerifyEmailController> {
                 style: Theme.of(context).textTheme.bodyMedium,
               ),
               SizedBox(height: 12.h),
-              Obx(
-                () => ElevatedButton(
+              Obx(() {
+                return ElevatedButton(
                   onPressed: controller.canResend.value
-                      ? () {
-                          controller.sendEmailVerify();
-                        }
+                      ? () => controller.sendEmailVerify()
                       : null,
-                  child: Visibility(
-                    visible: !controller.isLoading.value,
-                    replacement: const CircularProgressIndicator(),
-                    child: Visibility(
-                      visible: controller.canResend.value,
-                      replacement: Text(
-                        'Resend Email in ${controller.resendCooldown.value}s',
-                      ),
-                      child: Text(
-                        'Resend Email',
-                        style: Theme.of(context).textTheme.bodyMedium,
-                      ),
-                    ),
-                  ),
-                ),
-              )
+                  child: controller.isLoading.value
+                      ? const CircularProgressIndicator()
+                      : controller.canResend.value
+                          ? Text(
+                              'Resend Email',
+                              style: Theme.of(context).textTheme.bodyMedium,
+                            )
+                          : Text(
+                              'Resend Email in ${controller.resendCooldown.value}s'),
+                );
+              })
             ],
           ),
         ),

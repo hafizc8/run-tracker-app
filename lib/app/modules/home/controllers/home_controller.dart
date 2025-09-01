@@ -55,7 +55,7 @@ class HomeController extends GetxController {
 
   Timer? _syncTimerRefreshStepUI;
   static const _syncIntervalRefreshStepUI = Duration(seconds: 5);
-  
+
   // ✨ --- State baru untuk menampung data langkah per jam --- ✨
   var hourlySteps = <int, int>{}.obs; // Map<Jam, Jumlah_Langkah>
 
@@ -82,13 +82,17 @@ class HomeController extends GetxController {
     isLoadingGetUserData.value = true;
     try {
       // ✨ KUNCI #1: Alur inisialisasi yang baru dan lebih efisien ✨
-      await refreshData();
+      await Future.microtask(() async {
+        await refreshData();
 
-      // 2. Sinkronkan hari-hari yang terlewat terlebih dahulu
-      await _syncMissingDailyRecords();
+        await Future.wait([
+          // 2. Sinkronkan hari-hari yang terlewat terlebih dahulu
+          _syncMissingDailyRecords(),
 
-      // 3. Lakukan sinkronisasi pertama untuk HARI INI menggunakan metode per jam
-      await _syncTodaysData();
+          // 3. Lakukan sinkronisasi pertama untuk HARI INI menggunakan metode per jam
+          _syncTodaysData(),
+        ]);
+      });
 
       // 4. Setelah semua data siap, baru mulai proses latar belakang
       _startPeriodicSync();
@@ -107,7 +111,7 @@ class HomeController extends GetxController {
   void onReady() {
     super.onReady();
     _logService.log.i("HomeController: onReady.");
-    FcmService.markAppAsReady(); 
+    FcmService.markAppAsReady();
   }
 
   @override
@@ -125,7 +129,8 @@ class HomeController extends GetxController {
     var activityStatus = await Permission.activityRecognition.request();
 
     if (!activityStatus.isGranted) {
-      Get.snackbar("Permission Denied", "Activity sensor permission is required.");
+      Get.snackbar(
+          "Permission Denied", "Activity sensor permission is required.");
       _logService.log.w("Activity Recognition permission denied.");
       return;
     }
@@ -136,13 +141,15 @@ class HomeController extends GetxController {
           .clamp(0.0, 1.0);
 
   Future<void> _getLastRecord() async {
-    lastRecord.value = await _recordActivityService.getDailyRecord(limit: 1).then((value) => value.data.firstOrNull);
+    lastRecord.value = await _recordActivityService
+        .getDailyRecord(limit: 1)
+        .then((value) => value.data.firstOrNull);
   }
 
   /// ✨ KUNCI #2: Fungsi baru untuk menyinkronkan data hari ini berdasarkan data per jam.
   Future<void> _syncTodaysData() async {
     await _requestPermissions();
-    
+
     _logService.log.i("Syncing today's hourly step data...");
     final today = DateTime.now();
 
@@ -184,7 +191,8 @@ class HomeController extends GetxController {
     final lastSyncedTimestamp = lastRecord.value?.lastTimestamp;
 
     // Konversi data per jam menjadi format yang bisa dikirim ke API
-    final recordsToSync = _prepareRecordsFromHourlyData(today, hourlySteps, after: lastSyncedTimestamp);
+    final recordsToSync = _prepareRecordsFromHourlyData(today, hourlySteps,
+        after: lastSyncedTimestamp);
 
     // Hanya kirim jika ada data untuk disinkronkan
     if (recordsToSync.isNotEmpty) {
@@ -217,6 +225,7 @@ class HomeController extends GetxController {
     DateTime effectiveStartDate = lastRecordDate.isAfter(lastLoginTime) ? lastRecordDate : lastLoginTime;
 
     final today = DateTime.now();
+
     final differenceInDays = today.difference(effectiveStartDate).inDays;
 
     if (differenceInDays <= 1) {
@@ -254,7 +263,9 @@ class HomeController extends GetxController {
   }
 
   /// ✨ KUNCI #4: Helper untuk mengubah data per jam menjadi List<RecordDailyMiniModel>.
-  List<RecordDailyMiniModel> _prepareRecordsFromHourlyData(DateTime date, Map<int, int> hourlyData, {DateTime? after}) {
+  List<RecordDailyMiniModel> _prepareRecordsFromHourlyData(
+      DateTime date, Map<int, int> hourlyData,
+      {DateTime? after}) {
     List<RecordDailyMiniModel> records = [];
     hourlyData.forEach((hour, steps) {
       final timestamp = DateTime(date.year, date.month, date.day, hour);
@@ -283,10 +294,12 @@ class HomeController extends GetxController {
   }
 
   void _refreshStepUI() {
-    _syncTimerRefreshStepUI = Timer.periodic(_syncIntervalRefreshStepUI, (timer) async {
+    _syncTimerRefreshStepUI =
+        Timer.periodic(_syncIntervalRefreshStepUI, (timer) async {
       // Get from pedometer for step today and update UI
       final steps = await Pedometer().getStepCount(
-        from: DateTime(DateTime.now().year, DateTime.now().month, DateTime.now().day),
+        from: DateTime(
+            DateTime.now().year, DateTime.now().month, DateTime.now().day),
         to: DateTime.now(),
       );
 
@@ -333,12 +346,14 @@ class HomeController extends GetxController {
     isLoadingGetUserData.value = true;
     try {
       // Jalankan keduanya secara bersamaan untuk efisiensi
-      await Future.wait([
-        _loadMe(),
-        _loadHomePageData(),
-        _getLastRecord(),
-      ]).then((value) {
-        _startStaminaRecoveryTimer();
+      await Future.microtask(() async {
+        _loadMe();
+        await Future.wait([
+          _loadHomePageData(),
+          _getLastRecord(),
+        ]).then((value) {
+          _startStaminaRecoveryTimer();
+        });
       });
     } finally {
       isLoadingGetUserData.value = false;

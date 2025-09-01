@@ -173,6 +173,7 @@ class EventChatController extends GetxController {
   }
 
   Future<void> storeChat() async {
+    if (isLoadingStore.value) return;
     isLoadingStore.value = true;
     try {
       ChatModel? response = await _eventService.storeEventChat(

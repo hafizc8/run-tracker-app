@@ -1,3 +1,4 @@
+import 'package:currency_text_input_formatter/currency_text_input_formatter.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:intl/intl.dart';
@@ -20,6 +21,7 @@ import 'package:zest_mobile/app/routes/app_routes.dart';
 class ChallangeEditController extends GetxController {
   final TextEditingController startDateController = TextEditingController();
   final TextEditingController endDateController = TextEditingController();
+  final TextEditingController targetController = TextEditingController();
   var isLoading = false.obs;
   var isLoadingTeams = false.obs;
 
@@ -69,6 +71,17 @@ class ChallangeEditController extends GetxController {
       endDateController.text =
           DateFormat('yyyy-MM-dd').format(form.value.endDate!);
     }
+
+    targetController.text = CurrencyTextInputFormatter.currency(
+      locale: "id_ID",
+      symbol: '',
+      decimalDigits: 0,
+    )
+        .formatEditUpdate(
+          const TextEditingValue(text: '0'),
+          TextEditingValue(text: (challenge.target ?? 0).toString()),
+        )
+        .text;
   }
 
   Future<void> selectDate(BuildContext context, bool isStartDate) async {
@@ -99,7 +112,8 @@ class ChallangeEditController extends GetxController {
 
     try {
       ChallengeModel? res = await _challengeService.updateChallenge(
-        form.value,
+        form.value.copyWith(
+            target: int.tryParse(targetController.text.replaceAll('.', ''))),
         challengeId,
       );
       if (res != null) {

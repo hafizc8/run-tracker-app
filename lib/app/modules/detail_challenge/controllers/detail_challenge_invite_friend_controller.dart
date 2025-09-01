@@ -4,7 +4,6 @@ import 'package:zest_mobile/app/core/di/service_locator.dart';
 import 'package:zest_mobile/app/core/exception/app_exception.dart';
 import 'package:zest_mobile/app/core/exception/handler/app_exception_handler_info.dart';
 import 'package:zest_mobile/app/core/models/interface/pagination_response_model.dart';
-import 'package:zest_mobile/app/core/models/model/event_model.dart';
 import 'package:zest_mobile/app/core/models/model/user_mini_model.dart';
 import 'package:zest_mobile/app/core/services/challenge_service.dart';
 import 'package:zest_mobile/app/core/services/user_service.dart';
@@ -23,6 +22,8 @@ class DetailChallengeInviteController extends GetxController {
   var friends = <UserMiniModel>[].obs;
   var invites = <UserMiniModel>[].obs;
 
+  var ids = <String?>[].obs;
+
   final scrollControllerFriend = ScrollController();
 
   var page = 1;
@@ -37,6 +38,9 @@ class DetailChallengeInviteController extends GetxController {
   @override
   void onInit() {
     super.onInit();
+    if (Get.arguments != null && Get.arguments['ids'] != null) {
+      ids.value = Get.arguments['ids'];
+    }
     if (Get.arguments != null) {
       challengeId = Get.arguments['challengeId'];
     }
@@ -92,7 +96,8 @@ class DetailChallengeInviteController extends GetxController {
               response.pagination.next == '') ||
           response.pagination.total < 20) hasReacheMaxFriend.value = true;
 
-      friends.value += response.data;
+      friends.value +=
+          response.data.where((element) => !ids.contains(element.id)).toList();
     } catch (e) {
       Get.snackbar(
         'Error',
@@ -126,7 +131,8 @@ class DetailChallengeInviteController extends GetxController {
               response.pagination.next == '') ||
           response.pagination.total < 20) hasReacheMaxFriend.value = true;
 
-      friends.value += response.data;
+      friends.value +=
+          response.data.where((element) => !ids.contains(element.id)).toList();
     } catch (e) {
       Get.snackbar(
         'Error',

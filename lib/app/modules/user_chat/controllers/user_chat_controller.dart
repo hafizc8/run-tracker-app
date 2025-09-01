@@ -167,6 +167,7 @@ class UserChatController extends GetxController {
   }
 
   Future<void> storeChat() async {
+    if (isLoadingStore.value) return;
     isLoadingStore.value = true;
     try {
       ChatModel? response = await _userService.storeChat(

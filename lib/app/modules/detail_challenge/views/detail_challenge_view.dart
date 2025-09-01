@@ -182,8 +182,10 @@ class DetailChallengeView extends GetView<DetailChallangeController> {
 
               return Visibility(
                 visible: controller.detailChallenge.value?.startDate!
-                        .isFutureDate() ==
-                    true,
+                            .toLocal()
+                            .isFutureDate() ==
+                        true &&
+                    controller.detailChallenge.value?.completedAt == null,
                 child: SizedBox(
                   height: 43.h,
                   child: GradientOutlinedButton(
@@ -325,6 +327,7 @@ class DetailChallengeView extends GetView<DetailChallangeController> {
                                     const SizedBox(height: 16),
                                     if (!(controller.detailChallenge.value
                                                 ?.startDate!
+                                                .toLocal()
                                                 .isFutureDate() ==
                                             true) &&
                                         teams.any((element) =>
@@ -543,6 +546,7 @@ class DetailChallengeView extends GetView<DetailChallangeController> {
                               controller.detailChallenge.value?.isJoined ==
                                   1) &&
                           controller.detailChallenge.value?.startDate!
+                                  .toLocal()
                                   .isFutureDate() ==
                               true) ...[
                         const SizedBox(
@@ -581,7 +585,11 @@ class DetailChallengeView extends GetView<DetailChallangeController> {
                                 var res = await Get.toNamed(
                                     AppRoutes.challengedetailsInvite,
                                     arguments: {
-                                      'challengeId': controller.challengeId
+                                      'challengeId': controller.challengeId,
+                                      'ids': controller.invited.value
+                                          .map((member) => member.user?.id)
+                                          .whereType<String>()
+                                          .toList()
                                     });
                                 if (res != null &&
                                     res is List<ChallengeTeamsModel>) {
@@ -615,13 +623,21 @@ class DetailChallengeView extends GetView<DetailChallangeController> {
                             const Spacer(),
                             InkWell(
                               onTap: () {
-                                if (controller.detailChallenge.value?.type == 0) {
-                                  Get.toNamed(AppRoutes.shareChallengeProgressIndividual, arguments:controller.detailChallenge.value);
+                                if (controller.detailChallenge.value?.type ==
+                                    0) {
+                                  Get.toNamed(
+                                      AppRoutes
+                                          .shareChallengeProgressIndividual,
+                                      arguments:
+                                          controller.detailChallenge.value);
                                 } else {
-                                  Get.toNamed(AppRoutes.shareChallengeProgressTeam, arguments: {
-                                    'detailChallenge': controller.detailChallenge.value,
-                                    'team': controller.teams.value
-                                  });
+                                  Get.toNamed(
+                                      AppRoutes.shareChallengeProgressTeam,
+                                      arguments: {
+                                        'detailChallenge':
+                                            controller.detailChallenge.value,
+                                        'team': controller.teams.value
+                                      });
                                 }
                               },
                               child: SvgPicture.asset(
@@ -754,7 +770,6 @@ class DetailChallengeView extends GetView<DetailChallangeController> {
                               fontSize: 15.sp,
                             ),
                       ),
-
                       Column(
                         children: [
                           SvgPicture.asset(
@@ -777,25 +792,6 @@ class DetailChallengeView extends GetView<DetailChallangeController> {
                           ),
                         ],
                       ),
-                      // Text(
-                      //   'Invited',
-                      //   style: Theme.of(context).textTheme.bodyMedium?.copyWith(
-                      //         fontWeight: FontWeight.w400,
-                      //         color: Color(0xFFA5A5A5),
-                      //         fontSize: 15.sp,
-                      //       ),
-                      // ),
-                      // Row(
-                      //   children: [
-                      //     const Spacer(),
-                      //     SvgPicture.asset(
-                      //       'assets/icons/ic_add.svg',
-                      //       color: Theme.of(context).colorScheme.onBackground,
-                      //       height: 22.h,
-                      //       width: 27.w,
-                      //     ),
-                      //   ],
-                      // )
                     ],
                   )
                 : const SizedBox(),

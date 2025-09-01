@@ -7,6 +7,7 @@ import 'package:google_fonts/google_fonts.dart';
 import 'package:zest_mobile/app/core/extension/initial_profile_empty.dart';
 import 'package:zest_mobile/app/core/shared/widgets/shimmer_loading_circle.dart';
 import 'package:zest_mobile/app/modules/main_profile/widgets/custom_tab_bar/views/custom_tab_bar_view.dart';
+import 'package:zest_mobile/app/core/shared/widgets/skeleton/main_profile_skeleton.dart';
 import 'package:zest_mobile/app/routes/app_routes.dart';
 
 import '../controllers/main_profile_controller.dart';
@@ -17,6 +18,9 @@ class MainProfileView extends GetView<ProfileMainController> {
   Widget build(BuildContext context) {
     return Scaffold(
       body: Obx(() {
+        if (controller.user.value == null) {
+          return const MainProfileSkeleton(); // pakai skeleton shimmer
+        }
         ScrollController scrollController = ScrollController();
         switch (controller.tabBarController.selectedIndex.value) {
           case 0:
@@ -508,58 +512,53 @@ class MainProfileView extends GetView<ProfileMainController> {
                 ),
                 SizedBox(height: 16.h),
                 Obx(
-                  () {
-                    final badges = controller.user.value?.badges ?? [];
-
-                    return SizedBox(
-                      height: 200, // adjust for two rows of badges
-                      child: GridView.count(
-                        crossAxisCount: 1, // number of rows
-                        scrollDirection: Axis.horizontal,
-                        mainAxisSpacing: 12,
-                        crossAxisSpacing: 12,
-                        childAspectRatio: 1, // adjust to make square-ish badges
-                        children: badges.map((badge) {
-                          return Container(
-                            padding: const EdgeInsets.all(8),
-                            decoration: const BoxDecoration(
-                              borderRadius:
-                                  BorderRadius.all(Radius.circular(10)),
-                              color: Color(0xFF2E2E2E),
-                            ),
-                            child: Column(
-                              mainAxisSize: MainAxisSize.min,
-                              children: [
-                                ClipOval(
-                                  child: CachedNetworkImage(
-                                    imageUrl: badge.badgeIconUrl ?? '',
-                                    width: 50,
-                                    height: 50,
-                                    fit: BoxFit.cover,
-                                    placeholder: (context, url) =>
-                                        const ShimmerLoadingCircle(size: 50),
-                                    errorWidget: (context, url, error) =>
-                                        const CircleAvatar(
-                                      radius: 32,
-                                      backgroundImage: AssetImage(
-                                          'assets/images/empty_profile.png'),
+                  () => Row(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: (controller.user.value?.badges ?? [])
+                        .map(
+                          (e) => Flexible(
+                            child: Container(
+                              margin: const EdgeInsets.symmetric(horizontal: 5),
+                              padding: const EdgeInsets.only(
+                                  left: 12, right: 12, bottom: 12),
+                              decoration: const BoxDecoration(
+                                borderRadius:
+                                    BorderRadius.all(Radius.circular(10)),
+                                color: Color(0xFF2E2E2E),
+                              ),
+                              child: Column(
+                                mainAxisAlignment: MainAxisAlignment.center,
+                                children: [
+                                  ClipOval(
+                                    child: CachedNetworkImage(
+                                      imageUrl: e.badgeIconUrl ?? '',
+                                      width: 50,
+                                      height: 50,
+                                      fit: BoxFit.cover,
+                                      placeholder: (context, url) =>
+                                          const ShimmerLoadingCircle(size: 50),
+                                      errorWidget: (context, url, error) =>
+                                          const CircleAvatar(
+                                        radius: 32,
+                                        backgroundImage: AssetImage(
+                                            'assets/images/empty_profile.png'),
+                                      ),
                                     ),
                                   ),
-                                ),
-                                const SizedBox(height: 5),
-                                Text(
-                                  badge.badgeName ?? '-',
-                                  maxLines: 1,
-                                  overflow: TextOverflow.ellipsis,
-                                  textAlign: TextAlign.center,
-                                ),
-                              ],
+                                  const SizedBox(height: 5),
+                                  Text(
+                                    e.badgeName ?? '-',
+                                    maxLines: 1,
+                                    overflow: TextOverflow.ellipsis,
+                                    textAlign: TextAlign.center,
+                                  ),
+                                ],
+                              ),
                             ),
-                          );
-                        }).toList(),
-                      ),
-                    );
-                  },
+                          ),
+                        )
+                        .toList(),
+                  ),
                 ),
                 SizedBox(height: 16.h),
                 Container(

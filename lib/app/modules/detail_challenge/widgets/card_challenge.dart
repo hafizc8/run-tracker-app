@@ -234,6 +234,7 @@ class CardChallenge extends StatelessWidget {
                               ),
                               Text(
                                 NumberHelper().formatCurrency(
+                                    symbol: false,
                                     challengeDetailModel.target ?? 0),
                                 maxLines: 1,
                                 overflow: TextOverflow.ellipsis,

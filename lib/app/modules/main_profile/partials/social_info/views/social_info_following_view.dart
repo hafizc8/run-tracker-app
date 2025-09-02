@@ -7,11 +7,12 @@ import 'package:zest_mobile/app/core/extension/initial_profile_empty.dart';
 import 'package:zest_mobile/app/core/models/model/user_mini_model.dart';
 import 'package:zest_mobile/app/core/shared/widgets/custom_circular_progress_indicator.dart';
 import 'package:zest_mobile/app/core/shared/widgets/shimmer_loading_circle.dart';
+import 'package:zest_mobile/app/modules/main_profile/partials/profile/controllers/profile_controller.dart';
 import 'package:zest_mobile/app/modules/main_profile/partials/social_info/controllers/social_info_following.dart';
 import 'package:zest_mobile/app/routes/app_routes.dart';
 
 class SocialInfoFollowingView extends GetView<SocialInfoFollowingController> {
-  SocialInfoFollowingView({super.key});
+  const SocialInfoFollowingView({super.key});
 
   @override
   Widget build(BuildContext context) {
@@ -123,7 +124,10 @@ class SocialInfoFollowingView extends GetView<SocialInfoFollowingController> {
   Widget _buildFollowingListItem(BuildContext context, UserMiniModel user) {
     return ListTile(
       contentPadding: EdgeInsets.zero,
-      onTap: () => Get.toNamed(AppRoutes.profileUser, arguments: user.id),
+      onTap: () {
+        Get.delete<ProfileController>();
+        Get.toNamed(AppRoutes.profileUser, arguments: user.id);
+      },
       leading: ClipOval(
         child: CachedNetworkImage(
           imageUrl: user.imageUrl ?? '',

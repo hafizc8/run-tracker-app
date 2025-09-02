@@ -189,7 +189,7 @@ class UserService {
         queryParams: {
           'page': page.toString(),
           'random': random.toString(),
-          'search': search,
+          if (search != '') 'search': search,
           if (followingBy != null) 'following_by': followingBy,
           if (followersBy != null) 'follower_by': followersBy,
           if (followStatus != null) 'follow_status': followStatus,

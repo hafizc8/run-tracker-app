@@ -22,6 +22,8 @@ class ForgotPasswordSetNewPasswordView
             mainAxisAlignment: MainAxisAlignment.center, // vertical center
             crossAxisAlignment: CrossAxisAlignment.center,
             children: [
+              Image.asset('assets/icons/ic_password_updated.png',
+                  height: 280.h),
               Obx(() {
                 ResetPasswordFormModel form = controller.formReset.value;
                 return Column(

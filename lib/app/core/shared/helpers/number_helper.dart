@@ -49,10 +49,10 @@ class NumberHelper {
     return formatter.format(number);
   }
 
-  String formatCurrency(int amount) {
+  String formatCurrency(int amount, {bool symbol = true}) {
     final formatter = NumberFormat.currency(
       locale: 'id_ID',
-      symbol: 'Rp ',
+      symbol: symbol ? 'Rp ' : '',
       decimalDigits: 0,
     );
     return formatter.format(amount); // contoh: Rp 10.000

@@ -14,7 +14,7 @@ import 'package:zest_mobile/app/core/services/user_service.dart';
 import 'package:zest_mobile/app/modules/social/controllers/post_controller.dart';
 
 class ProfileController extends GetxController {
-  final String userId;
+  var userId = '';
 
   ProfileController({required this.userId});
 
@@ -114,13 +114,12 @@ class ProfileController extends GetxController {
     if (isLoadingPostActivity.value || hasReacheMaxPostActivity.value) return;
     isLoadingPostActivity.value = true;
     try {
-      PaginatedDataResponse<PostModel> response =
-        await _postService.getAll(
-          page: pagePostActivity,
-          user: userId,
-          limit: 5,
-          recordActivityOnly: true,
-        );
+      PaginatedDataResponse<PostModel> response = await _postService.getAll(
+        page: pagePostActivity,
+        user: userId,
+        limit: 5,
+        recordActivityOnly: true,
+      );
 
       if ((response.pagination.next == null ||
               response.pagination.next == '') ||
@@ -146,12 +145,11 @@ class ProfileController extends GetxController {
     final postController = Get.find<PostController>();
     postController.postDetail.value = post;
 
-    postController.goToDetail(postId: post!.id!, isFocusComment: isFocusComment);
+    postController.goToDetail(
+        postId: post!.id!, isFocusComment: isFocusComment);
   }
 
-  Future<void> likePost(
-      {required String postId,
-      int isDislike = 0}) async {
+  Future<void> likePost({required String postId, int isDislike = 0}) async {
     try {
       bool resp =
           await _postService.likeDislike(postId: postId, isDislike: isDislike);

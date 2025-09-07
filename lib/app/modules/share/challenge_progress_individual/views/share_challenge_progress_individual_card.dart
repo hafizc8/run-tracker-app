@@ -13,15 +13,16 @@ import 'package:zest_mobile/app/core/shared/widgets/share_footer.dart';
 import 'package:zest_mobile/app/core/shared/widgets/shimmer_loading_circle.dart';
 
 class ShareChallengeProgressIndividualCard extends StatelessWidget {
-  const ShareChallengeProgressIndividualCard({super.key, required this.challengeModel, required this.list4TopWalker, required this.currentUser});
+  const ShareChallengeProgressIndividualCard({super.key, required this.challengeModel, required this.list4TopWalker, required this.currentUser, this.showBackground = true, this.isSmallWidthScreen = false});
 
   final ChallengeDetailModel challengeModel;
   final List<LeaderboardUser> list4TopWalker;
   final UserModel currentUser;
+  final bool showBackground;
+  final bool isSmallWidthScreen;
 
   @override
   Widget build(BuildContext context) {
-    final isSmallWidthScreen = MediaQuery.of(context).size.width <= 360;
     final heightOfCard = isSmallWidthScreen 
       ? list4TopWalker.length == 5 ? 210.h : (list4TopWalker.length == 4 ? 170.h : (list4TopWalker.length == 3 ? 130.h : (list4TopWalker.length == 2 ? 85.h : 40.h)))
       : list4TopWalker.length == 5 ? 220.h : (list4TopWalker.length == 4 ? 180.h : (list4TopWalker.length == 3 ? 135.h : (list4TopWalker.length == 2 ? 90.h : 45.h)));
@@ -29,12 +30,15 @@ class ShareChallengeProgressIndividualCard extends StatelessWidget {
 
     return Stack(
       children: [
+        showBackground
+        ?
         Positioned.fill(
           child: Image.asset(
             'assets/images/share_challenge_individual_background.jpg',
             fit: BoxFit.fitWidth,
           ),
-        ),
+        )
+        : Container(),
         
         // Lapisan Konten di atas background
         Padding(
@@ -70,7 +74,7 @@ class ShareChallengeProgressIndividualCard extends StatelessWidget {
               Text(
                 (challengeModel.mode == 0)
                 ? 'Target ${NumberHelper().formatNumberToKWithComma(challengeModel.target)} Steps'
-                : '${(challengeModel.startDate ?? DateTime.now()).todMMMyyyyString()} - ${(challengeModel.endDate ?? DateTime.now()).todMMMyyyyString()}',
+                : '${(challengeModel.startDate?.toLocal() ?? DateTime.now()).todMMMyyyyString()} - ${(challengeModel.endDate?.toLocal() ?? DateTime.now()).todMMMyyyyString()}',
                 style: Theme.of(context).textTheme.labelSmall?.copyWith(
                   color: const Color(0xFF272727),
                   fontSize: 12.sp,
@@ -212,7 +216,6 @@ class ShareChallengeProgressIndividualCard extends StatelessWidget {
     required LeaderboardUser leaderboardUser,
     bool isCurrentUser = false
   }) {
-    final isSmallWidthScreen = MediaQuery.of(context).size.width <= 360;
     final avatarSize = isSmallWidthScreen ? 24.r : 26.r;
     final fontSize = isSmallWidthScreen ? 9.sp : 10.sp;
 

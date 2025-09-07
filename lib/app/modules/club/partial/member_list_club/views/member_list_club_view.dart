@@ -109,9 +109,12 @@ class MemberListClubView extends GetView<MemberListClubController> {
     return InkWell(
       onTapDown: (details) async {
         if (detailClubController.club.value?.isMember == true) {
+          // Get.snackbar('Info', 'Only an administrator/owner can perform this action. You do not have permission to remove members or assign admin roles.');
           return;
         }
-        if (members?.role != 2) {
+
+        // jika member role bukan member (admin/owner)
+        if (members?.roleText?.toLowerCase() == 'owner') {
           return;
         }
 

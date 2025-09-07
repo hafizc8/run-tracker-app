@@ -255,15 +255,6 @@ class RegisterView extends GetView<RegisterController> {
                         ),
                       ),
                     ),
-                    SizedBox(width: 20.w),
-                    SvgPicture.asset(
-                      'assets/icons/ic_fb.svg',
-                      width: 36.w,
-                      colorFilter: const ColorFilter.mode(
-                        Colors.white,
-                        BlendMode.srcIn,
-                      ),
-                    ),
                   ],
                 ),
                 SizedBox(height: 24.h),

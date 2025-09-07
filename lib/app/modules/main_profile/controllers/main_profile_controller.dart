@@ -18,6 +18,7 @@ import 'package:zest_mobile/app/core/services/event_service.dart';
 import 'package:zest_mobile/app/core/services/post_service.dart';
 import 'package:zest_mobile/app/core/services/storage_service.dart';
 import 'package:zest_mobile/app/core/services/user_service.dart';
+import 'package:zest_mobile/app/core/shared/helpers/unit_helper.dart';
 import 'package:zest_mobile/app/core/shared/widgets/custom_dialog_confirmation.dart';
 import 'package:zest_mobile/app/core/values/storage_keys.dart';
 import 'package:zest_mobile/app/modules/main_profile/widgets/custom_tab_bar/controllers/custom_tab_bar_controller.dart';
@@ -48,6 +49,7 @@ class ProfileMainController extends GetxController {
   final _eventService = sl<EventService>();
   final _challengeService = sl<ChallengeService>();
   final _postService = sl<PostService>();
+  final unitHelper = sl<UnitHelper>();
 
   final TabBarController tabBarController = Get.put(TabBarController());
 

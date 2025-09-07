@@ -22,6 +22,7 @@ import 'package:zest_mobile/app/core/services/location_service.dart';
 import 'package:zest_mobile/app/core/services/log_service.dart';
 import 'package:zest_mobile/app/core/services/record_activity_service.dart';
 import 'package:zest_mobile/app/core/services/user_service.dart';
+import 'package:zest_mobile/app/core/shared/helpers/unit_helper.dart';
 import 'package:zest_mobile/app/core/shared/theme/color_schemes.dart';
 import 'package:zest_mobile/app/core/shared/widgets/custom_dialog_confirmation.dart';
 import 'package:zest_mobile/app/modules/activity/record_activity/views/widgets/use_stamina_dialog.dart';
@@ -40,6 +41,7 @@ class RecordActivityController extends GetxController {
   final AuthService _authService = sl<AuthService>();
   UserModel? get user => _authService.user;
   final _prefs = sl<SharedPreferences>();
+  final _unitHelper = sl<UnitHelper>();
   
   // --- UI State ---
   var isTracking = false.obs;
@@ -96,7 +98,6 @@ class RecordActivityController extends GetxController {
 
     WidgetsBinding.instance.addPostFrameCallback((_) {
       _initializeSession();
-      loadMarkerIcons();
     });
 
     userCoin.value = user?.currentUserCoin?.currentAmount ?? 0;
@@ -144,6 +145,12 @@ class RecordActivityController extends GetxController {
     currentDistanceInMeters.value = (sessionData['distance'] as num?)?.toDouble() ?? 0.0;
     stepsInSession.value = sessionData['steps'] ?? 0;
 
+    final int staminaUsed = sessionData['staminaToUse'] ?? 0;
+    if (staminaUsed > 0) {
+      // Mulai kembali countdown stamina dari kondisi terakhir
+      _startStaminaCountdown(staminaToUse: staminaUsed, initialElapsedTime: elapsedTimeInSeconds.value);
+    }
+
     currentPath.assignAll(points.map((p) => LocationPoint(
           latitude: p.latitude, longitude: p.longitude, timestamp: p.timestamp))
         .toList());
@@ -182,6 +189,26 @@ class RecordActivityController extends GetxController {
         _saveDataPointToLocalDb(loc, newPoint.timestamp);
         _updateCameraForRoute();
       }
+    });
+
+    _service.on('save_session_to_db').listen((data) {
+      if (data == null || _recordActivityId == null) return;
+
+      _logService.log.i("Received data from background to save in local DB.");
+
+      // Panggil fungsi untuk menyimpan data sesi
+      // Kita menggunakan 'then' dan 'catchError' agar tidak memblokir listener
+      _localDb.saveUnsyncedSession({
+          'id': _recordActivityId!,
+          'elapsedTime': data['elapsedTime'],
+          'steps': data['steps'],
+          'distance': data['distance'],
+          'staminaToUse': totalStaminaToUse.value,
+      }).then((_) {
+        _logService.log.i("Local session data updated successfully.");
+      }).catchError((e, s) {
+        _logService.log.e("Failed to save session to local DB.", error: e, stackTrace: s);
+      });
     });
   }
 
@@ -305,7 +332,11 @@ class RecordActivityController extends GetxController {
           Get.back(); // Tutup loading overlay
 
           // Jika berhasil, langsung tampilkan dialog
-          await chooseStamina();
+          var isRunning = await _service.isRunning();
+          if (!isRunning) {
+            await chooseStamina();
+          }
+
           return; // Hentikan eksekusi agar tidak memanggil API
         } catch (e) {
           _logService.log.e("Failed to parse stamina config from cache. Fetching from API instead.", error: e);
@@ -327,7 +358,10 @@ class RecordActivityController extends GetxController {
 
       Get.back(); // Tutup loading overlay
       
-      await chooseStamina();
+      var isRunning = await _service.isRunning();
+      if (!isRunning) {
+        await chooseStamina();
+      }
 
     } catch (e, s) {
       _logService.log.e("Failed to load stamina requirements.", error: e, stackTrace: s);
@@ -459,7 +493,9 @@ class RecordActivityController extends GetxController {
       final completer = Completer<void>();
 
       void initiateRecording() {
-        _service.invoke('startRecording');
+        _service.invoke('startRecording', {
+          'unit': _unitHelper.getUserUnit().toString(),
+        });
         isTracking.value = true;
         _startPaceUpdater();
         Get.snackbar("Activity Started", "Tracking is running in the background.");
@@ -595,6 +631,8 @@ class RecordActivityController extends GetxController {
   void onMapCreated(GoogleMapController controller) {
     mapController = controller;
 
+    loadMarkerIcons();
+
     _updateCameraForRoute();
   }
 
@@ -638,37 +676,41 @@ class RecordActivityController extends GetxController {
     }
   }
 
-  void _startStaminaCountdown({required int staminaToUse}) {
+  void _startStaminaCountdown({required int staminaToUse, int initialElapsedTime = 0}) {
     _logService.log.i("Starting stamina countdown. Total: $staminaToUse stamina.");
-
-    _staminaTimer?.cancel(); // Batalkan timer lama jika ada
-
+    _staminaTimer?.cancel();
     if (staminaToUse <= 0) return;
 
-    // 1. Set state awal berdasarkan total stamina yang dipilih
     totalStaminaToUse.value = staminaToUse;
-    staminaRemainingCount.value = staminaToUse;
-    // Hitung TOTAL waktu untuk semua stamina
-    staminaTotalTimeRemainingInSeconds.value = staminaToUse * 3 * 60; 
+    
+    // Hitung total waktu sesi stamina
+    final int totalStaminaDuration = staminaToUse * 3 * 60;
+    // Hitung sisa waktu berdasarkan waktu yang sudah berlalu
+    final int remainingTime = totalStaminaDuration - initialElapsedTime;
+    
+    if (remainingTime <= 0) {
+      // Jika waktu sudah habis saat resume
+      staminaTotalTimeRemainingInSeconds.value = 0;
+      staminaRemainingCount.value = 0;
+      return;
+    }
+    
+    staminaTotalTimeRemainingInSeconds.value = remainingTime;
+    // Hitung sisa stamina berdasarkan sisa waktu
+    staminaRemainingCount.value = (remainingTime / (3 * 60)).ceil();
 
     _staminaTimer = Timer.periodic(const Duration(seconds: 1), (timer) {
-      // Countdown hanya berjalan jika tracking aktif dan tidak di-pause
       if (!isTracking.value) return;
 
-      // Selalu kurangi total sisa waktu
       staminaTotalTimeRemainingInSeconds.value--;
 
-      // 2. Logika baru untuk mengurangi jumlah stamina
-      // Cek apakah sisa waktu adalah kelipatan dari waktu per stamina (3 menit)
-      // Ini menandakan satu blok stamina telah selesai.
       if (staminaTotalTimeRemainingInSeconds.value % (3 * 60) == 0 &&
           staminaTotalTimeRemainingInSeconds.value > 0) {
         staminaRemainingCount.value--;
       }
       
-      // 3. Logika akhir saat semua waktu habis
       if (staminaTotalTimeRemainingInSeconds.value <= 0) {
-        staminaRemainingCount.value = 0; // Pastikan sisa stamina 0
+        staminaRemainingCount.value = 0;
         timer.cancel();
         Get.snackbar("Stamina Depleted", "All stamina has been used.");
       }
@@ -734,8 +776,7 @@ class RecordActivityController extends GetxController {
   }
 
   String get distance {
-    double distanceInKm = currentDistanceInMeters.value / 1000;
-    return "${distanceInKm.toStringAsFixed(2)} km";
+    return _unitHelper.formatDistance(currentDistanceInMeters.value);
   }
 
   Set<Polyline> get activityPolylines {

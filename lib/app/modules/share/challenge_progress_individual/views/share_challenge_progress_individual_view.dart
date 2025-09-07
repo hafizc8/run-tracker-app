@@ -41,6 +41,7 @@ class ShareChallengeProgressIndividualView extends GetView<ShareChallengeProgres
                         challengeModel: controller.challengeData.value!,
                         list4TopWalker: controller.getUsersToShow(),
                         currentUser: controller.user!,
+                        isSmallWidthScreen: MediaQuery.of(context).size.width <= 360,
                       ),
                     ),
                   ),

@@ -8,6 +8,30 @@ import 'package:zest_mobile/app/core/services/log_service.dart';
 import 'package:zest_mobile/app/core/shared/helpers/number_helper.dart';
 import 'package:pedometer_2/pedometer_2.dart';
 
+// ✨ KUNCI #1: Definisikan enum di luar fungsi agar bisa diakses secara global di file ini
+enum DistanceUnit { km, mi }
+
+/// ✨ KUNCI #2: Buat fungsi format lokal di dalam file background_service.
+/// Fungsi ini adalah duplikat dari logika di UnitHelper, tetapi diperlukan
+/// karena service ini berjalan di Isolate terpisah dan tidak bisa mengakses UnitHelper.
+String _formatDistance(double distanceInMeters, DistanceUnit unit) {
+  double convertedDistance;
+  String unitSuffix;
+  // Faktor konversi: 1 meter = 0.000621371 mil
+  const double metersToMiles = 0.000621371;
+
+  switch (unit) {
+    case DistanceUnit.mi:
+      convertedDistance = distanceInMeters * metersToMiles;
+      unitSuffix = 'mi';
+      break;
+    default: // km
+      convertedDistance = distanceInMeters / 1000;
+      unitSuffix = 'km';
+  }
+  return "${convertedDistance.toStringAsFixed(2)} $unitSuffix";
+}
+
 // --- Entry Point untuk Service ---
 @pragma('vm:entry-point')
 void onStart(ServiceInstance service) async {
@@ -29,6 +53,8 @@ void onStart(ServiceInstance service) async {
   final List<LocationPoint> currentPath = [];
   Map<String, dynamic>? latestLocation;
   Timer? updateTimer;
+  // ✨ KUNCI #3: Simpan preferensi unit di dalam state service
+  DistanceUnit userDistanceUnit = DistanceUnit.km;
 
   bool justResumed = false;
 
@@ -138,6 +164,15 @@ void onStart(ServiceInstance service) async {
           "startRecording called, but a session is already active.");
       return;
     }
+
+    // ✨ KUNCI #4: Baca preferensi dari event dan simpan ke state service
+    if (event is Map && event?['unit'] == 'DistanceUnit.mi') {
+      userDistanceUnit = DistanceUnit.mi;
+      _log(service, LogLevel.info, "Distance unit set to MILES.");
+    } else {
+      userDistanceUnit = DistanceUnit.km;
+      _log(service, LogLevel.info, "Distance unit set to KILOMETERS.");
+    }
     
 
     // // Ambil total langkah saat ini sebagai titik awal (offset)
@@ -162,17 +197,24 @@ void onStart(ServiceInstance service) async {
       if (!isPaused) {
         elapsedTimeInSeconds++;
       }
+
+      final Map<String, dynamic> sessionDataForDb = {
+        'elapsedTime': elapsedTimeInSeconds,
+        'steps': stepsInSession,
+        'distance': currentDistanceInMeters,
+      };
+      service.invoke('save_session_to_db', sessionDataForDb);
+
       // Kirim update ke UI
       _log(service, LogLevel.verbose, "Sending update to UI: stepsInSession = $stepsInSession");
       service.invoke('update', {
         "elapsedTime": elapsedTimeInSeconds,
         "steps": stepsInSession,
       });
-      latestLocation = null;
+      // latestLocation = null;
 
       // Update notifikasi foreground
-      final String content =
-          "Time: ${NumberHelper().formatDuration(elapsedTimeInSeconds)}, Distance: ${NumberHelper().formatDistanceMeterToKm(currentDistanceInMeters)}";
+      final String content = "Time: ${NumberHelper().formatDuration(elapsedTimeInSeconds)}, Distance: ${_formatDistance(currentDistanceInMeters, userDistanceUnit)}";
       service.invoke(
         'update_notification',
         {

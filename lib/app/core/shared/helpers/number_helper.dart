@@ -35,10 +35,10 @@ class NumberHelper {
     return minutes.toString();
   }
 
-  String formatDistanceMeterToKm(double distanceInMeters) {
-    double distanceInKm = distanceInMeters / 1000;
-    return "${distanceInKm.toStringAsFixed(2)} km";
-  }
+  // String formatDistanceMeterToKm(double distanceInMeters, bool isKm) {
+  //   double distanceInKm = distanceInMeters / 1000;
+  //   return "${distanceInKm.toStringAsFixed(2)} km";
+  // }
 
   // format number from 10000 to 10.000
   String formatNumberToKWithComma(num? number) {

@@ -134,6 +134,6 @@ class SocialClubSearchController extends GetxController {
   }
 
   dynamic goToClubDetails(ClubModel club) {
-    Get.toNamed(AppRoutes.detailClub, arguments: club.id);
+    Get.toNamed(AppRoutes.previewClub, arguments: club.id);
   }
 }

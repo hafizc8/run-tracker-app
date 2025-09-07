@@ -629,6 +629,7 @@ class HomeController extends GetxController {
           .w("Ongoing activity detected. Redirecting to RecordActivityView.");
 
       WidgetsBinding.instance.addPostFrameCallback((_) {
+        Get.toNamed(AppRoutes.activityStart);
         Get.toNamed(AppRoutes.activityRecord);
       });
     }

@@ -129,7 +129,7 @@ class FcmService {
 
     await FcmService.appIsReady;
 
-    // print("App is ready, proceeding with navigation for data: ${message.data}");
+    print("App is ready, proceeding with navigation for data: ${message.data}");
 
     // print("Handling a background message: $message");
 
@@ -195,8 +195,8 @@ class FcmService {
     }
 
     // --- Kategori: Undangan Challenge ---
-    else if (data.containsKey('challenge.id')) {
-      final challengeId = data['challenge.id'];
+    else if (data.containsKey('challange.id')) {
+      final challengeId = data['challange.id'];
       if (challengeId == null) return;
       Get.toNamed(AppRoutes.challengedetails, arguments: {"challengeId": challengeId});
     }

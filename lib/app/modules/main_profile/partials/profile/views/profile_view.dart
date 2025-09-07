@@ -786,7 +786,7 @@ class ProfileView extends GetView<ProfileController> {
                               Rect.fromLTWH(0, 0, bounds.width, bounds.height),
                             ),
                             child: Text(
-                              '${controller.user.value?.overallMileage ?? 0} km',
+                              controller.unitHelper.formatDistance(((controller.user.value?.overallMileage ?? 0) * 1000).toDouble()),
                               style: Theme.of(context)
                                   .textTheme
                                   .bodyMedium

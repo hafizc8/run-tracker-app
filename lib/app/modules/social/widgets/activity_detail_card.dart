@@ -417,9 +417,11 @@ class ActivityDetailCard extends StatelessWidget {
         mainAxisAlignment: MainAxisAlignment.spaceAround,
         children: [
           StatisticsColumn(
-              title: 'Distance',
-              value: NumberHelper().formatDistanceMeterToKm(
-                  recordActivity?.lastRecordActivityLog?.distance ?? 0)),
+            title: 'Distance',
+            value: controller.unitHelper.formatDistance(
+              recordActivity?.lastRecordActivityLog?.distance ?? 0,
+            ),
+          ),
           StatisticsColumn(
               title: 'AVG Pace',
               value: NumberHelper().formatDuration(int.parse(

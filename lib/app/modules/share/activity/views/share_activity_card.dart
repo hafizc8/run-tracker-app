@@ -10,9 +10,10 @@ import 'package:zest_mobile/app/core/shared/widgets/share_footer.dart';
 import 'package:zest_mobile/app/core/shared/widgets/shimmer_loading_rectangle.dart';
 
 class ShareActivityCard extends StatelessWidget {
-  const ShareActivityCard({super.key, required this.postModel});
+  const ShareActivityCard({super.key, required this.postModel, required this.distanceInFormat});
 
   final PostModel postModel;
+  final String distanceInFormat;
 
   @override
   Widget build(BuildContext context) {
@@ -90,7 +91,7 @@ class ShareActivityCard extends StatelessWidget {
                       _buildPlaceholder(
                         context: context,
                         svgIconPath: 'assets/icons/ic_run_white.svg',
-                        text: NumberHelper().formatDistanceMeterToKm(postModel.recordActivity?.lastRecordActivityLog?.distance ?? 0),
+                        text: distanceInFormat,
                       ),
                       _buildPlaceholder(
                         context: context,

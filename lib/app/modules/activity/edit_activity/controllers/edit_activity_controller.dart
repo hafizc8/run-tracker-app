@@ -19,6 +19,8 @@ import 'package:zest_mobile/app/modules/main_profile/controllers/main_profile_co
 import 'package:zest_mobile/app/modules/main_profile/widgets/custom_tab_bar/controllers/custom_tab_bar_controller.dart';
 import 'dart:ui' as ui;
 
+import 'package:zest_mobile/app/routes/app_routes.dart';
+
 class EditActivityController extends GetxController {
   final RecordActivityModel recordActivityData;
 
@@ -201,8 +203,8 @@ class EditActivityController extends GetxController {
       bool isSuccess = await _postService.shareRecordActivity(editActivityForm.value);
 
       if (isSuccess) {
-        // find MainHomeController
-        Get.close(2);
+        // Kembali ke halaman utama dan menuju tab profile
+        Get.until((route) => route.settings.name == AppRoutes.mainHome);
         Get.find<MainHomeController>().changeTab(3); // change to menu profile
         Get.find<ProfileMainController>().getPostActivity(refresh: true);
         Get.find<TabBarController>().changeTabIndex(0); // change to tab overview

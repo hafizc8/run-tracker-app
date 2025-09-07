@@ -8,6 +8,8 @@ import 'package:screenshot/screenshot.dart';
 import 'package:zest_mobile/app/core/models/model/challenge_detail_model.dart';
 import 'package:zest_mobile/app/core/models/model/challenge_team_model.dart';
 import 'package:zest_mobile/app/core/values/app_constants.dart';
+import 'package:zest_mobile/app/modules/share/challenge_progress_team/views/share_challenge_progress_team_card.dart';
+import 'package:zest_mobile/app/modules/share/widgets/share_image_wrapper.dart';
 
 class ShareChallengeProgressTeamController extends GetxController {
   
@@ -50,7 +52,16 @@ class ShareChallengeProgressTeamController extends GetxController {
   /// ✨ FUNGSI UTAMA: Menangkap gambar dan membagikannya
   Future<void> shareTo(String platform) async {
     // 1. Tangkap widget sebagai gambar (dalam format Uint8List)
-    final imageBytes = await screenshotController.capture(pixelRatio: 4).then((image) => image!.buffer.asUint8List());
+    final imageBytes = await screenshotController.captureFromWidget(
+      ShareImageWrapper(
+        shareCard: ShareChallengeProgressTeamCard(
+          challengeModel: challengeData.value!,
+          team: team,
+        ),
+        backgroundImagePath: 'assets/images/share_challenge_team_background.png',
+      ),
+      pixelRatio: 2.0,
+    );
 
     // 2. Simpan gambar ke file sementara
     final directory = await getTemporaryDirectory();

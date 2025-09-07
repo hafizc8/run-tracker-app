@@ -200,7 +200,28 @@ class DetailChallengeView extends GetView<DetailChallangeController> {
                           ),
                         ),
                       ),
-                      onPressed: () {},
+                      onPressed: () {
+                        Get.toNamed(AppRoutes.shareChallenge, arguments: ChallengeModel(
+                          id: controller.detailChallenge.value?.id,
+                          type: controller.detailChallenge.value?.type,
+                          typeText: controller.detailChallenge.value?.typeText,
+                          title: controller.detailChallenge.value?.title,
+                          mode: controller.detailChallenge.value?.mode,
+                          modeText: controller.detailChallenge.value?.modeText,
+                          startDate: controller.detailChallenge.value?.startDate,
+                          endDate: controller.detailChallenge.value?.endDate,
+                          clubId: controller.detailChallenge.value?.clubId,
+                          target: controller.detailChallenge.value?.target,
+                          teamSize: controller.detailChallenge.value?.teamSize,
+                          challengeUsersCount: controller.detailChallenge.value?.challangeUsersCount,
+                          cancelledAt: controller.detailChallenge.value?.cancelledAt,
+                          createdAt: controller.detailChallenge.value?.createdAt,
+                          isJoined: controller.detailChallenge.value?.isJoined,
+                          isOwner: controller.detailChallenge.value?.isOwner,
+                          isPendingJoin: controller.detailChallenge.value?.isPendingJoin,
+                          teams: controller.detailChallenge.value?.teams,
+                        ));
+                      },
                       child: ShaderMask(
                         shaderCallback: (bounds) => const LinearGradient(
                           begin: Alignment.centerLeft,
@@ -223,50 +244,6 @@ class DetailChallengeView extends GetView<DetailChallangeController> {
                                     fontWeight: FontWeight.w700,
                                   ),
                         ),
-                      ),
-                    ),
-                    onPressed: () {
-                      Get.toNamed(AppRoutes.shareChallenge, arguments: ChallengeModel(
-                        id: controller.detailChallenge.value?.id,
-                        type: controller.detailChallenge.value?.type,
-                        typeText: controller.detailChallenge.value?.typeText,
-                        title: controller.detailChallenge.value?.title,
-                        mode: controller.detailChallenge.value?.mode,
-                        modeText: controller.detailChallenge.value?.modeText,
-                        startDate: controller.detailChallenge.value?.startDate,
-                        endDate: controller.detailChallenge.value?.endDate,
-                        clubId: controller.detailChallenge.value?.clubId,
-                        target: controller.detailChallenge.value?.target,
-                        teamSize: controller.detailChallenge.value?.teamSize,
-                        challengeUsersCount: controller.detailChallenge.value?.challangeUsersCount,
-                        cancelledAt: controller.detailChallenge.value?.cancelledAt,
-                        createdAt: controller.detailChallenge.value?.createdAt,
-                        isJoined: controller.detailChallenge.value?.isJoined,
-                        isOwner: controller.detailChallenge.value?.isOwner,
-                        isPendingJoin: controller.detailChallenge.value?.isPendingJoin,
-                        teams: controller.detailChallenge.value?.teams,
-                      ));
-                    },
-                    child: ShaderMask(
-                      shaderCallback: (bounds) => const LinearGradient(
-                        begin: Alignment.centerLeft,
-                        end: Alignment.centerRight,
-                        colors: [
-                          Color(0xFFA2FF00),
-                          Color(0xFF00FF7F),
-                        ],
-                      ).createShader(
-                        Rect.fromLTWH(0, 0, bounds.width, bounds.height),
-                      ),
-                      child: Text(
-                        'Share',
-                        maxLines: 1,
-                        overflow: TextOverflow.ellipsis,
-                        style: Theme.of(context).textTheme.bodyLarge?.copyWith(
-                              color: Colors.white,
-                              fontSize: 17.sp,
-                              fontWeight: FontWeight.w700,
-                            ),
                       ),
                     ),
                   ),

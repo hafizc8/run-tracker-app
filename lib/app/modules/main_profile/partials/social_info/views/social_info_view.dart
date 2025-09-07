@@ -172,7 +172,6 @@ class SocialInfoView extends GetView<SocialInfoController> {
   Widget _buildChipFilter(BuildContext context) {
     return Obx(() {
       return Row(
-        mainAxisAlignment: MainAxisAlignment.spaceBetween,
         children: [
           _buildFilterChip(context, 'Following', YourPageChip.following),
           SizedBox(width: 8.w),

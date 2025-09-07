@@ -84,6 +84,8 @@ class DetailChallengeInviteController extends GetxController {
         page: pageFriend,
         followStatus: 'followers',
         search: input,
+        random: 0,
+        checkChallenge: challengeId,
       );
 
       if (response.data.isEmpty) {
@@ -96,8 +98,7 @@ class DetailChallengeInviteController extends GetxController {
               response.pagination.next == '') ||
           response.pagination.total < 20) hasReacheMaxFriend.value = true;
 
-      friends.value +=
-          response.data.where((element) => !ids.contains(element.id)).toList();
+      friends.value += response.data;
     } catch (e) {
       Get.snackbar(
         'Error',
@@ -122,7 +123,9 @@ class DetailChallengeInviteController extends GetxController {
       PaginatedDataResponse<UserMiniModel> response =
           await _userService.getUserList(
         page: pageFriend,
+        random: 0,
         followStatus: 'followers',
+        checkChallenge: challengeId,
       );
 
       pageFriend++;
@@ -131,8 +134,7 @@ class DetailChallengeInviteController extends GetxController {
               response.pagination.next == '') ||
           response.pagination.total < 20) hasReacheMaxFriend.value = true;
 
-      friends.value +=
-          response.data.where((element) => !ids.contains(element.id)).toList();
+      friends.value += response.data;
     } catch (e) {
       Get.snackbar(
         'Error',

@@ -1,21 +1,15 @@
-import 'dart:math';
-
 import 'package:cached_network_image/cached_network_image.dart';
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/widgets.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:get/get.dart';
 import 'package:intl/intl.dart';
-import 'package:share_plus/share_plus.dart';
 import 'package:zest_mobile/app/core/extension/date_extension.dart';
 import 'package:zest_mobile/app/core/extension/event_extension.dart';
 import 'package:zest_mobile/app/core/models/model/event_model.dart';
 import 'package:zest_mobile/app/core/shared/helpers/number_helper.dart';
 import 'package:zest_mobile/app/core/shared/widgets/gradient_elevated_button.dart';
 import 'package:zest_mobile/app/core/shared/widgets/shimmer_loading_circle.dart';
-import 'package:zest_mobile/app/core/values/app_constants.dart';
 import 'package:zest_mobile/app/modules/club/partial/detail_club/partial/tab_bar_club/views/widgets/participants_avatars.dart';
 import 'package:zest_mobile/app/modules/social/views/partial/for_you_tab/event/controllers/event_action_controller.dart';
 import 'package:zest_mobile/app/modules/social/views/partial/for_you_tab/event/controllers/event_controller.dart';
@@ -141,7 +135,8 @@ class EventCard extends StatelessWidget {
                   children: [
                     GestureDetector(
                       onTap: () {
-                        Get.toNamed(AppRoutes.shareEvent, arguments: eventModel);
+                        Get.toNamed(AppRoutes.shareEvent,
+                            arguments: eventModel);
                       },
                       child: SvgPicture.asset(
                         'assets/icons/ic_share-2.svg',
@@ -211,8 +206,13 @@ class EventCard extends StatelessWidget {
                             ),
                           ];
                         },
-                        child: Padding(
-                          padding: const EdgeInsets.only(left: 16),
+                        child: Container(
+                          padding: const EdgeInsets.all(
+                            16,
+                          ), // area sentuh jadi lebih luas
+                          color:
+                              Colors.transparent, // biar kelihatan transparan
+
                           child: SvgPicture.asset(
                             'assets/icons/ic_more_vert.svg',
                           ),

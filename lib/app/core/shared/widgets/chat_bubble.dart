@@ -22,14 +22,14 @@ class ChatBubble extends StatelessWidget {
     return ClipOval(
       child: CachedNetworkImage(
         imageUrl: chat?.user?.imageUrl ?? '',
-        width: 27.r,
-        height: 27.r,
+        width: 27,
+        height: 27,
         fit: BoxFit.cover,
-        placeholder: (context, url) => ShimmerLoadingCircle(
-          size: 27.r,
+        placeholder: (context, url) => const ShimmerLoadingCircle(
+          size: 27,
         ),
         errorWidget: (context, url, error) => CircleAvatar(
-          radius: 17.r,
+          radius: 17,
           backgroundColor: Theme.of(context).colorScheme.onBackground,
           child: Text(
             (chat?.user?.name ?? '-').toInitials(),
@@ -76,7 +76,7 @@ class ChatBubble extends StatelessWidget {
     // Kalau showUserInfo == false, sembunyikan avatar dan nama, tapi beri padding agar rata
     if (!showUserInfo) {
       return Padding(
-        padding: EdgeInsets.only(left: 28.w),
+        padding: const EdgeInsets.only(left: 44),
         child: Row(
           children: [
             Container(

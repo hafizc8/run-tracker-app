@@ -87,6 +87,7 @@ class CreateChallengeFormModel extends FormModel<CreateChallengeFormModel>
       'title': title,
       'type': type,
       'mode': mode,
+      if (clubId != null) 'club_id': clubId,
       'start_date': startDate != null
           ? DateFormat('yyyy-MM-dd').format(startDate!)
           : null,

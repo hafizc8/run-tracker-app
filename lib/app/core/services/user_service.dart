@@ -181,6 +181,7 @@ class UserService {
     String? followingBy,
     String? followersBy,
     String? checkClub,
+    String? checkChallenge,
   }) async {
     try {
       final response = await _apiService.request<FormData>(
@@ -189,6 +190,7 @@ class UserService {
         queryParams: {
           'page': page.toString(),
           'random': random.toString(),
+          if (checkChallenge != null) 'check_challange': checkChallenge,
           if (search != '') 'search': search,
           if (followingBy != null) 'following_by': followingBy,
           if (followersBy != null) 'follower_by': followersBy,

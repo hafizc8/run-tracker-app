@@ -17,6 +17,7 @@ import 'package:zest_mobile/app/core/services/auth_service.dart';
 import 'package:zest_mobile/app/core/services/location_service.dart';
 import 'package:zest_mobile/app/core/services/post_service.dart';
 import 'package:zest_mobile/app/core/shared/helpers/debouncer.dart';
+import 'package:zest_mobile/app/core/shared/helpers/unit_helper.dart';
 import 'package:zest_mobile/app/core/shared/widgets/custom_dialog_confirmation.dart';
 import 'package:zest_mobile/app/modules/social/views/partial/your_page_tab/post/create_post_dialog.dart';
 import 'package:zest_mobile/app/routes/app_routes.dart';
@@ -35,6 +36,7 @@ class PostController extends GetxController {
   var form = CreatePostFormModel().obs;
   var hasReacheMax = false.obs;
   var pagePost = 1;
+  final unitHelper = sl<UnitHelper>();
 
   // post detail
   Rx<PostModel?> postDetail = Rx<PostModel?>(null);

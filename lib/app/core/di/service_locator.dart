@@ -16,6 +16,7 @@ import 'package:zest_mobile/app/core/services/record_activity_service.dart';
 import 'package:zest_mobile/app/core/services/shop_service.dart';
 import 'package:zest_mobile/app/core/services/storage_service.dart';
 import 'package:zest_mobile/app/core/services/user_service.dart';
+import 'package:zest_mobile/app/core/shared/helpers/unit_helper.dart';
 
 final sl = GetIt.instance;
 
@@ -39,4 +40,5 @@ Future<void> setupServiceLocator() async {
   });
   sl.registerSingletonAsync<LogService>(() => LogService().init());
   sl.registerSingletonAsync<AppLinkService>(() => AppLinkService().init());
+  sl.registerLazySingleton(() => UnitHelper());
 }

@@ -2,7 +2,6 @@ import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
 import 'package:zest_mobile/app/core/models/enums/social_page_enum.dart';
-import 'package:zest_mobile/app/core/shared/theme/color_schemes.dart';
 import 'package:zest_mobile/app/modules/social/controllers/post_controller.dart';
 import 'package:zest_mobile/app/modules/social/controllers/social_club_search_controller.dart';
 import 'package:zest_mobile/app/modules/social/controllers/social_controller.dart';

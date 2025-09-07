@@ -6,7 +6,9 @@ import 'package:image_gallery_saver/image_gallery_saver.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:permission_handler/permission_handler.dart';
 import 'package:screenshot/screenshot.dart';
+import 'package:zest_mobile/app/core/di/service_locator.dart';
 import 'package:zest_mobile/app/core/models/model/post_model.dart';
+import 'package:zest_mobile/app/core/shared/helpers/unit_helper.dart';
 import 'package:zest_mobile/app/core/values/app_constants.dart';
 import 'package:zest_mobile/app/modules/share/activity/views/share_activity_card.dart';
 import 'package:zest_mobile/app/modules/share/widgets/share_image_wrapper.dart';
@@ -17,6 +19,7 @@ class ShareActivityController extends GetxController {
   ShareActivityController({required this.postModel});
 
   Rx<PostModel?> postData = Rx<PostModel?>(null);
+  final unitHelper = sl<UnitHelper>();
   RxBool isLoading = RxBool(true);
 
   final ScreenshotController screenshotController = ScreenshotController();
@@ -52,7 +55,10 @@ class ShareActivityController extends GetxController {
     // 1. Tangkap widget sebagai gambar (dalam format Uint8List)
     final imageBytes = await screenshotController.captureFromWidget(
       ShareImageWrapper(
-        shareCard: ShareActivityCard(postModel: postModel),
+        shareCard: ShareActivityCard(
+          postModel: postModel,
+          distanceInFormat: unitHelper.formatDistance(postModel.recordActivity?.lastRecordActivityLog?.distance ?? 0),
+        ),
         backgroundImagePath: 'assets/images/background_share-2.png',
       ),
       pixelRatio: 4.0,

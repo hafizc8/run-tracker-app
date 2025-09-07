@@ -1,5 +1,6 @@
 import 'dart:io';
 import 'package:appinio_social_share/appinio_social_share.dart';
+import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:image_gallery_saver/image_gallery_saver.dart';
 import 'package:path_provider/path_provider.dart';
@@ -10,6 +11,8 @@ import 'package:zest_mobile/app/core/models/model/challenge_detail_model.dart';
 import 'package:zest_mobile/app/core/models/model/user_model.dart';
 import 'package:zest_mobile/app/core/services/auth_service.dart';
 import 'package:zest_mobile/app/core/values/app_constants.dart';
+import 'package:zest_mobile/app/modules/share/challenge_progress_individual/views/share_challenge_progress_individual_card.dart';
+import 'package:zest_mobile/app/modules/share/widgets/share_image_wrapper.dart';
 
 class ShareChallengeProgressIndividualController extends GetxController {
   
@@ -54,7 +57,18 @@ class ShareChallengeProgressIndividualController extends GetxController {
   /// ✨ FUNGSI UTAMA: Menangkap gambar dan membagikannya
   Future<void> shareTo(String platform) async {
     // 1. Tangkap widget sebagai gambar (dalam format Uint8List)
-    final imageBytes = await screenshotController.capture(pixelRatio: 4).then((image) => image!.buffer.asUint8List());
+    final imageBytes = await screenshotController.captureFromWidget(
+      ShareImageWrapper(
+        shareCard: ShareChallengeProgressIndividualCard(
+          challengeModel: challengeData.value!,
+          list4TopWalker: getUsersToShow(),
+          currentUser: user!,
+          isSmallWidthScreen: MediaQuery.of(Get.context!).size.width <= 360,
+        ),
+        backgroundImagePath: 'assets/images/share_challenge_individual_background.jpg',
+      ),
+      pixelRatio: 2.0,
+    );
 
     // 2. Simpan gambar ke file sementara
     final directory = await getTemporaryDirectory();

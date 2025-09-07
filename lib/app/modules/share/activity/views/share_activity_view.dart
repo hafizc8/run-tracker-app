@@ -27,6 +27,7 @@ class ShareActivityView extends GetView<ShareActivityController> {
               children: [
                 ShareActivityCard(
                   postModel: controller.postData.value!,
+                  distanceInFormat: controller.unitHelper.formatDistance(controller.postData.value?.recordActivity?.lastRecordActivityLog?.distance ?? 0),
                 ),
             
                 SizedBox(height: 24.h),

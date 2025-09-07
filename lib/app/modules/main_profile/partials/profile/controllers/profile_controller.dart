@@ -11,6 +11,7 @@ import 'package:zest_mobile/app/core/models/model/user_model.dart';
 import 'package:zest_mobile/app/core/services/auth_service.dart';
 import 'package:zest_mobile/app/core/services/post_service.dart';
 import 'package:zest_mobile/app/core/services/user_service.dart';
+import 'package:zest_mobile/app/core/shared/helpers/unit_helper.dart';
 import 'package:zest_mobile/app/modules/social/controllers/post_controller.dart';
 
 class ProfileController extends GetxController {
@@ -23,6 +24,7 @@ class ProfileController extends GetxController {
   final _userService = sl<UserService>();
   final _authService = sl<AuthService>();
   final _postService = sl<PostService>();
+  final unitHelper = sl<UnitHelper>();
 
   UserModel? get currentUser => _authService.user;
 

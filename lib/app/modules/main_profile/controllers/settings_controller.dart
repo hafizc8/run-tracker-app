@@ -5,6 +5,7 @@ import 'package:package_info_plus/package_info_plus.dart';
 import 'package:zest_mobile/app/core/di/service_locator.dart';
 import 'package:zest_mobile/app/core/exception/app_exception.dart';
 import 'package:zest_mobile/app/core/exception/handler/app_exception_handler_info.dart';
+import 'package:zest_mobile/app/core/models/model/user_model.dart';
 import 'package:zest_mobile/app/core/services/auth_service.dart';
 import 'package:zest_mobile/app/core/services/user_service.dart';
 import 'package:zest_mobile/app/core/shared/widgets/custom_circular_progress_indicator.dart';
@@ -19,11 +20,12 @@ class SettingsController extends GetxController {
   Rx<String?> appVersion = Rx(null);
   final _authService = sl<AuthService>();
   final _userService = sl<UserService>();
+  Rx<UserModel?> user = Rx(null); // Rx<UserModel>
 
   @override
   void onInit() async {
     PackageInfo packageInfo = await PackageInfo.fromPlatform();
-
+    user.value = _authService.user;
     appVersion
       ..value = packageInfo.version
       ..refresh();
@@ -35,6 +37,22 @@ class SettingsController extends GetxController {
     try {
       bool resp = await _authService.logout();
       if (resp) Get.offAllNamed(AppRoutes.login);
+    } on AppException catch (e) {
+      // show error snackbar, toast, etc
+      AppExceptionHandlerInfo.handle(e);
+    } catch (e) {
+      Get.snackbar('Error', e.toString());
+    } finally {
+      isLoading.value = false;
+    }
+  }
+
+  void updateUserPreferencesUnit(int unit) async {
+    isLoading.value = true;
+    print('unit: $unit');
+    try {
+      bool resp = await _userService.updateUserPreference(unit: unit);
+      if (resp) Get.snackbar('Success', 'Successfully updated preferences');
     } on AppException catch (e) {
       // show error snackbar, toast, etc
       AppExceptionHandlerInfo.handle(e);

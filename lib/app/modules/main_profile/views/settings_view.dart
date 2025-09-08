@@ -103,15 +103,33 @@ class SettingsView extends GetView<SettingsController> {
                   Color(0xFF00FF7F),
                 ],
               ).createShader(Rect.fromLTWH(0, 0, bounds.width, bounds.height)),
-              child: Text(
-                'Kilometers',
-                maxLines: 1,
-                overflow: TextOverflow.ellipsis,
-                style: Theme.of(context).textTheme.labelLarge?.copyWith(
-                      color: Theme.of(context).colorScheme.onBackground,
-                      fontSize: 15.sp,
-                      fontWeight: FontWeight.w400,
+              child: Obx(
+                () => PopupMenuButton<int>(
+                  onSelected: (value) {
+                    // Panggil API lewat controller
+                    controller.updateUserPreferencesUnit(value);
+                  },
+                  itemBuilder: (context) => const [
+                    PopupMenuItem(
+                      value: 0,
+                      child: Text('Kilometer'),
                     ),
+                    PopupMenuItem(
+                      value: 1,
+                      child: Text('Miles'),
+                    ),
+                  ],
+                  child: Text(
+                    controller.user.value?.userPreference?.unitText ?? '-',
+                    maxLines: 1,
+                    overflow: TextOverflow.ellipsis,
+                    style: Theme.of(context).textTheme.labelLarge?.copyWith(
+                          color: Theme.of(context).colorScheme.onBackground,
+                          fontSize: 15.sp,
+                          fontWeight: FontWeight.w400,
+                        ),
+                  ),
+                ),
               ),
             ),
           ),

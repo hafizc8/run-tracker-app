@@ -85,7 +85,8 @@ class DetailChallengeInviteController extends GetxController {
         followStatus: 'followers',
         search: input,
         random: 0,
-        checkChallenge: challengeId,
+        inviteableType: 'challange',
+        inviteableId: challengeId,
       );
 
       if (response.data.isEmpty) {
@@ -125,7 +126,8 @@ class DetailChallengeInviteController extends GetxController {
         page: pageFriend,
         random: 0,
         followStatus: 'followers',
-        checkChallenge: challengeId,
+        inviteableType: 'challange',
+        inviteableId: challengeId,
       );
 
       pageFriend++;

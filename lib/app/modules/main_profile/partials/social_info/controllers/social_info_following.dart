@@ -35,6 +35,7 @@ class SocialInfoFollowingController extends GetxController {
         userId.value = Get.arguments['id'];
       }
     }
+    load(refresh: true);
     scrollFriendsController.addListener(() {
       final position = scrollFriendsController.position;
 

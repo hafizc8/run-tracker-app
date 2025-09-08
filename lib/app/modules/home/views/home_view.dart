@@ -81,11 +81,10 @@ class HomeView extends GetView<HomeController> {
                                 color: Color(0xFF494949),
                                 shape: BoxShape.circle,
                               ),
-                              padding: EdgeInsets.all(13.w),
-                              child: FaIcon(
-                                FontAwesomeIcons.solidBell,
-                                color: Colors.white,
-                                size: 18.sp,
+                              padding: EdgeInsets.all(8.w),
+                              child: SvgPicture.asset(
+                                'assets/icons/ic_notification_2.svg',
+                                width: 18.w,
                               ),
                             ),
                           ),
@@ -99,11 +98,10 @@ class HomeView extends GetView<HomeController> {
                                 color: Color(0xFF494949),
                                 shape: BoxShape.circle,
                               ),
-                              padding: EdgeInsets.all(12.w),
-                              child: FaIcon(
-                                FontAwesomeIcons.solidEnvelope,
-                                color: Colors.white,
-                                size: 18.sp,
+                              padding: EdgeInsets.all(8.w),
+                              child: SvgPicture.asset(
+                                'assets/icons/ic_inbox_2.svg',
+                                width: 21.w,
                               ),
                             ),
                           ),

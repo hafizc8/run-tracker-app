@@ -224,7 +224,7 @@ class MainProfileView extends GetView<ProfileMainController> {
                         ),
                       ),
                       Positioned(
-                        bottom: 58.h,
+                        bottom: 57.h,
                         right: 0,
                         child: IgnorePointer(
                           child: CachedNetworkImage(
@@ -461,7 +461,7 @@ class MainProfileView extends GetView<ProfileMainController> {
                           ),
                     ),
                     GestureDetector(
-                      onTap: () => Get.toNamed(AppRoutes.badges),
+                      onTap: () => Get.toNamed(AppRoutes.allBadges),
                       child: Row(
                         children: [
                           Obx(
@@ -517,42 +517,47 @@ class MainProfileView extends GetView<ProfileMainController> {
                     children: (controller.user.value?.badges ?? [])
                         .map(
                           (e) => Flexible(
-                            child: Container(
-                              margin: const EdgeInsets.symmetric(horizontal: 5),
-                              padding: const EdgeInsets.only(
-                                  left: 12, right: 12, bottom: 12),
-                              decoration: const BoxDecoration(
-                                borderRadius:
-                                    BorderRadius.all(Radius.circular(10)),
-                                color: Color(0xFF2E2E2E),
-                              ),
-                              child: Column(
-                                mainAxisAlignment: MainAxisAlignment.center,
-                                children: [
-                                  ClipOval(
-                                    child: CachedNetworkImage(
-                                      imageUrl: e.badgeIconUrl ?? '',
-                                      width: 50,
-                                      height: 50,
-                                      fit: BoxFit.cover,
-                                      placeholder: (context, url) =>
-                                          const ShimmerLoadingCircle(size: 50),
-                                      errorWidget: (context, url, error) =>
-                                          const CircleAvatar(
-                                        radius: 32,
-                                        backgroundImage: AssetImage(
-                                            'assets/images/empty_profile.png'),
+                            child: Opacity(
+                              opacity: (e.isLocked ?? true) ? 0.3 : 1.0,
+                              child: Container(
+                                margin:
+                                    const EdgeInsets.symmetric(horizontal: 5),
+                                padding: const EdgeInsets.only(
+                                    left: 12, right: 12, bottom: 12),
+                                decoration: const BoxDecoration(
+                                  borderRadius:
+                                      BorderRadius.all(Radius.circular(10)),
+                                  color: Color(0xFF2E2E2E),
+                                ),
+                                child: Column(
+                                  mainAxisAlignment: MainAxisAlignment.center,
+                                  children: [
+                                    ClipOval(
+                                      child: CachedNetworkImage(
+                                        imageUrl: e.badgeIconUrl ?? '',
+                                        width: 50,
+                                        height: 50,
+                                        fit: BoxFit.cover,
+                                        placeholder: (context, url) =>
+                                            const ShimmerLoadingCircle(
+                                                size: 50),
+                                        errorWidget: (context, url, error) =>
+                                            const CircleAvatar(
+                                          radius: 32,
+                                          backgroundImage: AssetImage(
+                                              'assets/images/empty_profile.png'),
+                                        ),
                                       ),
                                     ),
-                                  ),
-                                  const SizedBox(height: 5),
-                                  Text(
-                                    e.badgeName ?? '-',
-                                    maxLines: 1,
-                                    overflow: TextOverflow.ellipsis,
-                                    textAlign: TextAlign.center,
-                                  ),
-                                ],
+                                    const SizedBox(height: 5),
+                                    Text(
+                                      e.badgeName ?? '-',
+                                      maxLines: 1,
+                                      overflow: TextOverflow.ellipsis,
+                                      textAlign: TextAlign.center,
+                                    ),
+                                  ],
+                                ),
                               ),
                             ),
                           ),

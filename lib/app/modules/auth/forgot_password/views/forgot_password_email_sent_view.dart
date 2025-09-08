@@ -24,7 +24,7 @@ class ForgotPasswordEmailSentView extends GetView<ForgotPasswordController> {
               Column(
                 crossAxisAlignment: CrossAxisAlignment.center,
                 children: [
-                  SvgPicture.asset('assets/icons/email_sent.svg', width: 72),
+                  Image.asset('assets/icons/ic_email_sent.png', height: 280.h),
                   SizedBox(height: 24.h),
                   Text(
                     'Email Sent',

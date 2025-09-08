@@ -1,5 +1,7 @@
 import 'package:intl/intl.dart';
 import 'package:zest_mobile/app/core/models/interface/model_interface.dart';
+import 'package:zest_mobile/app/core/models/model/challenge_detail_model.dart';
+import 'package:zest_mobile/app/core/models/model/home_page_data_model.dart';
 
 class ChallengeModel extends Model<ChallengeModel> {
   ChallengeModel({
@@ -82,6 +84,29 @@ class ChallengeModel extends Model<ChallengeModel> {
       isOwner: isOwner ?? this.isOwner,
       isPendingJoin: isPendingJoin ?? this.isPendingJoin,
       teams: teams ?? this.teams,
+    );
+  }
+
+  factory ChallengeModel.fromDetail(ChallengeDetailModel detail) {
+    return ChallengeModel(
+      id: detail.id,
+      type: detail.type,
+      typeText: detail.typeText,
+      title: detail.title,
+      mode: detail.mode,
+      modeText: detail.modeText,
+      startDate: detail.startDate,
+      endDate: detail.endDate,
+      clubId: detail.clubId,
+      target: detail.target,
+      teamSize: detail.teamSize,
+      challangeUsersCount: detail.challangeUsersCount,
+      cancelledAt: detail.cancelledAt,
+      createdAt: detail.createdAt,
+      isJoined: detail.isJoined,
+      isOwner: detail.isOwner,
+      isPendingJoin: detail.isPendingJoin,
+      teams: detail.teams,
     );
   }
 

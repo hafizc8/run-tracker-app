@@ -51,7 +51,8 @@ class AuthService {
       await sl<StorageService>()
           .write(StorageKeys.token, response.data['data']['token']);
 
-      await sl<StorageService>().write(StorageKeys.lastLoginTimeStamp, DateTime.now().toIso8601String());
+      await sl<StorageService>().write(
+          StorageKeys.lastLoginTimeStamp, DateTime.now().toIso8601String());
 
       return response.data['success'];
     } catch (e) {
@@ -194,7 +195,8 @@ class AuthService {
         response.data['data']['token'],
       );
 
-      await sl<StorageService>().write(StorageKeys.lastLoginTimeStamp, DateTime.now().toIso8601String());
+      await sl<StorageService>().write(
+          StorageKeys.lastLoginTimeStamp, DateTime.now().toIso8601String());
 
       return response.data['success'] ?? false;
     } on FirebaseAuthException catch (e) {

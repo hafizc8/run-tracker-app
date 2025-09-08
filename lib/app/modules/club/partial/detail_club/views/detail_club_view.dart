@@ -3,6 +3,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:get/get.dart';
+import 'package:zest_mobile/app/core/models/model/challenge_model.dart';
+import 'package:zest_mobile/app/core/models/model/club_activities_model.dart';
 import 'package:zest_mobile/app/core/models/model/club_mini_model.dart';
 import 'package:zest_mobile/app/core/models/model/club_model.dart';
 import 'package:zest_mobile/app/core/models/model/event_model.dart';
@@ -433,7 +435,20 @@ class DetailClubView extends GetView<DetailClubController> {
                 }
               }
             } else if (value == 'create_a_challange') {
-              Get.snackbar('Coming soon', 'Feature is coming soon');
+              final res =
+                  await Get.toNamed(AppRoutes.challengeCreate, arguments: {
+                'clubId': club?.id,
+              });
+
+              if (res != null) {
+                var result = await Get.toNamed(AppRoutes.challengedetails,
+                    arguments: {'challengeId': res.id});
+
+                if (result != null && result is ChallengeModel) {
+                  clubActivityTabController.syncActivityClubChallange(
+                      Challange.fromChallengeModel(result));
+                }
+              }
             }
           });
         },
@@ -468,9 +483,11 @@ class DetailClubView extends GetView<DetailClubController> {
           onSelected: (value) async {
             // Handle the selection
             if (value == 'share_club') {
-              await Get.toNamed(AppRoutes.shareClub, arguments: controller.club.value);
+              await Get.toNamed(AppRoutes.shareClub,
+                  arguments: controller.club.value);
             } else if (value == 'mute_club') {
-              await controller.confirmMuteClub(isMuted: controller.club.value?.isMuted ?? false);
+              await controller.confirmMuteClub(
+                  isMuted: controller.club.value?.isMuted ?? false);
             } else if (value == 'leave_club') {
               await controller.confirmCancelEvent();
             }
@@ -491,7 +508,9 @@ class DetailClubView extends GetView<DetailClubController> {
               PopupMenuItem<String>(
                 value: 'mute_club',
                 child: Text(
-                  controller.club.value?.isMuted ?? false ? 'Unmute Club' : 'Mute Club',
+                  controller.club.value?.isMuted ?? false
+                      ? 'Unmute Club'
+                      : 'Mute Club',
                   style: Theme.of(context)
                       .textTheme
                       .bodyMedium

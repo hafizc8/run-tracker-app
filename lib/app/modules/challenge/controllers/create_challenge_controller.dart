@@ -23,10 +23,13 @@ class ChallangeCreateController extends GetxController {
   final _authService = sl<AuthService>();
   final _challengeService = sl<ChallengeService>();
   String get userId => _authService.user?.id ?? ''; // userId
-
+  String? clubId;
   @override
   onInit() {
     super.onInit();
+    if (Get.arguments != null) {
+      clubId = Get.arguments['clubId'];
+    }
     targetController.text = CurrencyTextInputFormatter.currency(
       locale: "id_ID",
       symbol: '',
@@ -81,6 +84,7 @@ class ChallangeCreateController extends GetxController {
     try {
       ChallengeModel? res = await _challengeService.storeChallenge(form.value
           .copyWith(
+              clubId: clubId,
               target: int.tryParse(targetController.text.replaceAll('.', ''))));
       if (res != null) {
         if (isTeam) {

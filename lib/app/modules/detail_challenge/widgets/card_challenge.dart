@@ -233,7 +233,7 @@ class CardChallenge extends StatelessWidget {
                                     ),
                               ),
                               Text(
-                                NumberHelper().formatCurrency(
+                                NumberHelper().formatNumberToKWithComma(
                                     challengeDetailModel.target ?? 0),
                                 maxLines: 1,
                                 overflow: TextOverflow.ellipsis,
@@ -592,7 +592,7 @@ class CardChallenge extends StatelessWidget {
                                 ),
                           ),
                           Text(
-                            NumberHelper().formatCurrency(
+                            NumberHelper().formatNumberToKWithComma(
                                 challengeDetailModel.target ?? 0),
                             maxLines: 1,
                             overflow: TextOverflow.ellipsis,

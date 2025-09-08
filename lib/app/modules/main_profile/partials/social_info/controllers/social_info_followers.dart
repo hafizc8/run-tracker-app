@@ -30,11 +30,13 @@ class SocialInfoFollowersController extends GetxController {
   @override
   void onInit() {
     super.onInit();
+    userId.value = '';
     if (Get.arguments != null) {
       if (Get.arguments['id'] != null) {
         userId.value = Get.arguments['id'];
       }
     }
+    load(refresh: true);
     scrollFriendsController.addListener(() {
       final position = scrollFriendsController.position;
 

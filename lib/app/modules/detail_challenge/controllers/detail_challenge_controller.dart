@@ -57,6 +57,7 @@ class DetailChallangeController extends GetxController {
       ChallengeDetailModel? resp =
           await _challengeService.detailChallenge(challengeId);
       detailChallenge.value = resp;
+      lastdetailChallenge.value = ChallengeModel.fromDetail(resp!);
     } on AppException catch (e) {
       AppExceptionHandlerInfo.handle(e);
     } catch (e) {
@@ -195,6 +196,9 @@ class DetailChallangeController extends GetxController {
 
       detailChallenge.value = detailChallenge.value!.copyWith(
         isJoined: 1,
+      );
+      lastdetailChallenge.value = ChallengeModel.fromDetail(
+        detailChallenge.value!,
       );
     } on AppException catch (e) {
       AppExceptionHandlerInfo.handle(e);

@@ -170,9 +170,12 @@ class UserChatController extends GetxController {
     if (isLoadingStore.value) return;
     isLoadingStore.value = true;
     try {
+      final String messageBody = messageController.text;
+      messageController.clear();
+      
       ChatModel? response = await _userService.storeChat(
         userId: userMini?.id ?? '',
-        message: messageController.text,
+        message: messageBody,
       );
       if (response != null) {
         messageController.clear();

@@ -82,7 +82,7 @@ class ShopView extends GetView<ShopController> {
                       onTap: () => controller.openLink(link?.link ?? ''),
                       child: Container(
                         decoration: BoxDecoration(
-                          color: Color(0xFF2E2E2E),
+                          color: const Color(0xFF2E2E2E),
                           borderRadius: BorderRadius.circular(15),
                         ),
                         child: Row(
@@ -129,27 +129,29 @@ class ShopView extends GetView<ShopController> {
                               padding: const EdgeInsets.all(16),
                               child: Row(
                                 children: [
-                                  ShaderMask(
-                                    shaderCallback: (bounds) =>
-                                        const LinearGradient(
-                                      begin: Alignment.centerLeft,
-                                      end: Alignment.centerRight,
-                                      colors: [
-                                        Color(0xFFA2FF00),
-                                        Color(0xFF00FF7F),
-                                      ],
-                                    ).createShader(Rect.fromLTWH(
-                                            0, 0, bounds.width, bounds.height)),
-                                    child: Text(
-                                      'Buy On ${link?.title ?? ''}',
-                                      style: Theme.of(context)
-                                          .textTheme
-                                          .bodyMedium
-                                          ?.copyWith(
-                                            color: Colors.white,
-                                            fontWeight: FontWeight.w400,
-                                            fontSize: 13.sp,
-                                          ),
+                                  Flexible(
+                                    child: ShaderMask(
+                                      shaderCallback: (bounds) =>
+                                          const LinearGradient(
+                                        begin: Alignment.centerLeft,
+                                        end: Alignment.centerRight,
+                                        colors: [
+                                          Color(0xFFA2FF00),
+                                          Color(0xFF00FF7F),
+                                        ],
+                                      ).createShader(Rect.fromLTWH(
+                                              0, 0, bounds.width, bounds.height)),
+                                      child: Text(
+                                        'Buy On ${link?.title ?? ''}',
+                                        style: Theme.of(context)
+                                            .textTheme
+                                            .bodyMedium
+                                            ?.copyWith(
+                                              color: Colors.white,
+                                              fontWeight: FontWeight.w400,
+                                              fontSize: 13.sp,
+                                            ),
+                                      ),
                                     ),
                                   ),
                                   ShaderMask(
@@ -183,6 +185,8 @@ class ShopView extends GetView<ShopController> {
                       ),
                   itemCount:
                       controller.shopProviderModel.value?.links.length ?? 0),
+
+              SizedBox(height: 60.h),
             ],
           ),
         );

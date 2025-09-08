@@ -1,5 +1,7 @@
 import 'package:dio/dio.dart';
+import 'package:flutter/material.dart';
 import 'package:get/get.dart' as g;
+import 'package:get/get.dart';
 import 'package:package_info_plus/package_info_plus.dart';
 import 'package:zest_mobile/app/core/di/service_locator.dart';
 import 'package:zest_mobile/app/core/exception/app_exception.dart';
@@ -8,21 +10,35 @@ import 'package:zest_mobile/app/core/models/enums/app_exception_enum.dart';
 import 'package:zest_mobile/app/core/services/storage_service.dart';
 import 'package:zest_mobile/app/core/values/storage_keys.dart';
 import 'package:zest_mobile/app/routes/app_routes.dart';
-import 'package:flutter/material.dart';
-import 'package:get/get.dart';
 
 class AppInterceptor extends Interceptor {
+  static CancelToken? _cancelToken;
+
+  static CancelToken get cancelToken {
+    _cancelToken ??= CancelToken();
+    return _cancelToken!;
+  }
+
+  static void cancelAllRequests([String? reason]) {
+    _cancelToken?.cancel(reason);
+    _cancelToken = CancelToken(); // reset biar bisa dipakai lagi
+  }
+
   @override
-  void onRequest(RequestOptions options, RequestInterceptorHandler handler) async {
+  void onRequest(
+      RequestOptions options, RequestInterceptorHandler handler) async {
     final token = sl<StorageService>().read(StorageKeys.token);
     final packageInfo = await PackageInfo.fromPlatform();
 
     options.headers['App-Version'] = packageInfo.version;
     options.headers['App-Platform'] = 'Android';
-    
+
     if (token != null) {
       options.headers['Authorization'] = 'Bearer $token';
     }
+
+    // inject global cancelToken
+    options.cancelToken = AppInterceptor.cancelToken;
     super.onRequest(options, handler);
   }
 
@@ -32,9 +48,12 @@ class AppInterceptor extends Interceptor {
     AppException appEx = AppExceptionHandler.fromDioError(err);
     switch (appEx.type) {
       case AppExceptionType.unauthorized:
+        // cancel semua request yang sedang jalan
+        AppInterceptor.cancelAllRequests("Unauthorized");
         sl<StorageService>().remove(StorageKeys.token);
         sl<StorageService>().remove(StorageKeys.user);
         g.Get.offAllNamed(AppRoutes.login);
+
         break;
       case AppExceptionType.emailUnVerified:
         g.Get.offAllNamed(AppRoutes.registerVerifyEmail);

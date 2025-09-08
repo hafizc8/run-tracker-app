@@ -263,10 +263,11 @@ class SettingsController extends GetxController {
                   Row(
                     children: [
                       Expanded(
-                        flex: 2,
+                        flex: 1,
                         child: SizedBox(
                           height: 43.h,
                           child: GradientOutlinedButton(
+                            contentPadding: EdgeInsets.zero,
                             gradient: const LinearGradient(
                               colors: [
                                 Color(0xFFFF0000),
@@ -288,6 +289,7 @@ class SettingsController extends GetxController {
                                 replacement: CustomCircularProgressIndicator(),
                                 child: Text(
                                   'Yes, Delete My Account',
+                                  textAlign: TextAlign.center,
                                   style: Theme.of(context).textTheme.labelSmall,
                                 ),
                               ),

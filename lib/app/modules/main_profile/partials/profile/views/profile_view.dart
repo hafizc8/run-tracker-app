@@ -317,7 +317,7 @@ class ProfileView extends GetView<ProfileController> {
                             ),
                           ),
                           Positioned(
-                            bottom: 45.h,
+                            bottom: 57.h,
                             right: 0,
                             child: IgnorePointer(
                               child: CachedNetworkImage(
@@ -331,7 +331,7 @@ class ProfileView extends GetView<ProfileController> {
                             ),
                           ),
                           Positioned(
-                            bottom: 62.h,
+                            bottom: 70.h,
                             right: 31.w,
                             child: IgnorePointer(
                               child: RichText(

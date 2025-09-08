@@ -224,7 +224,7 @@ class MainProfileView extends GetView<ProfileMainController> {
                         ),
                       ),
                       Positioned(
-                        bottom: 50.h,
+                        bottom: 57.h,
                         right: 0,
                         child: IgnorePointer(
                           child: CachedNetworkImage(
@@ -238,7 +238,7 @@ class MainProfileView extends GetView<ProfileMainController> {
                         ),
                       ),
                       Positioned(
-                        bottom: 60.h,
+                        bottom: 68.h,
                         right: 31.w,
                         child: IgnorePointer(
                           child: RichText(
@@ -461,7 +461,7 @@ class MainProfileView extends GetView<ProfileMainController> {
                           ),
                     ),
                     GestureDetector(
-                      onTap: () => Get.toNamed(AppRoutes.badges),
+                      onTap: () => Get.toNamed(AppRoutes.allBadges),
                       child: Row(
                         children: [
                           Obx(

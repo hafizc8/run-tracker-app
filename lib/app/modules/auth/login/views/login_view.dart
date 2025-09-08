@@ -24,10 +24,10 @@ class LoginView extends GetView<LoginController> {
             top: 0,
             left: 0,
             right: 0,
-            child: Image.asset(
-              "assets/images/z-background.png",
-              fit: BoxFit.fitHeight,
-              alignment: Alignment.topCenter,
+            child: SvgPicture.asset(
+              "assets/images/z-background-full.svg",
+              fit: BoxFit.cover,
+              alignment: Alignment.center,
             ),
           ),
 
@@ -37,9 +37,9 @@ class LoginView extends GetView<LoginController> {
               crossAxisAlignment: CrossAxisAlignment.center,
               children: [
                 SizedBox(height: 24.h),
-                SvgPicture.asset(
-                  'assets/images/zest-logo.svg',
-                  height: 68,
+                Image.asset(
+                  'assets/images/zest-logo.png',
+                  height: 48.h,
                 ),
                 SizedBox(height: 24.h),
                 Obx(() {

@@ -6,9 +6,8 @@ import 'package:get/get.dart';
 import 'package:zest_mobile/app/core/extension/date_extension.dart';
 import 'package:zest_mobile/app/core/extension/initial_profile_empty.dart';
 import 'package:zest_mobile/app/core/models/model/challenge_detail_model.dart';
+import 'package:zest_mobile/app/core/models/model/challenge_model.dart';
 import 'package:zest_mobile/app/core/models/model/challenge_team_model.dart';
-import 'package:zest_mobile/app/core/models/model/home_page_data_model.dart';
-
 import 'package:zest_mobile/app/core/shared/helpers/number_helper.dart';
 import 'package:zest_mobile/app/core/shared/widgets/custom_circular_progress_indicator.dart';
 import 'package:zest_mobile/app/core/shared/widgets/gradient_outlined_button.dart';
@@ -213,13 +212,13 @@ class DetailChallengeView extends GetView<DetailChallangeController> {
                           clubId: controller.detailChallenge.value?.clubId,
                           target: controller.detailChallenge.value?.target,
                           teamSize: controller.detailChallenge.value?.teamSize,
-                          challengeUsersCount: controller.detailChallenge.value?.challangeUsersCount,
+                          challangeUsersCount: controller.detailChallenge.value?.challangeUsersCount,
                           cancelledAt: controller.detailChallenge.value?.cancelledAt,
                           createdAt: controller.detailChallenge.value?.createdAt,
                           isJoined: controller.detailChallenge.value?.isJoined,
                           isOwner: controller.detailChallenge.value?.isOwner,
                           isPendingJoin: controller.detailChallenge.value?.isPendingJoin,
-                          teams: controller.detailChallenge.value?.teams,
+                          teams: controller.detailChallenge.value?.teams ?? [],
                         ));
                       },
                       child: ShaderMask(

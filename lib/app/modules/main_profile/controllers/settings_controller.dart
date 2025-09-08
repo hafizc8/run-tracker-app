@@ -267,6 +267,7 @@ class SettingsController extends GetxController {
                         child: SizedBox(
                           height: 43.h,
                           child: GradientOutlinedButton(
+                            contentPadding: EdgeInsets.zero,
                             gradient: const LinearGradient(
                               colors: [
                                 Color(0xFFFF0000),

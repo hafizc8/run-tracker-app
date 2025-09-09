@@ -100,6 +100,7 @@ class ChallengeService {
     String id, {
     String? team,
     String? pendingJoin,
+    String? includePendingJoin,
     String? limit,
   }) async {
     try {
@@ -109,6 +110,9 @@ class ChallengeService {
           queryParams: {
             if (team != null) 'team': team,
             if (pendingJoin != null) 'pending_join': pendingJoin,
+            if (includePendingJoin != null)
+              'include_pending_join': includePendingJoin,
+            if (limit != null) 'limit': limit
           });
 
       if (response.statusCode != 200) {

@@ -137,8 +137,8 @@ class DetailChallangeController extends GetxController {
 
   Future<List<ChallengeTeamsModel>> getUserOnTeam(String team) async {
     try {
-      final response =
-          await _challengeService.challengeUser(challengeId, team: team);
+      final response = await _challengeService.challengeUser(challengeId,
+          team: team, includePendingJoin: '1');
       return response.data;
     } catch (e) {
       rethrow;

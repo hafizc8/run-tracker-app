@@ -81,6 +81,9 @@ class ProfileMainController extends GetxController {
       final storedUser = sl<StorageService>().read(StorageKeys.detailUser);
 
       if (storedUser != null) {
+        user.value = await _userService.detailUser(_authService.user!.id!);
+        await sl<StorageService>()
+            .write(StorageKeys.detailUser, user.value!.toJson());
         // Load from local storage
         user.value = UserDetailModel.fromJson(storedUser);
       } else {

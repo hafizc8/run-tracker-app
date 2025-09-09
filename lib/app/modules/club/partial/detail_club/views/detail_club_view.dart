@@ -78,26 +78,31 @@ class DetailClubView extends GetView<DetailClubController> {
           );
         }
 
-        return NestedScrollView(
-          controller: (tabBarClubController.selectedIndex.value == 0)
-              ? clubActivityTabController.clubActivityScrollController
-              : clubLeaderboardTabController.clubLeaderboardScrollController,
-          headerSliverBuilder: (BuildContext context, bool innerBoxIsScrolled) {
-            return <Widget>[
-              _buildSliverAppBar(context),
-              SliverToBoxAdapter(
-                child: _buildClubInfo(context: context),
-              ),
-              SliverPersistentHeader(
-                delegate: _SliverTabBarDelegate(
-                  tabBar: _buildCustomTabBar(context, customTabBarHeight),
-                  tabBarHeight: customTabBarHeight,
+        return RefreshIndicator(
+          onRefresh: controller.onRefresh,
+          child: NestedScrollView(
+            physics: AlwaysScrollableScrollPhysics(),
+            controller: (tabBarClubController.selectedIndex.value == 0)
+                ? clubActivityTabController.clubActivityScrollController
+                : clubLeaderboardTabController.clubLeaderboardScrollController,
+            headerSliverBuilder:
+                (BuildContext context, bool innerBoxIsScrolled) {
+              return <Widget>[
+                _buildSliverAppBar(context),
+                SliverToBoxAdapter(
+                  child: _buildClubInfo(context: context),
                 ),
-                pinned: true,
-              ),
-            ];
-          },
-          body: _buildTabBarView(context), // Kirim TabController juga
+                SliverPersistentHeader(
+                  delegate: _SliverTabBarDelegate(
+                    tabBar: _buildCustomTabBar(context, customTabBarHeight),
+                    tabBarHeight: customTabBarHeight,
+                  ),
+                  pinned: true,
+                ),
+              ];
+            },
+            body: _buildTabBarView(context), // Kirim TabController juga
+          ),
         );
       }),
       floatingActionButton: Obx(() {

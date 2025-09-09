@@ -200,26 +200,39 @@ class DetailChallengeView extends GetView<DetailChallangeController> {
                         ),
                       ),
                       onPressed: () {
-                        Get.toNamed(AppRoutes.shareChallenge, arguments: ChallengeModel(
-                          id: controller.detailChallenge.value?.id,
-                          type: controller.detailChallenge.value?.type,
-                          typeText: controller.detailChallenge.value?.typeText,
-                          title: controller.detailChallenge.value?.title,
-                          mode: controller.detailChallenge.value?.mode,
-                          modeText: controller.detailChallenge.value?.modeText,
-                          startDate: controller.detailChallenge.value?.startDate,
-                          endDate: controller.detailChallenge.value?.endDate,
-                          clubId: controller.detailChallenge.value?.clubId,
-                          target: controller.detailChallenge.value?.target,
-                          teamSize: controller.detailChallenge.value?.teamSize,
-                          challangeUsersCount: controller.detailChallenge.value?.challangeUsersCount,
-                          cancelledAt: controller.detailChallenge.value?.cancelledAt,
-                          createdAt: controller.detailChallenge.value?.createdAt,
-                          isJoined: controller.detailChallenge.value?.isJoined,
-                          isOwner: controller.detailChallenge.value?.isOwner,
-                          isPendingJoin: controller.detailChallenge.value?.isPendingJoin,
-                          teams: controller.detailChallenge.value?.teams ?? [],
-                        ));
+                        Get.toNamed(AppRoutes.shareChallenge,
+                            arguments: ChallengeModel(
+                              id: controller.detailChallenge.value?.id,
+                              type: controller.detailChallenge.value?.type,
+                              typeText:
+                                  controller.detailChallenge.value?.typeText,
+                              title: controller.detailChallenge.value?.title,
+                              mode: controller.detailChallenge.value?.mode,
+                              modeText:
+                                  controller.detailChallenge.value?.modeText,
+                              startDate:
+                                  controller.detailChallenge.value?.startDate,
+                              endDate:
+                                  controller.detailChallenge.value?.endDate,
+                              clubId: controller.detailChallenge.value?.clubId,
+                              target: controller.detailChallenge.value?.target,
+                              teamSize:
+                                  controller.detailChallenge.value?.teamSize,
+                              challangeUsersCount: controller
+                                  .detailChallenge.value?.challangeUsersCount,
+                              cancelledAt:
+                                  controller.detailChallenge.value?.cancelledAt,
+                              createdAt:
+                                  controller.detailChallenge.value?.createdAt,
+                              isJoined:
+                                  controller.detailChallenge.value?.isJoined,
+                              isOwner:
+                                  controller.detailChallenge.value?.isOwner,
+                              isPendingJoin: controller
+                                  .detailChallenge.value?.isPendingJoin,
+                              teams:
+                                  controller.detailChallenge.value?.teams ?? [],
+                            ));
                       },
                       child: ShaderMask(
                         shaderCallback: (bounds) => const LinearGradient(
@@ -426,6 +439,7 @@ class DetailChallengeView extends GetView<DetailChallangeController> {
                                                   ) &&
                                                   controller.detailChallenge
                                                           .value?.startDate!
+                                                          .toLocal()
                                                           .isFutureDate() ==
                                                       true,
                                               child: Obx(
@@ -499,72 +513,77 @@ class DetailChallengeView extends GetView<DetailChallangeController> {
                                               return Padding(
                                                 padding:
                                                     EdgeInsets.only(left: 8.w),
-                                                child: AspectRatio(
-                                                  aspectRatio: 71 / 90,
-                                                  child: Container(
-                                                    padding:
-                                                        EdgeInsets.all(8.w),
-                                                    decoration: BoxDecoration(
-                                                      color: const Color(
-                                                          0xFF3C3C3C),
-                                                      borderRadius:
-                                                          BorderRadius.circular(
-                                                              10.w),
-                                                    ),
-                                                    child: Column(
-                                                      mainAxisAlignment:
-                                                          MainAxisAlignment
-                                                              .center,
-                                                      children: [
-                                                        ClipOval(
-                                                          child:
-                                                              CachedNetworkImage(
-                                                            imageUrl: e.user
-                                                                    ?.imageUrl ??
-                                                                '',
-                                                            width: 32.r,
-                                                            height: 32.r,
-                                                            fit: BoxFit.cover,
-                                                            placeholder: (context,
-                                                                    url) =>
-                                                                ShimmerLoadingCircle(
-                                                              size: 32.r,
-                                                            ),
-                                                            errorWidget: (context,
-                                                                    url,
-                                                                    error) =>
-                                                                CircleAvatar(
-                                                              radius: 32.r,
-                                                              backgroundColor: Theme
-                                                                      .of(context)
-                                                                  .colorScheme
-                                                                  .onBackground,
-                                                              child: Text(
-                                                                (e.user?.name ??
-                                                                        '')
-                                                                    .toInitials(),
-                                                                style: Theme.of(
+                                                child: Opacity(
+                                                  opacity: e.isPendingJoin == 1
+                                                      ? 0.3
+                                                      : 1.0,
+                                                  child: AspectRatio(
+                                                    aspectRatio: 71 / 90,
+                                                    child: Container(
+                                                      padding:
+                                                          EdgeInsets.all(8.w),
+                                                      decoration: BoxDecoration(
+                                                        color: const Color(
+                                                            0xFF3C3C3C),
+                                                        borderRadius:
+                                                            BorderRadius
+                                                                .circular(10.w),
+                                                      ),
+                                                      child: Column(
+                                                        mainAxisAlignment:
+                                                            MainAxisAlignment
+                                                                .center,
+                                                        children: [
+                                                          ClipOval(
+                                                            child:
+                                                                CachedNetworkImage(
+                                                              imageUrl: e.user
+                                                                      ?.imageUrl ??
+                                                                  '',
+                                                              width: 32.r,
+                                                              height: 32.r,
+                                                              fit: BoxFit.cover,
+                                                              placeholder: (context,
+                                                                      url) =>
+                                                                  ShimmerLoadingCircle(
+                                                                size: 32.r,
+                                                              ),
+                                                              errorWidget: (context,
+                                                                      url,
+                                                                      error) =>
+                                                                  CircleAvatar(
+                                                                radius: 32.r,
+                                                                backgroundColor: Theme.of(
                                                                         context)
-                                                                    .textTheme
-                                                                    .bodySmall
-                                                                    ?.copyWith(
-                                                                      color: Theme.of(
-                                                                              context)
-                                                                          .colorScheme
-                                                                          .background,
-                                                                    ),
+                                                                    .colorScheme
+                                                                    .onBackground,
+                                                                child: Text(
+                                                                  (e.user?.name ??
+                                                                          '')
+                                                                      .toInitials(),
+                                                                  style: Theme.of(
+                                                                          context)
+                                                                      .textTheme
+                                                                      .bodySmall
+                                                                      ?.copyWith(
+                                                                        color: Theme.of(context)
+                                                                            .colorScheme
+                                                                            .background,
+                                                                      ),
+                                                                ),
                                                               ),
                                                             ),
                                                           ),
-                                                        ),
-                                                        SizedBox(height: 8.h),
-                                                        Text(
-                                                          e.user?.name ?? '-',
-                                                          overflow: TextOverflow
-                                                              .ellipsis,
-                                                          maxLines: 1,
-                                                        ),
-                                                      ],
+                                                          SizedBox(height: 8.h),
+                                                          Text(
+                                                            e.user?.name ?? '-',
+                                                            overflow:
+                                                                TextOverflow
+                                                                    .ellipsis,
+                                                            maxLines: 1,
+                                                          ),
+                                                        ],
+                                                      ),
                                                     ),
                                                   ),
                                                 ),

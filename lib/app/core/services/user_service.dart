@@ -181,7 +181,8 @@ class UserService {
     String? followingBy,
     String? followersBy,
     String? checkClub,
-    String? checkChallenge,
+    String? inviteableType,
+    String? inviteableId,
   }) async {
     try {
       final response = await _apiService.request<FormData>(
@@ -190,7 +191,8 @@ class UserService {
         queryParams: {
           'page': page.toString(),
           'random': random.toString(),
-          if (checkChallenge != null) 'check_challange': checkChallenge,
+          if (inviteableId != null) 'inviteable_id': inviteableId,
+          if (inviteableType != null) 'inviteable_type': inviteableType,
           if (search != '') 'search': search,
           if (followingBy != null) 'following_by': followingBy,
           if (followersBy != null) 'follower_by': followersBy,
@@ -212,7 +214,7 @@ class UserService {
     }
   }
 
-  Future<bool> updateUserPreference({
+  Future<UserModel?> updateUserPreference({
     int? unit, // 0 km, 1 miles
     bool? allowNotification,
     bool? allowEmailNotification,
@@ -232,7 +234,14 @@ class UserService {
             if (dailyStepGoals != null) 'daily_step_goals': dailyStepGoals
           });
 
-      return response.data['success'];
+      if (response.statusCode != 200) {
+        throw Exception('Failed to update user preference');
+      }
+
+      final UserModel user = UserModel.fromJson(response.data['data']);
+      await sl<StorageService>().write(StorageKeys.user, user.toJson());
+
+      return user;
     } catch (e) {
       rethrow;
     }

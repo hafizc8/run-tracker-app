@@ -19,7 +19,7 @@ class MainHomeView extends GetView<MainHomeController> {
 
   // Ukuran Tombol START (diameter)
   // Didefinisikan di sini agar konsisten digunakan di _buildStartButton dan di Row spacer
-  static const double _startButtonDiameter = 104.0;
+  static const double _startButtonDiameter = 84.0;
 
   Widget _buildNavItem(
     BuildContext context, {
@@ -41,7 +41,7 @@ class MainHomeView extends GetView<MainHomeController> {
         child: SvgPicture.asset(
           svgPath,
           colorFilter: const ColorFilter.mode(Colors.white, BlendMode.srcIn),
-          height: 33.h,
+          height: 23.h,
         ),
       );
     } else {
@@ -51,7 +51,7 @@ class MainHomeView extends GetView<MainHomeController> {
           inactiveColor,
           BlendMode.srcIn,
         ),
-        height: 33.h,
+        height: 23.h,
       );
     }
 
@@ -108,7 +108,7 @@ class MainHomeView extends GetView<MainHomeController> {
 
   @override
   Widget build(BuildContext context) {
-    final double bottomBarHeight = 73.h;
+    final double bottomBarHeight = 53.h;
     // Menggunakan _startButtonDiameter yang sudah didefinisikan di atas
     // untuk konsistensi pada spacer dan kalkulasi posisi.
 
@@ -141,7 +141,10 @@ class MainHomeView extends GetView<MainHomeController> {
                         index: 1,
                         onTap: () => controller.changeTab(1)),
                     // Spacer untuk tombol START di tengah, menggunakan _startButtonDiameter
-                    const SizedBox(width: _startButtonDiameter),
+                    
+                    const SizedBox(
+                      
+                      width: _startButtonDiameter),
                     _buildNavItem(context,
                         svgPath: 'assets/icons/ic_shop.svg',
                         index: 2,

@@ -20,8 +20,8 @@ class LoginView extends GetView<LoginController> {
       body: Stack(
         children: [
           // Layer Background Image
-          Positioned(
-            top: 0,
+          Positioned.fill(
+            top: 32,
             left: 0,
             right: 0,
             child: SvgPicture.asset(
@@ -193,6 +193,7 @@ class LoginView extends GetView<LoginController> {
                     ],
                   ),
                 ),
+                
               ],
             ),
           ),

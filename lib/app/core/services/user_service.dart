@@ -214,7 +214,7 @@ class UserService {
     }
   }
 
-  Future<bool> updateUserPreference({
+  Future<UserModel?> updateUserPreference({
     int? unit, // 0 km, 1 miles
     bool? allowNotification,
     bool? allowEmailNotification,
@@ -234,7 +234,14 @@ class UserService {
             if (dailyStepGoals != null) 'daily_step_goals': dailyStepGoals
           });
 
-      return response.data['success'];
+      if (response.statusCode != 200) {
+        throw Exception('Failed to update user preference');
+      }
+
+      final UserModel user = UserModel.fromJson(response.data['data']);
+      await sl<StorageService>().write(StorageKeys.user, user.toJson());
+
+      return user;
     } catch (e) {
       rethrow;
     }

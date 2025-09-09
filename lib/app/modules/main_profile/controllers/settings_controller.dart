@@ -49,10 +49,13 @@ class SettingsController extends GetxController {
 
   void updateUserPreferencesUnit(int unit) async {
     isLoading.value = true;
-    print('unit: $unit');
+
     try {
-      bool resp = await _userService.updateUserPreference(unit: unit);
-      if (resp) Get.snackbar('Success', 'Successfully updated preferences');
+      UserModel? resp = await _userService.updateUserPreference(unit: unit);
+      if (resp != null) {
+        user.value = resp;
+        Get.snackbar('Success', 'Successfully updated preferences');
+      }
     } on AppException catch (e) {
       // show error snackbar, toast, etc
       AppExceptionHandlerInfo.handle(e);

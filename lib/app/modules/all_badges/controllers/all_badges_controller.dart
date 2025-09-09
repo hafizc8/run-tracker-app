@@ -78,7 +78,7 @@ class AllBadgesController extends GetxController {
             // Di sini Anda panggil API untuk menyimpan goal
             var response = await _userService.updateUserPreference(dailyStepGoals: selectedGoal);
 
-            if (response) {
+            if (response != null) {
               Get.back();
               Get.snackbar('Success', 'Your daily goal has been set to $selectedGoal steps!');
 

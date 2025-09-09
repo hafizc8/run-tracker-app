@@ -370,7 +370,7 @@ class HomeController extends GetxController {
             var response = await _userService.updateUserPreference(
                 dailyStepGoals: selectedGoal);
 
-            if (response) {
+            if (response != null) {
               Get.back();
               Get.snackbar('Success',
                   'Your daily goal has been set to $selectedGoal steps!');

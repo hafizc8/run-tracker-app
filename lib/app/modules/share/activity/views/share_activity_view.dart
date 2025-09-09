@@ -27,6 +27,7 @@ class ShareActivityView extends GetView<ShareActivityController> {
               children: [
                 ShareActivityCard(
                   postModel: controller.postData.value!,
+                  distanceInFormat: controller.unitHelper.formatDistance(controller.postData.value?.recordActivity?.lastRecordActivityLog?.distance ?? 0),
                 ),
             
                 SizedBox(height: 24.h),
@@ -34,6 +35,13 @@ class ShareActivityView extends GetView<ShareActivityController> {
                   onOptionTap: (String label) async {
                     await controller.shareTo(label);
                   },
+                  options: const [
+                    ShareOption.whatsapp,
+                    ShareOption.igStory,
+                    ShareOption.igFeed,
+                    ShareOption.x,
+                    ShareOption.download,
+                  ],
                 ),
                 SizedBox(height: 24.h),
               ],

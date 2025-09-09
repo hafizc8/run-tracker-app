@@ -1,18 +1,18 @@
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:zest_mobile/app/core/models/model/record_activity_model.dart';
 import 'package:zest_mobile/app/core/shared/theme/color_schemes.dart';
-import 'dart:ui' as ui;
 
 class StaticRouteMap extends StatefulWidget {
   final List<RecordActivityLogModel> activityLogs;
   final double height;
+  final bool isForDetail;
 
   const StaticRouteMap({
     super.key,
     required this.activityLogs,
     this.height = 310,
+    this.isForDetail = false,
   });
 
   @override
@@ -25,6 +25,19 @@ class _StaticRouteMapState extends State<StaticRouteMap> with AutomaticKeepAlive
   final Set<Marker> _markers = {};
   late LatLngBounds _routeBounds;
   bool _isMapDataReady = false;
+  final String _mapStyle = '''
+  [
+    {
+      "featureType": "poi",
+      "elementType": "labels",
+      "stylers": [
+        {
+          "visibility": "off"
+        }
+      ]
+    }
+  ]
+  ''';
 
   @override
   bool get wantKeepAlive => true;
@@ -124,7 +137,7 @@ class _StaticRouteMapState extends State<StaticRouteMap> with AutomaticKeepAlive
     // Pindahkan kamera ke area polyline setelah peta siap
     if (widget.activityLogs.isNotEmpty) {
       _mapController?.moveCamera(
-        CameraUpdate.newLatLngBounds(_routeBounds, 60.0),
+        CameraUpdate.newLatLngBounds(_routeBounds, widget.isForDetail ? 70.0 : 60.0),
       );
     }
   }
@@ -175,16 +188,15 @@ class _StaticRouteMapState extends State<StaticRouteMap> with AutomaticKeepAlive
       rotateGesturesEnabled: false,
       polylines: _polylines,
       markers: _markers,
-      // ✨ KUNCI PERBAIKAN: Gunakan titik pertama rute sebagai posisi awal ✨
-      // Ini menghilangkan "lompatan" dari (0,0)
       initialCameraPosition: CameraPosition(
         target: widget.activityLogs.first.latitude != null
             ? LatLng(widget.activityLogs.first.latitude!, widget.activityLogs.first.longitude!)
-            : const LatLng(0, 0), // Fallback
-        zoom: 15, // Zoom awal yang wajar
+            : const LatLng(0, 0),
+        zoom: 15,
       ),
       onMapCreated: _onMapCreated,
       mapType: MapType.normal,
+      style: _mapStyle,
     );
   }
 }

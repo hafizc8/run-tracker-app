@@ -5,6 +5,7 @@ import 'package:zest_mobile/app/core/models/model/club_activities_model.dart';
 import 'package:zest_mobile/app/core/models/model/event_model.dart';
 import 'package:zest_mobile/app/core/shared/widgets/shimmer_loading_list.dart';
 import 'package:zest_mobile/app/modules/club/partial/detail_club/partial/tab_bar_club/controllers/club_activity_tab_controller.dart';
+import 'package:zest_mobile/app/modules/club/partial/detail_club/partial/tab_bar_club/views/widgets/challenge_card.dart';
 import 'package:zest_mobile/app/modules/club/partial/detail_club/partial/tab_bar_club/views/widgets/event_card.dart';
 import 'package:zest_mobile/app/modules/social/views/partial/for_you_tab/event/controllers/event_controller.dart';
 import 'package:zest_mobile/app/routes/app_routes.dart';
@@ -92,7 +93,21 @@ class ClubActivityTabView extends GetView<ClubActivityTabController> {
                 },
               );
             } else {
-              return const Text('this is card challange');
+              return GestureDetector(
+                  onTap: () async {
+                    if (activity?.challange?.cancelledAt != null) return;
+                    var res = await Get.toNamed(AppRoutes.challengedetails,
+                        arguments: {
+                          "challengeId": activity?.challange?.id,
+                        });
+                    if (res != null) {
+                      print('res: $res');
+                      controller
+                          .syncChallange(Challange.fromChallengeModel(res));
+                    }
+                  },
+                  child:
+                      CardClubChallenge(challengeModel: activity?.challange));
             }
           },
         );

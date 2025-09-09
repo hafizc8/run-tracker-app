@@ -1,9 +1,9 @@
 import 'dart:io';
-
-import 'package:file_picker/file_picker.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
+import 'package:image_picker/image_picker.dart';
+import 'package:path_provider/path_provider.dart';
 import 'package:zest_mobile/app/core/exception/app_exception.dart';
 import 'package:zest_mobile/app/core/exception/handler/app_exception_handler_info.dart';
 import 'package:zest_mobile/app/core/di/service_locator.dart';
@@ -17,9 +17,11 @@ import 'package:zest_mobile/app/core/services/auth_service.dart';
 import 'package:zest_mobile/app/core/services/location_service.dart';
 import 'package:zest_mobile/app/core/services/post_service.dart';
 import 'package:zest_mobile/app/core/shared/helpers/debouncer.dart';
+import 'package:zest_mobile/app/core/shared/helpers/unit_helper.dart';
 import 'package:zest_mobile/app/core/shared/widgets/custom_dialog_confirmation.dart';
 import 'package:zest_mobile/app/modules/social/views/partial/your_page_tab/post/create_post_dialog.dart';
 import 'package:zest_mobile/app/routes/app_routes.dart';
+import 'package:image/image.dart' as img;
 
 class PostController extends GetxController {
   final AuthService _authService = sl<AuthService>();
@@ -34,6 +36,7 @@ class PostController extends GetxController {
   var form = CreatePostFormModel().obs;
   var hasReacheMax = false.obs;
   var pagePost = 1;
+  final unitHelper = sl<UnitHelper>();
 
   // post detail
   Rx<PostModel?> postDetail = Rx<PostModel?>(null);
@@ -117,14 +120,25 @@ class PostController extends GetxController {
 
   // Pick multiple images and videos.
   dynamic pickMultipleMedia() async {
-    FilePickerResult? result = await FilePicker.platform.pickFiles(
-      type: FileType.image,
-      allowMultiple: true,
+    ImagePicker picker = ImagePicker();
+    List<XFile> result = await picker.pickMultiImage(
+      limit: 5,
     );
 
-    if (result != null) {
-      form.value = form.value
-          .copyWith(galleries: result.xFiles.map((e) => File(e.path)).toList());
+    if (result.isNotEmpty) {
+      try {
+        List<File> correctedFiles = [];
+        
+        for (final xFile in result) {
+          final File originalFile = File(xFile.path);
+          correctedFiles.add(originalFile);
+        }
+
+        form.value = form.value.copyWith(galleries: correctedFiles);
+      } catch (e) {
+        print("Error correcting image orientation: $e");
+        Get.snackbar('Error', 'Gagal mengambil file: ${e.toString()}');
+      }
     }
   }
 
@@ -230,7 +244,7 @@ class PostController extends GetxController {
       commentTextController.clear();
 
       PostModel response = await _postService.getDetail(postId: postId);
-      postDetail.value = response;
+      postDetail.value = response.copyWith(isOwner: response.user?.id == user?.id);
     } on AppException catch (e) {
       // show error snackbar, toast, etc
       AppExceptionHandlerInfo.handle(e);
@@ -256,16 +270,18 @@ class PostController extends GetxController {
         return;
       }
 
+      final content = commentTextController.text;
+      commentTextController.clear();
+
       PostModel resp = await _postService.commentReply(
         postId: postDetail.value!.id!,
-        content: commentTextController.text,
+        content: content,
         parentCommentId: (focusedComment.value != null)
             ? focusedComment.value?.id ?? ''
             : '',
       );
 
       focusedComment.value = null;
-      commentTextController.clear();
 
       postDetail.value = resp;
     } on AppException catch (e) {
@@ -379,15 +395,40 @@ class PostController extends GetxController {
   }
 
   dynamic pickMultipleMediaToUpdate() async {
-    FilePickerResult? result = await FilePicker.platform.pickFiles(
-      type: FileType.image,
-      allowMultiple: true,
+    ImagePicker picker = ImagePicker();
+    List<XFile> result = await picker.pickMultiImage(
+      limit: 5,
     );
 
-    if (result != null) {
-      updatePostForm.value = updatePostForm.value.copyWith(
-        newGalleries: result.xFiles.map((e) => File(e.path)).toList(),
-      );
+    if (result.isNotEmpty) {
+      try {
+        List<File> correctedFiles = [];
+        
+        for (final xFile in result) {
+          final File originalFile = File(xFile.path);
+          final imageBytes = await originalFile.readAsBytes();
+          
+          // // ✨ 2. Baca data gambar dan EXIF-nya secara terpisah
+          final img.Image? originalImage = img.decodeImage(imageBytes);
+
+          if (originalImage == null) continue;
+          
+          // // ✨ 4. Simpan gambar yang sudah diperbaiki ke file baru
+          final tempDir = await getTemporaryDirectory();
+          final targetPath = '${tempDir.path}/${DateTime.now().millisecondsSinceEpoch}.jpg';
+          final correctedFile = File(targetPath);
+          await correctedFile.writeAsBytes(img.encodeJpg(originalImage, quality: 85));
+          
+          correctedFiles.add(correctedFile);
+        }
+
+        updatePostForm.value = updatePostForm.value.copyWith(
+          newGalleries: correctedFiles,
+        );
+      } catch (e) {
+        print("Error correcting image orientation: $e");
+        Get.snackbar('Error', 'Gagal mengambil file: ${e.toString()}');
+      }
     }
   }
 

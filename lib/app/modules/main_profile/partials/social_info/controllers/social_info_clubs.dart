@@ -33,6 +33,7 @@ class SocialInfoClubsController extends GetxController {
         userId.value = Get.arguments['id'];
       }
     }
+    load(refresh: true);
     scrollClubSearchController.addListener(() {
       var maxScroll = scrollClubSearchController.position.pixels >=
           scrollClubSearchController.position.maxScrollExtent - 200;

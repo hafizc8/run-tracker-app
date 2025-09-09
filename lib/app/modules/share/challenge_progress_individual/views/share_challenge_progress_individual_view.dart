@@ -41,6 +41,7 @@ class ShareChallengeProgressIndividualView extends GetView<ShareChallengeProgres
                         challengeModel: controller.challengeData.value!,
                         list4TopWalker: controller.getUsersToShow(),
                         currentUser: controller.user!,
+                        isSmallWidthScreen: MediaQuery.of(context).size.width <= 360,
                       ),
                     ),
                   ),
@@ -51,6 +52,13 @@ class ShareChallengeProgressIndividualView extends GetView<ShareChallengeProgres
                   onOptionTap: (String label) async {
                     await controller.shareTo(label);
                   },
+                  options: const [
+                    ShareOption.whatsapp,
+                    ShareOption.igStory,
+                    ShareOption.igFeed,
+                    ShareOption.x,
+                    ShareOption.download,
+                  ],
                 ),
                 SizedBox(height: 24.h),
               ],

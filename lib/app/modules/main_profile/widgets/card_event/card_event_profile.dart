@@ -134,7 +134,8 @@ class EventCard extends StatelessWidget {
                   children: [
                     GestureDetector(
                       onTap: () {
-                        Get.toNamed(AppRoutes.shareEvent, arguments: eventModel);
+                        Get.toNamed(AppRoutes.shareEvent,
+                            arguments: eventModel);
                       },
                       child: SvgPicture.asset(
                         'assets/icons/ic_share-2.svg',
@@ -198,8 +199,9 @@ class EventCard extends StatelessWidget {
                             ),
                           ];
                         },
-                        child: Padding(
-                          padding: const EdgeInsets.only(left: 16),
+                        child: Container(
+                          padding: const EdgeInsets.all(16),
+                          color: Colors.transparent,
                           child: SvgPicture.asset(
                             'assets/icons/ic_more_vert.svg',
                           ),

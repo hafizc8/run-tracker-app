@@ -295,9 +295,10 @@ class SocialSearchView extends GetView<SocialSearchController> {
                                           onPressed: () {
                                             if (user.isFollowing == 1 &&
                                                 user.isFollower == 1) {
-                                              Get.snackbar('Coming soon',
-                                                  'Feature chat coming soon');
-                                              return;
+                                              Get.toNamed(
+                                                AppRoutes.userChat,
+                                                arguments: user,
+                                              );
                                             }
 
                                             if (user.isFollowing == 0) {
@@ -416,9 +417,10 @@ class SocialSearchView extends GetView<SocialSearchController> {
                               onTap: () {
                                 if (user.isFollowing == 1 &&
                                     user.isFollower == 1) {
-                                  Get.snackbar('Coming soon',
-                                      'Feature chat coming soon');
-                                  return;
+                                  Get.toNamed(
+                                    AppRoutes.userChat,
+                                    arguments: user,
+                                  );
                                 }
 
                                 if (user.isFollowing == 0) {
@@ -567,8 +569,9 @@ class SocialSearchView extends GetView<SocialSearchController> {
                         itemBuilder: (context, index) {
                           ClubModel club = controller.clubMayYouKnow[index];
                           return InkWell(
-                            onTap: () => Get.toNamed(AppRoutes.previewClub,
-                                arguments: club.id),
+                            onTap: () {
+                              Get.toNamed(AppRoutes.previewClub, arguments: club.id);
+                            },
                             child: SearchClubCard(
                               club: club,
                               cardWidth: 115,
@@ -621,8 +624,9 @@ class SocialSearchView extends GetView<SocialSearchController> {
                         ClubModel club = controller.clubExplore[index];
 
                         return InkWell(
-                          onTap: () => Get.toNamed(AppRoutes.previewClub,
-                              arguments: club.id),
+                          onTap: () {
+                            Get.toNamed(AppRoutes.previewClub, arguments: club.id);
+                          },
                           child: SearchClubCard(
                             club: club,
                             cardWidth: cardWidth,
@@ -685,8 +689,9 @@ class SocialSearchView extends GetView<SocialSearchController> {
                       ClubModel club = controller.clubs[index];
 
                       return ListTile(
-                        onTap: () => Get.toNamed(AppRoutes.previewClub,
-                            arguments: club.id),
+                        onTap: () {
+                          Get.toNamed(AppRoutes.previewClub, arguments: club.id);
+                        },
                         leading: ClipOval(
                           child: CachedNetworkImage(
                             imageUrl: club.imageUrl ?? '',

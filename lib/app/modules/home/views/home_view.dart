@@ -81,11 +81,11 @@ class HomeView extends GetView<HomeController> {
                                 color: Color(0xFF494949),
                                 shape: BoxShape.circle,
                               ),
-                              padding: EdgeInsets.all(10.w),
-                              child: FaIcon(
-                                FontAwesomeIcons.solidBell,
-                                color: Colors.white,
-                                size: 18.sp,
+
+                              padding: EdgeInsets.all(8.w),
+                              child: SvgPicture.asset(
+                                'assets/icons/ic_notification_2.svg',
+                                width: 18.w,
                               ),
                             ),
                           ),
@@ -99,11 +99,11 @@ class HomeView extends GetView<HomeController> {
                                 color: Color(0xFF494949),
                                 shape: BoxShape.circle,
                               ),
-                              padding: EdgeInsets.all(10.w),
-                              child: FaIcon(
-                                FontAwesomeIcons.solidEnvelope,
-                                color: Colors.white,
-                                size: 16.sp,
+
+                              padding: EdgeInsets.all(8.w),
+                              child: SvgPicture.asset(
+                                'assets/icons/ic_inbox_2.svg',
+                                width: 21.w,
                               ),
                             ),
                           ),
@@ -362,15 +362,17 @@ class HomeView extends GetView<HomeController> {
                                           width: 15.w,
                                         ),
                                         SizedBox(width: 8.w),
-                                        Text(
-                                          '${NumberHelper().formatNumberToKWithComma(controller.totalCaloriesBurned)} Cal',
-                                          style: Theme.of(context)
-                                              .textTheme
-                                              .titleSmall
-                                              ?.copyWith(
-                                                fontSize: 12.5.sp,
-                                              ),
-                                        ),
+                                        Obx(() {
+                                          return Text(
+                                            '${NumberHelper().formatNumberToKWithComma(controller.totalCaloriesBurned)} Cal',
+                                            style: Theme.of(context)
+                                                .textTheme
+                                                .titleSmall
+                                                ?.copyWith(
+                                                  fontSize: 12.5.sp,
+                                                ),
+                                          );
+                                        }),
                                       ],
                                     ),
                                     SizedBox(width: 20.w),

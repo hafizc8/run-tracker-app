@@ -64,6 +64,19 @@ class UserChatView extends GetView<UserChatController> {
                 return const SizedBox.shrink();
               }
 
+              // scroll to bottom when keyboard open
+              WidgetsBinding.instance.addPostFrameCallback((_) {
+                if (MediaQuery.of(context).viewInsets.bottom > 0) {
+                  if (controller.scrollController.hasClients) {
+                    controller.scrollController.animateTo(
+                      controller.scrollController.position.maxScrollExtent,
+                      duration: const Duration(milliseconds: 300),
+                      curve: Curves.easeOut,
+                    );
+                  }
+                }
+              });
+
               var grouped = controller.groupedMessages;
               var dateKeys = grouped.keys.toList(); // oldest dulu
 

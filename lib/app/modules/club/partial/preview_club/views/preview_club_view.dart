@@ -11,6 +11,7 @@ import 'package:zest_mobile/app/core/shared/widgets/shimmer_loading_list.dart';
 import 'package:zest_mobile/app/core/extension/date_extension.dart';
 import 'package:zest_mobile/app/modules/club/partial/detail_club/partial/tab_bar_club/views/widgets/participants_avatars.dart';
 import 'package:zest_mobile/app/modules/club/partial/preview_club/controllers/preview_club_controller.dart';
+import 'package:zest_mobile/app/routes/app_routes.dart';
 
 class PreviewClubView extends GetView<PreviewClubController> {
   const PreviewClubView({super.key});
@@ -98,8 +99,13 @@ class PreviewClubView extends GetView<PreviewClubController> {
               Positioned(
                 top: 20,
                 right: 20,
-                child: SvgPicture.asset(
-                  'assets/icons/ic_share-2.svg',
+                child: InkWell(
+                  onTap: () {
+                    Get.toNamed(AppRoutes.shareClub, arguments: club);
+                  },
+                  child: SvgPicture.asset(
+                    'assets/icons/ic_share-2.svg',
+                  ),
                 ),
               ),
               Padding(

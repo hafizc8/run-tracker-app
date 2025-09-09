@@ -52,7 +52,7 @@ class OthersWalkers extends StatelessWidget {
                 style: Theme.of(context).textTheme.bodySmall?.copyWith(
                   fontWeight: FontWeight.w700,
                   color: isCurrentUser ? const Color(0xFF2E2E2E) : const Color(0xFFA5A5A5),
-                  fontSize: 12.sp,
+                  fontSize: 11.sp,
                 ),
               ),
             ),
@@ -81,7 +81,7 @@ class OthersWalkers extends StatelessWidget {
                 style: Theme.of(context).textTheme.bodySmall?.copyWith(
                   fontWeight: FontWeight.normal,
                   color: isCurrentUser ? const Color(0xFF2E2E2E) : const Color(0xFFA5A5A5),
-                  fontSize: 12.sp,
+                  fontSize: 11.sp,
                 ),
                 maxLines: 2,
                 overflow: TextOverflow.ellipsis,
@@ -93,7 +93,7 @@ class OthersWalkers extends StatelessWidget {
               style: Theme.of(context).textTheme.bodySmall?.copyWith(
                 fontWeight: FontWeight.normal,
                 color: isCurrentUser ? const Color(0xFF2E2E2E) : darkColorScheme.primary,
-                fontSize: 12.sp,
+                fontSize: 11.sp,
               ),
               maxLines: 1,
               overflow: TextOverflow.ellipsis,

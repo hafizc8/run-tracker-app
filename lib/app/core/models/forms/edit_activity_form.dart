@@ -13,6 +13,7 @@ class EditActivityForm extends FormModel<EditActivityForm> with FormModelMixin<E
   final List<Gallery>? currentGalleries;
   final double? latitude;
   final double? longitude;
+  final File? galleryMap;
 
   final Map<String, dynamic>? errors;
 
@@ -26,6 +27,7 @@ class EditActivityForm extends FormModel<EditActivityForm> with FormModelMixin<E
     this.latitude,
     this.longitude,
     this.errors,
+    this.galleryMap,
   });
 
   @override
@@ -43,6 +45,7 @@ class EditActivityForm extends FormModel<EditActivityForm> with FormModelMixin<E
     List<Gallery>? currentGalleries,
     double? latitude,
     double? longitude,
+    File? galleryMap,
     Map<String, dynamic>? errors,
     String? field,
   }) {
@@ -58,6 +61,7 @@ class EditActivityForm extends FormModel<EditActivityForm> with FormModelMixin<E
       newGalleries: newGalleries ?? this.newGalleries,
       deletedGalleries: deletedGalleries ?? this.deletedGalleries,
       currentGalleries: currentGalleries ?? this.currentGalleries,
+      galleryMap: galleryMap ?? this.galleryMap,
       latitude: latitude ?? this.latitude,
       longitude: longitude ?? this.longitude,
       errors: errors ?? this.errors,
@@ -77,6 +81,7 @@ class EditActivityForm extends FormModel<EditActivityForm> with FormModelMixin<E
     newGalleries,
     deletedGalleries,
     currentGalleries,
+    galleryMap,
     latitude,
     longitude,
     errors,
@@ -102,6 +107,7 @@ class EditActivityForm extends FormModel<EditActivityForm> with FormModelMixin<E
       'latitude': latitude,
       'longitude': longitude,
       'record_activity_id': recordActivityId,
+      'gallery_map': galleryMap
     };
 
     return data;

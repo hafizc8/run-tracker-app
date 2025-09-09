@@ -51,6 +51,9 @@ class AuthService {
       await sl<StorageService>()
           .write(StorageKeys.token, response.data['data']['token']);
 
+      await sl<StorageService>().write(
+          StorageKeys.lastLoginTimeStamp, DateTime.now().toIso8601String());
+
       return response.data['success'];
     } catch (e) {
       rethrow;
@@ -176,26 +179,24 @@ class AuthService {
 
       final googleAuth = await googleUser.authentication;
 
-      final credential = GoogleAuthProvider.credential(
-        accessToken: googleAuth.accessToken,
-        idToken: googleAuth.idToken,
-      );
-      final userCred =
-          await FirebaseAuth.instance.signInWithCredential(credential);
-
-      final idToken = await userCred.user!.getIdToken();
       final fcmToken = await _fcmService.getFcmToken();
 
       final response = await _apiService.request(
         path: AppConstants.loginWithGoogle,
         method: HttpMethod.post,
-        data: {"access_token": idToken, "fcm_token": fcmToken ?? ''},
+        data: {
+          "access_token": googleAuth.accessToken,
+          "fcm_token": fcmToken ?? ''
+        },
       );
 
       await sl<StorageService>().write(
         StorageKeys.token,
         response.data['data']['token'],
       );
+
+      await sl<StorageService>().write(
+          StorageKeys.lastLoginTimeStamp, DateTime.now().toIso8601String());
 
       return response.data['success'] ?? false;
     } on FirebaseAuthException catch (e) {

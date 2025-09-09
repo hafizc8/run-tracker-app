@@ -13,26 +13,41 @@ import 'package:zest_mobile/app/core/shared/widgets/share_footer.dart';
 import 'package:zest_mobile/app/core/shared/widgets/shimmer_loading_circle.dart';
 
 class ShareChallengeProgressIndividualCard extends StatelessWidget {
-  const ShareChallengeProgressIndividualCard({super.key, required this.challengeModel, required this.list4TopWalker, required this.currentUser});
+  const ShareChallengeProgressIndividualCard({super.key, required this.challengeModel, required this.list4TopWalker, required this.currentUser, this.showBackground = true, this.isSmallWidthScreen = false});
 
   final ChallengeDetailModel challengeModel;
   final List<LeaderboardUser> list4TopWalker;
   final UserModel currentUser;
+  final bool showBackground;
+  final bool isSmallWidthScreen;
 
   @override
   Widget build(BuildContext context) {
+    final heightOfCard = isSmallWidthScreen 
+      ? list4TopWalker.length == 5 ? 210.h : (list4TopWalker.length == 4 ? 170.h : (list4TopWalker.length == 3 ? 130.h : (list4TopWalker.length == 2 ? 85.h : 40.h)))
+      : list4TopWalker.length == 5 ? 220.h : (list4TopWalker.length == 4 ? 180.h : (list4TopWalker.length == 3 ? 135.h : (list4TopWalker.length == 2 ? 90.h : 45.h)));
+
+
     return Stack(
       children: [
+        showBackground
+        ?
         Positioned.fill(
           child: Image.asset(
             'assets/images/share_challenge_individual_background.jpg',
             fit: BoxFit.fitWidth,
           ),
-        ),
+        )
+        : Container(),
         
         // Lapisan Konten di atas background
         Padding(
-          padding: EdgeInsets.fromLTRB(16.w, 16.h, 16.w, 80.h),
+          padding: EdgeInsets.only(
+            left: isSmallWidthScreen ? 8.w : 16.w,
+            top: 16.h,
+            right: isSmallWidthScreen ? 8.w : 16.w,
+            bottom: 80.h
+          ),
           child: Column(
             mainAxisSize: MainAxisSize.min,
             children: [
@@ -59,7 +74,7 @@ class ShareChallengeProgressIndividualCard extends StatelessWidget {
               Text(
                 (challengeModel.mode == 0)
                 ? 'Target ${NumberHelper().formatNumberToKWithComma(challengeModel.target)} Steps'
-                : '${(challengeModel.startDate ?? DateTime.now()).todMMMyyyyString()} - ${(challengeModel.endDate ?? DateTime.now()).todMMMyyyyString()}',
+                : '${(challengeModel.startDate?.toLocal() ?? DateTime.now()).todMMMyyyyString()} - ${(challengeModel.endDate?.toLocal() ?? DateTime.now()).todMMMyyyyString()}',
                 style: Theme.of(context).textTheme.labelSmall?.copyWith(
                   color: const Color(0xFF272727),
                   fontSize: 12.sp,
@@ -93,7 +108,7 @@ class ShareChallengeProgressIndividualCard extends StatelessWidget {
                     // Top 2
                     Positioned(
                       top: 50.h,
-                      left: 8.w,
+                      left: 25.w,
                       child: challengeModel.leaderboardUsers.length > 1
                         ? _buildTop3Placeholder(context: context, leaderboardUser: challengeModel.leaderboardUsers[1])
                         : const SizedBox.shrink(),
@@ -101,7 +116,7 @@ class ShareChallengeProgressIndividualCard extends StatelessWidget {
                     // Top 3
                     Positioned(
                       top: 50.h,
-                      right: 8.w,
+                      right: 25.w,
                       child: challengeModel.leaderboardUsers.length > 2
                         ? _buildTop3Placeholder(context: context, leaderboardUser: challengeModel.leaderboardUsers[2])
                         : const SizedBox.shrink(),
@@ -110,14 +125,18 @@ class ShareChallengeProgressIndividualCard extends StatelessWidget {
                 ),
               ),
 
+              (list4TopWalker.isEmpty)
+              ? const SizedBox.shrink()
+              :
               Container(
                 margin: EdgeInsets.only(top: 18.h),
                 decoration: BoxDecoration(
                   borderRadius: BorderRadius.circular(10.r),
                   color: Colors.white.withOpacity(0.6),
                 ),
-                height: 220.h,
+                height: heightOfCard,
                 child: ListView(
+                  physics: const NeverScrollableScrollPhysics(),
                   children: list4TopWalker
                       .map((user) {
                         return _buildListTopWalker(
@@ -197,45 +216,48 @@ class ShareChallengeProgressIndividualCard extends StatelessWidget {
     required LeaderboardUser leaderboardUser,
     bool isCurrentUser = false
   }) {
+    final avatarSize = isSmallWidthScreen ? 24.r : 26.r;
+    final fontSize = isSmallWidthScreen ? 9.sp : 10.sp;
+
     return Container(
-      padding: EdgeInsets.symmetric(vertical: 8.h, horizontal: 16.w),
+      padding: EdgeInsets.symmetric(vertical: 8.h, horizontal: isSmallWidthScreen ? 8.w : 16.w),
       child: Row(
         crossAxisAlignment: CrossAxisAlignment.center,
         mainAxisAlignment: MainAxisAlignment.center,
         children: [
           ConstrainedBox(
             constraints: BoxConstraints(
-              minWidth: 27.w,
-              maxWidth: 27.w,
+              minWidth: isSmallWidthScreen ? 24.w : 27.w,
+              maxWidth: isSmallWidthScreen ? 24.w : 27.w,
             ),
             child: Text(
               NumberHelper().formatRank(leaderboardUser.rank ?? 0),
               style: GoogleFonts.poppins(
                 fontWeight: isCurrentUser ? FontWeight.w700 : FontWeight.w500,
                 color: const Color(0xFF272727),
-                fontSize: 11.sp,
+                fontSize: fontSize.sp,
               ),
             ),
           ),
-          SizedBox(width: 10.w),
+          SizedBox(width: 2.w),
           ClipOval(
             child: CachedNetworkImage(
               imageUrl: leaderboardUser.user?.imageUrl ?? '',
-              width: 27.r,
-              height: 27.r,
+              width: avatarSize.r,
+              height: avatarSize.r,
               fit: BoxFit.cover,
-              placeholder: (context, url) => ShimmerLoadingCircle(size: 27.w),
+              placeholder: (context, url) => ShimmerLoadingCircle(size: avatarSize.w),
               errorWidget: (context, url, error) => Container(
-                width: 27.r,
-                height: 27.r,
+                width: avatarSize.r,
+                height: avatarSize.r,
                 child: CircleAvatar(
-                  radius: 27.r,
+                  radius: avatarSize.r,
                   backgroundImage: const AssetImage('assets/images/empty_profile.png'),
                 ),
               ),
             ),
           ),
-          SizedBox(width: 12.w),
+          SizedBox(width: 5.w),
           ConstrainedBox(
             constraints: BoxConstraints(
               minWidth: 110.w,
@@ -246,9 +268,9 @@ class ShareChallengeProgressIndividualCard extends StatelessWidget {
               style: GoogleFonts.poppins(
                 fontWeight: isCurrentUser ? FontWeight.w700 : FontWeight.w500,
                 color: const Color(0xFF272727),
-                fontSize: 11.sp,
+                fontSize: fontSize.sp,
               ),
-              maxLines: 2,
+              maxLines: 1,
               overflow: TextOverflow.ellipsis,
             ),
           ),
@@ -258,7 +280,7 @@ class ShareChallengeProgressIndividualCard extends StatelessWidget {
             style: GoogleFonts.poppins(
               fontWeight: isCurrentUser ? FontWeight.w700 : FontWeight.w500,
               color: const Color(0xFF272727),
-              fontSize: 11.sp,
+              fontSize: fontSize.sp,
             ),
             maxLines: 1,
             overflow: TextOverflow.ellipsis,

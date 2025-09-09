@@ -126,7 +126,7 @@ class NotificationItem extends GetView<NotificationController> {
                 // Tombol Follow Back (hanya muncul jika diperlukan)
                 if (isFollowBackAction) ...[
                   SizedBox(width: 8.w),
-                  notification.data?['user']['is_follower'] == 0
+                  notification.data?['user']['is_following'] == 0
                   ? SizedBox(
                     width: 100.w,
                     height: 28.h,

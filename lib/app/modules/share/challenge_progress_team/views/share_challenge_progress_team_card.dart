@@ -10,24 +10,24 @@ import 'package:zest_mobile/app/core/shared/widgets/share_footer.dart';
 import 'package:zest_mobile/app/modules/share/challenge_progress_team/views/team_challenge_card.dart';
 
 class ShareChallengeProgressTeamCard extends StatelessWidget {
-  const ShareChallengeProgressTeamCard({super.key, required this.challengeModel, required this.team});
+  const ShareChallengeProgressTeamCard({super.key, required this.challengeModel, required this.team, this.showBackground = true});
 
   final ChallengeDetailModel challengeModel;
   final Map<String, List<ChallengeTeamsModel>> team;
+  final bool showBackground;
 
   @override
   Widget build(BuildContext context) {
-    print(team);
-    
-
     return Stack(
       children: [
+        showBackground ?
         Positioned.fill(
           child: Image.asset(
             'assets/images/share_challenge_team_background.png',
             fit: BoxFit.fitWidth,
           ),
-        ),
+        )
+        : Container(),
         
         // Lapisan Konten di atas background
         Padding(
@@ -58,7 +58,7 @@ class ShareChallengeProgressTeamCard extends StatelessWidget {
               Text(
                 (challengeModel.mode == 0)
                 ? 'Target ${NumberHelper().formatNumberToKWithComma(challengeModel.target)} Steps'
-                : '${(challengeModel.startDate ?? DateTime.now()).todMMMyyyyString()} - ${(challengeModel.endDate ?? DateTime.now()).todMMMyyyyString()}',
+                : '${(challengeModel.startDate?.toLocal() ?? DateTime.now()).todMMMyyyyString()} - ${(challengeModel.endDate?.toLocal() ?? DateTime.now()).todMMMyyyyString()}',
                 style: Theme.of(context).textTheme.labelSmall?.copyWith(
                   color: const Color(0xFF272727),
                   fontSize: 12.sp,
@@ -75,7 +75,7 @@ class ShareChallengeProgressTeamCard extends StatelessWidget {
                   totalSteps: e.point ?? 0,
                   memberImageUrls: // find all user image url in team
                     team[e.team]?.map((team) => team.user?.imageUrl ?? '').toList() ?? [],
-                  teamColor: _getColorFromTeamName(e.team ?? ''),
+                  // teamColor: _getColorFromTeamName(e.team ?? ''),
                 );
               }),
             ],
@@ -84,24 +84,5 @@ class ShareChallengeProgressTeamCard extends StatelessWidget {
         const ShareFooter(withShadow: true),
       ],
     );
-  }
-
-  Color _getColorFromTeamName(String teamName) {
-    final name = teamName.toLowerCase(); // Ubah ke huruf kecil agar tidak case-sensitive
-
-    if (name.contains('red')) {
-      return Colors.red.shade400;
-    } else if (name.contains('blue')) {
-      return Colors.blue.shade400;
-    } else if (name.contains('orange')) {
-      return Colors.orange.shade400;
-    } else if (name.contains('yellow')) {
-      return Colors.yellow.shade600;
-    } else if (name.contains('purple')) {
-      return Colors.purple.shade400;
-    }
-    
-    // Warna default jika tidak ada nama warna yang cocok
-    return Colors.green; 
   }
 }

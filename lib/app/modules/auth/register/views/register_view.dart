@@ -28,10 +28,10 @@ class RegisterView extends GetView<RegisterController> {
             top: 0,
             left: 0,
             right: 0,
-            child: Image.asset(
-              "assets/images/z-background.png",
-              fit: BoxFit.fitHeight,
-              alignment: Alignment.topCenter,
+            child: SvgPicture.asset(
+              "assets/images/z-background-full.svg",
+              fit: BoxFit.cover,
+              alignment: Alignment.center,
             ),
           ),
           SingleChildScrollView(
@@ -40,9 +40,9 @@ class RegisterView extends GetView<RegisterController> {
               crossAxisAlignment: CrossAxisAlignment.center,
               children: [
                 SizedBox(height: 24.h),
-                SvgPicture.asset(
-                  'assets/images/zest-logo.svg',
-                  height: 68.h,
+                Image.asset(
+                  'assets/images/zest-logo.png',
+                  height: 48.h,
                 ),
                 SizedBox(height: 24.h),
                 Obx(() {
@@ -234,21 +234,25 @@ class RegisterView extends GetView<RegisterController> {
                 Row(
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
-                    SvgPicture.asset(
-                      'assets/icons/ic_google.svg',
-                      width: 36.w,
-                      colorFilter: const ColorFilter.mode(
-                        Colors.white,
-                        BlendMode.srcIn,
-                      ),
-                    ),
-                    SizedBox(width: 20.w),
-                    SvgPicture.asset(
-                      'assets/icons/ic_fb.svg',
-                      width: 36.w,
-                      colorFilter: const ColorFilter.mode(
-                        Colors.white,
-                        BlendMode.srcIn,
+                    Obx(
+                      () => Visibility(
+                        visible: controller.isLoadingGoogle.value,
+                        replacement: InkWell(
+                          onTap: () => controller.loginWithGoogle(),
+                          child: SvgPicture.asset(
+                            'assets/icons/ic_google.svg',
+                            width: 36.w,
+                            colorFilter: const ColorFilter.mode(
+                              Colors.white, // Warna yang diinginkan
+                              BlendMode
+                                  .srcIn, // BlendMode ini akan menerapkan warna ke SVG
+                            ),
+                          ),
+                        ),
+                        child: Padding(
+                          padding: const EdgeInsets.all(8.0),
+                          child: CustomCircularProgressIndicator(),
+                        ),
                       ),
                     ),
                   ],

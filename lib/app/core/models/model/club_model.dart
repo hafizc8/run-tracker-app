@@ -28,6 +28,7 @@ class ClubModel extends Model<ClubModel> {
     this.isMember = false,
     this.friendsTotal,
     this.friendsNames,
+    this.isMuted,
   });
 
   final String? id;
@@ -53,6 +54,7 @@ class ClubModel extends Model<ClubModel> {
   bool? isOwner;
   int? friendsTotal;
   List<String>? friendsNames;
+  final bool? isMuted;
 
   @override
   ClubModel copyWith({
@@ -79,6 +81,7 @@ class ClubModel extends Model<ClubModel> {
     bool? isMember,
     int? friendsTotal,
     List<String>? friendsNames,
+    bool? isMuted,
   }) {
     return ClubModel(
       id: id ?? this.id,
@@ -104,6 +107,7 @@ class ClubModel extends Model<ClubModel> {
       isMember: isMember ?? this.isMember,
       friendsTotal: friendsTotal ?? this.friendsTotal,
       friendsNames: friendsNames ?? this.friendsNames,
+      isMuted: isMuted ?? this.isMuted,
     );
   }
 
@@ -139,6 +143,7 @@ class ClubModel extends Model<ClubModel> {
       friendsNames: json["friends_names"] == null
           ? []
           : List<String>.from(json["friends_names"].map((x) => x)),
+      isMuted: json["is_muted"] != null && json["is_muted"] == 1,
     );
   }
 
@@ -164,7 +169,8 @@ class ClubModel extends Model<ClubModel> {
         "is_pending_join": isPendingJoin == true ? 1 : 0,
         "is_owner": isOwner == true ? 1 : 0,
         "is_joined": isJoined == true ? 1 : 0,
-        "is_member": isMember == true ? 1 : 0
+        "is_member": isMember == true ? 1 : 0,
+        "is_muted": isMuted == true ? 1 : 0
       };
 
   @override
@@ -191,6 +197,7 @@ class ClubModel extends Model<ClubModel> {
         isJoined,
         isMember,
         friendsTotal,
-        friendsNames
+        friendsNames,
+        isMuted
       ];
 }

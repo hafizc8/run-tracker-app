@@ -6,6 +6,8 @@ import 'package:zest_mobile/app/core/exception/handler/app_exception_handler_inf
 import 'package:zest_mobile/app/core/models/enums/leaderboard_top_walkers_page_enum.dart';
 import 'package:zest_mobile/app/core/models/model/leaderboard_response_model.dart';
 import 'package:zest_mobile/app/core/models/model/leaderboard_user_model.dart';
+import 'package:zest_mobile/app/core/models/model/user_model.dart';
+import 'package:zest_mobile/app/core/services/auth_service.dart';
 import 'package:zest_mobile/app/core/services/leaderboard_service.dart';
 import 'package:zest_mobile/app/core/shared/helpers/debouncer.dart';
 
@@ -20,6 +22,7 @@ class LeaderboardTopWalkersController extends GetxController {
   RxBool isLoadingGetLeaderboard = false.obs;
   RxBool hasReacheMax = false.obs;
   Rx<LeaderboardUserModel?> me = Rx<LeaderboardUserModel?>(null);
+  RxString areaFilter = ''.obs;
 
   final leaderboardScrollController = ScrollController();
   final _debouncer = Debouncer(milliseconds: 500);
@@ -30,6 +33,9 @@ class LeaderboardTopWalkersController extends GetxController {
   var isMyRankOffscreen = false.obs;
   // Threshold untuk menentukan kapan rank dianggap "jauh"
   final int floatingRankThreshold = 10;
+
+  final AuthService _authService = sl<AuthService>();
+  UserModel? get user => _authService.user;
 
 
   @override
@@ -62,11 +68,15 @@ class LeaderboardTopWalkersController extends GetxController {
   dynamic selectChip(LeaderboardTopWalkersPageEnum chip) {
     selectedChip.value = chip;
     if (selectedChip.value == LeaderboardTopWalkersPageEnum.global) {
-      // load data global
+      areaFilter.value = '';
     } else if (selectedChip.value == LeaderboardTopWalkersPageEnum.country) {
-      // load data country
+      areaFilter.value = user?.country ?? '';
     } else if (selectedChip.value == LeaderboardTopWalkersPageEnum.province) {
-      // load data province
+      areaFilter.value = user?.province ?? '';
+    } else if (selectedChip.value == LeaderboardTopWalkersPageEnum.regency) {
+      areaFilter.value = user?.district ?? '';
+    } else if (selectedChip.value == LeaderboardTopWalkersPageEnum.district) {
+      areaFilter.value = user?.subdistrict ?? '';
     }
 
     refreshLeaderboard();

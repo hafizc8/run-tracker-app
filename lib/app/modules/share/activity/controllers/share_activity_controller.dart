@@ -1,13 +1,14 @@
 import 'dart:io';
 
 import 'package:appinio_social_share/appinio_social_share.dart';
-import 'package:flutter/services.dart';
 import 'package:get/get.dart';
 import 'package:image_gallery_saver/image_gallery_saver.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:permission_handler/permission_handler.dart';
 import 'package:screenshot/screenshot.dart';
+import 'package:zest_mobile/app/core/di/service_locator.dart';
 import 'package:zest_mobile/app/core/models/model/post_model.dart';
+import 'package:zest_mobile/app/core/shared/helpers/unit_helper.dart';
 import 'package:zest_mobile/app/core/values/app_constants.dart';
 import 'package:zest_mobile/app/modules/share/activity/views/share_activity_card.dart';
 import 'package:zest_mobile/app/modules/share/widgets/share_image_wrapper.dart';
@@ -18,6 +19,7 @@ class ShareActivityController extends GetxController {
   ShareActivityController({required this.postModel});
 
   Rx<PostModel?> postData = Rx<PostModel?>(null);
+  final unitHelper = sl<UnitHelper>();
   RxBool isLoading = RxBool(true);
 
   final ScreenshotController screenshotController = ScreenshotController();
@@ -53,10 +55,13 @@ class ShareActivityController extends GetxController {
     // 1. Tangkap widget sebagai gambar (dalam format Uint8List)
     final imageBytes = await screenshotController.captureFromWidget(
       ShareImageWrapper(
-        shareCard: ShareActivityCard(postModel: postModel),
+        shareCard: ShareActivityCard(
+          postModel: postModel,
+          distanceInFormat: unitHelper.formatDistance(postModel.recordActivity?.lastRecordActivityLog?.distance ?? 0),
+        ),
         backgroundImagePath: 'assets/images/background_share-2.png',
       ),
-      pixelRatio: 3.0,
+      pixelRatio: 4.0,
     );
 
     // 2. Simpan gambar ke file sementara
@@ -65,7 +70,7 @@ class ShareActivityController extends GetxController {
     final file = await File(imagePath).create();
     await file.writeAsBytes(imageBytes);
 
-    String message = AppConstants.sharePostLink(postModel.id!);
+    String message = ''; //AppConstants.sharePostLink(postModel.id!);
 
     final installedApps = await socialShare.getInstalledApps();
 
@@ -78,12 +83,23 @@ class ShareActivityController extends GetxController {
         await socialShare.android.shareToWhatsapp(message, imagePath);
         break;
 
-      case 'instagram':
+      case 'ig story':
         if (installedApps['instagram'] == false) {
           Get.snackbar('Error', 'Instagram is not installed on this device.');
           return;
         }
-        await socialShare.android.shareToInstagramDirect(message);
+        await socialShare.android.shareToInstagramStory(
+          AppConstants.facebookAppId, 
+          stickerImage: imagePath,
+        );
+        break;
+
+      case 'ig feed':
+        if (installedApps['instagram'] == false) {
+          Get.snackbar('Error', 'Instagram is not installed on this device.');
+          return;
+        }
+        await socialShare.android.shareToInstagramFeed(message, imagePath);
         break;
 
       case 'x':
@@ -92,12 +108,6 @@ class ShareActivityController extends GetxController {
           return;
         }
         await socialShare.android.shareToTwitter(message, imagePath);
-        break;
-
-      case 'link':
-        // save message to clipboard
-        await Clipboard.setData(ClipboardData(text: message));
-        Get.snackbar('Success', 'Link copied to clipboard.');
         break;
 
       case 'download':

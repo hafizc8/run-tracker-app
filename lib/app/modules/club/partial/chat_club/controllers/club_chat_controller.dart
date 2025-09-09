@@ -172,10 +172,16 @@ class ClubChatController extends GetxController {
   }
 
   Future<void> storeChat() async {
+    if (isLoadingStore.value) return;
     isLoadingStore.value = true;
     try {
+      final String messageBody = messageController.text;
+      messageController.clear();
+
       ChatModel? response = await _clubService.storeClubChat(
-          clubId: id.value, message: messageController.text);
+        clubId: id.value, 
+        message: messageBody,
+      );
       if (response != null) {
         messageController.clear();
         message.value = '';

@@ -1,4 +1,6 @@
+import 'package:currency_text_input_formatter/currency_text_input_formatter.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
 import 'package:zest_mobile/app/core/shared/widgets/gradient_elevated_button.dart';
@@ -352,6 +354,8 @@ class ChallengeCreateView extends GetView<ChallangeCreateController> {
                                         TextFormField(
                                           cursorColor: Colors.white,
                                           keyboardType: TextInputType.number,
+                                          controller:
+                                              controller.targetController,
                                           onChanged: (value) {
                                             controller.form.value =
                                                 form.copyWith(
@@ -360,6 +364,17 @@ class ChallengeCreateView extends GetView<ChallangeCreateController> {
                                               field: 'target',
                                             );
                                           },
+                                          inputFormatters: [
+                                            FilteringTextInputFormatter.allow(
+                                                RegExp(r'[0-9]')),
+                                            FilteringTextInputFormatter.deny(
+                                                RegExp(r'^0+')),
+                                            CurrencyTextInputFormatter.currency(
+                                              locale: "id_ID",
+                                              symbol: '',
+                                              decimalDigits: 0,
+                                            )
+                                          ],
                                           decoration: InputDecoration(
                                             hintText: 'Enter target steps',
                                             errorText: form.errors?['target'],

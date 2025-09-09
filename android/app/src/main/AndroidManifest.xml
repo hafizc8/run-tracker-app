@@ -41,6 +41,9 @@
             android:name="com.google.android.geo.API_KEY"
             android:value="AIzaSyD-ueM1nm0oVLA8c3ekfPu7rF2bD0NMD2w"/>
 
+        <!-- Facebook -->
+        <meta-data android:name="com.facebook.sdk.ApplicationId" android:value="@string/facebook_app_id"/>
+
         <activity
             android:name=".MainActivity"
             android:exported="true"

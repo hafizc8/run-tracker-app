@@ -26,11 +26,8 @@ class ForgotPasswordPasswordUpdatedView
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.center,
                   children: [
-                    SvgPicture.asset(
-                      'assets/icons/check_circle.svg',
-                      width: 72.w,
-                    ),
-                    SizedBox(height: 24.h),
+                    Image.asset('assets/icons/ic_success_updated_password.png',
+                        height: 280.h),
                     Text(
                       'Password Updated!',
                       style: Theme.of(context).textTheme.headlineMedium,

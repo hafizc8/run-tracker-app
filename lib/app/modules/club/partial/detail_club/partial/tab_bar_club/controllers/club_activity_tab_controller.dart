@@ -1,7 +1,4 @@
-import 'dart:math';
-
 import 'package:flutter/material.dart';
-import 'package:flutter/widgets.dart';
 import 'package:get/get.dart';
 import 'package:zest_mobile/app/core/di/service_locator.dart';
 import 'package:zest_mobile/app/core/exception/app_exception.dart';
@@ -125,6 +122,20 @@ class ClubActivityTabController extends GetxController {
     }
   }
 
+  Future<void> syncChallange(Challange challange) async {
+    // cari index item yang punya event dengan id yang dicancel
+    int index = activities
+        .indexWhere((activity) => activity?.challange?.id == challange.id);
+
+    if (index != -1) {
+      final oldActivity = activities[index]!;
+
+      final updatedActivity = oldActivity.copyWith(challange: challange);
+
+      activities[index] = updatedActivity;
+    }
+  }
+
   Future<void> syncActivityClubEvent(EventModel newEvent) async {
     final newActivity = ClubActivitiesModel(
       clubId: clubId.value,
@@ -133,6 +144,19 @@ class ClubActivityTabController extends GetxController {
       createdAt: DateTime.now(),
       challange: null,
       event: newEvent,
+    );
+
+    activities.insert(0, newActivity);
+  }
+
+  Future<void> syncActivityClubChallange(Challange newChallange) async {
+    final newActivity = ClubActivitiesModel(
+      clubId: clubId.value,
+      activityableId: newChallange.id, // bisa pakai event id
+      activityableType: 'challenge', // atau apapun yang sesuai API
+      createdAt: DateTime.now(),
+      challange: newChallange,
+      event: null,
     );
 
     activities.insert(0, newActivity);

@@ -3,6 +3,7 @@ import 'package:flutter/widgets.dart';
 import 'package:flutter_background_service/flutter_background_service.dart';
 import 'package:get/get.dart';
 import 'package:permission_handler/permission_handler.dart';
+import 'package:table_calendar/table_calendar.dart';
 import 'package:zest_mobile/app/core/di/service_locator.dart';
 import 'package:zest_mobile/app/core/models/model/daily_record_model.dart';
 import 'package:zest_mobile/app/core/models/model/home_page_data_model.dart';
@@ -13,7 +14,9 @@ import 'package:zest_mobile/app/core/services/auth_service.dart';
 import 'package:zest_mobile/app/core/services/fcm_service.dart';
 import 'package:zest_mobile/app/core/services/log_service.dart';
 import 'package:zest_mobile/app/core/services/record_activity_service.dart';
+import 'package:zest_mobile/app/core/services/storage_service.dart';
 import 'package:zest_mobile/app/core/services/user_service.dart';
+import 'package:zest_mobile/app/core/values/storage_keys.dart';
 import 'package:zest_mobile/app/modules/home/widgets/achieve_badge_dialog.dart';
 import 'package:zest_mobile/app/modules/home/widgets/achieve_streak_dialog.dart';
 import 'package:zest_mobile/app/modules/home/widgets/leveled_up_dialog.dart';
@@ -52,7 +55,7 @@ class HomeController extends GetxController {
 
   Timer? _syncTimerRefreshStepUI;
   static const _syncIntervalRefreshStepUI = Duration(seconds: 5);
-  
+
   // ✨ --- State baru untuk menampung data langkah per jam --- ✨
   var hourlySteps = <int, int>{}.obs; // Map<Jam, Jumlah_Langkah>
 
@@ -79,13 +82,17 @@ class HomeController extends GetxController {
     isLoadingGetUserData.value = true;
     try {
       // ✨ KUNCI #1: Alur inisialisasi yang baru dan lebih efisien ✨
-      await refreshData();
+      await Future.microtask(() async {
+        await refreshData();
 
-      // 2. Sinkronkan hari-hari yang terlewat terlebih dahulu
-      await _syncMissingDailyRecords();
+        await Future.wait([
+          // 2. Sinkronkan hari-hari yang terlewat terlebih dahulu
+          _syncMissingDailyRecords(),
 
-      // 3. Lakukan sinkronisasi pertama untuk HARI INI menggunakan metode per jam
-      await _syncTodaysData();
+          // 3. Lakukan sinkronisasi pertama untuk HARI INI menggunakan metode per jam
+          _syncTodaysData(),
+        ]);
+      });
 
       // 4. Setelah semua data siap, baru mulai proses latar belakang
       _startPeriodicSync();
@@ -104,7 +111,7 @@ class HomeController extends GetxController {
   void onReady() {
     super.onReady();
     _logService.log.i("HomeController: onReady.");
-    FcmService.markAppAsReady(); 
+    FcmService.markAppAsReady();
   }
 
   @override
@@ -122,7 +129,8 @@ class HomeController extends GetxController {
     var activityStatus = await Permission.activityRecognition.request();
 
     if (!activityStatus.isGranted) {
-      Get.snackbar("Permission Denied", "Activity sensor permission is required.");
+      Get.snackbar(
+          "Permission Denied", "Activity sensor permission is required.");
       _logService.log.w("Activity Recognition permission denied.");
       return;
     }
@@ -133,21 +141,33 @@ class HomeController extends GetxController {
           .clamp(0.0, 1.0);
 
   Future<void> _getLastRecord() async {
-    lastRecord.value = await _recordActivityService.getDailyRecord(limit: 1).then((value) => value.data.firstOrNull);
+    lastRecord.value = await _recordActivityService
+        .getDailyRecord(limit: 1)
+        .then((value) => value.data.firstOrNull);
   }
 
   /// ✨ KUNCI #2: Fungsi baru untuk menyinkronkan data hari ini berdasarkan data per jam.
   Future<void> _syncTodaysData() async {
     await _requestPermissions();
-    
+
     _logService.log.i("Syncing today's hourly step data...");
     final today = DateTime.now();
 
-    // Dapatkan data per jam untuk hari ini
-    await _fetchHourlyStepData(today);
+    // Dapatkan timestamp login terakhir
+    final lastLoginString = await sl<StorageService>().read(StorageKeys.lastLoginTimeStamp);
+    final lastLoginTime = lastLoginString != null ? DateTime.parse(lastLoginString) : null;
 
-    final localTotalSteps =
-        hourlySteps.values.fold(0, (sum, item) => sum + item);
+    // Tentukan waktu mulai untuk "penyelaman": dari waktu login jika di hari yang sama,
+    // atau dari awal hari jika login terjadi di hari sebelumnya.
+    DateTime startTimeForFetch = DateTime(today.year, today.month, today.day);
+    if (lastLoginTime != null && isSameDay(lastLoginTime, today)) {
+      startTimeForFetch = lastLoginTime;
+    }
+
+    // Dapatkan data per jam untuk hari ini, dimulai dari waktu yang relevan
+    await _fetchHourlyStepData(today, startTime: startTimeForFetch);
+
+    final localTotalSteps = hourlySteps.values.fold(0, (sum, item) => sum + item);
 
     // Rekonsiliasi dengan data backend
     final backendSteps = homePageData.value?.recordDaily?.step ?? 0;
@@ -171,7 +191,8 @@ class HomeController extends GetxController {
     final lastSyncedTimestamp = lastRecord.value?.lastTimestamp;
 
     // Konversi data per jam menjadi format yang bisa dikirim ke API
-    final recordsToSync = _prepareRecordsFromHourlyData(today, hourlySteps, after: lastSyncedTimestamp);
+    final recordsToSync = _prepareRecordsFromHourlyData(today, hourlySteps,
+        after: lastSyncedTimestamp);
 
     // Hanya kirim jika ada data untuk disinkronkan
     if (recordsToSync.isNotEmpty) {
@@ -192,44 +213,59 @@ class HomeController extends GetxController {
 
     _logService.log.i("Checking for missing daily records to sync...");
 
-    if (lastRecord.value == null) return;
+    final lastRecordDate = lastRecord.value?.date;
+    final lastLoginString = await sl<StorageService>().read(StorageKeys.lastLoginTimeStamp);
+    final lastLoginTime = lastLoginString != null ? DateTime.parse(lastLoginString) : null;
+
+    if (lastRecordDate == null || lastLoginTime == null) {
+      _logService.log.w("No last record or login date found. Skipping catch-up sync.");
+      return;
+    }
+
+    DateTime effectiveStartDate = lastRecordDate.isAfter(lastLoginTime) ? lastRecordDate : lastLoginTime;
 
     final today = DateTime.now();
-    final differenceInDays = today.difference(lastRecord.value?.date ?? today).inDays;
 
-    if (differenceInDays <= 0) return;
-    _logService.log.w(
-        "$differenceInDays day(s) of data are missing. Starting catch-up sync...");
+    final differenceInDays = today.difference(effectiveStartDate).inDays;
+
+    if (differenceInDays <= 1) {
+      _logService.log.i("Data is up to date since last valid point. No catch-up sync needed.");
+      return;
+    }
+
+    _logService.log.w("${differenceInDays - 1} day(s) of valid data are missing. Starting catch-up sync...");
 
     List<RecordDailyMiniModel> allMissingRecords = [];
 
-    for (int i = 1; i < differenceInDays; i++) { // Gunakan '<' agar tidak menyertakan hari ini
-      final dateToSync = lastRecord.value?.date?.add(Duration(days: i)) ?? today;
-      
-      // Dapatkan data per jam untuk hari yang hilang
-      await _fetchHourlyStepData(dateToSync);
+    // Loop dari hari setelah effectiveStartDate sampai KEMARIN
+    for (int i = 1; i < differenceInDays; i++) {
+      final dateToSync = effectiveStartDate.add(Duration(days: i));
+
+      if (isSameDay(dateToSync, lastLoginTime)) {
+        await _fetchHourlyStepData(dateToSync, startTime: lastLoginTime);
+      } else {
+        await _fetchHourlyStepData(dateToSync);
+      }
 
       if (hourlySteps.isNotEmpty) {
-        allMissingRecords
-            .addAll(_prepareRecordsFromHourlyData(dateToSync, hourlySteps));
+        allMissingRecords.addAll(_prepareRecordsFromHourlyData(dateToSync, hourlySteps));
       }
     }
 
     if (allMissingRecords.isNotEmpty) {
       try {
-        await _recordActivityService.syncDailyRecord(
-            records: allMissingRecords);
-        _logService.log.i(
-            "Successfully synced ${allMissingRecords.length} missing hourly records.");
+        await _recordActivityService.syncDailyRecord(records: allMissingRecords);
+        _logService.log.i("Successfully synced ${allMissingRecords.length} missing hourly records.");
       } catch (e, s) {
-        _logService.log
-            .e("Failed to sync missing daily records", error: e, stackTrace: s);
+        _logService.log.e("Failed to sync missing daily records", error: e, stackTrace: s);
       }
     }
   }
 
   /// ✨ KUNCI #4: Helper untuk mengubah data per jam menjadi List<RecordDailyMiniModel>.
-  List<RecordDailyMiniModel> _prepareRecordsFromHourlyData(DateTime date, Map<int, int> hourlyData, {DateTime? after}) {
+  List<RecordDailyMiniModel> _prepareRecordsFromHourlyData(
+      DateTime date, Map<int, int> hourlyData,
+      {DateTime? after}) {
     List<RecordDailyMiniModel> records = [];
     hourlyData.forEach((hour, steps) {
       final timestamp = DateTime(date.year, date.month, date.day, hour);
@@ -258,10 +294,12 @@ class HomeController extends GetxController {
   }
 
   void _refreshStepUI() {
-    _syncTimerRefreshStepUI = Timer.periodic(_syncIntervalRefreshStepUI, (timer) async {
+    _syncTimerRefreshStepUI =
+        Timer.periodic(_syncIntervalRefreshStepUI, (timer) async {
       // Get from pedometer for step today and update UI
       final steps = await Pedometer().getStepCount(
-        from: DateTime(DateTime.now().year, DateTime.now().month, DateTime.now().day),
+        from: DateTime(
+            DateTime.now().year, DateTime.now().month, DateTime.now().day),
         to: DateTime.now(),
       );
 
@@ -308,12 +346,14 @@ class HomeController extends GetxController {
     isLoadingGetUserData.value = true;
     try {
       // Jalankan keduanya secara bersamaan untuk efisiensi
-      await Future.wait([
-        _loadMe(),
-        _loadHomePageData(),
-        _getLastRecord(),
-      ]).then((value) {
-        _startStaminaRecoveryTimer();
+      await Future.microtask(() async {
+        _loadMe();
+        await Future.wait([
+          _loadHomePageData(),
+          _getLastRecord(),
+        ]).then((value) {
+          _startStaminaRecoveryTimer();
+        });
       });
     } finally {
       isLoadingGetUserData.value = false;
@@ -330,7 +370,7 @@ class HomeController extends GetxController {
             var response = await _userService.updateUserPreference(
                 dailyStepGoals: selectedGoal);
 
-            if (response) {
+            if (response != null) {
               Get.back();
               Get.snackbar('Success',
                   'Your daily goal has been set to $selectedGoal steps!');
@@ -347,16 +387,15 @@ class HomeController extends GetxController {
     );
   }
 
-  Future<void> _fetchHourlyStepData(DateTime date) async {
-    _logService.log.i(
-        "Starting hourly step data fetch for ${DateFormat('yyyy-MM-dd').format(date)}");
+  Future<void> _fetchHourlyStepData(DateTime date, {DateTime? startTime}) async {
+    _logService.log.i("Starting hourly step data fetch for ${DateFormat('yyyy-MM-dd').format(date)}");
     hourlySteps.clear(); // Bersihkan data lama
 
-    final startTime = DateTime(date.year, date.month, date.day);
-    final endTime = DateTime(date.year, date.month, date.day, 23, 59, 59);
+    final startOfDay = startTime ?? DateTime(date.year, date.month, date.day);
+    final endOfDay = DateTime(date.year, date.month, date.day, 23, 59, 59);
 
     // Memulai proses rekursif dari rentang satu hari penuh
-    await _recursiveStepFetch(startTime, endTime);
+    await _recursiveStepFetch(startOfDay, endOfDay);
 
     _logService.log.i("Hourly step data fetched: $hourlySteps");
     update(); // Memicu update UI
@@ -590,6 +629,7 @@ class HomeController extends GetxController {
           .w("Ongoing activity detected. Redirecting to RecordActivityView.");
 
       WidgetsBinding.instance.addPostFrameCallback((_) {
+        Get.toNamed(AppRoutes.activityStart);
         Get.toNamed(AppRoutes.activityRecord);
       });
     }

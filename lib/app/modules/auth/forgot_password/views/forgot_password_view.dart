@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:flutter_svg/flutter_svg.dart';
 import 'package:get/get.dart';
 import 'package:zest_mobile/app/core/models/forms/forgot_password_form.dart';
 import 'package:zest_mobile/app/core/shared/widgets/custom_circular_progress_indicator.dart';
@@ -21,6 +22,8 @@ class ForgotPasswordView extends GetView<ForgotPasswordController> {
             mainAxisAlignment: MainAxisAlignment.center, // vertical center
             crossAxisAlignment: CrossAxisAlignment.center,
             children: [
+              Image.asset('assets/icons/ic_forget_password.png', height: 280.h),
+              SizedBox(height: 24.h),
               Form(
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,

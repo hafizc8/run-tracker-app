@@ -21,7 +21,7 @@ class RegisterCreateProfileView
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.center,
           children: [
-            SizedBox(height: 24.h),
+            Image.asset('assets/icons/ic_complete_profile.png', height: 280.h),
             Obx(() {
               RegisterCreateProfileFormModel form = controller.form.value;
               return Column(
@@ -249,6 +249,7 @@ class RegisterCreateProfileView
         margin: EdgeInsets.symmetric(horizontal: 8.w, vertical: 16.h),
         child: Obx(
           () => GradientElevatedButton(
+            contentPadding: EdgeInsets.zero,
             onPressed: !controller.isValid
                 ? null
                 : controller.isLoading.value

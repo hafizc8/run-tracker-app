@@ -1,18 +1,19 @@
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:zest_mobile/app/core/models/model/post_model.dart';
-import 'package:zest_mobile/app/core/models/model/record_activity_model.dart';
 import 'package:zest_mobile/app/core/shared/helpers/number_helper.dart';
 import 'package:zest_mobile/app/core/shared/theme/color_schemes.dart';
 import 'package:zest_mobile/app/core/shared/widgets/share_footer.dart';
-import 'package:zest_mobile/app/modules/social/widgets/static_routes_map.dart';
+import 'package:zest_mobile/app/core/shared/widgets/shimmer_loading_rectangle.dart';
 
 class ShareActivityCard extends StatelessWidget {
-  const ShareActivityCard({super.key, required this.postModel});
+  const ShareActivityCard({super.key, required this.postModel, required this.distanceInFormat});
 
   final PostModel postModel;
+  final String distanceInFormat;
 
   @override
   Widget build(BuildContext context) {
@@ -52,7 +53,7 @@ class ShareActivityCard extends StatelessWidget {
                   ),
                   SizedBox(height: 42.h),
 
-                  _buildMapPlaceholder(postModel.recordActivity),
+                  _buildMapPlaceholder(postModel.galleryMap),
                   SizedBox(height: 16.h),
 
                   ShaderMask(
@@ -90,7 +91,7 @@ class ShareActivityCard extends StatelessWidget {
                       _buildPlaceholder(
                         context: context,
                         svgIconPath: 'assets/icons/ic_run_white.svg',
-                        text: NumberHelper().formatDistanceMeterToKm(postModel.recordActivity?.lastRecordActivityLog?.distance ?? 0),
+                        text: distanceInFormat,
                       ),
                       _buildPlaceholder(
                         context: context,
@@ -136,10 +137,43 @@ class ShareActivityCard extends StatelessWidget {
     );
   }
 
-  Widget _buildMapPlaceholder(RecordActivityModel? recordActivity) {
-    return StaticRouteMap(
-      activityLogs: recordActivity?.recordActivityLogs ?? [],
-      height: 200.h,
+  Widget _buildMapPlaceholder(Gallery? galleryMap) {
+    // return StaticRouteMap(
+    //   activityLogs: recordActivity?.recordActivityLogs ?? [],
+    //   height: 200.h,
+    // );
+    return ClipRRect(
+      borderRadius: BorderRadius.circular(12.r),
+      child: CachedNetworkImage(
+        imageUrl: galleryMap?.url ?? '',
+        width: double.infinity,
+        height: 200.h,
+        fit: BoxFit.cover,
+        placeholder: (context, url) => ShimmerLoadingRectangle(height: 200.h),
+        errorWidget: (context, url, error) => _buildImagePlaceholder(),
+      ),
+    );
+  }
+
+  Widget _buildImagePlaceholder() {
+    return AspectRatio(
+      aspectRatio: 1,
+      child: ClipRRect(
+        borderRadius: BorderRadius.circular(12),
+        child: Container(
+          color: Colors.grey.shade300,
+          child: Center(
+            child: Column(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                Icon(Icons.image, size: 64.r, color: Colors.grey),
+                SizedBox(height: 8.h),
+                const Text('Maps not available', style: TextStyle(color: Colors.grey)),
+              ],
+            ),
+          ),
+        ),
+      ),
     );
   }
 }

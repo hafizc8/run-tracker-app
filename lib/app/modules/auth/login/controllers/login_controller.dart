@@ -41,12 +41,8 @@ class LoginController extends GetxController {
   Future<void> loginWithGoogle() async {
     isLoadingGoogle.value = true;
     try {
-      final success = await _authService.loginWithGoogle();
-      if (success) {
-        Get.snackbar('Success', 'Logged in successfully!');
-      } else {
-        Get.snackbar('Error', 'Login failed');
-      }
+      final resp = await _authService.loginWithGoogle();
+      if (resp) Get.offAllNamed(AppRoutes.mainHome);
     } catch (e) {
       // Map exception messages into friendly text
       String message;
@@ -59,7 +55,7 @@ class LoginController extends GetxController {
       } else {
         message = "Unexpected error: $e";
       }
-      print(e.toString());
+
       Get.snackbar('Auth Error', message);
     } finally {
       isLoadingGoogle.value = false;

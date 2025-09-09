@@ -18,6 +18,7 @@ import 'package:zest_mobile/app/core/services/event_service.dart';
 import 'package:zest_mobile/app/core/services/post_service.dart';
 import 'package:zest_mobile/app/core/services/storage_service.dart';
 import 'package:zest_mobile/app/core/services/user_service.dart';
+import 'package:zest_mobile/app/core/shared/helpers/unit_helper.dart';
 import 'package:zest_mobile/app/core/shared/widgets/custom_dialog_confirmation.dart';
 import 'package:zest_mobile/app/core/values/storage_keys.dart';
 import 'package:zest_mobile/app/modules/main_profile/widgets/custom_tab_bar/controllers/custom_tab_bar_controller.dart';
@@ -29,7 +30,7 @@ class ProfileMainController extends GetxController {
   var pageEvent = 0;
   var isLoadingEvent = false.obs;
   var isLoadingActionEvent = false.obs;
-  var isLoadingUpComingEvent = false.obs;
+  var isLoadingUser = false.obs;
   var hasReacheMaxEvent = false.obs;
   ScrollController eventController = ScrollController();
 
@@ -48,6 +49,7 @@ class ProfileMainController extends GetxController {
   final _eventService = sl<EventService>();
   final _challengeService = sl<ChallengeService>();
   final _postService = sl<PostService>();
+  final unitHelper = sl<UnitHelper>();
 
   final TabBarController tabBarController = Get.put(TabBarController());
 
@@ -74,6 +76,7 @@ class ProfileMainController extends GetxController {
   }
 
   Future<void> getDetailUser() async {
+    isLoadingUser.value = true;
     try {
       final storedUser = sl<StorageService>().read(StorageKeys.detailUser);
 
@@ -83,6 +86,8 @@ class ProfileMainController extends GetxController {
       } else {
         // Fetch from server
         user.value = await _userService.detailUser(_authService.user!.id!);
+        await sl<StorageService>()
+            .write(StorageKeys.detailUser, user.value!.toJson());
       }
     } on AppException catch (e) {
       // show error snackbar, toast, etc
@@ -94,6 +99,8 @@ class ProfileMainController extends GetxController {
         backgroundColor: Colors.red,
         colorText: Colors.white,
       );
+    } finally {
+      isLoadingUser.value = false;
     }
   }
 

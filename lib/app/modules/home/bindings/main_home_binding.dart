@@ -2,6 +2,7 @@ import 'package:get/get.dart';
 import 'package:zest_mobile/app/modules/home/controllers/home_controller.dart';
 import 'package:zest_mobile/app/modules/home/controllers/main_home_controller.dart';
 import 'package:zest_mobile/app/modules/home/controllers/shop_controller.dart';
+import 'package:zest_mobile/app/modules/main_profile/controllers/main_profile_controller.dart';
 import 'package:zest_mobile/app/modules/social/controllers/post_controller.dart';
 import 'package:zest_mobile/app/modules/social/controllers/social_club_search_controller.dart';
 import 'package:zest_mobile/app/modules/social/controllers/social_controller.dart';
@@ -16,12 +17,13 @@ class MainHomeBinding extends Bindings {
     Get.put<MainHomeController>(MainHomeController());
     Get.lazyPut<HomeController>(() => HomeController());
     Get.lazyPut<ShopController>(() => ShopController());
+    Get.lazyPut<ProfileMainController>(() => ProfileMainController());
     Get.lazyPut<SocialController>(() => SocialController());
-    Get.put<PostController>(PostController());
+    Get.lazyPut<PostController>(() => PostController());
     Get.lazyPut<SocialFollowingController>(() => SocialFollowingController());
     Get.lazyPut<SocialFollowersController>(() => SocialFollowersController());
-    Get.put<EventController>(EventController());
-    Get.put<EventActionController>(EventActionController());
+    Get.lazyPut<EventController>(() => EventController());
+    Get.lazyPut<EventActionController>(() => EventActionController());
     Get.lazyPut<SocialClubSearchController>(() => SocialClubSearchController());
   }
 }

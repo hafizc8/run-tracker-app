@@ -31,6 +31,29 @@ class LeaderboardTopWalkersTabView extends GetView<LeaderboardTopWalkersControll
               children: [
                 _buildChipFilter(context),
                 const SizedBox(),
+                Obx(
+                  () {
+                    if (controller.areaFilter.value.isEmpty) {
+                      return const SizedBox();
+                    }
+
+                    return Container(
+                      margin: EdgeInsets.only(top: 20.h, bottom: 0.h, right: 5.w),
+                      child: Align(
+                        alignment: Alignment.centerRight,
+                        child: Text(
+                          controller.areaFilter.value,
+                          style: Theme.of(context).textTheme.headlineSmall?.copyWith(
+                            color: const Color(0xFFA5A5A5),
+                            fontSize: 13.sp,
+                            fontWeight: FontWeight.w400,
+                          ),
+                          textAlign: TextAlign.right,
+                        ),
+                      ),
+                    );
+                  }
+                ),
                 _buildTopWalkersList(context),
                 SizedBox(height: 80.h),
               ],
@@ -220,7 +243,7 @@ class LeaderboardTopWalkersTabView extends GetView<LeaderboardTopWalkersControll
                 final bool isCurrentUser = (me?.rank == walker.rank);
 
                 // ✨ KUNCI: Bungkus item user dengan VisibilityDetector ✨
-                if (isCurrentUser) {
+                if (isCurrentUser && (walker.totalStep ?? 0) > 0) {
                   return VisibilityDetector(
                     key: const Key('my_rank_in_list'),
                     onVisibilityChanged: (visibilityInfo) {
@@ -259,7 +282,7 @@ class LeaderboardTopWalkersTabView extends GetView<LeaderboardTopWalkersControll
         bottom: controller.showFloatingRank.value ? 16.h : -100.h,
         left: 0,
         right: 0,
-        child: (me != null)
+        child: (me != null && me.totalStep != null && me.totalStep! > 0)
             ? Material(
                 elevation: 8,
                 borderRadius: BorderRadius.circular(12.r),

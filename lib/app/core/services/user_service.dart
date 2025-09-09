@@ -117,7 +117,7 @@ class UserService {
       );
 
       UserDetailModel user = UserDetailModel.fromJson(response.data['data']);
-      await sl<StorageService>().write(StorageKeys.detailUser, user.toJson());
+
       return user;
     } catch (e) {
       rethrow;
@@ -150,6 +150,29 @@ class UserService {
     }
   }
 
+  Future<bool> deleteAccount() async {
+    try {
+      final response = await _apiService.request(
+        path: AppConstants.userOther,
+        method: HttpMethod.delete,
+      );
+
+      if (response.statusCode != 200) {
+        throw Exception('Failed to delete account');
+      }
+
+      if (response.data['success']) {
+        await sl<StorageService>().remove(StorageKeys.token);
+        await sl<StorageService>().remove(StorageKeys.user);
+        await sl<StorageService>().remove(StorageKeys.detailUser);
+      }
+
+      return response.data['success'];
+    } catch (e) {
+      rethrow;
+    }
+  }
+
   Future<PaginatedDataResponse<UserMiniModel>> getUserList({
     required int page,
     int random = 1,
@@ -158,6 +181,8 @@ class UserService {
     String? followingBy,
     String? followersBy,
     String? checkClub,
+    String? inviteableType,
+    String? inviteableId,
   }) async {
     try {
       final response = await _apiService.request<FormData>(
@@ -166,7 +191,9 @@ class UserService {
         queryParams: {
           'page': page.toString(),
           'random': random.toString(),
-          'search': search,
+          if (inviteableId != null) 'inviteable_id': inviteableId,
+          if (inviteableType != null) 'inviteable_type': inviteableType,
+          if (search != '') 'search': search,
           if (followingBy != null) 'following_by': followingBy,
           if (followersBy != null) 'follower_by': followersBy,
           if (followStatus != null) 'follow_status': followStatus,
@@ -187,7 +214,7 @@ class UserService {
     }
   }
 
-  Future<bool> updateUserPreference({
+  Future<UserModel?> updateUserPreference({
     int? unit, // 0 km, 1 miles
     bool? allowNotification,
     bool? allowEmailNotification,
@@ -207,7 +234,14 @@ class UserService {
             if (dailyStepGoals != null) 'daily_step_goals': dailyStepGoals
           });
 
-      return response.data['success'];
+      if (response.statusCode != 200) {
+        throw Exception('Failed to update user preference');
+      }
+
+      final UserModel user = UserModel.fromJson(response.data['data']);
+      await sl<StorageService>().write(StorageKeys.user, user.toJson());
+
+      return user;
     } catch (e) {
       rethrow;
     }

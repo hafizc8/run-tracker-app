@@ -65,10 +65,6 @@ class DetailClubController extends GetxController {
     }
   }
 
-  Future<void> onRefresh() async {
-    loadDetail();
-  }
-
   Future<void> confirmCancelEvent() async {
     await Get.dialog(
       Obx(

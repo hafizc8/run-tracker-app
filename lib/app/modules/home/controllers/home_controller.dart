@@ -171,7 +171,10 @@ class HomeController extends GetxController {
 
     // Rekonsiliasi dengan data backend
     final backendSteps = homePageData.value?.recordDaily?.step ?? 0;
-    final authoritativeSteps = max(backendSteps, localTotalSteps);
+    int authoritativeSteps = max(backendSteps, localTotalSteps);
+    if (backendSteps > localTotalSteps) {
+      authoritativeSteps = backendSteps + localTotalSteps;
+    }
 
     // Perbarui UI dengan nilai yang paling benar
     validatedSteps.value = authoritativeSteps;
@@ -294,17 +297,34 @@ class HomeController extends GetxController {
   }
 
   void _refreshStepUI() {
-    _syncTimerRefreshStepUI =
-        Timer.periodic(_syncIntervalRefreshStepUI, (timer) async {
-      // Get from pedometer for step today and update UI
-      final steps = await Pedometer().getStepCount(
-        from: DateTime(
-            DateTime.now().year, DateTime.now().month, DateTime.now().day),
-        to: DateTime.now(),
-      );
+    _syncTimerRefreshStepUI = Timer.periodic(_syncIntervalRefreshStepUI, (timer) async {
+      final today = DateTime.now();
 
-      // Update UI
-      validatedSteps.value = steps;
+      // Dapatkan timestamp login terakhir
+      final lastLoginString = await sl<StorageService>().read(StorageKeys.lastLoginTimeStamp);
+      final lastLoginTime = lastLoginString != null ? DateTime.parse(lastLoginString) : null;
+
+      // Tentukan waktu mulai untuk "penyelaman": dari waktu login jika di hari yang sama,
+      // atau dari awal hari jika login terjadi di hari sebelumnya.
+      DateTime startTimeForFetch = DateTime(today.year, today.month, today.day);
+      if (lastLoginTime != null && isSameDay(lastLoginTime, today)) {
+        startTimeForFetch = lastLoginTime;
+      }
+
+      // Dapatkan data per jam untuk hari ini, dimulai dari waktu yang relevan
+      final int localTotalSteps = await _getStepsForPeriod(startTimeForFetch, DateTime.now());
+
+      // Rekonsiliasi dengan data backend
+      final backendSteps = homePageData.value?.recordDaily?.step ?? 0;
+      int authoritativeSteps = max(backendSteps, localTotalSteps);
+      if (backendSteps > localTotalSteps) {
+        authoritativeSteps = backendSteps + localTotalSteps;
+      }
+
+      // Perbarui UI dengan nilai yang paling benar
+      validatedSteps.value = authoritativeSteps;
+      _totalActiveTimeInSeconds.value = _estimateActiveTime(authoritativeSteps);
+      _totalCaloriesBurned.value = _estimateCalories(authoritativeSteps);
     });
   }
 

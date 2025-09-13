@@ -6,7 +6,16 @@ import '../controllers/share_challenge_progress_individual_controller.dart';
 class ShareChallengeProgressIndividualBinding extends Bindings {
   @override
   void dependencies() {
-    final challengeModel = Get.arguments as ChallengeDetailModel;
-    Get.put(ShareChallengeProgressIndividualController(challengeModel: challengeModel));
+    if (Get.arguments is ChallengeDetailModel) {
+      final challengeModel = Get.arguments as ChallengeDetailModel;
+      Get.put(ShareChallengeProgressIndividualController(challengeModel: challengeModel));
+    } else {
+      Future.delayed(Duration.zero, () {
+        Get.snackbar("Error", "Could not load data");
+        if (Get.previousRoute.isNotEmpty) {
+          Get.back(closeOverlays: true);
+        }
+      });
+    }
   }
 }

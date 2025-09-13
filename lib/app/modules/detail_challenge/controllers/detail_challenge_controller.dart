@@ -1,5 +1,3 @@
-import 'dart:ffi';
-
 import 'package:get/get.dart';
 import 'package:zest_mobile/app/core/di/service_locator.dart';
 import 'package:zest_mobile/app/core/exception/app_exception.dart';
@@ -36,9 +34,19 @@ class DetailChallangeController extends GetxController {
   void onInit() {
     super.onInit();
 
-    if (Get.arguments != null) {
-      challengeId = Get.arguments['challengeId'];
-      init();
+    if (Get.arguments is Map && Get.arguments.containsKey('challengeId')) {
+      final id = Get.arguments['challengeId'];
+      
+      if (id is String && id.isNotEmpty) {
+        challengeId = id;
+        init();
+      } else {
+        Get.snackbar("Error", "Could not load challenge details.");
+        Get.back();
+      }
+    } else {
+      Get.snackbar("Error", "Could not load challenge details. (2)");
+      Get.back();
     }
   }
 

@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:get/get.dart';
 import 'package:zest_mobile/app/core/models/model/club_activities_model.dart';
@@ -28,39 +29,40 @@ class ClubActivityTabView extends GetView<ClubActivityTabController> {
         }
 
         if (controller.activities.isEmpty) {
-          return Center(
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.center,
-              mainAxisSize: MainAxisSize.min,
-              children: [
-                const SizedBox(height: 30),
-                SvgPicture.asset('assets/icons/ic_no_club_yet.svg', width: 140),
-                const SizedBox(height: 16),
-                Text(
-                  'No activities yet',
-                  style: Theme.of(context).textTheme.titleMedium?.copyWith(
-                        color: const Color(0xFF5C5C5C),
-                        fontSize: 20,
-                      ),
-                  textAlign: TextAlign.center,
-                ),
-                const SizedBox(height: 3),
-                Text(
-                  'You can create an event or create a challange',
-                  style: Theme.of(context).textTheme.titleSmall?.copyWith(
-                        color: const Color(0xFF5C5C5C),
-                      ),
-                  textAlign: TextAlign.center,
-                ),
-              ],
+          return SingleChildScrollView(
+            child: Center(
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.center,
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  SizedBox(height: 65.h),
+                  SvgPicture.asset('assets/icons/ic_no_club_yet.svg', width: 140),
+                  const SizedBox(height: 16),
+                  Text(
+                    'No activities yet',
+                    style: Theme.of(context).textTheme.titleMedium?.copyWith(
+                          color: const Color(0xFF5C5C5C),
+                          fontSize: 20,
+                        ),
+                    textAlign: TextAlign.center,
+                  ),
+                  const SizedBox(height: 3),
+                  Text(
+                    'You can create an event or create a challange',
+                    style: Theme.of(context).textTheme.titleSmall?.copyWith(
+                          color: const Color(0xFF5C5C5C),
+                        ),
+                    textAlign: TextAlign.center,
+                  ),
+                ],
+              ),
             ),
           );
         }
 
         return ListView.builder(
-          physics: const BouncingScrollPhysics(
-            parent: AlwaysScrollableScrollPhysics(),
-          ),
+          shrinkWrap: true,
+          physics: const NeverScrollableScrollPhysics(),
           itemCount: controller.activities.length +
               (controller.hasReacheMax.value ? 0 : 1),
           itemBuilder: (context, index) {

@@ -95,7 +95,9 @@ class UpdateClubController extends GetxController {
       bool resp = await _clubService.update(clubId: updateClubForm.value.id!, form: updateClubForm.value);
       if (resp) {
         // refresh
-        Get.find<DetailClubController>().loadDetail();
+        if (Get.isRegistered<DetailClubController>()) {
+          Get.find<DetailClubController>().loadDetail();
+        }
 
         Get.back(closeOverlays: true);
         Get.snackbar("Success", "Successfully update club");

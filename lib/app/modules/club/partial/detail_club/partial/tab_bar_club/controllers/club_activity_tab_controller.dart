@@ -25,7 +25,16 @@ class ClubActivityTabController extends GetxController {
   @override
   void onInit() {
     super.onInit();
-    clubId.value = Get.arguments as String;
+    if (Get.arguments is String) {
+      clubId.value = Get.arguments as String;
+    } else {
+      Future.delayed(Duration.zero, () {
+        Get.snackbar("Error", "Could not load data");
+        if (Get.previousRoute.isNotEmpty) {
+          Get.back(closeOverlays: true);
+        }
+      });
+    }
     getClubActivity();
     clubActivityScrollController.addListener(() {
       final position = clubActivityScrollController.position;

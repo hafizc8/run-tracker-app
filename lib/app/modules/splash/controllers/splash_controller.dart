@@ -59,15 +59,24 @@ class SplashController extends GetxController {
     // detail terjadi setelah navigasi home selesai.
     Future.delayed(const Duration(seconds: 2), () {
       if (uri.host == "share-club" && uri.queryParameters['club'] != null) {
+        if (uri.queryParameters['club'] == null) return;
         Get.toNamed(AppRoutes.detailClub, arguments: uri.queryParameters['club']);
+
       } else if (uri.host == "share-profile" && uri.queryParameters['user'] != null) {
+        if (uri.queryParameters['user'] == null) return;
         Get.toNamed(AppRoutes.profileUser, arguments: uri.queryParameters['user']);
+
       } else if (uri.host == "share-event" && uri.queryParameters['event'] != null) {
+        if (uri.queryParameters['event'] == null) return;
         Get.toNamed(AppRoutes.socialYourPageEventDetail, arguments: {'eventId': uri.queryParameters['event']});
+
       } else if (uri.host == "share-post" && uri.queryParameters['post'] != null) {
+        if (uri.queryParameters['post'] == null) return;
         final postController = Get.put(PostController());
         postController.goToDetail(postId: uri.queryParameters['post'] ?? '', isFocusComment: false);
+
       } else if (uri.host == "share-challenge" && uri.queryParameters['challenge'] != null) {
+        if (uri.queryParameters['challenge'] == null) return;
         Get.toNamed(AppRoutes.challengedetails, arguments: {"challengeId": uri.queryParameters['challenge']});
       }
     });

@@ -6,7 +6,16 @@ import '../controllers/share_challenge_controller.dart';
 class ShareChallengeBinding extends Bindings {
   @override
   void dependencies() {
-    final challengeModel = Get.arguments as ChallengeModel;
-    Get.put(ShareChallengeController(challengeModel: challengeModel));
+    if (Get.arguments is ChallengeModel) {
+      final challengeModel = Get.arguments as ChallengeModel;
+      Get.put(ShareChallengeController(challengeModel: challengeModel));
+    } else {
+      Future.delayed(Duration.zero, () {
+        Get.snackbar("Error", "Could not load data");
+        if (Get.previousRoute.isNotEmpty) {
+          Get.back(closeOverlays: true);
+        }
+      });
+    }
   }
 }

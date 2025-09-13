@@ -6,7 +6,16 @@ class EditActivityBinding extends Bindings {
   @override
 
   void dependencies() {
-    final recordActivityData = Get.arguments as RecordActivityModel;
-    Get.put(EditActivityController(recordActivityData: recordActivityData));
+    if (Get.arguments is RecordActivityModel) {
+      final recordActivityData = Get.arguments as RecordActivityModel;
+      Get.put(EditActivityController(recordActivityData: recordActivityData));
+    } else {
+      Future.delayed(Duration.zero, () {
+        Get.snackbar("Error", "Could not load data");
+        if (Get.previousRoute.isNotEmpty) {
+          Get.back(closeOverlays: true);
+        }
+      });
+    }
   }
 }

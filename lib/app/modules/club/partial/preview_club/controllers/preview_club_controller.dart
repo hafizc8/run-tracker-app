@@ -55,6 +55,7 @@ class PreviewClubController extends GetxController {
         clubId: clubId,
         page: 1,
         limit: 10,
+        status: [1, 2],
       );
 
       for (ClubMemberModel member in response.data) {

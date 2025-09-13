@@ -83,7 +83,9 @@ class AllBadgesController extends GetxController {
               Get.snackbar('Success', 'Your daily goal has been set to $selectedGoal steps!');
 
               // find HomeController
-              Get.find<HomeController>().refreshData();
+              if (Get.isRegistered<HomeController>()) {
+                Get.find<HomeController>().refreshData();
+              }
             }
           } catch (e) {
             print('Failed to save goal: $e');

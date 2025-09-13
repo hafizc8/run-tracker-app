@@ -10,7 +10,7 @@ import 'package:zest_mobile/app/core/di/service_locator.dart';
 import 'package:zest_mobile/app/core/models/model/user_model.dart';
 import 'package:zest_mobile/app/core/services/auth_service.dart';
 import 'package:zest_mobile/app/core/values/app_constants.dart';
-import 'package:zest_mobile/app/modules/share/badges/views/share_badges_card.dart';
+import 'package:zest_mobile/app/modules/share/daily_streak/views/share_daily_streak_card.dart';
 import 'package:zest_mobile/app/modules/share/widgets/share_image_wrapper.dart';
 
 class ShareDailyStreakController extends GetxController {
@@ -53,14 +53,14 @@ class ShareDailyStreakController extends GetxController {
     // 1. Tangkap widget sebagai gambar (dalam format Uint8List)
     final imageBytes = await screenshotController.captureFromWidget(
       ShareImageWrapper(
-        shareCard: ShareBadgesCard(
+        shareCard: ShareDailySteakCard(
           title: title,
           description: description,
           imageUrl: imageUrl,
         ),
         backgroundImagePath: 'assets/images/background_share-2.png',
       ),
-      pixelRatio: 4.0,
+      pixelRatio: 2.0,
     );
 
     // 2. Simpan gambar ke file sementara

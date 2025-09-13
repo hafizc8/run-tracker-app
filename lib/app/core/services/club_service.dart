@@ -105,8 +105,12 @@ class ClubService {
     }
   }
 
-  Future<PaginatedDataResponse<ClubMemberModel>> getAllMembers(
-      {required String clubId, required int page, int? limit}) async {
+  Future<PaginatedDataResponse<ClubMemberModel>> getAllMembers({
+      required String clubId, 
+      required int page, 
+      int? limit,
+      List<int>? status,
+    }) async {
     try {
       final response = await _apiService.request(
         path: AppConstants.clubGetAllMember(clubId),
@@ -114,6 +118,7 @@ class ClubService {
         queryParams: {
           'page': page.toString(),
           if (limit != null) 'limit': limit.toString(),
+          if (status != null && status.isNotEmpty) 'status[]': status,
         },
       );
 

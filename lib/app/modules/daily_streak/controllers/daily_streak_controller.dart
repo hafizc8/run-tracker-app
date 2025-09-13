@@ -97,10 +97,7 @@ class DailyStreakController extends GetxController {
   void onDaySelected(DateTime selected, DateTime focused) {
     focusedDay.value = focused;
     
-    if (isSameDay(selectedDay.value, selected)) {
-      selectedDay.value = null;
-      selectedRecord.value = null;
-    } else {
+    if (!isSameDay(selectedDay.value, selected)) {
       selectedDay.value = selected;
       final record = dailyRecords.firstWhere(
         (r) => isSameDay(r.date, selected),

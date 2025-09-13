@@ -4,6 +4,8 @@ import 'package:zest_mobile/app/core/exception/app_exception.dart';
 import 'package:zest_mobile/app/core/exception/handler/app_exception_handler_info.dart';
 import 'package:zest_mobile/app/core/models/model/club_model.dart';
 import 'package:zest_mobile/app/core/services/club_service.dart';
+import 'package:zest_mobile/app/modules/club/partial/detail_club/partial/tab_bar_club/controllers/club_activity_tab_controller.dart';
+import 'package:zest_mobile/app/modules/club/partial/detail_club/partial/tab_bar_club/controllers/club_leaderboard_tab_controller.dart';
 import 'package:zest_mobile/app/modules/social/controllers/social_club_search_controller.dart';
 import 'package:zest_mobile/app/modules/social/views/partial/for_you_tab/widget/confirmation.dart';
 
@@ -23,13 +25,30 @@ class DetailClubController extends GetxController {
   @override
   void onInit() {
     super.onInit();
-    clubId.value = Get.arguments as String;
+    if (Get.arguments is String) {
+      clubId.value = Get.arguments as String;
+    } else {
+      Future.delayed(Duration.zero, () {
+        Get.snackbar("Error", "Could not load data");
+        if (Get.previousRoute.isNotEmpty) {
+          Get.back(closeOverlays: true);
+        }
+      });
+    }
   }
 
   @override
   void onReady() {
     super.onReady();
     loadDetail();
+  }
+
+  // on refresh
+  Future<void> onRefresh() async {
+    loadDetail();
+
+    Get.find<ClubActivityTabController>().getClubActivity();
+    Get.find<ClubLeaderboardTabController>().getLeaderboard();
   }
 
   Future<void> loadDetail() async {

@@ -1,4 +1,5 @@
 import 'package:cached_network_image/cached_network_image.dart';
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_svg/flutter_svg.dart';
@@ -10,7 +11,6 @@ import 'package:zest_mobile/app/core/models/model/club_model.dart';
 import 'package:zest_mobile/app/core/models/model/event_model.dart';
 import 'package:zest_mobile/app/core/shared/helpers/number_helper.dart';
 import 'package:zest_mobile/app/core/shared/widgets/shimmer_loading_circle.dart';
-import 'package:zest_mobile/app/core/shared/widgets/shimmer_loading_list.dart';
 import 'package:zest_mobile/app/modules/club/partial/detail_club/controllers/detail_club_controller.dart';
 import 'package:zest_mobile/app/core/extension/date_extension.dart';
 import 'package:zest_mobile/app/modules/club/partial/detail_club/partial/tab_bar_club/controllers/club_activity_tab_controller.dart';
@@ -18,6 +18,7 @@ import 'package:zest_mobile/app/modules/club/partial/detail_club/partial/tab_bar
 import 'package:zest_mobile/app/modules/club/partial/detail_club/partial/tab_bar_club/controllers/tab_bar_club_controller.dart';
 import 'package:zest_mobile/app/modules/club/partial/detail_club/partial/tab_bar_club/views/club_activity_tab_view.dart';
 import 'package:zest_mobile/app/modules/club/partial/detail_club/partial/tab_bar_club/views/club_leaderboard_tab_view.dart';
+import 'package:zest_mobile/app/modules/club/partial/detail_club/views/detail_club_shimmer.dart';
 import 'package:zest_mobile/app/modules/social/views/partial/for_you_tab/event/controllers/event_action_controller.dart';
 import 'package:zest_mobile/app/routes/app_routes.dart';
 
@@ -72,32 +73,37 @@ class DetailClubView extends GetView<DetailClubController> {
     return Scaffold(
       body: Obx(() {
         if (controller.isLoading.value) {
-          return const ShimmerLoadingList(
-            itemCount: 5,
-            itemHeight: 100,
-          );
+          return const DetailClubShimmer();
         }
 
-        return NestedScrollView(
+        return CustomScrollView(
           controller: (tabBarClubController.selectedIndex.value == 0)
               ? clubActivityTabController.clubActivityScrollController
               : clubLeaderboardTabController.clubLeaderboardScrollController,
-          headerSliverBuilder: (BuildContext context, bool innerBoxIsScrolled) {
-            return <Widget>[
-              _buildSliverAppBar(context),
-              SliverToBoxAdapter(
-                child: _buildClubInfo(context: context),
+
+          physics: const BouncingScrollPhysics(
+            parent: AlwaysScrollableScrollPhysics(),
+          ),
+          slivers: <Widget>[
+            CupertinoSliverRefreshControl(
+              onRefresh: controller.onRefresh,
+            ),
+
+            _buildSliverAppBar(context),
+            SliverToBoxAdapter(
+              child: _buildClubInfo(context: context),
+            ),
+            SliverPersistentHeader(
+              delegate: _SliverTabBarDelegate(
+                tabBar: _buildCustomTabBar(context, customTabBarHeight),
+                tabBarHeight: customTabBarHeight,
               ),
-              SliverPersistentHeader(
-                delegate: _SliverTabBarDelegate(
-                  tabBar: _buildCustomTabBar(context, customTabBarHeight),
-                  tabBarHeight: customTabBarHeight,
-                ),
-                pinned: true,
-              ),
-            ];
-          },
-          body: _buildTabBarView(context), // Kirim TabController juga
+              pinned: true,
+            ),
+            SliverFillRemaining(
+              child: _buildTabBarView(context),
+            ),
+          ],
         );
       }),
       floatingActionButton: Obx(() {

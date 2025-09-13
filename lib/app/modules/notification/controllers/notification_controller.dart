@@ -156,15 +156,19 @@ class NotificationController extends GetxController {
       );
 
     } else if (notification?.type == NotificationTypeEnum.userFollowing.name) {
+      if (notification?.data?['user']['id'] == null) return;
       Get.toNamed(AppRoutes.profileUser, arguments: notification?.data?['user']['id']);
     
     } else if (notification?.type == NotificationTypeEnum.clubInvite.name) {
+      if (notification?.data?['club']['id'] == null) return;
       Get.toNamed(AppRoutes.previewClub, arguments: notification?.data?['club']['id']);
     
     } else if (notification?.type == NotificationTypeEnum.challangeInvite.name) {
+      if (notification?.data?['challange']['id'] == null) return;
       Get.toNamed(AppRoutes.challengedetails, arguments: {"challengeId": notification?.data?['challange']['id']});
     
     } else if (notification?.type == NotificationTypeEnum.eventInvite.name) {
+      if (notification?.data?['event']['id'] == null) return;
       Get.put(EventController());
       Get.put(EventActionController());
       Get.toNamed(AppRoutes.socialYourPageEventDetail, arguments: {'eventId': notification?.data?['event']['id']});

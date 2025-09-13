@@ -205,9 +205,15 @@ class EditActivityController extends GetxController {
       if (isSuccess) {
         // Kembali ke halaman utama dan menuju tab profile
         Get.until((route) => route.settings.name == AppRoutes.mainHome);
-        Get.find<MainHomeController>().changeTab(3); // change to menu profile
-        Get.find<ProfileMainController>().getPostActivity(refresh: true);
-        Get.find<TabBarController>().changeTabIndex(0); // change to tab overview
+        if (Get.isRegistered<MainHomeController>()) {
+          Get.find<MainHomeController>().changeTab(3); // change to menu profile
+        }
+        if (Get.isRegistered<ProfileMainController>()) {
+          Get.find<ProfileMainController>().getPostActivity(refresh: true);
+        }
+        if (Get.isRegistered<TabBarController>()) {
+          Get.find<TabBarController>().changeTabIndex(0); // change to tab overview
+        }
 
         Get.snackbar('Success', 'Successfully share activity');
       }

@@ -6,7 +6,16 @@ import '../controllers/share_profile_controller.dart';
 class ShareProfileBinding extends Bindings {
   @override
   void dependencies() {
-    final userDetailModel = Get.arguments as UserDetailModel;
-    Get.put(ShareProfileController(userDetailModel: userDetailModel));
+    if (Get.arguments is UserDetailModel) {
+      final userDetailModel = Get.arguments as UserDetailModel;
+      Get.put(ShareProfileController(userDetailModel: userDetailModel));
+    } else {
+      Future.delayed(Duration.zero, () {
+        Get.snackbar("Error", "Could not load data");
+        if (Get.previousRoute.isNotEmpty) {
+          Get.back(closeOverlays: true);
+        }
+      });
+    }
   }
 }

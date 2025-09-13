@@ -63,7 +63,17 @@ class AppInterceptor extends Interceptor {
         break;
       case AppExceptionType.notFound:
         // get.back and show message with snackbar
-        Get.back(closeOverlays: true);
+        if (g.Get.previousRoute.isNotEmpty) {
+          Get.back(closeOverlays: true);
+        }
+        break;
+
+      case AppExceptionType.noInternet:
+        AppInterceptor.cancelAllRequests("No Internet Connection");
+
+        if (g.Get.previousRoute.isNotEmpty) {
+          Get.back(closeOverlays: true);
+        }
         break;
       case AppExceptionType.serverError:
         Get.snackbar(

@@ -545,7 +545,9 @@ class RecordActivityController extends GetxController {
           labelConfirm: 'Yes, delete',
           onConfirm: () {
             deleteActivity();
-            Get.find<StartActivityController>().loadMe(); // refresh stamina in start activity page
+            if (Get.isRegistered<StartActivityController>()) {
+              Get.find<StartActivityController>().loadMe();
+            }
             Get.back(closeOverlays: true);
           },
           onCancel: () => Get.back(),

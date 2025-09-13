@@ -60,7 +60,7 @@ class ShareBadgesController extends GetxController {
         ),
         backgroundImagePath: 'assets/images/background_share-2.png',
       ),
-      pixelRatio: 4.0,
+      pixelRatio: 2.0,
     );
 
     // 2. Simpan gambar ke file sementara

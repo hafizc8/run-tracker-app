@@ -149,40 +149,43 @@ class SocialInfoFollowersView extends GetView<SocialInfoFollowersController> {
             .bodyMedium
             ?.copyWith(fontWeight: FontWeight.w600),
       ),
-      trailing: Row(
-        mainAxisSize: MainAxisSize.min,
-        children: [
-          Obx(
-            () => InkWell(
-              onTap: () {
-                if (user.isFollowing == 0) {
-                  controller.follow(user.id);
-                }
-              },
-              child: Visibility(
-                visible: user.id == controller.userId.value,
-                replacement: Visibility(
-                  visible: user.isFollowing == 0,
-                  replacement: InkWell(
-                    onTap: () => Get.toNamed(
-                      AppRoutes.userChat,
-                      arguments: user,
+      trailing: Visibility(
+        visible: controller.user?.id != user.id,
+        child: Row(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            Obx(
+              () => InkWell(
+                onTap: () {
+                  if (user.isFollowing == 0) {
+                    controller.follow(user.id);
+                  }
+                },
+                child: Visibility(
+                  visible: user.id == controller.userId.value,
+                  replacement: Visibility(
+                    visible: user.isFollowing == 0,
+                    replacement: InkWell(
+                      onTap: () => Get.toNamed(
+                        AppRoutes.userChat,
+                        arguments: user,
+                      ),
+                      child: SvgPicture.asset(
+                        'assets/icons/msg.svg',
+                      ),
                     ),
                     child: SvgPicture.asset(
-                      'assets/icons/msg.svg',
+                      'assets/icons/follback.svg',
                     ),
                   ),
-                  child: SvgPicture.asset(
-                    'assets/icons/follback.svg',
+                  child: const Center(
+                    child: CircularProgressIndicator(),
                   ),
-                ),
-                child: const Center(
-                  child: CircularProgressIndicator(),
                 ),
               ),
             ),
-          ),
-        ],
+          ],
+        ),
       ),
     );
   }

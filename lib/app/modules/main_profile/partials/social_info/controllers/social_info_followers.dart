@@ -3,6 +3,8 @@ import 'package:get/get.dart';
 import 'package:zest_mobile/app/core/di/service_locator.dart';
 import 'package:zest_mobile/app/core/models/interface/pagination_response_model.dart';
 import 'package:zest_mobile/app/core/models/model/user_mini_model.dart';
+import 'package:zest_mobile/app/core/models/model/user_model.dart';
+import 'package:zest_mobile/app/core/services/auth_service.dart';
 import 'package:zest_mobile/app/core/services/user_service.dart';
 import 'package:zest_mobile/app/core/shared/helpers/debouncer.dart';
 
@@ -16,6 +18,9 @@ class SocialInfoFollowersController extends GetxController {
   TextEditingController searchController = TextEditingController();
 
   final _userService = sl<UserService>();
+  final _authService = sl<AuthService>();
+
+  UserModel? get user => _authService.user;
 
   var friends = <UserMiniModel>[].obs;
   var search = ''.obs;

@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/widgets.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
@@ -81,7 +82,6 @@ class HomeView extends GetView<HomeController> {
                                 color: Color(0xFF494949),
                                 shape: BoxShape.circle,
                               ),
-
                               padding: EdgeInsets.all(8.w),
                               child: SvgPicture.asset(
                                 'assets/icons/ic_notification_2.svg',
@@ -99,7 +99,6 @@ class HomeView extends GetView<HomeController> {
                                 color: Color(0xFF494949),
                                 shape: BoxShape.circle,
                               ),
-
                               padding: EdgeInsets.all(8.w),
                               child: SvgPicture.asset(
                                 'assets/icons/ic_inbox_2.svg',
@@ -208,7 +207,9 @@ class HomeView extends GetView<HomeController> {
                           child: StepsTrackerWidget(
                             progressValue: controller.progressValue,
                             currentSteps: controller.validatedSteps.value,
-                            maxSteps: controller.user.value?.userPreference?.dailyStepGoals ?? 0,
+                            maxSteps: controller.user.value?.userPreference
+                                    ?.dailyStepGoals ??
+                                0,
                           ),
                         ),
                       );
@@ -378,11 +379,20 @@ class HomeView extends GetView<HomeController> {
                                     SizedBox(width: 20.w),
                                     InkWell(
                                       onTap: () {
-                                        Get.toNamed(AppRoutes.shareDailyStepProgress, arguments: {
-                                          'progressValue': controller.progressValue,
-                                          'currentSteps': controller.validatedSteps.value,
-                                          'maxSteps': controller.user.value?.userPreference?.dailyStepGoals ?? 0,
-                                        });
+                                        Get.toNamed(
+                                            AppRoutes.shareDailyStepProgress,
+                                            arguments: {
+                                              'progressValue':
+                                                  controller.progressValue,
+                                              'currentSteps': controller
+                                                  .validatedSteps.value,
+                                              'maxSteps': controller
+                                                      .user
+                                                      .value
+                                                      ?.userPreference
+                                                      ?.dailyStepGoals ??
+                                                  0,
+                                            });
                                       },
                                       child: SvgPicture.asset(
                                         'assets/icons/ic_share_3.svg',
@@ -589,8 +599,11 @@ class HomeView extends GetView<HomeController> {
                       ),
                     ),
 
-                    LastChallengeCard(
-                      challenge: controller.homePageData.value?.challenge,
+                    Visibility(
+                      visible: controller.homePageData.value?.challenge != null,
+                      child: LastChallengeCard(
+                        challenge: controller.homePageData.value?.challenge,
+                      ),
                     ),
 
                     SizedBox(height: 36.h),

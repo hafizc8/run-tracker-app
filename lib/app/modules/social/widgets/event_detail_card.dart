@@ -1,14 +1,18 @@
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/widgets.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:get/get.dart';
 import 'package:intl/intl.dart';
 import 'package:shimmer/shimmer.dart';
+import 'package:zest_mobile/app/core/di/service_locator.dart';
 import 'package:zest_mobile/app/core/extension/date_extension.dart';
 import 'package:zest_mobile/app/core/models/model/event_model.dart';
+import 'package:zest_mobile/app/core/services/auth_service.dart';
 import 'package:zest_mobile/app/core/shared/helpers/number_helper.dart';
 import 'package:zest_mobile/app/core/shared/widgets/shimmer_loading_circle.dart';
+import 'package:zest_mobile/app/modules/main_profile/partials/profile/controllers/profile_controller.dart';
 import 'package:zest_mobile/app/modules/social/views/partial/for_you_tab/event/controllers/event_action_controller.dart';
 import 'package:zest_mobile/app/modules/social/views/partial/for_you_tab/event/controllers/event_controller.dart';
 import 'package:zest_mobile/app/modules/social/views/partial/for_you_tab/event/controllers/event_detail_controller.dart';
@@ -217,46 +221,55 @@ class EventDetailCard extends GetView<EventDetailController> {
                     ),
               ),
               SizedBox(height: 8.h),
-              Row(
-                children: [
-                  ClipOval(
-                    child: CachedNetworkImage(
-                      imageUrl: event?.user?.imageUrl ?? '',
-                      width: 29.r,
-                      height: 29.r,
-                      fit: BoxFit.cover,
-                      placeholder: (context, url) => Shimmer.fromColors(
-                        baseColor: Colors.grey.shade800,
-                        highlightColor: Colors.grey.shade700,
-                        child: const SizedBox.shrink(),
-                      ),
-                      errorWidget: (context, url, error) => Center(
-                        child: Column(
-                          mainAxisAlignment: MainAxisAlignment.center,
-                          children: [
-                            Icon(
-                              Icons.person,
-                              size: 24.r,
-                              color: Colors.grey,
-                            ),
-                          ],
+              GestureDetector(
+                onTap: () {
+                  if (sl<AuthService>().user?.id == event?.user?.id) return;
+                  Get.delete<ProfileController>();
+                  Get.toNamed(AppRoutes.profileUser,
+                      arguments: event?.user?.id);
+                },
+                child: Row(
+                  children: [
+                    ClipOval(
+                      child: CachedNetworkImage(
+                        imageUrl: event?.user?.imageUrl ?? '',
+                        width: 29.r,
+                        height: 29.r,
+                        fit: BoxFit.cover,
+                        placeholder: (context, url) => Shimmer.fromColors(
+                          baseColor: Colors.grey.shade800,
+                          highlightColor: Colors.grey.shade700,
+                          child: const SizedBox.shrink(),
+                        ),
+                        errorWidget: (context, url, error) => Center(
+                          child: Column(
+                            mainAxisAlignment: MainAxisAlignment.center,
+                            children: [
+                              Icon(
+                                Icons.person,
+                                size: 24.r,
+                                color: Colors.grey,
+                              ),
+                            ],
+                          ),
                         ),
                       ),
                     ),
-                  ),
-                  SizedBox(width: 8.w),
-                  Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Text(
-                        event?.user?.name ?? '-',
-                        style: Theme.of(context).textTheme.bodyMedium?.copyWith(
-                              fontWeight: FontWeight.w600,
-                            ),
-                      ),
-                    ],
-                  ),
-                ],
+                    SizedBox(width: 8.w),
+                    Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Text(
+                          event?.user?.name ?? '-',
+                          style:
+                              Theme.of(context).textTheme.bodyMedium?.copyWith(
+                                    fontWeight: FontWeight.w600,
+                                  ),
+                        ),
+                      ],
+                    ),
+                  ],
+                ),
               ),
             ],
           ),
@@ -525,63 +538,70 @@ class EventDetailCard extends GetView<EventDetailController> {
         borderRadius: BorderRadius.circular(16.r),
         color: Color(0xFF4C4C4C),
       ),
-      child: Column(
-        mainAxisAlignment: MainAxisAlignment.center,
-        children: [
-          const Spacer(),
-          ClipOval(
-            child: CachedNetworkImage(
-              imageUrl: user?.user?.imageUrl ?? '',
-              width: 35.r,
-              height: 35.r,
-              fit: BoxFit.cover,
-              placeholder: (context, url) => ShimmerLoadingCircle(size: 50.r),
-              errorWidget: (context, url, error) => CircleAvatar(
-                radius: 32.r,
-                backgroundImage:
-                    const AssetImage('assets/images/empty_profile.png'),
-              ),
-            ),
-          ),
-          SizedBox(height: 8.h),
-          Padding(
-            padding: EdgeInsets.symmetric(horizontal: 8.0.w),
-            child: Text(
-              user?.user?.name ?? '',
-              maxLines: 1,
-              overflow: TextOverflow.ellipsis,
-              style: Theme.of(context)
-                  .textTheme
-                  .bodyMedium
-                  ?.copyWith(fontWeight: FontWeight.w600),
-            ),
-          ),
-          const Spacer(),
-          if (user?.status == 3) ...[
-            Container(
-              width: double.infinity,
-              height: 25.h,
-              alignment: Alignment.center,
-              decoration: const BoxDecoration(
-                borderRadius:
-                    BorderRadius.vertical(bottom: Radius.circular(16)),
-                gradient: LinearGradient(
-                  colors: [Color(0xFFA2FF00), Color(0xFF00FF7F)],
-                  begin: Alignment.centerLeft,
-                  end: Alignment.centerRight,
+      child: GestureDetector(
+        onTap: () {
+          if (user?.user?.id == sl<AuthService>().user?.id) return;
+          Get.delete<ProfileController>();
+          Get.toNamed(AppRoutes.profileUser, arguments: user?.user?.id);
+        },
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            const Spacer(),
+            ClipOval(
+              child: CachedNetworkImage(
+                imageUrl: user?.user?.imageUrl ?? '',
+                width: 35.r,
+                height: 35.r,
+                fit: BoxFit.cover,
+                placeholder: (context, url) => ShimmerLoadingCircle(size: 50.r),
+                errorWidget: (context, url, error) => CircleAvatar(
+                  radius: 32.r,
+                  backgroundImage:
+                      const AssetImage('assets/images/empty_profile.png'),
                 ),
               ),
+            ),
+            SizedBox(height: 8.h),
+            Padding(
+              padding: EdgeInsets.symmetric(horizontal: 8.0.w),
               child: Text(
-                'Reserved',
-                style: Theme.of(context).textTheme.bodySmall?.copyWith(
-                      fontWeight: FontWeight.w400,
-                      fontSize: 10,
-                      color: Theme.of(context).colorScheme.secondary,
-                    ),
+                user?.user?.name ?? '',
+                maxLines: 1,
+                overflow: TextOverflow.ellipsis,
+                style: Theme.of(context)
+                    .textTheme
+                    .bodyMedium
+                    ?.copyWith(fontWeight: FontWeight.w600),
               ),
-            )
-          ]
-        ],
+            ),
+            const Spacer(),
+            if (user?.status == 3) ...[
+              Container(
+                width: double.infinity,
+                height: 25.h,
+                alignment: Alignment.center,
+                decoration: const BoxDecoration(
+                  borderRadius:
+                      BorderRadius.vertical(bottom: Radius.circular(16)),
+                  gradient: LinearGradient(
+                    colors: [Color(0xFFA2FF00), Color(0xFF00FF7F)],
+                    begin: Alignment.centerLeft,
+                    end: Alignment.centerRight,
+                  ),
+                ),
+                child: Text(
+                  'Reserved',
+                  style: Theme.of(context).textTheme.bodySmall?.copyWith(
+                        fontWeight: FontWeight.w400,
+                        fontSize: 10,
+                        color: Theme.of(context).colorScheme.secondary,
+                      ),
+                ),
+              )
+            ]
+          ],
+        ),
       ),
     );
   }

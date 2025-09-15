@@ -237,6 +237,7 @@ class EventCard extends StatelessWidget {
             SizedBox(height: 16.h),
 
             ParticipantsAvatars(
+              eventUsers: eventModel?.userOnEvents,
               totalUsers: eventModel?.userOnEventsCount ?? 0,
               imageUrls: eventModel?.userOnEvents
                       ?.map((e) => e.user?.imageUrl ?? 'null')

@@ -601,7 +601,8 @@ class ProfileView extends GetView<ProfileController> {
                                   ),
                         ),
                         GestureDetector(
-                          onTap: () => Get.toNamed(AppRoutes.badges),
+                          onTap: () => Get.toNamed(AppRoutes.badges,
+                              arguments: {'id': controller.user.value?.id}),
                           child: Row(
                             children: [
                               Obx(

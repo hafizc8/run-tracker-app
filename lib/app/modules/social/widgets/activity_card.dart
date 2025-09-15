@@ -405,7 +405,8 @@ class ActivityCard extends StatelessWidget {
               children: [
                 Icon(Icons.image, size: 64.r, color: Colors.grey),
                 SizedBox(height: 8.h),
-                const Text('Maps not available', style: TextStyle(color: Colors.grey)),
+                const Text('Maps not available',
+                    style: TextStyle(color: Colors.grey)),
               ],
             ),
           ),
@@ -519,7 +520,8 @@ class ActivityCard extends StatelessWidget {
               ),
               label: 'Share',
               onTap: () {
-                if ((postData.isOwner ?? false) && postData.recordActivity != null) {
+                if ((postData.isOwner ?? false) &&
+                    postData.recordActivity != null) {
                   Get.toNamed(AppRoutes.shareActivity, arguments: postData);
                 } else {
                   Share.share(

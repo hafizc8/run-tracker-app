@@ -1,11 +1,16 @@
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:zest_mobile/app/core/di/service_locator.dart';
 import 'package:zest_mobile/app/core/models/model/club_member_model.dart';
+import 'package:zest_mobile/app/core/services/auth_service.dart';
 import 'package:zest_mobile/app/core/shared/widgets/shimmer_loading_circle.dart';
 import 'package:zest_mobile/app/core/shared/widgets/shimmer_loading_list.dart';
 import 'package:zest_mobile/app/modules/club/partial/detail_club/controllers/detail_club_controller.dart';
 import 'package:zest_mobile/app/modules/club/partial/member_list_club/controllers/member_list_club_controller.dart';
+import 'package:zest_mobile/app/routes/app_routes.dart';
+
+import '../../../../main_profile/partials/profile/controllers/profile_controller.dart';
 
 class MemberListClubView extends GetView<MemberListClubController> {
   MemberListClubView({super.key});
@@ -106,78 +111,83 @@ class MemberListClubView extends GetView<MemberListClubController> {
   }
 
   Widget _buildMemberListItem(BuildContext context, ClubMemberModel? members) {
-    return InkWell(
-      onTapDown: (details) async {
-        if (detailClubController.club.value?.isMember == true) {
-          // Get.snackbar('Info', 'Only an administrator/owner can perform this action. You do not have permission to remove members or assign admin roles.');
-          return;
-        }
-
-        // jika member role bukan member (admin/owner)
-        if (members?.roleText?.toLowerCase() == 'owner') {
-          return;
-        }
-
-        final result = await showMenu<String>(
-          context: context,
-          position: RelativeRect.fromLTRB(
-            details.globalPosition.dx,
-            details.globalPosition.dy,
-            0,
-            0,
-          ),
-          surfaceTintColor: Theme.of(context).colorScheme.onPrimary,
-          items: [
-            PopupMenuItem<String>(
-              value: 'assign_as_admin',
-              child: Text(
-                'Assign as Admin',
-                style: Theme.of(context)
-                    .textTheme
-                    .bodyMedium
-                    ?.copyWith(fontWeight: FontWeight.w600),
-              ),
-            ),
-            PopupMenuItem<String>(
-              value: 'remove_from_club',
-              child: Text(
-                'Remove from Club',
-                style: Theme.of(context)
-                    .textTheme
-                    .bodyMedium
-                    ?.copyWith(fontWeight: FontWeight.w600),
-              ),
-            ),
-          ],
-        );
-
-        if (result != null) {
-          if (result == 'assign_as_admin') {
-            controller.assignAsAdmin(clubUserId: members?.id ?? '');
-          } else if (result == 'remove_from_club') {
-            controller.removeUserInClub(clubUserId: members?.id ?? '');
-          }
-        }
+    return ListTile(
+      onTap: () {
+        if (sl<AuthService>().user?.id == members?.user?.id) return;
+        Get.delete<ProfileController>();
+        Get.toNamed(AppRoutes.profileUser, arguments: members?.user?.id);
       },
-      child: ListTile(
-        leading: ClipOval(
-          child: CachedNetworkImage(
-            imageUrl: members?.user?.imageUrl ?? '',
-            width: 37,
-            height: 37,
-            fit: BoxFit.cover,
-            placeholder: (context, url) => const ShimmerLoadingCircle(size: 37),
-            errorWidget: (context, url, error) => const CircleAvatar(
-              radius: 37,
-              backgroundImage: AssetImage('assets/images/empty_profile.png'),
-            ),
+      leading: ClipOval(
+        child: CachedNetworkImage(
+          imageUrl: members?.user?.imageUrl ?? '',
+          width: 37,
+          height: 37,
+          fit: BoxFit.cover,
+          placeholder: (context, url) => const ShimmerLoadingCircle(size: 37),
+          errorWidget: (context, url, error) => const CircleAvatar(
+            radius: 37,
+            backgroundImage: AssetImage('assets/images/empty_profile.png'),
           ),
         ),
-        title: Text(
-          members?.user?.name ?? '',
-          style: Theme.of(context).textTheme.bodyMedium,
-        ),
-        trailing: Visibility(
+      ),
+      title: Text(
+        members?.user?.name ?? '',
+        style: Theme.of(context).textTheme.bodyMedium,
+      ),
+      trailing: InkWell(
+        onTapDown: (details) async {
+          if (detailClubController.club.value?.isMember == true) {
+            // Get.snackbar('Info', 'Only an administrator/owner can perform this action. You do not have permission to remove members or assign admin roles.');
+            return;
+          }
+
+          // jika member role bukan member (admin/owner)
+          if (members?.roleText?.toLowerCase() == 'owner') {
+            return;
+          }
+
+          final result = await showMenu<String>(
+            context: context,
+            position: RelativeRect.fromLTRB(
+              details.globalPosition.dx,
+              details.globalPosition.dy,
+              0,
+              0,
+            ),
+            surfaceTintColor: Theme.of(context).colorScheme.onPrimary,
+            items: [
+              PopupMenuItem<String>(
+                value: 'assign_as_admin',
+                child: Text(
+                  'Assign as Admin',
+                  style: Theme.of(context)
+                      .textTheme
+                      .bodyMedium
+                      ?.copyWith(fontWeight: FontWeight.w600),
+                ),
+              ),
+              PopupMenuItem<String>(
+                value: 'remove_from_club',
+                child: Text(
+                  'Remove from Club',
+                  style: Theme.of(context)
+                      .textTheme
+                      .bodyMedium
+                      ?.copyWith(fontWeight: FontWeight.w600),
+                ),
+              ),
+            ],
+          );
+
+          if (result != null) {
+            if (result == 'assign_as_admin') {
+              controller.assignAsAdmin(clubUserId: members?.id ?? '');
+            } else if (result == 'remove_from_club') {
+              controller.removeUserInClub(clubUserId: members?.id ?? '');
+            }
+          }
+        },
+        child: Visibility(
           visible: members?.status == 0,
           replacement: Text(
             members?.roleText ?? '',

@@ -1,18 +1,23 @@
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/widgets.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:get/get.dart';
+import 'package:zest_mobile/app/core/di/service_locator.dart';
 import 'package:zest_mobile/app/core/extension/initial_profile_empty.dart';
+import 'package:zest_mobile/app/core/services/auth_service.dart';
 import 'package:zest_mobile/app/core/shared/widgets/gradient_elevated_button.dart';
 import 'package:zest_mobile/app/core/shared/widgets/gradient_outlined_button.dart';
 import 'package:zest_mobile/app/core/shared/widgets/shimmer_loading_circle.dart';
 import 'package:zest_mobile/app/core/shared/widgets/shimmer_loading_list.dart';
 import 'package:zest_mobile/app/modules/challenge/controllers/edit_challenge_controller.dart';
+import 'package:zest_mobile/app/modules/main_profile/partials/profile/controllers/profile_controller.dart';
+import 'package:zest_mobile/app/routes/app_routes.dart';
 
 class ChallengeEditTeamView extends GetView<ChallangeEditController> {
-  const ChallengeEditTeamView({super.key});
+  ChallengeEditTeamView({super.key}) {
+    controller.isTeamView = true;
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -216,46 +221,57 @@ class ChallengeEditTeamView extends GetView<ChallangeEditController> {
                                   color: const Color(0xFF3C3C3C),
                                   borderRadius: BorderRadius.circular(10.w),
                                 ),
-                                child: Column(
-                                  mainAxisAlignment: MainAxisAlignment.center,
-                                  children: [
-                                    ClipOval(
-                                      child: CachedNetworkImage(
-                                        imageUrl: e?.imageUrl ?? '',
-                                        width: 32.r,
-                                        height: 32.r,
-                                        fit: BoxFit.cover,
-                                        placeholder: (context, url) =>
-                                            ShimmerLoadingCircle(
-                                          size: 32.r,
-                                        ),
-                                        errorWidget: (context, url, error) =>
-                                            CircleAvatar(
-                                          radius: 32.r,
-                                          backgroundColor: Theme.of(context)
-                                              .colorScheme
-                                              .onBackground,
-                                          child: Text(
-                                            (e?.name ?? '').toInitials(),
-                                            style: Theme.of(context)
-                                                .textTheme
-                                                .bodySmall
-                                                ?.copyWith(
-                                                  color: Theme.of(context)
-                                                      .colorScheme
-                                                      .background,
-                                                ),
+                                child: GestureDetector(
+                                  onTap: () {
+                                    if (sl<AuthService>().user?.id == e?.id) {
+                                      return;
+                                    }
+
+                                    Get.delete<ProfileController>();
+                                    Get.toNamed(AppRoutes.profileUser,
+                                        arguments: e?.id);
+                                  },
+                                  child: Column(
+                                    mainAxisAlignment: MainAxisAlignment.center,
+                                    children: [
+                                      ClipOval(
+                                        child: CachedNetworkImage(
+                                          imageUrl: e?.imageUrl ?? '',
+                                          width: 32.r,
+                                          height: 32.r,
+                                          fit: BoxFit.cover,
+                                          placeholder: (context, url) =>
+                                              ShimmerLoadingCircle(
+                                            size: 32.r,
+                                          ),
+                                          errorWidget: (context, url, error) =>
+                                              CircleAvatar(
+                                            radius: 32.r,
+                                            backgroundColor: Theme.of(context)
+                                                .colorScheme
+                                                .onBackground,
+                                            child: Text(
+                                              (e?.name ?? '').toInitials(),
+                                              style: Theme.of(context)
+                                                  .textTheme
+                                                  .bodySmall
+                                                  ?.copyWith(
+                                                    color: Theme.of(context)
+                                                        .colorScheme
+                                                        .background,
+                                                  ),
+                                            ),
                                           ),
                                         ),
                                       ),
-                                    ),
-                                    SizedBox(height: 8.h),
-                                    Text(
-                                      e?.name ?? '-',
-                                      overflow: TextOverflow.ellipsis,
-                                      maxLines: 1,
-                                    ),
-                                  ],
+                                      SizedBox(height: 8.h),
+                                      Text(
+                                        e?.name ?? '-',
+                                        overflow: TextOverflow.ellipsis,
+                                        maxLines: 1,
+                                      ),
+                                    ],
+                                  ),
                                 ),
                               ),
                             ),

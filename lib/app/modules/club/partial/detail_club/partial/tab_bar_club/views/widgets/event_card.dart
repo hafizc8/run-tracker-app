@@ -137,7 +137,8 @@ class EventClubCard extends StatelessWidget {
                   children: [
                     GestureDetector(
                       onTap: () {
-                        Get.toNamed(AppRoutes.shareEvent, arguments: eventModel);
+                        Get.toNamed(AppRoutes.shareEvent,
+                            arguments: eventModel);
                       },
                       child: SvgPicture.asset(
                         'assets/icons/ic_share-2.svg',
@@ -237,6 +238,7 @@ class EventClubCard extends StatelessWidget {
             ),
             SizedBox(height: 16.h),
             ParticipantsAvatars(
+              eventUsers: eventModel?.userOnEvents,
               totalUsers: eventModel?.userOnEventsCount ?? 0,
               imageUrls: eventModel?.userOnEvents
                       ?.map((e) => e.user?.imageUrl ?? 'null')

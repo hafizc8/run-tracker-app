@@ -1,12 +1,16 @@
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:zest_mobile/app/core/di/service_locator.dart';
 import 'package:zest_mobile/app/core/models/model/user_mini_model.dart';
+import 'package:zest_mobile/app/core/services/auth_service.dart';
 import 'package:zest_mobile/app/core/shared/widgets/custom_circular_progress_indicator.dart';
 import 'package:zest_mobile/app/core/shared/widgets/gradient_elevated_button.dart';
 import 'package:zest_mobile/app/core/shared/widgets/shimmer_loading_circle.dart';
 import 'package:zest_mobile/app/core/shared/widgets/shimmer_loading_list.dart';
 import 'package:zest_mobile/app/modules/detail_challenge/controllers/detail_challenge_invite_friend_controller.dart';
+import 'package:zest_mobile/app/modules/main_profile/partials/profile/controllers/profile_controller.dart';
+import 'package:zest_mobile/app/routes/app_routes.dart';
 
 class DetailChallengeInviteFriendView
     extends GetView<DetailChallengeInviteController> {
@@ -166,42 +170,50 @@ class DetailChallengeInviteFriendView
   Widget _buildFriendListItem(BuildContext context, UserMiniModel friend) {
     return Padding(
       padding: const EdgeInsets.only(bottom: 10),
-      child: Row(
-        children: [
-          ClipOval(
-            child: CachedNetworkImage(
-              imageUrl: friend.imageUrl ?? '',
-              width: 50,
-              height: 50,
-              fit: BoxFit.cover,
-              placeholder: (context, url) =>
-                  const ShimmerLoadingCircle(size: 50),
-              errorWidget: (context, url, error) => const CircleAvatar(
-                radius: 32,
-                backgroundImage: AssetImage('assets/images/empty_profile.png'),
+      child: GestureDetector(
+        onTap: () {
+          if (sl<AuthService>().user?.id == friend.id) return;
+          Get.delete<ProfileController>();
+          Get.toNamed(AppRoutes.profileUser, arguments: friend.id);
+        },
+        child: Row(
+          children: [
+            ClipOval(
+              child: CachedNetworkImage(
+                imageUrl: friend.imageUrl ?? '',
+                width: 50,
+                height: 50,
+                fit: BoxFit.cover,
+                placeholder: (context, url) =>
+                    const ShimmerLoadingCircle(size: 50),
+                errorWidget: (context, url, error) => const CircleAvatar(
+                  radius: 32,
+                  backgroundImage:
+                      AssetImage('assets/images/empty_profile.png'),
+                ),
               ),
             ),
-          ),
-          const SizedBox(width: 8),
-          Expanded(
-            child: Text(
-              friend.name,
-              style: Theme.of(context)
-                  .textTheme
-                  .bodyMedium
-                  ?.copyWith(fontWeight: FontWeight.w600),
+            const SizedBox(width: 8),
+            Expanded(
+              child: Text(
+                friend.name,
+                style: Theme.of(context)
+                    .textTheme
+                    .bodyMedium
+                    ?.copyWith(fontWeight: FontWeight.w600),
+              ),
             ),
-          ),
-          // checkbox
-          Obx(
-            () => Checkbox(
-              value: controller.invites.contains(friend),
-              onChanged: (val) {
-                controller.toggleInvite(friend);
-              },
+            // checkbox
+            Obx(
+              () => Checkbox(
+                value: controller.invites.contains(friend),
+                onChanged: (val) {
+                  controller.toggleInvite(friend);
+                },
+              ),
             ),
-          ),
-        ],
+          ],
+        ),
       ),
     );
   }

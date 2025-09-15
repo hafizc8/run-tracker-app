@@ -24,6 +24,7 @@ class ChallangeCreateController extends GetxController {
   final _challengeService = sl<ChallengeService>();
   String get userId => _authService.user?.id ?? ''; // userId
   String? clubId;
+  var isTeamView = false;
   @override
   onInit() {
     super.onInit();
@@ -96,6 +97,7 @@ class ChallangeCreateController extends GetxController {
     } on AppException catch (e) {
       if (e.type == AppExceptionType.validation) {
         form.value = form.value.setErrors(e.errors!);
+        if (isTeamView) Get.back();
         return;
       }
       // show error snackbar, toast, etc

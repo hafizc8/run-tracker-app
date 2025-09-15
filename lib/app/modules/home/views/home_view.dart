@@ -13,6 +13,7 @@ import 'package:zest_mobile/app/modules/home/widgets/custom_exp_progress_bar.dar
 import 'package:zest_mobile/app/modules/home/widgets/last_challenge_card.dart';
 import 'package:zest_mobile/app/modules/home/widgets/stamina_recovery_popup.dart';
 import 'package:zest_mobile/app/modules/home/widgets/walker_profile.dart';
+import 'package:zest_mobile/app/modules/main_profile/partials/profile/controllers/profile_controller.dart';
 import 'package:zest_mobile/app/routes/app_routes.dart';
 
 import '../controllers/home_controller.dart';
@@ -499,6 +500,7 @@ class HomeView extends GetView<HomeController> {
                                           walker.id == currentUser.id;
                                       return Expanded(
                                         child: WalkerProfile(
+                                          userId: walker.id ?? '',
                                           rank: NumberHelper()
                                               .formatRank(walker.rank),
                                           name: isCurrentUser
@@ -538,6 +540,7 @@ class HomeView extends GetView<HomeController> {
                                             walker.id == currentUser.id;
                                         return Expanded(
                                           child: WalkerProfile(
+                                            userId: walker.id ?? '',
                                             rank: NumberHelper()
                                                 .formatRank(walker.rank),
                                             name: isCurrentUser

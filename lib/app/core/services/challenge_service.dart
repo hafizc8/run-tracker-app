@@ -108,7 +108,7 @@ class ChallengeService {
           path: AppConstants.challengeUser(id: id),
           method: HttpMethod.get,
           queryParams: {
-            if (team != null) 'team': team,
+            'team': team,
             if (pendingJoin != null) 'pending_join': pendingJoin,
             if (includePendingJoin != null)
               'include_pending_join': includePendingJoin,

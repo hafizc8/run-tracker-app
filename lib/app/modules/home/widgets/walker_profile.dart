@@ -1,10 +1,17 @@
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:get/get.dart';
+import 'package:zest_mobile/app/core/di/service_locator.dart';
+import 'package:zest_mobile/app/core/services/auth_service.dart';
 import 'package:zest_mobile/app/core/shared/widgets/shimmer_loading_circle.dart';
+import 'package:zest_mobile/app/routes/app_routes.dart';
+
+import '../../main_profile/partials/profile/controllers/profile_controller.dart';
 
 class WalkerProfile extends StatelessWidget {
   final String rank;
+  final String userId;
   final String imageUrl;
   final String name;
   final Color? backgroundColor;
@@ -12,6 +19,7 @@ class WalkerProfile extends StatelessWidget {
   const WalkerProfile({
     super.key,
     required this.rank,
+    required this.userId,
     required this.imageUrl,
     required this.name,
     this.backgroundColor,
@@ -71,43 +79,51 @@ class WalkerProfile extends StatelessWidget {
             )
           : null,
       padding: EdgeInsets.symmetric(
-        vertical: 16.h, 
+        vertical: 16.h,
         horizontal: 8.w, // Beri sedikit padding horizontal
       ),
-      child: Column(
-        mainAxisSize: MainAxisSize.min,
-        children: [
-          _buildRankWidget(context, rank),
-          SizedBox(height: 8.h),
-          ClipOval(
-            child: CachedNetworkImage(
-              imageUrl: imageUrl,
-              width: 44.r,
-              height: 44.r,
-              fit: BoxFit.cover,
-              placeholder: (context, url) => ShimmerLoadingCircle(size: 44.w),
-              errorWidget: (context, url, error) => CircleAvatar(
-                radius: 44.r,
-                backgroundImage: const AssetImage('assets/images/empty_profile.png'),
+      child: GestureDetector(
+        onTap: () {
+          if (sl<AuthService>().user?.id == userId) return;
+          Get.delete<ProfileController>();
+          Get.toNamed(AppRoutes.profileUser, arguments: userId);
+        },
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            _buildRankWidget(context, rank),
+            SizedBox(height: 8.h),
+            ClipOval(
+              child: CachedNetworkImage(
+                imageUrl: imageUrl,
+                width: 44.r,
+                height: 44.r,
+                fit: BoxFit.cover,
+                placeholder: (context, url) => ShimmerLoadingCircle(size: 44.w),
+                errorWidget: (context, url, error) => CircleAvatar(
+                  radius: 44.r,
+                  backgroundImage:
+                      const AssetImage('assets/images/empty_profile.png'),
+                ),
               ),
             ),
-          ),
-          SizedBox(height: 8.h),
-          
-          // ✨ 2. Bungkus Text dengan Flexible agar tidak menyebabkan overflow di dalam Column
-          Flexible(
-            child: Text(
-              name,
-              maxLines: 1,
-              overflow: TextOverflow.ellipsis,
-              textAlign: TextAlign.center,
-              style: Theme.of(context).textTheme.titleSmall?.copyWith(
-                    color: darkColorScheme.primary,
-                    fontSize: 12.sp,
-                  ),
+            SizedBox(height: 8.h),
+
+            // ✨ 2. Bungkus Text dengan Flexible agar tidak menyebabkan overflow di dalam Column
+            Flexible(
+              child: Text(
+                name,
+                maxLines: 1,
+                overflow: TextOverflow.ellipsis,
+                textAlign: TextAlign.center,
+                style: Theme.of(context).textTheme.titleSmall?.copyWith(
+                      color: darkColorScheme.primary,
+                      fontSize: 12.sp,
+                    ),
+              ),
             ),
-          ),
-        ],
+          ],
+        ),
       ),
     );
   }

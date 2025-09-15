@@ -12,18 +12,23 @@ class BadgesController extends GetxController {
 
   final _badgeService = sl<BadgeService>();
   final _authService = sl<AuthService>();
+  var userId = '';
 
   @override
   void onInit() {
     super.onInit();
+    if (Get.arguments != null) {
+      if (Get.arguments['id'] != null) {
+        userId = Get.arguments['id'];
+      }
+    }
     getBadges();
   }
 
   void getBadges() async {
     try {
       isLoading.value = true;
-      badges.value =
-          await _badgeService.getBadges(userId: _authService.user!.id!);
+      badges.value = await _badgeService.getBadges(userId: userId);
     } on AppException catch (e) {
       AppExceptionHandlerInfo.handle(e);
     } catch (e) {

@@ -374,12 +374,12 @@ class AppPages {
 
     GetPage(
       name: AppRoutes.challengeCreateTeam,
-      page: () => const ChallengeCreateTeamView(),
+      page: () => ChallengeCreateTeamView(),
       binding: ChallengeCreateBinding(),
     ),
     GetPage(
       name: AppRoutes.challengeEditTeam,
-      page: () => const ChallengeEditTeamView(),
+      page: () => ChallengeEditTeamView(),
       binding: ChallengeEditBinding(),
     ),
     GetPage(

@@ -3,19 +3,20 @@ import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
 import 'package:zest_mobile/app/core/di/service_locator.dart';
+import 'package:zest_mobile/app/core/models/model/challenge_team_model.dart';
 import 'package:zest_mobile/app/core/models/model/event_model.dart';
 import 'package:zest_mobile/app/core/services/auth_service.dart';
 import 'package:zest_mobile/app/core/shared/widgets/shimmer_loading_circle.dart';
 import 'package:zest_mobile/app/routes/app_routes.dart';
 
-import '../../../../../../../main_profile/partials/profile/controllers/profile_controller.dart';
+import '../../main_profile/partials/profile/controllers/profile_controller.dart';
 
 // ignore: must_be_immutable
-class ParticipantsAvatars extends StatelessWidget {
-  ParticipantsAvatars({
+class ParticipantsAvatarsChallenge extends StatelessWidget {
+  ParticipantsAvatarsChallenge({
     super.key,
     required this.imageUrls,
-    this.eventUsers,
+    this.challengeUsers,
     this.avatarSize = 29,
     this.totalUsers = 0,
     this.overlapOffset = 23,
@@ -23,7 +24,7 @@ class ParticipantsAvatars extends StatelessWidget {
   });
 
   final List<String> imageUrls;
-  final List<EventUserModel>? eventUsers; // <====>
+  final List<ChallengeTeamsModel>? challengeUsers; // <====>
 
   final int totalUsers;
   double avatarSize = 35;
@@ -34,9 +35,9 @@ class ParticipantsAvatars extends StatelessWidget {
   Widget build(BuildContext context) {
     final displayCount1 =
         imageUrls.length > maxVisible ? maxVisible : imageUrls.length;
-    final displayCount = (eventUsers?.length ?? 0) > maxVisible
+    final displayCount = (challengeUsers?.length ?? 0) > maxVisible
         ? maxVisible
-        : (eventUsers?.length ?? 0);
+        : (challengeUsers?.length ?? 0);
 
     final extraCount = totalUsers - displayCount;
 
@@ -51,12 +52,12 @@ class ParticipantsAvatars extends StatelessWidget {
               child: GestureDetector(
                 onTap: () {
                   if (sl<AuthService>().user?.id ==
-                      eventUsers?[index].user?.id) {
+                      challengeUsers?[index].user?.id) {
                     return;
                   }
                   Get.delete<ProfileController>();
                   Get.toNamed(AppRoutes.profileUser,
-                      arguments: eventUsers?[index].user?.id);
+                      arguments: challengeUsers?[index].user?.id);
                 },
                 child: Container(
                   width: avatarSize.r,
@@ -68,7 +69,7 @@ class ParticipantsAvatars extends StatelessWidget {
                   ),
                   child: ClipOval(
                     child: CachedNetworkImage(
-                      imageUrl: eventUsers?[index].user?.imageUrl ?? '',
+                      imageUrl: challengeUsers?[index].user?.imageUrl ?? '',
                       width: avatarSize.r,
                       height: avatarSize.r,
                       fit: BoxFit.cover,

@@ -3,11 +3,13 @@ import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:get/get.dart';
+import 'package:zest_mobile/app/core/di/service_locator.dart';
 import 'package:zest_mobile/app/core/extension/date_extension.dart';
 import 'package:zest_mobile/app/core/extension/initial_profile_empty.dart';
 import 'package:zest_mobile/app/core/models/model/challenge_detail_model.dart';
 import 'package:zest_mobile/app/core/models/model/challenge_model.dart';
 import 'package:zest_mobile/app/core/models/model/challenge_team_model.dart';
+import 'package:zest_mobile/app/core/services/auth_service.dart';
 import 'package:zest_mobile/app/core/shared/helpers/number_helper.dart';
 import 'package:zest_mobile/app/core/shared/widgets/custom_circular_progress_indicator.dart';
 import 'package:zest_mobile/app/core/shared/widgets/gradient_outlined_button.dart';
@@ -18,8 +20,11 @@ import 'package:zest_mobile/app/modules/detail_challenge/controllers/detail_chal
 import 'package:zest_mobile/app/modules/detail_challenge/widgets/card_challenge.dart';
 import 'package:zest_mobile/app/modules/detail_challenge/widgets/leaderboard_other.dart';
 import 'package:zest_mobile/app/modules/detail_challenge/widgets/leaderboard_top.dart';
+import 'package:zest_mobile/app/modules/detail_challenge/widgets/participants_avatar_challenge.dart';
 
 import 'package:zest_mobile/app/routes/app_routes.dart';
+
+import '../../main_profile/partials/profile/controllers/profile_controller.dart';
 
 class DetailChallengeView extends GetView<DetailChallangeController> {
   const DetailChallengeView({super.key});
@@ -431,81 +436,167 @@ class DetailChallengeView extends GetView<DetailChallangeController> {
                                           shrinkWrap: true,
                                           scrollDirection: Axis.horizontal,
                                           children: [
-                                            Visibility(
-                                              visible: teams.every(
-                                                    (element) =>
-                                                        element.user?.id !=
-                                                        controller.userId,
-                                                  ) &&
-                                                  controller.detailChallenge
-                                                          .value?.startDate!
-                                                          .toLocal()
-                                                          .isFutureDate() ==
-                                                      true,
-                                              child: Obx(
-                                                () => GestureDetector(
-                                                  onTap: controller
-                                                          .isLoadingJoin.value
-                                                      ? null
-                                                      : () async {
-                                                          controller.join(
-                                                            toTeam: teamKey,
-                                                          );
-                                                        },
-                                                  child: AspectRatio(
-                                                    aspectRatio: 71 / 90,
-                                                    child: Container(
-                                                      padding:
-                                                          EdgeInsets.all(1.w),
-                                                      decoration: BoxDecoration(
-                                                        gradient:
-                                                            const LinearGradient(
-                                                          colors: [
-                                                            Color(0xFFA2FF00),
-                                                            Color(0xFF00FF7F),
-                                                          ],
-                                                          begin: Alignment
-                                                              .topCenter,
-                                                          end: Alignment
-                                                              .bottomCenter,
-                                                        ),
-                                                        borderRadius:
-                                                            BorderRadius
-                                                                .circular(11.r),
-                                                      ),
+                                            if (controller.detailChallenge.value
+                                                    ?.isJoined ==
+                                                0) ...[
+                                              Visibility(
+                                                visible: teams.every(
+                                                      (element) =>
+                                                          element.user?.id ==
+                                                          controller.userId,
+                                                    ) &&
+                                                    controller.detailChallenge
+                                                            .value?.startDate!
+                                                            .toLocal()
+                                                            .isFutureDate() ==
+                                                        true,
+                                                child: Obx(
+                                                  () => GestureDetector(
+                                                    onTap: controller
+                                                            .isLoadingJoin.value
+                                                        ? null
+                                                        : () async {
+                                                            controller.join(
+                                                              toTeam: teamKey,
+                                                            );
+                                                          },
+                                                    child: AspectRatio(
+                                                      aspectRatio: 71 / 90,
                                                       child: Container(
+                                                        padding:
+                                                            EdgeInsets.all(1.w),
                                                         decoration:
                                                             BoxDecoration(
+                                                          gradient:
+                                                              const LinearGradient(
+                                                            colors: [
+                                                              Color(0xFFA2FF00),
+                                                              Color(0xFF00FF7F),
+                                                            ],
+                                                            begin: Alignment
+                                                                .topCenter,
+                                                            end: Alignment
+                                                                .bottomCenter,
+                                                          ),
                                                           borderRadius:
                                                               BorderRadius
                                                                   .circular(
-                                                                      10.r),
-                                                          color:
-                                                              Theme.of(context)
-                                                                  .colorScheme
-                                                                  .background,
+                                                                      11.r),
                                                         ),
-                                                        alignment:
-                                                            Alignment.center,
-                                                        child: Visibility(
-                                                          visible: controller
-                                                                  .teamName ==
-                                                              teamKey,
-                                                          replacement:
-                                                              SvgPicture.asset(
-                                                            width: 24.r,
-                                                            height: 24.r,
-                                                            'assets/icons/ic_switch_user.svg',
+                                                        child: Container(
+                                                          decoration:
+                                                              BoxDecoration(
+                                                            borderRadius:
+                                                                BorderRadius
+                                                                    .circular(
+                                                                        10.r),
+                                                            color: Theme.of(
+                                                                    context)
+                                                                .colorScheme
+                                                                .background,
                                                           ),
-                                                          child:
-                                                              CustomCircularProgressIndicator(),
+                                                          alignment:
+                                                              Alignment.center,
+                                                          child: Visibility(
+                                                            visible: controller
+                                                                    .teamName ==
+                                                                teamKey,
+                                                            replacement:
+                                                                SvgPicture
+                                                                    .asset(
+                                                              width: 24.r,
+                                                              height: 24.r,
+                                                              'assets/icons/ic_switch_user.svg',
+                                                            ),
+                                                            child:
+                                                                CustomCircularProgressIndicator(),
+                                                          ),
                                                         ),
                                                       ),
                                                     ),
                                                   ),
                                                 ),
                                               ),
-                                            ),
+                                            ] else ...[
+                                              Visibility(
+                                                visible: teams.every(
+                                                      (element) =>
+                                                          element.user?.id !=
+                                                          controller.userId,
+                                                    ) &&
+                                                    controller.detailChallenge
+                                                            .value?.startDate!
+                                                            .toLocal()
+                                                            .isFutureDate() ==
+                                                        true,
+                                                child: Obx(
+                                                  () => GestureDetector(
+                                                    onTap: controller
+                                                            .isLoadingJoin.value
+                                                        ? null
+                                                        : () async {
+                                                            controller.join(
+                                                              toTeam: teamKey,
+                                                            );
+                                                          },
+                                                    child: AspectRatio(
+                                                      aspectRatio: 71 / 90,
+                                                      child: Container(
+                                                        padding:
+                                                            EdgeInsets.all(1.w),
+                                                        decoration:
+                                                            BoxDecoration(
+                                                          gradient:
+                                                              const LinearGradient(
+                                                            colors: [
+                                                              Color(0xFFA2FF00),
+                                                              Color(0xFF00FF7F),
+                                                            ],
+                                                            begin: Alignment
+                                                                .topCenter,
+                                                            end: Alignment
+                                                                .bottomCenter,
+                                                          ),
+                                                          borderRadius:
+                                                              BorderRadius
+                                                                  .circular(
+                                                                      11.r),
+                                                        ),
+                                                        child: Container(
+                                                          decoration:
+                                                              BoxDecoration(
+                                                            borderRadius:
+                                                                BorderRadius
+                                                                    .circular(
+                                                                        10.r),
+                                                            color: Theme.of(
+                                                                    context)
+                                                                .colorScheme
+                                                                .background,
+                                                          ),
+                                                          alignment:
+                                                              Alignment.center,
+                                                          child: Visibility(
+                                                            visible: controller
+                                                                    .teamName ==
+                                                                teamKey,
+                                                            replacement:
+                                                                SvgPicture
+                                                                    .asset(
+                                                              width: 24.r,
+                                                              height: 24.r,
+                                                              'assets/icons/ic_switch_user.svg',
+                                                            ),
+                                                            child:
+                                                                CustomCircularProgressIndicator(),
+                                                          ),
+                                                        ),
+                                                      ),
+                                                    ),
+                                                  ),
+                                                ),
+                                              ),
+                                            ],
                                             ...(List.generate(teams.length,
                                                 (i) {
                                               final e = teams[i];
@@ -529,60 +620,79 @@ class DetailChallengeView extends GetView<DetailChallangeController> {
                                                             BorderRadius
                                                                 .circular(10.w),
                                                       ),
-                                                      child: Column(
-                                                        mainAxisAlignment:
-                                                            MainAxisAlignment
-                                                                .center,
-                                                        children: [
-                                                          ClipOval(
-                                                            child:
-                                                                CachedNetworkImage(
-                                                              imageUrl: e.user
-                                                                      ?.imageUrl ??
-                                                                  '',
-                                                              width: 32.r,
-                                                              height: 32.r,
-                                                              fit: BoxFit.cover,
-                                                              placeholder: (context,
-                                                                      url) =>
-                                                                  ShimmerLoadingCircle(
-                                                                size: 32.r,
-                                                              ),
-                                                              errorWidget: (context,
-                                                                      url,
-                                                                      error) =>
-                                                                  CircleAvatar(
-                                                                radius: 32.r,
-                                                                backgroundColor: Theme.of(
-                                                                        context)
-                                                                    .colorScheme
-                                                                    .onBackground,
-                                                                child: Text(
-                                                                  (e.user?.name ??
-                                                                          '')
-                                                                      .toInitials(),
-                                                                  style: Theme.of(
+                                                      child: GestureDetector(
+                                                        onTap: () {
+                                                          if (sl<AuthService>()
+                                                                  .user
+                                                                  ?.id ==
+                                                              e.user?.id)
+                                                            return;
+                                                          Get.delete<
+                                                              ProfileController>();
+                                                          Get.toNamed(
+                                                              AppRoutes
+                                                                  .profileUser,
+                                                              arguments:
+                                                                  e.user?.id);
+                                                        },
+                                                        child: Column(
+                                                          mainAxisAlignment:
+                                                              MainAxisAlignment
+                                                                  .center,
+                                                          children: [
+                                                            ClipOval(
+                                                              child:
+                                                                  CachedNetworkImage(
+                                                                imageUrl: e.user
+                                                                        ?.imageUrl ??
+                                                                    '',
+                                                                width: 32.r,
+                                                                height: 32.r,
+                                                                fit: BoxFit
+                                                                    .cover,
+                                                                placeholder: (context,
+                                                                        url) =>
+                                                                    ShimmerLoadingCircle(
+                                                                  size: 32.r,
+                                                                ),
+                                                                errorWidget: (context,
+                                                                        url,
+                                                                        error) =>
+                                                                    CircleAvatar(
+                                                                  radius: 32.r,
+                                                                  backgroundColor: Theme.of(
                                                                           context)
-                                                                      .textTheme
-                                                                      .bodySmall
-                                                                      ?.copyWith(
-                                                                        color: Theme.of(context)
-                                                                            .colorScheme
-                                                                            .background,
-                                                                      ),
+                                                                      .colorScheme
+                                                                      .onBackground,
+                                                                  child: Text(
+                                                                    (e.user?.name ??
+                                                                            '')
+                                                                        .toInitials(),
+                                                                    style: Theme.of(
+                                                                            context)
+                                                                        .textTheme
+                                                                        .bodySmall
+                                                                        ?.copyWith(
+                                                                          color: Theme.of(context)
+                                                                              .colorScheme
+                                                                              .background,
+                                                                        ),
+                                                                  ),
                                                                 ),
                                                               ),
                                                             ),
-                                                          ),
-                                                          SizedBox(height: 8.h),
-                                                          Text(
-                                                            e.user?.name ?? '-',
-                                                            overflow:
-                                                                TextOverflow
-                                                                    .ellipsis,
-                                                            maxLines: 1,
-                                                          ),
-                                                        ],
+                                                            SizedBox(
+                                                                height: 8.h),
+                                                            Text(
+                                                              e.user?.name ??
+                                                                  '-',
+                                                              overflow:
+                                                                  TextOverflow
+                                                                      .ellipsis,
+                                                              maxLines: 1,
+                                                            ),
+                                                          ],
+                                                        ),
                                                       ),
                                                     ),
                                                   ),
@@ -629,7 +739,8 @@ class DetailChallengeView extends GetView<DetailChallangeController> {
                                 if (controller.isLoadingInvited.value) {
                                   return const CircularProgressIndicator();
                                 }
-                                return ParticipantsAvatars(
+                                return ParticipantsAvatarsChallenge(
+                                  challengeUsers: controller.invited.value,
                                   imageUrls: controller.invited.value
                                       .map((e) => e.user?.imageUrl ?? 'null')
                                       .toList(),

@@ -17,8 +17,8 @@ class AllBadgesView extends GetView<AllBadgesController> {
         title: Text(
           controller.user?.name ?? '',
           style: Theme.of(context).textTheme.headlineSmall?.copyWith(
-            color: const Color(0xFFA5A5A5),
-          ),
+                color: const Color(0xFFA5A5A5),
+              ),
         ),
         automaticallyImplyLeading: false,
         centerTitle: false,
@@ -59,9 +59,9 @@ class AllBadgesView extends GetView<AllBadgesController> {
                   child: Text(
                     'Set Your Goals',
                     style: Theme.of(context).textTheme.bodyMedium?.copyWith(
-                      color: Colors.white,
-                      fontWeight: FontWeight.w600,
-                    ),
+                          color: Colors.white,
+                          fontWeight: FontWeight.w600,
+                        ),
                   ),
                 ),
                 SizedBox(width: 8.w), // Beri sedikit padding di kanan
@@ -80,12 +80,17 @@ class AllBadgesView extends GetView<AllBadgesController> {
           return Column(
             children: [
               Container(
-                margin: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+                margin:
+                    const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
                 child: LevelExpBar(
                   level: controller.user?.currentUserXp?.currentLevel ?? 0,
-                  levelName: controller.user?.currentUserXp?.levelDetail?.animal ?? '',
-                  currentExp: controller.user?.currentUserXp?.currentAmount ?? 0,
-                  maxExp: controller.user?.currentUserXp?.levelDetail?.xpNeeded ?? 0,
+                  levelName:
+                      controller.user?.currentUserXp?.levelDetail?.animal ?? '',
+                  currentExp:
+                      controller.user?.currentUserXp?.currentAmount ?? 0,
+                  maxExp:
+                      controller.user?.currentUserXp?.levelDetail?.xpNeeded ??
+                          0,
                 ),
               ),
               ListView.builder(
@@ -94,31 +99,35 @@ class AllBadgesView extends GetView<AllBadgesController> {
                 itemCount: controller.allCategorizedBadges.length,
                 itemBuilder: (context, categoryIndex) {
                   // Ambil daftar badge untuk kategori saat ini
-                  final categoryBadges = controller.allCategorizedBadges[categoryIndex];
+                  final categoryBadges =
+                      controller.allCategorizedBadges[categoryIndex];
                   // Ambil nama kategori dari item pertama (semua item dalam list ini punya kategori yang sama)
                   final categoryName = categoryBadges.first.category ?? 'Other';
-              
+
                   return Padding(
-                    padding: EdgeInsets.symmetric(horizontal: 16.w, vertical: 8.h),
+                    padding:
+                        EdgeInsets.symmetric(horizontal: 16.w, vertical: 8.h),
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
                         // --- Tampilkan Judul Kategori ---
                         Text(
                           categoryName,
-                          style: Theme.of(context).textTheme.titleMedium?.copyWith(
-                            fontWeight: FontWeight.normal,
-                            color: const Color(0xFFA5A5A5),
-                            fontSize: 14.sp,
-                          ),
+                          style:
+                              Theme.of(context).textTheme.titleMedium?.copyWith(
+                                    fontWeight: FontWeight.normal,
+                                    color: const Color(0xFFA5A5A5),
+                                    fontSize: 14.sp,
+                                  ),
                         ),
                         SizedBox(height: 12.h),
-              
+
                         // --- GridView untuk Badge di dalam Kategori Ini ---
                         GridView.builder(
                           shrinkWrap: true,
                           physics: const NeverScrollableScrollPhysics(),
-                          gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
+                          gridDelegate:
+                              const SliverGridDelegateWithFixedCrossAxisCount(
                             crossAxisCount: 4, // 3 badge per baris
                             mainAxisSpacing: 8,
                             crossAxisSpacing: 8,
@@ -127,14 +136,16 @@ class AllBadgesView extends GetView<AllBadgesController> {
                           itemCount: categoryBadges.length,
                           itemBuilder: (context, badgeIndex) {
                             final badge = categoryBadges[badgeIndex];
-                            
+
                             // Gunakan Opacity untuk membedakan badge yang terkunci
                             return Opacity(
                               opacity: (badge.isLocked ?? true) ? 0.3 : 1.0,
                               child: Container(
-                                padding: EdgeInsets.only(right: 8.w, left: 8.w, bottom: 8.h),
+                                padding: EdgeInsets.only(
+                                    right: 8.w, left: 8.w, bottom: 8.h),
                                 decoration: const BoxDecoration(
-                                  borderRadius: BorderRadius.all(Radius.circular(10)),
+                                  borderRadius:
+                                      BorderRadius.all(Radius.circular(10)),
                                   color: Color(0xFF2E2E2E),
                                 ),
                                 child: Column(
@@ -144,8 +155,11 @@ class AllBadgesView extends GetView<AllBadgesController> {
                                       imageUrl: badge.badgeIconUrl ?? '',
                                       fit: BoxFit.fitHeight,
                                       height: 50.h,
-                                      placeholder: (context, url) => ShimmerLoadingCircle(size: 45.h),
-                                      errorWidget: (context, url, error) => const Icon(Icons.error, color: Colors.grey),
+                                      placeholder: (context, url) =>
+                                          ShimmerLoadingCircle(size: 45.h),
+                                      errorWidget: (context, url, error) =>
+                                          const Icon(Icons.error,
+                                              color: Colors.grey),
                                     ),
                                     const SizedBox(height: 8),
                                     Text(
@@ -153,11 +167,14 @@ class AllBadgesView extends GetView<AllBadgesController> {
                                       maxLines: 2,
                                       overflow: TextOverflow.ellipsis,
                                       textAlign: TextAlign.center,
-                                      style: Theme.of(context).textTheme.bodyMedium?.copyWith(
-                                        color: const Color(0xFFA5A5A5),
-                                        fontWeight: FontWeight.w400,
-                                        fontSize: 11.sp,
-                                      ),
+                                      style: Theme.of(context)
+                                          .textTheme
+                                          .bodyMedium
+                                          ?.copyWith(
+                                            color: const Color(0xFFA5A5A5),
+                                            fontWeight: FontWeight.w400,
+                                            fontSize: 11.sp,
+                                          ),
                                     ),
                                   ],
                                 ),

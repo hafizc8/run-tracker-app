@@ -272,4 +272,22 @@ class EventService {
       rethrow;
     }
   }
+
+  Future<EventUserModel?> removeUserFromEvent(
+      {required String eventId, required String userId}) async {
+    try {
+      final response = await _apiService.request(
+        path: AppConstants.eventRemoveUser(eventId, userId),
+        method: HttpMethod.delete,
+      );
+
+      if (response.statusCode != 200) {
+        throw Exception('Failed to remove user from event');
+      }
+
+      return EventUserModel.fromJson(response.data['data']);
+    } catch (e) {
+      rethrow;
+    }
+  }
 }

@@ -1,6 +1,5 @@
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/widgets.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:get/get.dart';
@@ -420,8 +419,18 @@ class EventDetailCard extends GetView<EventDetailController> {
               ),
               if (seeAll) ...[
                 GestureDetector(
-                  onTap: () => Get.toNamed(AppRoutes.eventSeeAllParticipant,
-                      arguments: {'eventId': event?.id}),
+                  onTap: () async {
+                    var res = await Get.toNamed(
+                      AppRoutes.eventSeeAllParticipant,
+                      arguments: event,
+                    );
+                    if (res != null) {
+                      await Future.wait([
+                        controller.loadGoing(refresh: true),
+                        controller.loadWaiting(refresh: true),
+                      ]);
+                    }
+                  },
                   child: Row(
                     children: [
                       ShaderMask(

@@ -4,6 +4,7 @@ import 'package:get/get.dart';
 import 'package:zest_mobile/app/core/di/service_locator.dart';
 import 'package:zest_mobile/app/core/models/model/event_model.dart';
 import 'package:zest_mobile/app/core/services/auth_service.dart';
+import 'package:zest_mobile/app/core/shared/widgets/custom_circular_progress_indicator.dart';
 import 'package:zest_mobile/app/core/shared/widgets/shimmer_loading_circle.dart';
 import 'package:zest_mobile/app/core/shared/widgets/shimmer_loading_list.dart';
 import 'package:zest_mobile/app/modules/main_profile/partials/profile/controllers/profile_controller.dart';
@@ -89,6 +90,47 @@ class SocialForYouEventDetailSeelAllParticipantView
     return Padding(
       padding: const EdgeInsets.only(bottom: 10),
       child: GestureDetector(
+        onLongPressDown: (details) async {
+          if (controller.eventModel?.isOwner == 0) return;
+          if (controller.eventModel?.user?.id == friend.user?.id) {
+            return;
+          }
+
+          final result = await showMenu<String>(
+            context: context,
+            position: RelativeRect.fromLTRB(
+              details.globalPosition.dx,
+              details.globalPosition.dy,
+              0,
+              0,
+            ),
+            surfaceTintColor: Theme.of(context).colorScheme.onPrimary,
+            items: [
+              PopupMenuItem<String>(
+                value: 'remove_from_event',
+                child: Obx(
+                  () => Visibility(
+                    visible: controller.userId.value == friend.id,
+                    replacement: Text(
+                      'Remove',
+                      style: Theme.of(context)
+                          .textTheme
+                          .bodyMedium
+                          ?.copyWith(fontWeight: FontWeight.w600),
+                    ),
+                    child: CustomCircularProgressIndicator(),
+                  ),
+                ),
+              ),
+            ],
+          );
+
+          if (result != null) {
+            if (result == 'remove_from_event') {
+              controller.removeUser(friend.id ?? '');
+            }
+          }
+        },
         onTap: () {
           if (sl<AuthService>().user?.id == friend.user?.id) return;
           Get.delete<ProfileController>();

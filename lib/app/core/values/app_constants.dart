@@ -68,6 +68,8 @@ class AppConstants {
   static const String eventActivity = "/event/activity";
   static const String eventLocation = "/event/location";
   static String eventDetail(String id) => "/event/$id";
+  static String eventRemoveUser(String eventId, String userId) =>
+      "/event/$eventId/user/$userId";
   static String eventAccLeaveJoin(String id) => "/event/$id/join";
   static String eventInviteFriend(String id) => "/event/$id/invite";
   static String eventUsers(String id) => "/event/$id/user";
@@ -126,11 +128,16 @@ class AppConstants {
   static const String readPopupNotification = "/popup-notification";
 
   // Share Link
-  static String shareProfileLink(String id) => "$baseUrlShareLink/share-profile?user=$id";
-  static String shareClubLink(String id) => "$baseUrlShareLink/share-club?club=$id";
-  static String shareEventLink(String id) => "$baseUrlShareLink/share-event?event=$id";
-  static String sharePostLink(String id) => "$baseUrlShareLink/share-post?post=$id";
-  static String shareChallengeLink(String id) => "$baseUrlShareLink/share-challenge?challenge=$id";
+  static String shareProfileLink(String id) =>
+      "$baseUrlShareLink/share-profile?user=$id";
+  static String shareClubLink(String id) =>
+      "$baseUrlShareLink/share-club?club=$id";
+  static String shareEventLink(String id) =>
+      "$baseUrlShareLink/share-event?event=$id";
+  static String sharePostLink(String id) =>
+      "$baseUrlShareLink/share-post?post=$id";
+  static String shareChallengeLink(String id) =>
+      "$baseUrlShareLink/share-challenge?challenge=$id";
 
   // Notification
   static const String notification = '/notification';

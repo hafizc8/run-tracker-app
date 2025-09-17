@@ -8,6 +8,7 @@ import 'package:zest_mobile/app/core/shared/helpers/debouncer.dart';
 
 class SeeAllParticipantController extends GetxController {
   var isLoading = false.obs;
+  var userId = ''.obs;
   var hasReacheMax = false.obs;
   final _eventService = sl<EventService>();
 
@@ -19,13 +20,13 @@ class SeeAllParticipantController extends GetxController {
 
   final _debouncer = Debouncer(milliseconds: 500);
 
-  var eventId = '';
+  EventModel? eventModel;
 
   @override
   void onInit() {
     super.onInit();
     if (Get.arguments != null) {
-      eventId = Get.arguments['eventId'];
+      eventModel = Get.arguments as EventModel;
     }
     loadFriends();
 
@@ -57,7 +58,7 @@ class SeeAllParticipantController extends GetxController {
     try {
       PaginatedDataResponse<EventUserModel> response =
           await _eventService.getEventUsers(
-        eventId: eventId,
+        eventId: eventModel?.id ?? '',
         page: page,
         statues: ['1', '3'],
       );
@@ -78,6 +79,26 @@ class SeeAllParticipantController extends GetxController {
       ); // show error snackbar, toast, etc (e.g.message)
     } finally {
       isLoading.value = false;
+    }
+  }
+
+  Future<void> removeUser(String userId) async {
+    this.userId.value = userId;
+    try {
+      EventUserModel? response = await _eventService.removeUserFromEvent(
+          eventId: eventModel?.id ?? '', userId: userId);
+      if (response != null) {
+        Get.back(result: response);
+      }
+    } catch (e) {
+      Get.snackbar(
+        'Error',
+        e.toString(),
+        backgroundColor: Colors.red,
+        colorText: Colors.white,
+      ); // show error snackbar, toast, etc (e.g.message)
+    } finally {
+      this.userId.value = '';
     }
   }
 }

@@ -4,6 +4,7 @@ import 'package:get/get.dart';
 import 'package:zest_mobile/app/core/di/service_locator.dart';
 import 'package:zest_mobile/app/core/models/model/event_model.dart';
 import 'package:zest_mobile/app/core/services/auth_service.dart';
+import 'package:zest_mobile/app/core/shared/widgets/custom_circular_progress_indicator.dart';
 import 'package:zest_mobile/app/core/shared/widgets/shimmer_loading_circle.dart';
 import 'package:zest_mobile/app/core/shared/widgets/shimmer_loading_list.dart';
 import 'package:zest_mobile/app/modules/main_profile/partials/profile/controllers/profile_controller.dart';
@@ -16,47 +17,57 @@ class SocialForYouEventDetailSeelAllParticipantView
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: _buildAppBar(context),
-      body: SingleChildScrollView(
-        padding: const EdgeInsets.all(16),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Obx(
-              () => Text(
-                '${controller.friends.length} Participants',
-                style: Theme.of(context).textTheme.headlineSmall,
+    return PopScope(
+      canPop: false,
+      onPopInvoked: (didPop) {
+        if (!didPop) {
+          Future.delayed(Duration.zero, () {
+            Get.back(result: controller.isChanged.value);
+          });
+        }
+      },
+      child: Scaffold(
+        appBar: _buildAppBar(context),
+        body: SingleChildScrollView(
+          padding: const EdgeInsets.all(16),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Obx(
+                () => Text(
+                  '${controller.friends.length} Participants',
+                  style: Theme.of(context).textTheme.headlineSmall,
+                ),
               ),
-            ),
-            const SizedBox(height: 16),
-            Obx(() {
-              if (controller.isLoading.value && controller.page == 1) {
-                return const ShimmerLoadingList(
-                  itemCount: 10,
-                );
-              }
+              const SizedBox(height: 16),
+              Obx(() {
+                if (controller.isLoading.value && controller.page == 1) {
+                  return const ShimmerLoadingList(
+                    itemCount: 10,
+                  );
+                }
 
-              return ListView.builder(
-                shrinkWrap: true,
-                itemCount: controller.friends.length +
-                    (controller.hasReacheMax.value ? 0 : 1),
-                physics: const NeverScrollableScrollPhysics(),
-                itemBuilder: (context, index) {
-                  if (index == controller.friends.length) {
-                    return Center(
-                      child: Container(
-                        margin: const EdgeInsets.symmetric(vertical: 10),
-                        child: const CircularProgressIndicator(),
-                      ),
-                    );
-                  }
-                  final friend = controller.friends[index];
-                  return _buildFriendListItem(context, friend);
-                },
-              );
-            }),
-          ],
+                return ListView.builder(
+                  shrinkWrap: true,
+                  itemCount: controller.friends.length +
+                      (controller.hasReacheMax.value ? 0 : 1),
+                  physics: const NeverScrollableScrollPhysics(),
+                  itemBuilder: (context, index) {
+                    if (index == controller.friends.length) {
+                      return Center(
+                        child: Container(
+                          margin: const EdgeInsets.symmetric(vertical: 10),
+                          child: const CircularProgressIndicator(),
+                        ),
+                      );
+                    }
+                    final friend = controller.friends[index];
+                    return _buildFriendListItem(context, friend);
+                  },
+                );
+              }),
+            ],
+          ),
         ),
       ),
     );
@@ -67,10 +78,9 @@ class SocialForYouEventDetailSeelAllParticipantView
       leading: IconButton(
         icon: Icon(
           Icons.chevron_left,
-          color: Theme.of(context).colorScheme.primary,
-          size: 35,
+          color: Theme.of(context).colorScheme.onBackground,
         ),
-        onPressed: () => Get.back(),
+        onPressed: () => Get.back(result: controller.isChanged.value),
       ),
       title: Text(
         'Participants',
@@ -89,6 +99,52 @@ class SocialForYouEventDetailSeelAllParticipantView
     return Padding(
       padding: const EdgeInsets.only(bottom: 10),
       child: GestureDetector(
+        onLongPressDown: (details) async {
+          // Cek apakah current user adalah owner
+          if (controller.event?.isOwner != 1) {
+            return;
+          }
+
+          // Jangan tampilkan menu untuk owner sendiri
+          if (friend.user?.id == controller.event?.user?.id) {
+            return;
+          }
+
+          final result = await showMenu<String>(
+            context: context,
+            position: RelativeRect.fromLTRB(
+              details.globalPosition.dx,
+              details.globalPosition.dy,
+              0,
+              0,
+            ),
+            surfaceTintColor: Theme.of(context).colorScheme.onPrimary,
+            items: [
+              PopupMenuItem<String>(
+                value: 'remove_from_event',
+                child: Obx(
+                  () => Visibility(
+                    visible: controller.userId.value == friend.id,
+                    replacement: Text(
+                      'Remove from Event',
+                      style: Theme.of(context)
+                          .textTheme
+                          .bodyMedium
+                          ?.copyWith(fontWeight: FontWeight.w600),
+                    ),
+                    child: CustomCircularProgressIndicator(),
+                  ),
+                ),
+              ),
+            ],
+          );
+
+          if (result != null) {
+            if (result == 'remove_from_event') {
+              controller.kickUserFromEvent(friend.id ?? '');
+            }
+          }
+        },
         onTap: () {
           if (sl<AuthService>().user?.id == friend.user?.id) return;
           Get.delete<ProfileController>();

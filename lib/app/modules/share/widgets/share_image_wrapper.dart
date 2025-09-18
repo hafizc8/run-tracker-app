@@ -4,20 +4,19 @@ import 'package:zest_mobile/app/core/shared/theme/color_schemes.dart'; // Sesuai
 class ShareImageWrapper extends StatelessWidget {
   final Widget shareCard; // Widget kartu profil yang sudah ada
   final String? backgroundImagePath; // Path ke gambar background (opsional)
+  final double wrapperWidth;
+  final double wrapperHeight;
 
   const ShareImageWrapper({
     super.key,
     required this.shareCard,
     this.backgroundImagePath,
+    this.wrapperWidth = 1080,
+    this.wrapperHeight = 1920,
   });
 
   @override
   Widget build(BuildContext context) {
-    // ✨ KUNCI PERBAIKAN: Gunakan ukuran piksel absolut untuk screenshot ✨
-    // Ini memastikan rasio 9:16 yang presisi.
-    const double wrapperWidth = 1080;  // Lebar standar untuk story
-    const double wrapperHeight = 1920; // Tinggi standar untuk story
-
     return RepaintBoundary(
       child: Container(
         width: wrapperWidth,

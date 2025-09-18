@@ -66,6 +66,8 @@ class ShareChallengeProgressIndividualController extends GetxController {
           isSmallWidthScreen: MediaQuery.of(Get.context!).size.width <= 360,
         ),
         backgroundImagePath: 'assets/images/share_challenge_individual_background.jpg',
+        wrapperWidth: MediaQuery.of(Get.context!).size.width,
+        wrapperHeight: MediaQuery.of(Get.context!).size.height,
       ),
       pixelRatio: 2.0,
     );

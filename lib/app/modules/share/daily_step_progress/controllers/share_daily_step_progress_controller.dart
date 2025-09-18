@@ -1,6 +1,7 @@
 import 'dart:io';
 
 import 'package:appinio_social_share/appinio_social_share.dart';
+import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:image_gallery_saver/image_gallery_saver.dart';
 import 'package:path_provider/path_provider.dart';
@@ -59,8 +60,10 @@ class ShareDailyStepProgressController extends GetxController {
           maxSteps: maxSteps
         ),
         backgroundImagePath: 'assets/images/background_share-2.png',
+        wrapperWidth: MediaQuery.of(Get.context!).size.width,
+        wrapperHeight: MediaQuery.of(Get.context!).size.height,
       ),
-      pixelRatio: 4.0,
+      pixelRatio: 2.0,
     );
 
     // 2. Simpan gambar ke file sementara

@@ -12,9 +12,13 @@ class HomePageDataModel extends Model<HomePageDataModel> {
     this.recordDaily,
     this.leaderboards,
     this.challenge,
+    this.unreadNotificationCount,
+    this.unreadChatCount,
   });
 
   final int? recordDailyStreakCount;
+  final int? unreadNotificationCount;
+  final int? unreadChatCount;
   final RecordDailyModel? recordDaily;
   final List<LeaderboardUserModel>? leaderboards;
   final ChallengeModel? challenge;
@@ -25,12 +29,16 @@ class HomePageDataModel extends Model<HomePageDataModel> {
     RecordDailyModel? recordDaily,
     List<LeaderboardUserModel>? leaderboards,
     ChallengeModel? challenge,
+    int? unreadNotificationCount,
+    int? unreadChatCount,
   }) {
     return HomePageDataModel(
       recordDailyStreakCount: recordDailyStreakCount ?? this.recordDailyStreakCount,
       recordDaily: recordDaily ?? this.recordDaily,
       leaderboards: leaderboards ?? this.leaderboards,
       challenge: challenge ?? this.challenge,
+      unreadNotificationCount: unreadNotificationCount ?? this.unreadNotificationCount,
+      unreadChatCount: unreadChatCount ?? this.unreadChatCount,
     );
   }
 
@@ -44,6 +52,8 @@ class HomePageDataModel extends Model<HomePageDataModel> {
           ? []
           : List<LeaderboardUserModel>.from(json["leaderboards"]!.map((x) => LeaderboardUserModel.fromJson(x))),
       challenge: json["challange"] == null ? null : ChallengeModel.fromJson(json["challange"]),
+      unreadNotificationCount: json["unread_notification_count"] ?? 0,
+      unreadChatCount: json["unread_chat_count"] ?? 0,
     );
   }
 
@@ -53,6 +63,8 @@ class HomePageDataModel extends Model<HomePageDataModel> {
         "record_daily": recordDaily,
         "leaderboards": leaderboards?.map((x) => x.toJson()).toList(),
         "challange": challenge?.toJson(),
+        "unread_notification_count": unreadNotificationCount,
+        "unread_chat_count": unreadChatCount,
       };
 
   @override
@@ -61,6 +73,8 @@ class HomePageDataModel extends Model<HomePageDataModel> {
         recordDaily,
         leaderboards,
         challenge,
+        unreadNotificationCount,
+        unreadChatCount,
       ];
 }
 

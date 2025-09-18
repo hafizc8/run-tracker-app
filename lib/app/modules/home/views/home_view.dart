@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:flutter/widgets.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
@@ -13,7 +12,6 @@ import 'package:zest_mobile/app/modules/home/widgets/custom_exp_progress_bar.dar
 import 'package:zest_mobile/app/modules/home/widgets/last_challenge_card.dart';
 import 'package:zest_mobile/app/modules/home/widgets/stamina_recovery_popup.dart';
 import 'package:zest_mobile/app/modules/home/widgets/walker_profile.dart';
-import 'package:zest_mobile/app/modules/main_profile/partials/profile/controllers/profile_controller.dart';
 import 'package:zest_mobile/app/routes/app_routes.dart';
 
 import '../controllers/home_controller.dart';
@@ -74,38 +72,120 @@ class HomeView extends GetView<HomeController> {
                             ),
                           ),
                           const SizedBox(width: 5),
-                          InkWell(
-                            onTap: () {
-                              Get.toNamed(AppRoutes.notification);
-                            },
-                            child: Container(
-                              decoration: const BoxDecoration(
-                                color: Color(0xFF494949),
-                                shape: BoxShape.circle,
-                              ),
-                              padding: EdgeInsets.all(8.w),
-                              child: SvgPicture.asset(
-                                'assets/icons/ic_notification_2.svg',
-                                width: 18.w,
-                              ),
-                            ),
+                          Obx(
+                            () {
+                              return InkWell(
+                                onTap: () {
+                                  Get.toNamed(AppRoutes.notification);
+                                },
+                                child: Stack(
+                                  clipBehavior: Clip.none,
+                                  children: [
+                                    Container(
+                                      decoration: const BoxDecoration(
+                                        color: Color(0xFF494949),
+                                        shape: BoxShape.circle,
+                                      ),
+                                      padding: EdgeInsets.all(8.w),
+                                      child: SvgPicture.asset(
+                                        'assets/icons/ic_notification_2.svg',
+                                        width: 18.w,
+                                      ),
+                                    ),
+                              
+                                    if ((controller.homePageData.value?.unreadNotificationCount ?? 0) > 0)
+                                      Positioned(
+                                        top: -5,
+                                        right: -5,
+                                        child: Container(
+                                          padding: const EdgeInsets.all(4),
+                                          constraints: BoxConstraints(
+                                            minWidth: 20.r,
+                                            minHeight: 20.r,
+                                          ),
+                                          decoration: const BoxDecoration(
+                                            shape: BoxShape.circle,
+                                            gradient: LinearGradient(
+                                              colors: [Color(0xFFA2FF00), Color(0xFF00FF7F)],
+                                              begin: Alignment.topLeft,
+                                              end: Alignment.bottomRight,
+                                            ),
+                                          ),
+                                          child: Center(
+                                            child: Text(
+                                              '${controller.homePageData.value?.unreadNotificationCount ?? 0}',
+                                              style: GoogleFonts.poppins(
+                                                fontSize: 9.sp,
+                                                fontWeight: FontWeight.w600,
+                                                color: const Color(0xFF424242),
+                                                fontStyle: FontStyle.italic,
+                                              ),
+                                            ),
+                                          ),
+                                        ),
+                                      ),
+                                  ],
+                                ),
+                              );
+                            }
                           ),
                           SizedBox(width: 12.w),
-                          InkWell(
-                            onTap: () {
-                              Get.toNamed(AppRoutes.inbox);
-                            },
-                            child: Container(
-                              decoration: const BoxDecoration(
-                                color: Color(0xFF494949),
-                                shape: BoxShape.circle,
-                              ),
-                              padding: EdgeInsets.all(8.w),
-                              child: SvgPicture.asset(
-                                'assets/icons/ic_inbox_2.svg',
-                                width: 21.w,
-                              ),
-                            ),
+                          Obx(
+                            () {
+                              return InkWell(
+                                onTap: () {
+                                  Get.toNamed(AppRoutes.inbox);
+                                },
+                                child: Stack(
+                                  clipBehavior: Clip.none,
+                                  children: [
+                                    Container(
+                                      decoration: const BoxDecoration(
+                                        color: Color(0xFF494949),
+                                        shape: BoxShape.circle,
+                                      ),
+                                      padding: EdgeInsets.all(8.w),
+                                      child: SvgPicture.asset(
+                                        'assets/icons/ic_inbox_2.svg',
+                                        width: 21.w,
+                                      ),
+                                    ),
+                              
+                                    if ((controller.homePageData.value?.unreadChatCount ?? 0) > 0)
+                                      Positioned(
+                                        top: -5,
+                                        right: -5,
+                                        child: Container(
+                                          padding: const EdgeInsets.all(4),
+                                          constraints: BoxConstraints(
+                                            minWidth: 20.r,
+                                            minHeight: 20.r,
+                                          ),
+                                          decoration: const BoxDecoration(
+                                            shape: BoxShape.circle,
+                                            gradient: LinearGradient(
+                                              colors: [Color(0xFFA2FF00), Color(0xFF00FF7F)],
+                                              begin: Alignment.topLeft,
+                                              end: Alignment.bottomRight,
+                                            ),
+                                          ),
+                                          child: Center(
+                                            child: Text(
+                                              '${controller.homePageData.value?.unreadChatCount ?? 0}',
+                                              style: GoogleFonts.poppins(
+                                                fontSize: 9.sp,
+                                                fontWeight: FontWeight.w600,
+                                                color: const Color(0xFF424242),
+                                                fontStyle: FontStyle.italic,
+                                              ),
+                                            ),
+                                          ),
+                                        ),
+                                      ),
+                                  ],
+                                ),
+                              );
+                            }
                           ),
                         ],
                       ),

@@ -8,6 +8,7 @@ import 'package:zest_mobile/app/core/models/model/post_model.dart';
 import 'package:zest_mobile/app/core/services/post_service.dart';
 import 'package:zest_mobile/app/core/services/user_service.dart';
 import 'package:zest_mobile/app/core/shared/widgets/simple_custom_dialog.dart';
+import 'package:zest_mobile/app/modules/home/controllers/home_controller.dart';
 import 'package:zest_mobile/app/modules/social/controllers/post_controller.dart';
 import 'package:zest_mobile/app/modules/social/views/partial/for_you_tab/event/controllers/event_action_controller.dart';
 import 'package:zest_mobile/app/modules/social/views/partial/for_you_tab/event/controllers/event_controller.dart';
@@ -28,6 +29,8 @@ class NotificationController extends GetxController {
   ScrollController notificationScrollController = ScrollController();
 
   var isLoadingReadAll = false.obs;
+
+  final homeController = Get.find<HomeController>();
 
   @override
   void onInit() {
@@ -123,6 +126,12 @@ class NotificationController extends GetxController {
 
           // action notification by type
           showNotificationDetail(notification);
+
+          // update unreadNotificationCount in homepage
+          final unreadNotificationCount = homeController.homePageData.value?.unreadNotificationCount ?? 0;
+          if (unreadNotificationCount > 0) {
+            homeController.homePageData.value = homeController.homePageData.value?.copyWith(unreadNotificationCount: unreadNotificationCount - 1);
+          }
         }
       } else {
         isLoadingReadAll.value = true;
@@ -131,6 +140,12 @@ class NotificationController extends GetxController {
         if (response) {
           // refresh notification
           fetchNotifications(refresh: true);
+
+          // update unreadNotificationCount in homepage
+          final unreadNotificationCount = homeController.homePageData.value?.unreadNotificationCount ?? 0;
+          if (unreadNotificationCount > 0) {
+            homeController.homePageData.value = homeController.homePageData.value?.copyWith(unreadNotificationCount: 0);
+          }
         }
       }
     } catch (e) {

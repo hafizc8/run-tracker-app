@@ -511,7 +511,7 @@ class HomeController extends GetxController {
       }
 
       if (result == 'share') {
-        Future.delayed(const Duration(seconds: 2), () {
+        Future.delayed(const Duration(milliseconds: 500), () {
           if (notification.typeText == 'AchieveStreak') {
             Get.toNamed(AppRoutes.shareDailyGoals, arguments: {
               'title': notification.title ?? '',

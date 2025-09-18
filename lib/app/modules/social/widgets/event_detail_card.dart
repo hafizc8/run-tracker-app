@@ -420,12 +420,11 @@ class EventDetailCard extends GetView<EventDetailController> {
               if (seeAll) ...[
                 GestureDetector(
                   onTap: () async {
-                    var res = await Get.toNamed(
-                      AppRoutes.eventSeeAllParticipant,
-                      arguments: event,
-                    );
-                    if (res != null) {
-                      await Future.wait([
+                    var result = await Get.toNamed(
+                        AppRoutes.eventSeeAllParticipant,
+                        arguments: controller.event.value);
+                    if (result != null && (result as bool == true)) {
+                      Future.wait([
                         controller.loadGoing(refresh: true),
                         controller.loadWaiting(refresh: true),
                       ]);

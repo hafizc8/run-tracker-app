@@ -273,16 +273,18 @@ class EventService {
     }
   }
 
-  Future<EventUserModel?> removeUserFromEvent(
-      {required String eventId, required String userId}) async {
+  Future<EventUserModel?> kickUserFromEvent({
+    required String eventId,
+    required String userId,
+  }) async {
     try {
-      final response = await _apiService.request(
-        path: AppConstants.eventRemoveUser(eventId, userId),
+      final response = await _apiService.request<FormData>(
+        path: AppConstants.eventKickUser(id: eventId, userId: userId),
         method: HttpMethod.delete,
       );
 
       if (response.statusCode != 200) {
-        throw Exception('Failed to remove user from event');
+        throw Exception('Failed to kick user from event');
       }
 
       return EventUserModel.fromJson(response.data['data']);

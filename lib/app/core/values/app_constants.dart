@@ -73,6 +73,11 @@ class AppConstants {
   static String eventAccLeaveJoin(String id) => "/event/$id/join";
   static String eventInviteFriend(String id) => "/event/$id/invite";
   static String eventUsers(String id) => "/event/$id/user";
+  static String eventKickUser({
+    required String id,
+    required String userId,
+  }) =>
+      "/event/$id/user/$userId";
   static String event([String? id]) => id != null ? "/event/$id" : "/event";
 
   // notif

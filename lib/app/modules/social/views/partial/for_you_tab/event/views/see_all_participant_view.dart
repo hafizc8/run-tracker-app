@@ -17,47 +17,57 @@ class SocialForYouEventDetailSeelAllParticipantView
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: _buildAppBar(context),
-      body: SingleChildScrollView(
-        padding: const EdgeInsets.all(16),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Obx(
-              () => Text(
-                '${controller.friends.length} Participants',
-                style: Theme.of(context).textTheme.headlineSmall,
+    return PopScope(
+      canPop: false,
+      onPopInvoked: (didPop) {
+        if (!didPop) {
+          Future.delayed(Duration.zero, () {
+            Get.back(result: controller.isChanged.value);
+          });
+        }
+      },
+      child: Scaffold(
+        appBar: _buildAppBar(context),
+        body: SingleChildScrollView(
+          padding: const EdgeInsets.all(16),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Obx(
+                () => Text(
+                  '${controller.friends.length} Participants',
+                  style: Theme.of(context).textTheme.headlineSmall,
+                ),
               ),
-            ),
-            const SizedBox(height: 16),
-            Obx(() {
-              if (controller.isLoading.value && controller.page == 1) {
-                return const ShimmerLoadingList(
-                  itemCount: 10,
-                );
-              }
+              const SizedBox(height: 16),
+              Obx(() {
+                if (controller.isLoading.value && controller.page == 1) {
+                  return const ShimmerLoadingList(
+                    itemCount: 10,
+                  );
+                }
 
-              return ListView.builder(
-                shrinkWrap: true,
-                itemCount: controller.friends.length +
-                    (controller.hasReacheMax.value ? 0 : 1),
-                physics: const NeverScrollableScrollPhysics(),
-                itemBuilder: (context, index) {
-                  if (index == controller.friends.length) {
-                    return Center(
-                      child: Container(
-                        margin: const EdgeInsets.symmetric(vertical: 10),
-                        child: const CircularProgressIndicator(),
-                      ),
-                    );
-                  }
-                  final friend = controller.friends[index];
-                  return _buildFriendListItem(context, friend);
-                },
-              );
-            }),
-          ],
+                return ListView.builder(
+                  shrinkWrap: true,
+                  itemCount: controller.friends.length +
+                      (controller.hasReacheMax.value ? 0 : 1),
+                  physics: const NeverScrollableScrollPhysics(),
+                  itemBuilder: (context, index) {
+                    if (index == controller.friends.length) {
+                      return Center(
+                        child: Container(
+                          margin: const EdgeInsets.symmetric(vertical: 10),
+                          child: const CircularProgressIndicator(),
+                        ),
+                      );
+                    }
+                    final friend = controller.friends[index];
+                    return _buildFriendListItem(context, friend);
+                  },
+                );
+              }),
+            ],
+          ),
         ),
       ),
     );
@@ -68,10 +78,9 @@ class SocialForYouEventDetailSeelAllParticipantView
       leading: IconButton(
         icon: Icon(
           Icons.chevron_left,
-          color: Theme.of(context).colorScheme.primary,
-          size: 35,
+          color: Theme.of(context).colorScheme.onBackground,
         ),
-        onPressed: () => Get.back(),
+        onPressed: () => Get.back(result: controller.isChanged.value),
       ),
       title: Text(
         'Participants',
@@ -91,8 +100,13 @@ class SocialForYouEventDetailSeelAllParticipantView
       padding: const EdgeInsets.only(bottom: 10),
       child: GestureDetector(
         onLongPressDown: (details) async {
-          if (controller.eventModel?.isOwner == 0) return;
-          if (controller.eventModel?.user?.id == friend.user?.id) {
+          // Cek apakah current user adalah owner
+          if (controller.event?.isOwner != 1) {
+            return;
+          }
+
+          // Jangan tampilkan menu untuk owner sendiri
+          if (friend.user?.id == controller.event?.user?.id) {
             return;
           }
 
@@ -112,7 +126,7 @@ class SocialForYouEventDetailSeelAllParticipantView
                   () => Visibility(
                     visible: controller.userId.value == friend.id,
                     replacement: Text(
-                      'Remove',
+                      'Remove from Event',
                       style: Theme.of(context)
                           .textTheme
                           .bodyMedium
@@ -127,7 +141,7 @@ class SocialForYouEventDetailSeelAllParticipantView
 
           if (result != null) {
             if (result == 'remove_from_event') {
-              controller.removeUser(friend.id ?? '');
+              controller.kickUserFromEvent(friend.id ?? '');
             }
           }
         },

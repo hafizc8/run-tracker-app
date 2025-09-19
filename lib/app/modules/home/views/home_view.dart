@@ -42,7 +42,7 @@ class HomeView extends GetView<HomeController> {
                     // Widget Profile
                     Container(
                       margin:
-                          EdgeInsets.only(top: 10.h, left: 16.w, right: 16.w),
+                          EdgeInsets.only(top: 16.h, left: 16.w, right: 16.w),
                       child: Row(
                         children: [
                           Expanded(
@@ -83,10 +83,11 @@ class HomeView extends GetView<HomeController> {
                                 color: Color(0xFF494949),
                                 shape: BoxShape.circle,
                               ),
-                              padding: EdgeInsets.all(8.w),
+                              padding: EdgeInsets.all(12.w),
                               child: SvgPicture.asset(
                                 'assets/icons/ic_notification_2.svg',
-                                width: 18.w,
+                                colorFilter: const ColorFilter.mode(Colors.white,  BlendMode.srcIn),
+                                width:14.w,
                               ),
                             ),
                           ),
@@ -100,10 +101,11 @@ class HomeView extends GetView<HomeController> {
                                 color: Color(0xFF494949),
                                 shape: BoxShape.circle,
                               ),
-                              padding: EdgeInsets.all(8.w),
+                              padding: EdgeInsets.all(12.w),
                               child: SvgPicture.asset(
                                 'assets/icons/ic_inbox_2.svg',
-                                width: 21.w,
+                                colorFilter: const ColorFilter.mode(Colors.white,  BlendMode.srcIn),
+                                width: 14.w,
                               ),
                             ),
                           ),

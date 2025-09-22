@@ -97,7 +97,7 @@ class ShareChallengeController extends GetxController {
         }
         await socialShare.android.shareToInstagramStory(
           AppConstants.facebookAppId, 
-          stickerImage: imagePath,
+          backgroundImage: imagePath,
         );
         break;
 

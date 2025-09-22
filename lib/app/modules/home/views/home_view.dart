@@ -40,7 +40,7 @@ class HomeView extends GetView<HomeController> {
                     // Widget Profile
                     Container(
                       margin:
-                          EdgeInsets.only(top: 10.h, left: 16.w, right: 16.w),
+                          EdgeInsets.only(top: 16.h, left: 16.w, right: 16.w),
                       child: Row(
                         children: [
                           Expanded(

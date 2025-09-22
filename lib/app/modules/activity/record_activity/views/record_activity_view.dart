@@ -359,7 +359,7 @@ class RecordActivityView extends GetView<RecordActivityController> {
               
                   Obx(
                     () {
-                      if (controller.isStartingActivity.value) {
+                      if (controller.isStartingActivity.value || controller.isLoadingStaminaDialog.value) {
                         return Container(
                           child: const Center(
                             child: Column(

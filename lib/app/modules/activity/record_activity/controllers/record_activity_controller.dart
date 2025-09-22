@@ -52,6 +52,7 @@ class RecordActivityController extends GetxController {
   var currentDistanceInMeters = 0.0.obs;
   var currentPath = <LocationPoint>[].obs;
   var isStartingActivity = false.obs;
+  var isLoadingStaminaDialog = false.obs;
   
   // ✨ --- Stamina State --- ✨
   var totalStaminaToUse = 0.obs;
@@ -311,8 +312,8 @@ class RecordActivityController extends GetxController {
 
   /// Fungsi baru untuk mengambil konfigurasi dari API.
   Future<void> _loadStaminaConfigAndShowDialog() async {
-    // Tampilkan loading overlay jika diperlukan
-    Get.dialog(const Center(child: CircularProgressIndicator()));
+
+    isLoadingStaminaDialog.value = true;
 
     final lastFetchTimestamp = _prefs.getInt(_staminaConfigTimestampKey);
     final now = DateTime.now().millisecondsSinceEpoch;
@@ -329,7 +330,7 @@ class RecordActivityController extends GetxController {
           final requirements = decodedList.map((item) => StaminaRequirementModel.fromJson(item)).toList();
           staminaRequirements.assignAll(requirements);
 
-          Get.back(); // Tutup loading overlay
+          isLoadingStaminaDialog.value = false;
 
           // Jika berhasil, langsung tampilkan dialog
           var isRunning = await _service.isRunning();
@@ -339,6 +340,7 @@ class RecordActivityController extends GetxController {
 
           return; // Hentikan eksekusi agar tidak memanggil API
         } catch (e) {
+          isLoadingStaminaDialog.value = false;
           _logService.log.e("Failed to parse stamina config from cache. Fetching from API instead.", error: e);
         }
       }
@@ -356,7 +358,7 @@ class RecordActivityController extends GetxController {
       await _prefs.setInt(_staminaConfigTimestampKey, now);
       _logService.log.i("Stamina requirements loaded from API and cached.");
 
-      Get.back(); // Tutup loading overlay
+      isLoadingStaminaDialog.value = false;
       
       var isRunning = await _service.isRunning();
       if (!isRunning) {
@@ -364,6 +366,7 @@ class RecordActivityController extends GetxController {
       }
 
     } catch (e, s) {
+      isLoadingStaminaDialog.value = false;
       _logService.log.e("Failed to load stamina requirements.", error: e, stackTrace: s);
       Get.snackbar("Error", "Could not load stamina settings. Please try again.");
     }

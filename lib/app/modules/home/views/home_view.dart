@@ -86,10 +86,11 @@ class HomeView extends GetView<HomeController> {
                                         color: Color(0xFF494949),
                                         shape: BoxShape.circle,
                                       ),
-                                      padding: EdgeInsets.all(8.w),
+                                      padding: EdgeInsets.all(12.w),
                                       child: SvgPicture.asset(
                                         'assets/icons/ic_notification_2.svg',
-                                        width: 18.w,
+                                        width: 14.w,
+                                        colorFilter: const ColorFilter.mode(Colors.white,  BlendMode.srcIn),
                                       ),
                                     ),
                               
@@ -144,10 +145,11 @@ class HomeView extends GetView<HomeController> {
                                         color: Color(0xFF494949),
                                         shape: BoxShape.circle,
                                       ),
-                                      padding: EdgeInsets.all(8.w),
+                                      padding: EdgeInsets.all(12.w),
                                       child: SvgPicture.asset(
                                         'assets/icons/ic_inbox_2.svg',
-                                        width: 21.w,
+                                        width: 14.w,
+                                        colorFilter: const ColorFilter.mode(Colors.white,  BlendMode.srcIn),
                                       ),
                                     ),
                               

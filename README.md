@@ -1,6 +1,6 @@
-# 💪 Zest Mobile – Fitness App
+# 💪 Fitness App
 
-Zest Mobile is a modern **fitness app** built with Flutter, designed to help users achieve their health and fitness goals in a structured and seamless way. It offers features like activity tracking, and wellness guides — all wrapped in a responsive and clean UI/UX experience.
+Fitness Mobile is a modern **fitness app** built with Flutter, designed to help users achieve their health and fitness goals in a structured and seamless way. It offers features like activity tracking, and wellness guides — all wrapped in a responsive and clean UI/UX experience.
 
 ---
 
@@ -45,8 +45,8 @@ To get started locally, follow these steps:
 
 1. **Clone the repository**
    ```bash
-   git clone https://github.com/hafizc8/zest_mobile.git
-   cd zest_mobile
+   git clone xxx
+   cd xxx
    ```
 
 2. **Install dependencies**
